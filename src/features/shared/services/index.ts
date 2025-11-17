@@ -1,2 +1,3 @@
-// Export shared services here
+export { categoriesApi } from './categories.api';
+export { brandsApi } from './brands.api';
 

@@ -1,5 +1,7 @@
-import type { Metadata } from 'next';
+import HeroBanner from '@/features/home/components/HeroBanner';
+import HomeSection from '@/features/home/components/HomeSection';
 
+import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Home - Shoe Shop',
   description: 'Welcome to Shoe Shop - Your favorite shoe store',
@@ -7,9 +9,16 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main>
-      <h1>Welcome to Shoe Shop</h1>
-    </main>
+    <>
+      <main>
+        <HeroBanner
+          image="https://thumbs.dreamstime.com/z/design-mock-up-banner-illustration-white-sport-sneaker-shoes-banner-footwear-commercials-retail-offers-isolated-335060242.jpg?ct=jpeg"
+          alt="Hero Banner"
+          description="Discover the best shoes for your feet"
+        />
+        <HomeSection /> 
+      </main>
+    </>
   );
 }
 
