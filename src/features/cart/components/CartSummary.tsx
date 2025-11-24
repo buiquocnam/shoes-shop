@@ -17,7 +17,27 @@ export function CartSummary({ cart }: CartSummaryProps) {
     const router = useRouter();
 
     const handleCheckout = () => {
-        router.push('/checkout');
+        // Convert cart items to checkout items format
+        const checkoutItems = cart.items.map((item) => ({
+            productId: item.product.id,
+            variantId: item.variant.id,
+            quantity: item.quantity,
+            product: {
+                id: item.product.id,
+                name: item.product.name,
+                imageUrl: item.product.imageUrl?.url || '',
+                price: item.product.price,
+            },
+            variant: {
+                id: item.variant.id,
+                size: item.variant.size?.label || '',
+                color: item.variant.color,
+            },
+        }));
+
+        // Pass checkout items via URL searchParams
+        const itemsParam = encodeURIComponent(JSON.stringify(checkoutItems));
+        router.push(`/checkout?items=${itemsParam}`);
     };
 
     return (

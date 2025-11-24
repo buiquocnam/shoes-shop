@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,8 @@ import {
     transformVariantsToForm,
     getDefaultFormValues,
 } from "../utils/productFormHelpers";
-
-type FormMode = "info" | "images" | "variants" | "create";
+import { FormMode } from "../utils/productFormHelpers";
+import { Spinner } from "@/components/ui/spinner";
 
 const SCHEMA_MAP = {
     create: productCreateSchema,
@@ -33,8 +33,7 @@ const SCHEMA_MAP = {
 
 interface ProductFormContentProps {
     mode: FormMode;
-    productProp?: ProductDetailType;
-    isEditMode: boolean;
+    productProp?: ProductDetailType;    
     categories: CategoryType[];
     brands: BrandType[];
     images: File[];
@@ -48,7 +47,6 @@ interface ProductFormContentProps {
 export const ProductFormContent: React.FC<ProductFormContentProps> = ({
     mode,
     productProp,
-    isEditMode,
     categories,
     brands,
     images,
@@ -73,7 +71,7 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
             };
         }
 
-        if (mode === "create" && categories.length > 0 && brands.length > 0) {
+        if (mode === FormMode.create && categories.length > 0 && brands.length > 0) {
             return getDefaultFormValues(categories, brands);
         }
 
@@ -90,97 +88,80 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
         };
     }, [productProp, mode, categories.length, brands.length]);
 
+
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(SCHEMA_MAP[mode]),
         defaultValues,
     });
 
+    // Reset form khi productProp thay đổi từ undefined → có giá trị
+    useEffect(() => {
+        if (productProp) {
+            form.reset({
+                name: productProp.product.name || "",
+                description: productProp.product.description || "",
+                category: productProp.product.category?.id || "",
+                brand: productProp.product.brand?.id || "",
+                price: productProp.product.price || 0,
+                discount: productProp.product.discount ?? 0,
+                image: undefined,
+                variants: transformVariantsToForm(productProp),
+            });
+        }
+    }, [productProp, form]);
+
     const renderFormContent = () => {
-        if (mode === "images") {
+        // Render theo mode cụ thể
+        if (mode === FormMode.info) {
             return (
-                <div className="w-full">
+                    <ProductBasicInfoSection
+                        control={form.control}
+                        categories={categories}
+                        brands={brands}
+                    />
+            );
+        }
+
+        if (mode === FormMode.variants) {
+            return (
+                    <ProductVariantsSection control={form.control} />
+            );
+        }
+
+        if (mode === FormMode.images) {
+            return (
                     <ProductMediaSection
                         control={form.control}
                         images={images}
                         existingImages={productProp?.listImg || []}
                         onAddImages={onAddImages}
                         onRemoveImage={onRemoveImage}
-                        onRemoveExistingImage={
-                            isEditMode
-                                ? (index) => {
-                                    // TODO: Implement remove existing image API call
-                                    console.log("Remove existing image at index:", index);
-                                }
-                                : undefined
-                        }
-                        isEditMode={isEditMode}
+                        onRemoveExistingImage={undefined}
                     />
-                </div>
             );
         }
 
-        if (mode === "variants") {
-            return (
-                <div className="w-full max-w-4xl mx-auto">
-                    <ProductVariantsSection control={form.control} />
-                </div>
-            );
-        }
-
-        if (mode === "info") {
-            return (
-                <div className="w-full max-w-3xl mx-auto">
+        // Mode "create" - hiển thị tất cả 3 sections
+        return (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="space-y-6 col-span-2">
                     <ProductBasicInfoSection
                         control={form.control}
                         categories={categories}
                         brands={brands}
                     />
+                    <ProductVariantsSection control={form.control} />
                 </div>
-            );
-        }
-
-        // Create mode - full form
-        const showBasicInfo = true;
-        const showVariants = true;
-        const showMedia = true;
-        const showInfoSection = true;
-
-        return (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {showInfoSection && (
-                    <div className="space-y-6 col-span-2">
-                        {showBasicInfo && (
-                            <ProductBasicInfoSection
-                                control={form.control}
-                                categories={categories}
-                                brands={brands}
-                            />
-                        )}
-                        {showVariants && (
-                            <ProductVariantsSection control={form.control} />
-                        )}
-                    </div>
-                )}
-
-                {showMedia && (
-                    <div className="space-y-6">
-                        <ProductMediaSection
-                            control={form.control}
-                            images={images}
-                            existingImages={productProp?.listImg || []}
-                            onAddImages={onAddImages}
-                            onRemoveImage={onRemoveImage}
-                            onRemoveExistingImage={
-                                isEditMode
-                                    ? (index) => {
-                                        // TODO: Implement remove existing image API call
-                                        console.log("Remove existing image at index:", index);
-                                    }
-                                    : undefined
-                            }
-                        />
-                    </div>
-                )}
+                <div className="space-y-6">
+                    <ProductMediaSection
+                        control={form.control}
+                        images={images}
+                        existingImages={productProp?.listImg || []}
+                        onAddImages={onAddImages}
+                        onRemoveImage={onRemoveImage}
+                        onRemoveExistingImage={undefined}
+                    />
+                </div>
             </div>
         );
     };
@@ -202,13 +183,7 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
                         </Button>
                     </DialogClose>
                     <Button type="submit" disabled={isLoading}>
-                        {isLoading
-                            ? isEditMode
-                                ? "Updating..."
-                                : "Creating..."
-                            : isEditMode
-                                ? "Update"
-                                : "Save Product"}
+                        {isLoading ? <Spinner /> : "Save"}
                     </Button>
                 </div>
             </form>

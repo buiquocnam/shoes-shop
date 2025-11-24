@@ -6,7 +6,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel,
   SortingState,
   getSortedRowModel,
   ColumnFiltersState,
@@ -22,35 +21,40 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  filterColumnKey?: string;
-  filterPlaceholder?: string;
+  onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
+  // Server-side pagination
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalElements: number;
+    pageSize: number;
+  };
+  onPageChange?: (page: number) => void;
+  columnFilters?: ColumnFiltersState;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  filterColumnKey,
-  filterPlaceholder = "Filter data...",
+  pagination,
+  onPageChange,
+  columnFilters: externalColumnFilters,
+  onColumnFiltersChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+
+  const columnFilters = externalColumnFilters ?? [];
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
@@ -58,35 +62,19 @@ export function DataTable<TData, TValue>({
     },
     initialState: {
       pagination: {
-        pageSize: 10,
+        pageSize: pagination?.pageSize || 10,
+        pageIndex: pagination ? pagination.currentPage - 1 : 0, // Convert to 0-based index
       },
     },
+    // Server-side pagination config
+    ...(pagination && {
+      pageCount: pagination.totalPages,
+      manualPagination: true,
+    }),
   });
-
-  const filterValue =
-    filterColumnKey
-      ? ((table.getColumn(filterColumnKey)?.getFilterValue() as string) ?? "")
-      : "";
 
   return (
     <div className="space-y-4 p-1">
-      {filterColumnKey && (
-        <div className="flex items-center py-4">
-          <div className="relative w-full max-w-sm">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Search className="h-4 w-4" />
-            </span>
-            <Input
-              placeholder={filterPlaceholder}
-              value={filterValue}
-              onChange={(event) =>
-                table.getColumn(filterColumnKey)?.setFilterValue(event.target.value)
-              }
-              className="pl-10 pr-3 rounded-lg bg-gray-100"
-            />
-          </div>
-        </div>
-      )}
 
       <div className="rounded-lg border shadow-sm bg-gray-100">
         <Table>
@@ -148,26 +136,48 @@ export function DataTable<TData, TValue>({
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex-1 text-sm text-gray-500">
-          Page {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+          {pagination ? (
+            <>
+              Showing {data.length} of {pagination.totalElements} results
+              {pagination.totalPages > 1 && (
+                <span className="ml-2">
+                  (Page {pagination.currentPage} / {pagination.totalPages})
+                </span>
+              )}
+            </>
+          ) : (
+            <>
+              Showing {table.getRowModel().rows.length} of {table.getFilteredRowModel().rows.length} results
+              {table.getPageCount() > 1 && (
+                <span className="ml-2">
+                  (Page {table.getState().pagination.pageIndex + 1} / {table.getPageCount()})
+                </span>
+              )}
+            </>
+          )}
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        {
+          pagination.totalPages > 1 && (
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange?.(pagination.currentPage - 1)}
+                disabled={pagination.currentPage <= 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange?.(pagination.currentPage + 1)}
+                disabled={pagination.currentPage >= pagination.totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          )
+        }
       </div>
     </div>
   );

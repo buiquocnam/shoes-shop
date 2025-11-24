@@ -1,16 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import AddReviewDialog from "./AddReviewDialog"; // Giả định đây là Dialog/Modal để thêm Review
-import { useReviews } from "../hooks/useReviews"; // Giả định hook lấy data
-import { formatDate } from "@/utils/date"; // Giả định hàm format ngày tháng
-import { StarIcon } from "lucide-react";
-import { ProductReviewType } from "../types"; // Giả định type
+import AddReviewDialog from "@/features/product/components/AddReviewDialog";
+import { useReviews } from "../hooks/useReviews";
+import { formatDate } from "@/utils/date";
+import { StarIcon, MessageCircle } from "lucide-react";
+import { ProductReviewType } from "../types";
+import { AlertLogin } from "@/features/product/components";
+import { useAuthStore } from "@/store/useAuthStore";
 
-// Màu vàng cho các ngôi sao
-const STAR_COLOR = "rgb(234, 179, 8)"; // Tailwind yellow-500
+const STAR_COLOR = "rgb(234, 179, 8)";
 
-// Hàm tính toán thống kê rating
 const calculateRatingStats = (reviews: ProductReviewType[]) => {
   const stats = {
     5: 0,
@@ -40,7 +41,6 @@ const calculateRatingStats = (reviews: ProductReviewType[]) => {
   };
 };
 
-// Component thanh tiến trình rating (Rating Bar)
 const RatingBar = ({
   stars,
   count,
@@ -72,7 +72,6 @@ const RatingBar = ({
         ></div>
       </div>
 
-      {/* Số lượng review */}
       <span className="text-sm text-gray-700 w-4 text-right flex-shrink-0">
         {count}
       </span>
@@ -80,7 +79,6 @@ const RatingBar = ({
   );
 };
 
-// Component hiển thị mỗi Review item
 const ReviewItem = ({ review }: { review: ProductReviewType }) => {
   const avatarUrl = null;
   const userName = review.user?.name || "Anonymous User";
@@ -88,7 +86,6 @@ const ReviewItem = ({ review }: { review: ProductReviewType }) => {
 
   return (
     <div className="flex items-start gap-4 pb-6 pt-4 border-b border-gray-100 last:border-b-0 last:pb-0">
-      {/* Ảnh User */}
       <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden">
         {avatarUrl ? (
           <img
@@ -118,9 +115,8 @@ const ReviewItem = ({ review }: { review: ProductReviewType }) => {
             {Array.from({ length: 5 }).map((_, i) => (
               <StarIcon
                 key={i}
-                className={`w-3.5 h-3.5 ${
-                  i < review.rating ? "" : "text-gray-300 fill-gray-300"
-                }`}
+                className={`w-3.5 h-3.5 ${i < review.rating ? "" : "text-gray-300 fill-gray-300"
+                  }`}
                 style={{
                   color: STAR_COLOR,
                   fill: i < review.rating ? STAR_COLOR : "",
@@ -139,6 +135,9 @@ const ReviewItem = ({ review }: { review: ProductReviewType }) => {
 
 export default function ProductReview({ productId }: { productId: string }) {
   const { data: productReviews, isLoading, error } = useReviews(productId);
+  const { isAuthenticated } = useAuthStore();
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   if (isLoading) {
     return (
@@ -163,6 +162,14 @@ export default function ProductReview({ productId }: { productId: string }) {
     calculateRatingStats(reviews);
 
   const isEmpty = totalValidReviews === 0;
+
+  const handleWriteReview = () => {
+    if (isAuthenticated) {
+      setShowReviewDialog(true);
+    } else {
+      setShowLoginDialog(true);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-primary/3 rounded-xl shadow-xl mt-8 ">
@@ -195,7 +202,14 @@ export default function ProductReview({ productId }: { productId: string }) {
           </p>
           <div className="flex justify-center">
             <div className="w-full max-w-xs">
-              <AddReviewDialog productId={productId} />
+              <Button
+                variant="outline"
+                onClick={handleWriteReview}
+                className="gap-2 cursor-pointer border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-150 font-semibold px-5 py-2 rounded-full shadow"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Write a Review
+              </Button>
             </div>
           </div>
         </div>
@@ -226,6 +240,17 @@ export default function ProductReview({ productId }: { productId: string }) {
           </div>
         )}
       </div>
+
+      {/* Dialogs */}
+      <AddReviewDialog
+        productId={productId}
+        open={showReviewDialog}
+        onOpenChange={setShowReviewDialog}
+      />
+      <AlertLogin
+        open={showLoginDialog}
+        onOpenChange={setShowLoginDialog}
+      />
     </div>
   );
 }

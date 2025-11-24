@@ -1,7 +1,7 @@
 import { ProductType } from '@/features/product/types';
 
 export interface ProductContentInput {
-  id?: string;
+  productId: string;
   name: string;
   slug: string;
   description: string;
@@ -9,20 +9,7 @@ export interface ProductContentInput {
   discount?: number;
   categoryId?: string;
   brandId?: string;
-  status?: 'ACTIVE' | 'INACTIVE';
 }
-
-export interface UpdateProductInput {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  discount?: number;
-  categoryId?: string;
-  brandId?: string;
-}
-
-
 
 export interface AdminProductFilters {
   search?: string;

@@ -14,7 +14,6 @@ import {
 const AdminBrandsPage: React.FC = () => {
   const { data, isLoading } = useBrands({});
   const createBrandMutation = useCreateBrand();
-
   const brands: BrandType[] = data?.data || [];
 
   const handleCreateBrand = async (formData: FormData) => {
@@ -49,8 +48,12 @@ const AdminBrandsPage: React.FC = () => {
         <DataTable
           columns={brandColumns}
           data={brands}
-          filterColumnKey="name"
-          filterPlaceholder="Search brand..."
+          pagination={{
+            currentPage: 1,
+            totalPages: 1,
+            totalElements: brands.length,
+            pageSize: 10,
+          }}
         />
       </div>
     </div>

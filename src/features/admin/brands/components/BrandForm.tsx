@@ -14,6 +14,9 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { Spinner } from "@/components/ui/spinner";
+
+
 import {
     Dialog,
     DialogContent,
@@ -59,7 +62,10 @@ export default function BrandForm({
             name: data.name,
         };
 
-        formData.append("object", JSON.stringify(brandData));
+        const requestBlob = new Blob([JSON.stringify(brandData)], {
+            type: "application/json",
+        });
+        formData.append("request", requestBlob);
 
         if (data.logo) {
             formData.append("file", data.logo);
@@ -92,6 +98,8 @@ export default function BrandForm({
         form.setValue("logo", undefined);
         setLogoPreview(null);
     };
+
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -200,6 +208,11 @@ export default function BrandForm({
                                 {isLoading ? "Saving..." : brand ? "Update" : "Create"}
                             </Button>
                         </div>
+                        {isLoading &&
+                            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/50">
+                                <Spinner />
+                            </div>
+                        }
                     </form>
                 </Form>
             </DialogContent>

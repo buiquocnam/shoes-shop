@@ -1,21 +1,24 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '../services/product.api';
-import type { ProductFilters, ProductPaginationResponse } from '../types';
+import { useQuery } from "@tanstack/react-query";
+import { productApi } from "@/features/product/services/product.api";
+import { queryKeys } from "@/features/shared";
+import type { ProductFilters, ProductPaginationResponse, ProductType } from "../types";
 
-export function useProducts(
-  filters?: ProductFilters
-) {
+export function useProducts(filters?: ProductFilters) {
   return useQuery<ProductPaginationResponse>({
-    queryKey: ['products', filters],
-    queryFn: () => getProducts(filters),
-    staleTime: 60 * 1000, // Cache 1 phút
-    placeholderData: (previousData) => previousData, // Giữ data cũ khi đang fetch
+    queryKey: queryKeys.product.list(filters),
+    queryFn: () => productApi.getProducts(filters),
+    staleTime: 60 * 1000,
+    placeholderData: (previousData) => previousData,
   });
 }
 
-
-
-
-
+export function useTopRatedProducts() {
+  return useQuery<ProductType[]>({
+    queryKey: queryKeys.product.topRated(),
+    queryFn: () => productApi.getTopRatedProducts(),
+    staleTime: 60 * 1000,
+    placeholderData: (previousData) => previousData,
+  });
+} 

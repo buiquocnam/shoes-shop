@@ -1,4 +1,15 @@
-export * from './components';
-export * from './hooks';
-export * from './services';
-export * from './types';
+export {
+  ProfileInfo,
+  ProfileFormDialog,
+  ProductListBought,
+} from './components';
+export {
+  useUpdateProfile,
+  useProductsPurchased,
+} from './hooks';
+export { profileApi } from './services';
+export type {
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+  Address,
+} from './types';

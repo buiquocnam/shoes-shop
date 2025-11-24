@@ -15,7 +15,8 @@ export const adminCategoriesApi = {
     return response.result;
   },
 
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/shoes/categories/delete/${id}`);
+  delete: async (id: string): Promise<boolean> => {
+    const response = await apiClient.delete<boolean>(`/shoes/categories/delete/${id}`);
+    return response.result;
   },
 };

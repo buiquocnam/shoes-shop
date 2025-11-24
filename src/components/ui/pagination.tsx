@@ -1,14 +1,8 @@
-'use client';
-
 import * as React from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
-
-type ButtonProps = React.ComponentProps<typeof Button>
+import { buttonVariants } from "@/components/ui/button"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -42,61 +36,55 @@ PaginationItem.displayName = "PaginationItem"
 
 type PaginationLinkProps = {
   isActive?: boolean
-} & Pick<ButtonProps, "size"> &
-  React.ComponentProps<typeof Link>
+} & React.ComponentProps<"a">
 
-const PaginationLink = ({
-  className,
-  isActive,
-  size = "icon",
-  ...props
-}: PaginationLinkProps) => (
-  <PaginationItem>
-    <Link
-      aria-current={isActive ? "page" : undefined}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? "outline" : "ghost",
-          size,
-        }),
-        className
-      )}
-      {...props}
-    />
-  </PaginationItem>
-)
+const PaginationLink = React.forwardRef<
+  HTMLAnchorElement,
+  PaginationLinkProps
+>(({ className, isActive, ...props }, ref) => (
+  <a
+    ref={ref}
+    aria-current={isActive ? "page" : undefined}
+    className={cn(
+      buttonVariants({
+        variant: isActive ? "outline" : "ghost",
+        size: "icon",
+      }),
+      className
+    )}
+    {...props}
+  />
+))
 PaginationLink.displayName = "PaginationLink"
 
-const PaginationPrevious = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+const PaginationPrevious = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentProps<typeof PaginationLink>
+>(({ className, ...props }, ref) => (
   <PaginationLink
+    ref={ref}
     aria-label="Go to previous page"
-    size="default"
     className={cn("gap-1 pl-2.5", className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
   </PaginationLink>
-)
+))
 PaginationPrevious.displayName = "PaginationPrevious"
 
-const PaginationNext = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+const PaginationNext = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentProps<typeof PaginationLink>
+>(({ className, ...props }, ref) => (
   <PaginationLink
+    ref={ref}
     aria-label="Go to next page"
-    size="default"
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
-)
+))
 PaginationNext.displayName = "PaginationNext"
 
 const PaginationEllipsis = ({
@@ -113,148 +101,6 @@ const PaginationEllipsis = ({
   </span>
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"
-
-interface ReusablePaginationProps {
-  currentPage: number;
-  totalPages: number;
-  className?: string;
-}
-
-export function ReusablePagination({
-  currentPage,
-  totalPages,
-  className,
-}: ReusablePaginationProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-
-  const createUrl = (page: number) => {
-    const params = new URLSearchParams(
-      searchParams?.toString() || ''
-    );
-    params.set('page', page.toString());
-    return `${pathname || ''}?${params.toString()}`;
-  };
-
-
-  const handlePageChange = (page: number) => {
-    router.push(createUrl(page));
-  };
-
-  if (totalPages <= 1) return null;
-
-  return (
-    <Pagination className={className}>
-      <PaginationContent>
-        {currentPage > 1 && (
-          <PaginationItem>
-            <PaginationPrevious
-              href={createUrl(currentPage - 1)}
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(currentPage - 1);
-              }}
-            />
-          </PaginationItem>
-        )}
-
-        {/* Show first page */}
-        {currentPage > 2 && (
-          <>
-            <PaginationItem>
-              <PaginationLink
-                href={createUrl(1)}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePageChange(1);
-                }}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-            {currentPage > 3 && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-          </>
-        )}
-
-        {/* Show previous page */}
-        {currentPage > 1 && (
-          <PaginationItem>
-            <PaginationLink
-              href={createUrl(currentPage - 1)}
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(currentPage - 1);
-              }}
-            >
-              {currentPage - 1}
-            </PaginationLink>
-          </PaginationItem>
-        )}
-
-        {/* Show current page */}
-        <PaginationItem>
-          <PaginationLink href={createUrl(currentPage)} isActive>
-            {currentPage}
-          </PaginationLink>
-        </PaginationItem>
-
-        {/* Show next page */}
-        {currentPage < totalPages && (
-          <PaginationItem>
-            <PaginationLink
-              href={createUrl(currentPage + 1)}
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(currentPage + 1);
-              }}
-            >
-              {currentPage + 1}
-            </PaginationLink>
-          </PaginationItem>
-        )}
-
-        {/* Show last page */}
-        {currentPage < totalPages - 1 && (
-          <>
-            {currentPage < totalPages - 2 && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-            <PaginationItem>
-              <PaginationLink
-                href={createUrl(totalPages)}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePageChange(totalPages);
-                }}
-              >
-                {totalPages}
-              </PaginationLink>
-            </PaginationItem>
-          </>
-        )}
-
-        {currentPage < totalPages && (
-          <PaginationItem>
-            <PaginationNext
-              href={createUrl(currentPage + 1)}
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(currentPage + 1);
-              }}
-            />
-          </PaginationItem>
-        )}
-      </PaginationContent>
-    </Pagination>
-  );
-}
 
 export {
   Pagination,

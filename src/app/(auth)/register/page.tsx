@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { RegisterForm } from '@/features/auth/components';
+import { Suspense } from 'react';
+import { Spinner } from '@/components/ui/spinner';
 
 export const metadata: Metadata = {
   title: 'Register - Shoe Shop',
@@ -8,7 +10,9 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <RegisterForm />
+    <Suspense fallback={<div className="flex justify-center items-center h-full"> <Spinner className='size-8' /></div>}>
+      <RegisterForm />
+    </Suspense>
   );
 }
 
