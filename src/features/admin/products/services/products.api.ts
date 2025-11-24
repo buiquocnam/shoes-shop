@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api';
 import { ProductContentInput, AdminProductFilters } from '../types';
-import { ProductType, ProductPaginationResponse, ProductDetailType } from '@/features/product/types';
+import { ProductType, ProductPaginationResponse, ProductDetailType, ImageType } from '@/features/product/types';
 import { toQueryString } from '@/utils/queryString';
 export const adminProductsApi = {
   // Lấy danh sách sản phẩm
@@ -37,8 +37,8 @@ export const adminProductsApi = {
     const response = await apiClient.patch<ProductDetailType>(`/shoes/products/update/content`, data);
     return response.result;
   },
-  updateImages: async (data: FormData): Promise<ProductDetailType> => {
-    const response = await apiClient.patch<ProductDetailType>(`/shoes/products/update/images`, data);
+  updateImages: async (data: FormData): Promise<ImageType[]> => {
+    const response = await apiClient.post<ImageType[]>(`/shoes/products/update/image`, data);
     return response.result;
   },
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -8,261 +8,141 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ProductFormValues } from "../schema";
-import {
-    useUpdateProduct,
-    useCreateProduct,
-    useUpdateProductImages,
-    useUpdateProductVariants,
-} from "../hooks";
-import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
-import { categoriesApi, brandsApi } from "@/features/shared/services";
-import { ProductDetailType } from "@/features/product/types";
-import { generateSlug, DIALOG_TITLES } from "../utils/productFormHelpers";
+import { DIALOG_TITLES } from "../utils/productFormHelpers";
 import { ProductFormContent } from "./ProductFormContent";
-
-type FormMode = "info" | "images" | "variants" | "create";
+import {
+    useProductFormData,
+    useProductImages,
+    useProductCreateForm,
+    useProductEditInfoForm,
+    useProductEditImagesForm,
+    useProductEditVariantsForm,
+    useProduct,
+} from "../hooks";
+import { ProductFormValues } from "../schema";
+import { cn } from "@/utils";
+import { FormMode } from "../utils/productFormHelpers";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ProductFormProps {
-    product?: ProductDetailType;
+    productId?: string;
     trigger?: React.ReactNode;
-    mode?: FormMode;
+    mode: FormMode;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
 }
 
-// Main component - chỉ quản lý dialog và state
 export const ProductForm: React.FC<ProductFormProps> = ({
-    product: productProp,
+    productId,
     trigger,
-    mode = productProp ? "info" : "create",
+    mode,
     open: openProp,
     onOpenChange,
 }) => {
-    const [images, setImages] = useState<File[]>([]);
     const [internalOpen, setInternalOpen] = useState(false);
+    const isEditMode = !!productId;
 
-    const isEditMode = !!productProp;
-    const isCreateMode = mode === "create";
-    const productId = productProp?.product?.id;
-
+    const dialogTitle = DIALOG_TITLES[mode];
     const open = openProp !== undefined ? openProp : internalOpen;
 
-    const handleOpenChange = useCallback(
-        (newOpen: boolean) => {
-            if (openProp === undefined) {
-                setInternalOpen(newOpen);
-            }
-            onOpenChange?.(newOpen);
-            // Reset images khi dialog đóng
-            if (!newOpen) {
-                setImages([]);
-            }
-        },
-        [openProp, onOpenChange]
+    const { data: productDetail, isLoading: isLoadingProduct } = useProduct(
+        open && isEditMode && productId ? productId : ""
     );
 
-    const updateProductMutation = useUpdateProduct();
-    const updateImagesMutation = useUpdateProductImages();
-    const updateVariantsMutation = useUpdateProductVariants();
-    const createProductMutation = useCreateProduct();
+    const { categories, brands } = useProductFormData();
+    const { images, handleAddImages, handleRemoveImage, resetImages } =
+        useProductImages();
 
-    const { data: categoriesData } = useQuery({
-        queryKey: ["categories"],
-        queryFn: categoriesApi.getAll,
-    });
-    const { data: brandsData } = useQuery({
-        queryKey: ["brands"],
-        queryFn: () => brandsApi.search(),
-    });
+    // Reset images when dialog closes
+    useEffect(() => {
+        if (!open) {
+            resetImages();
+        }
+    }, [open, resetImages]);
 
-    const categories = categoriesData || [];
-    const brands = brandsData?.data || [];
+    // Call all hooks unconditionally (React Rules of Hooks)
+    const createForm = useProductCreateForm(images);
+    const editInfoForm = useProductEditInfoForm(productId || "");
+    const editImagesForm = useProductEditImagesForm(productId || "", images);
+    const editVariantsForm = useProductEditVariantsForm(productId || "");
 
-    const handleUpdateInfo = useCallback(
-        async (data: ProductFormValues, id: string) => {
-            if (!data.name || !data.description || !data.category || !data.brand) {
-                return;
-            }
+    // Select the appropriate handler based on mode
+    const getFormHandler = () => {
+        if (mode === "create") return createForm;
+        if (mode === "info") return editInfoForm;
+        if (mode === "images") return editImagesForm;
+        return editVariantsForm;
+    };
 
-            await updateProductMutation.mutateAsync({
-                id,
-                name: data.name,
-                slug: generateSlug(data.name),
-                description: data.description,
-                categoryId: data.category,
-                brandId: data.brand,
-                price: data.price ?? 0,
-                discount: data.discount ?? 0,
-            });
-        },
-        [updateProductMutation]
-    );
+    const { handleSubmit: hookHandleSubmit, isLoading } = getFormHandler();
 
-    const handleUpdateImages = useCallback(
-        async (id: string) => {
-            if (images.length === 0) {
-                toast.error("Please upload at least one image");
-                return;
-            }
-            await updateImagesMutation.mutateAsync({ productId: id, images });
-            setImages([]);
-        },
-        [images, updateImagesMutation]
-    );
 
-    const handleUpdateVariants = useCallback(
-        async (data: ProductFormValues, id: string) => {
-            if (!data.variants || data.variants.length === 0) {
-                return;
-            }
-
-            await updateVariantsMutation.mutateAsync({
-                productId: id,
-                variants: data.variants,
-            });
-        },
-        [updateVariantsMutation]
-    );
-
-    const handleCreate = useCallback(
-        async (data: ProductFormValues) => {
-            if (
-                !data.name ||
-                !data.description ||
-                !data.category ||
-                !data.variants ||
-                data.variants.length === 0
-            ) {
-                return;
-            }
-
-            await createProductMutation.mutateAsync({
-                name: data.name,
-                slug: generateSlug(data.name),
-                description: data.description,
-                categoryId: data.category,
-                brandId: data.brand || undefined,
-                price: data.price ?? 0,
-                discount: data.discount ?? 0,
-                images: images,
-                variants: data.variants,
-            });
-            setImages([]);
-        },
-        [images, createProductMutation]
-    );
-
-    const handleSubmit = useCallback(
+    // Wrapper để đóng dialog sau khi submit thành công
+    const handleFormSubmit = useCallback(
         async (data: ProductFormValues) => {
             try {
-                if (mode === "images" && images.length === 0) {
-                    toast.error("Please upload at least one image");
-                    return;
-                }
+                await hookHandleSubmit(data);
 
-                if (isEditMode && productId) {
-                    switch (mode) {
-                        case "info":
-                            await handleUpdateInfo(data, productId);
-                            break;
-                        case "images":
-                            await handleUpdateImages(productId);
-                            break;
-                        case "variants":
-                            await handleUpdateVariants(data, productId);
-                            break;
-                    }
-                } else if (isCreateMode) {
-                    await handleCreate(data);
+                // Đóng dialog sau khi submit thành công
+                if (openProp === undefined) {
+                    setInternalOpen(false);
                 }
-
-                toast.success(
-                    `${isEditMode ? "Update" : "Create"} product successfully`
-                );
-                handleOpenChange(false);
+                onOpenChange?.(false);
             } catch (error) {
-                console.error(
-                    `Error ${isEditMode ? "updating" : "creating"} product:`,
-                    error
-                );
-                toast.error(
-                    `Failed to ${isEditMode ? "update" : "create"} product. Please try again.`
-                );
+                // Error đã được handle trong hooks, dialog vẫn mở để user thấy lỗi
             }
         },
-        [
-            mode,
-            images.length,
-            isEditMode,
-            productId,
-            isCreateMode,
-            handleUpdateInfo,
-            handleUpdateImages,
-            handleUpdateVariants,
-            handleCreate,
-            handleOpenChange,
-        ]
+        [hookHandleSubmit, openProp, onOpenChange]
     );
 
-    const handleAddImages = useCallback((files: FileList | null) => {
-        if (!files) return;
-        setImages((prev) => [...prev, ...Array.from(files)]);
-    }, []);
-
-    const handleRemoveImage = useCallback((index: number) => {
-        setImages((prev) => prev.filter((_, i) => i !== index));
-    }, []);
-
-    const isLoading = useMemo(() => {
-        if (isCreateMode) return createProductMutation.isPending;
-
-        const mutationMap: Record<FormMode, boolean> = {
-            info: updateProductMutation.isPending,
-            images: updateImagesMutation.isPending,
-            variants: updateVariantsMutation.isPending,
-            create: false,
-        };
-
-        return mutationMap[mode] || false;
-    }, [
-        isCreateMode,
-        mode,
-        createProductMutation.isPending,
-        updateProductMutation.isPending,
-        updateImagesMutation.isPending,
-        updateVariantsMutation.isPending,
-    ]);
-
-    const dialogTitle = DIALOG_TITLES[mode] || DIALOG_TITLES.create;
 
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
+        <Dialog
+            open={open}
+            onOpenChange={(newOpen) => {
+                if (openProp === undefined) {
+                    setInternalOpen(newOpen);
+                }
+                onOpenChange?.(newOpen);
+            }}
+        >
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             {open && (
-                <DialogContent className="sm:max-w-7xl max-h-[90vh] overflow-y-auto">
+                <DialogContent
+                    className={cn(
+                        "max-h-[90vh] overflow-y-auto",
+                        mode === "create"
+                            ? "sm:max-w-7xl"
+                            : mode === "images"
+                                ? "sm:max-w-6xl"
+                                : "sm:max-w-3xl"
+                    )}
+                >
                     <DialogHeader>
                         <DialogTitle>{dialogTitle}</DialogTitle>
                     </DialogHeader>
 
-                    {isEditMode && !productProp ? (
+                    {isEditMode && isLoadingProduct ? (
                         <div className="flex items-center justify-center py-8">
-                            <div className="text-gray-500">Loading product data...</div>
+                            <Spinner />
                         </div>
                     ) : (
                         <ProductFormContent
                             mode={mode}
-                            productProp={productProp}
-                            isEditMode={isEditMode}
+                            productProp={productDetail}
                             categories={categories}
                             brands={brands}
                             images={images}
                             isLoading={isLoading}
                             onAddImages={handleAddImages}
                             onRemoveImage={handleRemoveImage}
-                            onSubmit={handleSubmit}
-                            onCancel={() => handleOpenChange(false)}
+                            onSubmit={handleFormSubmit}
+                            onCancel={() => {
+                                if (openProp === undefined) {
+                                    setInternalOpen(false);
+                                }
+                                onOpenChange?.(false);
+                            }}
                         />
                     )}
                 </DialogContent>

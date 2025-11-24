@@ -1,5 +1,4 @@
-import { PaginatedResponse } from "@/types/global";
-import { User } from "../auth/types";
+import { PaginatedResponse, User } from "@/types/global";
 
 // ===== CATEGORY =====
 export interface CategoryType {
@@ -30,7 +29,7 @@ export interface ProductVariant {
   id: string;
   productId: string;
   color: string;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: "ACTIVE" | "INACTIVE";
   countSell: number;
   stock: number;
   size: { label: string };
@@ -48,10 +47,10 @@ export interface ProductType {
   price: number;
   discount: number;
   totalStock: number;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: "ACTIVE" | "INACTIVE";
   createdDate: string;
   modifiedDate?: string;
-  countSell: number
+  countSell: number;
   averageRating?: number;
   brand?: BrandType;
   category?: CategoryType;
@@ -61,7 +60,7 @@ export interface ProductType {
 }
 
 // ===== PRODUCT DETAIL =====
-export interface ProductDetailType  {
+export interface ProductDetailType {
   product: ProductType;
   listImg: ImageType[];
   variants: ProductVariant[];
@@ -87,23 +86,24 @@ export interface CreateProductReviewType {
   comment: string;
 }
 
-
-
-export interface ProductReviewResponse extends PaginatedResponse<ProductReviewType> {}
+export interface ProductReviewResponse
+  extends PaginatedResponse<ProductReviewType> {}
 
 // ===== PRODUCT FILTERS =====
 export interface ProductFilters {
   page?: number;
+  size?: number;
   category_id?: string;
   brand_id?: string;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
   search?: string;
   name?: string;
   min_price?: number;
   max_price?: number;
   sort_by?: string;
-  sort_order?: 'asc' | 'desc';
+  sort_order?: "asc" | "desc";
 }
 
 // ===== PAGINATION =====
-export interface ProductPaginationResponse extends PaginatedResponse<ProductType> {}
+export interface ProductPaginationResponse
+  extends PaginatedResponse<ProductType> {}

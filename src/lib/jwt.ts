@@ -1,4 +1,3 @@
-// JWT utilities - can be used on both client and server
 import { jwtDecode } from 'jwt-decode';
 
 /**
@@ -7,10 +6,6 @@ import { jwtDecode } from 'jwt-decode';
  */
 export function isTokenExpired(token?: string): boolean {
   if (!token) return true;
-  try {
-    const decoded: { exp: number } = jwtDecode(token);
-    return decoded.exp * 1000 < Date.now();
-  } catch {
-    return true;
-  }
+    const decoded: { exp: number } = jwtDecode(token);  
+    return decoded.exp * 1000 < Date.now(); 
 }

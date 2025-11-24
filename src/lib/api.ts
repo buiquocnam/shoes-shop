@@ -1,171 +1,157 @@
-import type { ApiResponse } from '@/types/api';
-import { getAccessToken } from './token';
-import { isTokenExpired } from './jwt';
+import type { ApiResponse } from "@/types/api";
+import { isTokenExpired } from "./jwt";
+import { useAuthStore } from "@/store/useAuthStore";
+import { authApi } from "@/features/auth/services";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
+const isDev = process.env.NODE_ENV === "development";
 
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-// 🧩 Lấy header có token, xử lý FormData tự động
-async function getHeaders(body?: unknown): Promise<HeadersInit> {
-  const headers: HeadersInit = { Accept: 'application/json' };
+interface RequestOptions {
+  method: HttpMethod;
+  endpoint: string;
+  data?: unknown;
+}
+
+async function getHeaders(
+  endpoint: string,
+  body?: unknown
+): Promise<HeadersInit> {
+  const headers = new Headers();
+  headers.set("Accept", "application/json");
 
   if (!(body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
+    headers.set("Content-Type", "application/json");
   }
 
   try {
-    const accessToken = await getAccessToken();
-    if (accessToken && !isTokenExpired(accessToken)) {
-      console.log("accessToken", accessToken);
-      console.log("headers", headers);
-      headers['Authorization'] = `Bearer ${accessToken}`;
+    const { accessToken, refreshToken, user, setAuth } =
+      useAuthStore.getState();
+
+    if (accessToken) {
+      if (!isTokenExpired(accessToken)) {
+        headers.set("Authorization", `Bearer ${accessToken}`);
+      } else {
+        const isAuthRefreshEndpoint = endpoint.includes("/auth/refresh");
+
+        if (!isAuthRefreshEndpoint && refreshToken) {
+          if (isDev) {
+            console.warn("⚠️ Token expired, refreshing...");
+          }
+
+          try {
+            const response = await authApi.refreshToken(refreshToken);
+
+            if (user && refreshToken) {
+              setAuth(user, response.access_token, refreshToken);
+            }
+
+            headers.set("Authorization", `Bearer ${response.access_token}`);
+
+            if (isDev) {
+              console.log("✅ Token refreshed successfully");
+            }
+          } catch (error) {
+            if (isDev) {
+              console.error("❌ Failed to refresh token:", error);
+            }
+            await authApi.logout();
+          }
+        } else {
+          if (isDev) {
+            console.log("⏭️ Skipping refresh (calling /auth/refresh endpoint)");
+          }
+        }
+      }
     }
   } catch (error) {
-    console.warn('⚠️ Failed to get access token:', error);
+    if (isDev) {
+      console.warn("⚠️ Failed to get access token:", error);
+    }
   }
 
   return headers;
 }
 
+function prepareBody(data?: unknown) {
+  if (!data) return undefined;
+  return data instanceof FormData ? data : JSON.stringify(data);
+}
+
+async function handleErrorResponse(res: Response): Promise<never> {
+  let message = `API request failed (${res.status})`;
+
+  try {
+    const errorData = await res.json();
+    if (isDev) {
+      console.error("❌ API Error:", errorData);
+    }
+    message = errorData?.message || errorData?.error || message;
+  } catch {
+    message = res.statusText || message;
+  }
+
+  throw new Error(message);
+}
+
+async function request<T>({
+  method,
+  endpoint,
+  data,
+}: RequestOptions): Promise<ApiResponse<T>> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const body = prepareBody(data);
+
+  // ✅ Truyền endpoint vào getHeaders, nó sẽ tự check
+  const headers = await getHeaders(endpoint, data);
+
+  if (isDev) {
+    console.log(
+      `[${method}] ${url}`,
+      data ? { body: data instanceof FormData ? "[FormData]" : data } : ""
+    );
+  }
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers,
+      ...(body && { body }),
+    });
+
+    if (!res.ok) {
+      await handleErrorResponse(res);
+    }
+
+    return (await res.json()) as ApiResponse<T>;
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Network error";
+    throw new Error(errorMessage);
+  }
+}
+
 // 🚀 API client chính
 export const apiClient = {
-  // GET
   async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const url = `${API_BASE_URL}${endpoint}`;
-    console.log("url", url);
-    try {
-      const res = await fetch(url, { headers: await getHeaders() });
-
-      if (!res.ok) {
-        let message = `API request failed (${res.status})`;
-        try {
-          const errorData = await res.json();
-          console.error('❌ API Error JSON:', errorData);
-          message = errorData?.message || errorData?.error || message;
-        } catch {
-          message = res.statusText || message;
-        }
-        throw new Error(message);
-      }
-
-      return (await res.json()) as ApiResponse<T>;
-    } catch (err) {
-      throw new Error((err as Error).message || 'Network error');
-    }
+    return request<T>({ method: "GET", endpoint });
   },
 
-  // POST
-  async post<T>(endpoint: string, data: unknown): Promise<ApiResponse<T>> {
-    const isFormData = data instanceof FormData;
-    const body = isFormData ? data : JSON.stringify(data);
-
-    try {
-      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: await getHeaders(data),
-        body,
-      });
-      if (!res.ok) {
-        let message = `API request failed (${res.status})`;
-        try {
-          const errorData = await res.json();
-          console.error('❌ API Error JSON:', errorData);
-          message = errorData?.message || errorData?.error || message;
-        } catch {
-          message = res.statusText || message;
-        }
-        throw new Error(message);
-      }
-
-      return (await res.json()) as ApiResponse<T>;
-    } catch (err) {
-      throw new Error((err as Error).message || 'Network error');
-    }
+  async post<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+    return request<T>({ method: "POST", endpoint, data });
   },
 
-  // PUT
   async put<T>(endpoint: string, data: unknown): Promise<ApiResponse<T>> {
-    const isFormData = data instanceof FormData;
-    const body = isFormData ? data : JSON.stringify(data);
-
-    try {
-      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'PUT',
-        headers: await getHeaders(data),
-        body,
-      });
-
-      if (!res.ok) {
-        let message = `API request failed (${res.status})`;
-        try {
-          const errorData = await res.json();
-          console.error('❌ API Error JSON:', errorData);
-          message = errorData?.message || errorData?.error || message;
-        } catch {
-          message = res.statusText || message;
-        }
-        throw new Error(message);
-      }
-
-      return (await res.json()) as ApiResponse<T>;
-    } catch (err) {
-      throw new Error((err as Error).message || 'Network error');
-    }
+    return request<T>({ method: "PUT", endpoint, data });
   },
 
   async patch<T>(endpoint: string, data: unknown): Promise<ApiResponse<T>> {
-    const isFormData = data instanceof FormData;
-    const body = isFormData ? data : JSON.stringify(data);
-
-    try {
-      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'PATCH',
-        headers: await getHeaders(data),
-        body,
-      });
-      if (!res.ok) {
-        let message = `API request failed (${res.status})`;
-        try {
-          const errorData = await res.json();
-          console.error('❌ API Error JSON:', errorData);
-          message = errorData?.message || errorData?.error || message;
-        } catch {
-          message = res.statusText || message;
-        }
-        throw new Error(message);
-      }
-
-      return (await res.json()) as ApiResponse<T>;
-    } catch (err) {
-      throw new Error((err as Error).message || 'Network error');
-    }
+    return request<T>({ method: "PATCH", endpoint, data });
   },
 
-  // DELETE
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    try {
-      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'DELETE',
-        headers: await getHeaders(),
-      });
-
-      if (!res.ok) {
-        let message = `API request failed (${res.status})`;
-        try {
-          const errorData = await res.json();
-          console.error('❌ API Error JSON:', errorData);
-          message = errorData?.message || errorData?.error || message;
-        } catch {
-          message = res.statusText || message;
-        }
-        throw new Error(message);
-      }
-
-      return (await res.json()) as ApiResponse<T>;
-    } catch (err) {
-      throw new Error((err as Error).message || 'Network error');
-    }
+    return request<T>({ method: "DELETE", endpoint });
   },
 };

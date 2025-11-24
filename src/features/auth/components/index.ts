@@ -1,3 +1,4 @@
 export { default as LoginForm } from './LoginForm';
-export { AuthTabs } from './AuthTabs';
 export { default as RegisterForm } from './RegisterForm';
+export { default as ForgetForm } from './ForgetForm';
+export { default as VerifyOtp } from './VerifyOtp';

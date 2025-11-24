@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Trash2, Pencil, Image as ImageIcon, Package } from "lucide-react";
 import Image from "next/image";
@@ -8,7 +7,8 @@ import { ProductType } from "@/features/product/types";
 import { ConfirmAlert } from "@/features/admin/components";
 import { ProductForm } from "./ProductForm";
 import { Button } from "@/components/ui/button";
-import { useDeleteProduct, useProduct } from "../hooks";
+import { useDeleteProduct } from "../hooks";
+import { FormMode } from "../utils/productFormHelpers";
 
 export const productColumns: ColumnDef<ProductType>[] = [
     {
@@ -99,36 +99,12 @@ export const productColumns: ColumnDef<ProductType>[] = [
                 await deleteProductMutation.mutateAsync(productId);
             };
 
-            // Wrapper component to handle dialog open state và fetch product
-            const ProductFormWrapper = ({ mode, trigger }: { mode: 'info' | 'images' | 'variants', trigger: React.ReactNode }) => {
-                const [isOpen, setIsOpen] = useState(false);
-
-                // Fetch product detail only when dialog is open
-                const { data: productDetail } = useProduct(
-                    isOpen ? productId : ""
-                );
-
-
-                const handleOpenChange = (open: boolean) => {
-                    setIsOpen(open);
-                };
-
-                return (
-                    <ProductForm
-                        product={productDetail || undefined}
-                        mode={mode}
-                        trigger={trigger}
-                        open={isOpen}
-                        onOpenChange={handleOpenChange}
-                    />
-                );
-            };
-
             return (
                 <div className="flex gap-2 items-center">
                     {/* Edit Info */}
-                    <ProductFormWrapper
-                        mode="info"
+                    <ProductForm
+                        productId={productId}
+                        mode= {FormMode.info}
                         trigger={
                             <Button
                                 variant="ghost"
@@ -142,8 +118,9 @@ export const productColumns: ColumnDef<ProductType>[] = [
                     />
 
                     {/* Edit Images */}
-                    <ProductFormWrapper
-                        mode="images"
+                    <ProductForm
+                        productId={productId}
+                        mode= {FormMode.images}
                         trigger={
                             <Button
                                 variant="ghost"
@@ -157,8 +134,9 @@ export const productColumns: ColumnDef<ProductType>[] = [
                     />
 
                     {/* Edit Variants */}
-                    <ProductFormWrapper
-                        mode="variants"
+                    <ProductForm
+                        productId={productId}
+                        mode={FormMode.variants}
                         trigger={
                             <Button
                                 variant="ghost"

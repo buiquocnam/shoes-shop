@@ -1,49 +1,55 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { BrandType } from '@/features/product/types';
-import { adminBrandsApi } from '@/features/admin/brands/services/brand';
-import { toast } from 'sonner';
+import { useQueryClient } from "@tanstack/react-query";
+import { BrandType } from "@/features/product/types";
+import { adminBrandsApi } from "@/features/admin/brands/services/brands.api";
+import { queryKeys, useMutationWithToast } from "@/features/shared";
 
 // Re-export shared useBrands for convenience
-export { useBrands } from '@/features/shared/hooks/useBrands';
+export { useBrands } from "@/features/shared/hooks/useBrands";
 
 export const useCreateBrand = () => {
   const queryClient = useQueryClient();
-  return useMutation<BrandType, Error, FormData>({
+  return useMutationWithToast<BrandType, FormData>({
     mutationFn: (data: FormData) => adminBrandsApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-      toast.success('Brand created successfully');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.shared.brand.lists(),
+      });
     },
-    onError: (error) => {
-      toast.error('Failed to create brand');
-    },
+    successMessage: "Brand created successfully",
+    errorMessage: "Failed to create brand",
   });
 };
 
 export const useUpdateBrand = () => {
   const queryClient = useQueryClient();
-  return useMutation<BrandType, Error, { id: string, data: FormData }>({
+  return useMutationWithToast<BrandType, { id: string; data: FormData }>({
     mutationFn: ({ id, data }) => adminBrandsApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-      toast.success('Brand updated successfully');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.shared.brand.lists(),
+      });
     },
-    onError: (error) => {
-      toast.error('Failed to update brand');
-    },
+    successMessage: "Brand updated successfully",
+    errorMessage: "Failed to update brand",
   });
 };
 
 export const useDeleteBrand = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, string>({
-    mutationFn: (id: string) => adminBrandsApi.delete(id),
+  return useMutationWithToast<boolean, string>({
+    mutationFn: async (id: string) => {
+      const result = await adminBrandsApi.delete(id);
+      if (!result) {
+        throw new Error("Failed to delete brand");
+      }
+      return result;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-      toast.success('Brand deleted successfully');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.shared.brand.lists(),
+      });
     },
-    onError: (error) => {
-      toast.error('Failed to delete brand');
-    },
+    successMessage: "Brand deleted successfully",
+    errorMessage: "Failed to delete brand",
   });
 };

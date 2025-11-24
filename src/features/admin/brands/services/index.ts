@@ -1,2 +1,2 @@
-export { adminBrandsApi } from './brand';
+export { adminBrandsApi } from './brands.api';
 

@@ -1,25 +1,34 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+"use client";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createReview, getReviews } from "../services/review.api";
-import { CreateProductReviewType, ProductReviewResponse, ProductReviewType } from "../types";
+import { queryKeys, useMutationWithToast } from "@/features/shared";
+import {
+  CreateProductReviewType,
+  ProductReviewResponse,
+  ProductReviewType,
+} from "../types";
 
 export function useReviews(productId: string) {
   return useQuery<ProductReviewResponse>({
-    queryKey: ['reviews', productId],
+    queryKey: queryKeys.review.lists(productId),
     queryFn: () => getReviews(productId),
-    placeholderData: (previousData) => previousData, 
-
+    enabled: !!productId,
+    placeholderData: (previousData) => previousData,
   });
 }
 
 export function useCreateReview(productId: string) {
   const queryClient = useQueryClient();
-  return useMutation<ProductReviewType, Error, CreateProductReviewType>({
+
+  return useMutationWithToast<ProductReviewType, CreateProductReviewType>({
     mutationFn: (review) => createReview(review),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['reviews', productId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.review.lists(productId),
+      });
     },
-    onError: (error) => {
-      console.error('Create review error:', error);
-    },
+    successMessage: "Review submitted successfully",
+    errorMessage: "Failed to submit review",
   });
 }

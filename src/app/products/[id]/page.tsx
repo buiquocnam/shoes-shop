@@ -1,26 +1,24 @@
-import { getProductById } from "@/features/product/services/product.api";
+import { productApi } from "@/features/product/services/product.api";
 import { getReviews } from "@/features/product/services/review.api";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import ProductGallery from "@/features/product/components/ProductGallery";
-import ProductInfo from "@/features/product/components/ProductInfo";
-import ProductReview from "@/features/product/components/ProductReview";
-import NotFound from "./not-found";
+import  {ProductGallery, ProductInfo, ProductReview} from "@/features/product/components";
 import type { Metadata } from "next";
+import NotFound from "./not-found";
+import { queryKeys } from "@/features/shared";
 
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-    const { id } = await params;
-    const product = await getProductById(id);
-    return {
+  const { id } = await params;
+  const product = await productApi.getProductById(id);
+  return {
+    title: `${product.product.name} - Shoe Shop`,
+    description: product.product.description || "",
+    openGraph: {
       title: `${product.product.name} - Shoe Shop`,
       description: product.product.description || "",
-      openGraph: {
-        title: `${product.product.name} - Shoe Shop`,
-        description: product.product.description || "",
-        images: product.listImg.map((img) => img.url),
-      },
-    };
-  }
+    },
+  };
+}
 
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
@@ -28,8 +26,8 @@ export default async function ProductPage({ params }: { params: { id: string } }
   const queryClient = new QueryClient();
 
   const product = await queryClient.fetchQuery({
-    queryKey: ["product", id],
-    queryFn: () => getProductById(id),
+    queryKey: queryKeys.product.detail(id),
+    queryFn: () => productApi.getProductById(id),
   });
 
   if (!product) {
@@ -37,7 +35,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
   }
 
   await queryClient.prefetchQuery({
-    queryKey: ["reviews", id],
+    queryKey: queryKeys.review.lists(id),
     queryFn: () => getReviews(id),
   });
 
@@ -48,8 +46,8 @@ export default async function ProductPage({ params }: { params: { id: string } }
           <div className="col-span-1">
             <ProductGallery images={product.listImg || []} />
           </div>
-          <div className="col-span-1">
-            <ProductInfo product={product.product} variants={product.variants}  />
+          <div className="col-span-1 rounded-xl p-4">
+            <ProductInfo product={product}  />
           </div>
         </div>
 

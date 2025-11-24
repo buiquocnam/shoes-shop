@@ -1,6 +1,11 @@
-export * from './components';
-export * from './hooks';
-export * from './services';
-export * from './schema';
+export { BrandForm, brandColumns } from './components';
+export {
+  useBrands,
+  useCreateBrand,
+  useUpdateBrand,
+  useDeleteBrand,
+} from './hooks';
+export { adminBrandsApi } from './services/brands.api';
+export { brandSchema, type BrandFormValues } from './schema';
 export type { FetchBrandsParams, BrandPaginationResponse } from '@/features/shared/types';
 

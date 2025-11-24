@@ -50,6 +50,12 @@ export const DIALOG_TITLES = {
   variants: "Edit Product Variants",
 } as const;
 
+export enum FormMode {
+  info = "info",
+  images = "images",
+  variants = "variants",
+  create = "create",
+}
 /**
  * Default form values for create mode
  */

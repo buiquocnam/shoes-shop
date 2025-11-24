@@ -49,8 +49,12 @@ const AdminCategoriesPage: React.FC = () => {
         <DataTable
           columns={categoryColumns}
           data={categoriesData}
-          filterColumnKey="name"
-          filterPlaceholder="Search category..."
+          pagination={{
+            currentPage: 1,
+            totalPages: 1,
+            totalElements: categoriesData.length,
+            pageSize: 10,
+          }}
         />
       </div>
     </div>

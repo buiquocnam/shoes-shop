@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
 import Header from '@/components/layout/Header';
-import { QueryProvider } from '@/providers/QueryProvider';
+import { CartProvider, QueryProvider, } from '@/providers';
 import { Toaster } from 'sonner';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'Shoe Shop',
@@ -18,8 +19,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <QueryProvider>
+          <CartProvider />
           <Header />
           {children}
+          <Footer />
           <Toaster position="top-right" />
         </QueryProvider>
       </body>

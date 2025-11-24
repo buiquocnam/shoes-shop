@@ -9,11 +9,8 @@ import {
     Bookmark,
     Settings,
     LogOut,
-    Trash2 // Dùng icon Trash2 (thùng rác) giống trong hình cho Products
+    Trash2
 } from "lucide-react";
-
-// Không cần định nghĩa biến màu cứng (PRIMARY_COLOR/ACTIVE_BG_COLOR) nữa, 
-// vì chúng ta sẽ sử dụng class Tailwind: text-primary, bg-primary/10, etc.
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -31,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             href: "/admin/products",
             subMenu: [
                 { label: "Product List", href: "/admin/products" },
-                { label: "Manage Variants", href: "/admin/products/variants" },
+                { label: "History Variants", href: "/admin/products/variants" },
             ],
         },
         {

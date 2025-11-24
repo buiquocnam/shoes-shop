@@ -7,7 +7,6 @@ import { Trash2, Plus, Minus } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import { TableRow, TableCell } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
 import { useUpdateCartItem, useRemoveCartItem } from '../hooks/useCart';
 interface CartItemProps {
     item: CartType;
