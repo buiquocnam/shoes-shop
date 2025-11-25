@@ -1,19 +1,12 @@
-"use client";
 
-import { ReactNode } from 'react';
-import { useAuthGuard } from '@/hooks';
-import { usePathname } from 'next/navigation';
-import { Spinner } from '@/components/ui/spinner';
+import { ReactNode } from "react";
+/**
+ * Protected routes layout
+ * - Middleware đã handle authentication check
+ * - Chỉ cần show loading state khi store chưa hydrate
+ */
 const Layout = ({ children }: { children: ReactNode }) => {
-    const pathname = usePathname();
-    const { shouldRender, hasHydrated } = useAuthGuard(pathname);
-
-    if (!hasHydrated || !shouldRender) {
-        return <div className="flex justify-center items-center h-screen">
-            <Spinner className="size-8" />
-        </div>;
-    }
-
+  
     return <>{children}</>;
 };
 

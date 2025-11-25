@@ -40,8 +40,19 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (error) {
+            console.error("Failed to rehydrate auth store:", error);
+          }
+          // Luôn set hasHydrated = true sau khi rehydrate (thành công hoặc thất bại)
+          if (state) {
+            state.setHasHydrated(true);
+          } else {
+            // Nếu state là undefined, tạo state mới và set hasHydrated
+            useAuthStore.getState().setHasHydrated(true);
+          }
+        };
       },
     }
   )

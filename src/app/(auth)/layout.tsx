@@ -2,8 +2,6 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { useAuthGuard } from '@/hooks';
-import { Spinner } from '@/components/ui/spinner';
 
 export default function AuthLayout({
   children,
@@ -11,16 +9,6 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { shouldRender, hasHydrated } = useAuthGuard();
-
-  // Hiển thị loading trong khi check
-  if (!hasHydrated || !shouldRender) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner className="size-8" />
-      </div>
-    );
-  }
 
   if (pathname === '/forgot-password' || pathname === '/verify-otp') {
     return (
