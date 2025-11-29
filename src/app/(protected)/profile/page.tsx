@@ -1,27 +1,21 @@
 'use client';
 
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
-import { use, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileInfo, ProductListBought } from '@/features/profile';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function ProfilePage() {
   const { logout } = useAuthStore();
-  const router = useRouter();
 
   const handleLogout = () => {
     logout();
-    router.push('/');
   };
 
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-[1200px] mx-auto px-4">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">Tài khoản của tôi</h1>
           <Button

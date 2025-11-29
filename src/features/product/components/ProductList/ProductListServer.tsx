@@ -19,7 +19,7 @@ interface ProductListServerProps {
 }
 
 async function ProductListServer({ searchParams }: ProductListServerProps) {
-
+    await new Promise(resolve => setTimeout(resolve, 5000));
     // Parse searchParams
     const params = await searchParams;
     const currentPage = params?.page && !isNaN(parseInt(params.page))

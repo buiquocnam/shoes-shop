@@ -3,11 +3,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "../services/auth.api";
 import { useAuthStore } from "@/store/useAuthStore";
+import type { AuthResponse } from "../types";
+import { setAccessTokenCookie } from "@/lib/middleware/cookies";
 
 export function useRefreshToken() {
   const { refreshToken: storedRefreshToken, setAuth, user } = useAuthStore();
 
-  return useMutation<{ token: string }, Error, void>({
+  return useMutation<AuthResponse, Error, void>({
     mutationFn: async () => {
       if (!storedRefreshToken) {
         throw new Error("No refresh token available");
@@ -18,7 +20,9 @@ export function useRefreshToken() {
       // Update access token trong store
       // Giữ nguyên user và refresh token
       if (user && storedRefreshToken) {
-        setAuth(user, response.token, storedRefreshToken);
+        setAuth(user, response.access_token, response.refresh_token);
+        // Update cookie for middleware
+        setAccessTokenCookie(response.access_token);
       }
     },
     onError: (error) => {

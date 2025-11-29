@@ -6,6 +6,7 @@ import type { AuthResponse } from "../types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useMutationWithToast } from "@/features/shared";
+import { setAccessTokenCookie } from "@/lib/middleware/cookies";
 
 export function useRegister() {
   const { setAuth } = useAuthStore();
@@ -18,6 +19,8 @@ export function useRegister() {
     mutationFn: (data) => authApi.register(data),
     onSuccess: (response) => {
       setAuth(response.user, response.access_token, response.refresh_token);
+      // Set cookie for middleware authentication
+      setAccessTokenCookie(response.access_token);
       router.push("/");
     },
     successMessage: "Registration successful",
