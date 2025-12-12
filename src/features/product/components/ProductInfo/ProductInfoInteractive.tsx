@@ -10,14 +10,12 @@ import { AlertLogin } from "@/features/product/components";
 import { useAuthStore } from "@/store/useAuthStore";
 import { CheckoutItem } from "@/features/checkout/types";
 import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
-
+import { AddToCartRequest } from "@/features/cart/types";
 interface ProductInfoInteractiveProps {
   product: ProductDetailType;
 }
 
-/**
- * Component để chọn số lượng sản phẩm
- */
+
 const QuantitySelector = ({
   quantity,
   setQuantity,
@@ -100,7 +98,6 @@ export default function ProductInfoInteractive({
   const { mutate: createCart } = useCreateCart();
   const { variants, listImg, product: productInfo } = product;
 
-  // Tự động chọn size đầu tiên có stock > 0
   const firstInStockSizeId = useMemo(() => {
     for (const variant of variants) {
       const inStockSize = variant.sizes.find((size) => size.stock > 0);
@@ -125,9 +122,6 @@ export default function ProductInfoInteractive({
   const stock = selectedData?.size.stock || 0;
   const canPurchase = !!selectedData && stock > 0 && quantity > 0;
 
-  /**
-   * Xử lý thêm sản phẩm vào giỏ hàng
-   */
   const handleAddToCart = () => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
@@ -135,12 +129,9 @@ export default function ProductInfoInteractive({
     }
     if (!canPurchase || !selectedData) return;
     console.log(selectedData);
-    createCart({ variantId: selectedData.variant.id, quantity });
+    createCart({ variantId: selectedSizeId, quantity } as AddToCartRequest);
   };
 
-  /**
-   * Xử lý mua ngay - chuyển đến trang checkout với thông tin sản phẩm đầy đủ
-   */
   const handleBuy = () => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
@@ -148,15 +139,12 @@ export default function ProductInfoInteractive({
     }
     if (!canPurchase || !selectedData) return;
 
-    // Tính giá sau discount
     const discountPercent = productInfo.discount || 0;
     const discountedPrice = productInfo.price - (productInfo.price * discountPercent) / 100;
     const totalPrice = discountedPrice * quantity;
 
-    // Lấy ảnh sản phẩm (ưu tiên ảnh đầu tiên trong listImg, nếu không có thì dùng imageUrl)
     const productImage = listImg.find((img) => img.isPrimary)?.url || productInfo.imageUrl?.url || null;
 
-    // Tạo checkout items với thông tin sản phẩm đầy đủ (không có variantId, quantity, totalPrice ở đây)
     const checkoutItem: CheckoutItem = {
       product: {
         id: productInfo.id,
@@ -181,7 +169,6 @@ export default function ProductInfoInteractive({
     router.push('/checkout');
   };
 
-  // Nếu không có variant nào, hiển thị thông báo hết hàng
   if (variants.length === 0) {
     return (
       <div className="mb-4 sm:mb-6">
@@ -194,7 +181,6 @@ export default function ProductInfoInteractive({
 
   return (
     <>
-      {/* Variant Selector - Grouped by Color */}
       <div className="mb-4 sm:mb-6 space-y-3">
         {variants.map((variant) => (
           <div key={variant.id} className="space-y-2">
@@ -223,7 +209,6 @@ export default function ProductInfoInteractive({
         ))}
       </div>
 
-      {/* Quantity Selector + Action Buttons */}
       <div className="mb-4 sm:mb-6 border-b border-gray-200 pb-4 sm:pb-6">
         {selectedData && (
           <p className="text-xs sm:text-sm font-medium mb-3 sm:mb-2 text-red-700">

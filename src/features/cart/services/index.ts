@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api';
-import { CartType, CartResponse } from '@/features/cart/types';
+import { AddToCartRequest ,CartResponse } from '@/features/cart/types';
 
 /**
  * Get user's cart
@@ -12,10 +12,10 @@ export const getCart = async (): Promise<CartResponse> => {
 /**
  * Add item to cart
  */
-export const addToCart = async (productVariantId: string, quantity: number = 1): Promise<CartResponse> => {
+export const addToCart = async (request: AddToCartRequest): Promise<CartResponse> => {
     const response = await apiClient.post<CartResponse>(`/shoes/cart`, { 
-        quantity,
-        variantId: productVariantId
+        quantity: request.quantity,
+        variantId: request.variantId
     });
     return response.result;
 };

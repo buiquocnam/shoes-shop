@@ -1,5 +1,4 @@
 import { ProductType } from "../product";
-import { ProductVariant } from "../product";
 
 export interface CartResponse {
     id: string;
@@ -7,13 +6,23 @@ export interface CartResponse {
     count: number;
     totalPrice: number;
     items: CartType[];
-
 }
 
 export interface CartType {
    id: string;
    cartId: string;
    quantity: number;
-   variant: ProductVariant;
+   variant: {
+    id: string;
+    productId: string;
+    color: string;
+    sizeLabel: string;
+    stock: number;
+  };
    product: ProductType;
+}
+
+export interface AddToCartRequest {
+    variantId: string;
+    quantity: number;
 }

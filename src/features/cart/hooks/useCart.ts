@@ -7,7 +7,7 @@ import {
   removeCartItem,
   updateCartItem,
 } from "@/features/cart/services";
-import { CartResponse } from "@/features/cart/types";
+import { CartResponse, AddToCartRequest } from "@/features/cart/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys, useMutationWithToast } from "@/features/shared";
@@ -48,12 +48,12 @@ export const useCreateCart = () => {
 
   return useMutationWithToast<
     CartResponse,
-    { variantId: string; quantity: number }
+    AddToCartRequest
   >({
-    mutationFn: async ({ variantId, quantity }) => {
-      return await addToCart(variantId, quantity);
-    },
-    onSuccess: (data) => {
+    mutationFn: async (request: AddToCartRequest) => {
+      return await addToCart(request);
+      },
+      onSuccess: (data) => {
       setCart(data);
       queryClient.invalidateQueries({ queryKey: queryKeys.cart.current() });
     },

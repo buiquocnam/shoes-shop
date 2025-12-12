@@ -25,17 +25,22 @@ export function CartContent() {
     }
 
     return (
-        <div className="">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center uppercase" >Shopping Cart</h1>
-
-            {/* Cart Items */}
-            <div className="lg:col-span-2">
-                <CartList items={cart.items} />
+        <div className="space-y-8">
+            <div className="text-center">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+                <p className="text-gray-600">Review your items and proceed to checkout</p>
             </div>
 
-            {/* Cart Summary */}
-            <div className="lg:col-span-1">
-                <CartSummary cart={cart} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Cart Items - Takes 2 columns on large screens */}
+                <div className="lg:col-span-2">
+                    <CartList items={cart.items} />
+                </div>
+
+                {/* Cart Summary - Takes 1 column on large screens, sticky */}
+                <div className="lg:col-span-1">
+                    <CartSummary cart={cart} />
+                </div>
             </div>
         </div>
     );

@@ -25,7 +25,7 @@ export {
 } from './services';
 
 // Types
-export type { CartType, CartResponse, CartItem as CartItemType } from './types';
+export type { CartType, CartResponse, AddToCartRequest } from './types';
 
 
 

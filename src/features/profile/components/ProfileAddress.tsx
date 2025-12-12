@@ -12,8 +12,9 @@ export function ProfileAddress() {
   return (
     <AddressManagement
       userId={userId}
-      usersAddress={usersAddress}
+      usersAddress={usersAddress || []}
       isLoading={isLoading}
+      selectedAddress={null}
     />
   );
 }

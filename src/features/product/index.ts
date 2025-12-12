@@ -1,5 +1,6 @@
 export type {
   ProductType,
+  ProductVariant,
   ProductDetailType,
   ProductFilters,
   ProductPaginationResponse,

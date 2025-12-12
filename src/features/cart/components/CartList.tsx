@@ -14,15 +14,15 @@ export function CartList({ items }: CartListProps) {
     }
 
     return (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
             <Table>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[300px]">Product</TableHead>
-                        <TableHead className="text-center">Price</TableHead>
-                        <TableHead className="text-center">Quantity</TableHead>
-                        <TableHead className="text-right">Subtotal</TableHead>
-                        <TableHead className="text-right w-[80px]">Action</TableHead>
+                    <TableRow className="bg-gray-50">
+                        <TableHead className="w-[300px] font-semibold">Product</TableHead>
+                        <TableHead className="text-center font-semibold">Price</TableHead>
+                        <TableHead className="text-center font-semibold">Quantity</TableHead>
+                        <TableHead className="text-right font-semibold">Subtotal</TableHead>
+                        <TableHead className="text-right w-[80px] font-semibold">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="[&_tr:not(:last-child)]:border-b [&_tr]:border-gray-200">
