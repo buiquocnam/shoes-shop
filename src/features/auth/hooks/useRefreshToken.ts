@@ -4,7 +4,6 @@ import { useMutation } from "@tanstack/react-query";
 import { authApi } from "../services/auth.api";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { AuthResponse } from "../types";
-import { setAccessTokenCookie } from "@/lib/middleware/cookies";
 
 export function useRefreshToken() {
   const { user, setAuth } = useAuthStore();
@@ -16,9 +15,9 @@ export function useRefreshToken() {
     },
     onSuccess: (response) => {
       // Cập nhật store với access_token và refresh_token mới từ response
+      // setAuth sẽ tự động set cookie
       if (user) {
         setAuth(user, response.access_token, response.refresh_token);
-        setAccessTokenCookie(response.access_token);
       }
     },
     onError: (error) => {

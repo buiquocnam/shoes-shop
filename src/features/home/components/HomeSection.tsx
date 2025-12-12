@@ -14,7 +14,17 @@ export default async function HomeSection() {
     const products = bestSellers.data || [];
 
     if (products.length === 0) {
-        return null;
+        return (
+            <section className="py-16 md:py-24 text-center">
+                <div className="max-w-2xl mx-auto">
+                    <Sparkles className="mx-auto mb-4 w-8 h-8 text-primary" />
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">No Best Sellers Yet</h2>
+                    <p className="text-gray-600 mb-8">
+                        There are currently no best-selling products to display. Please check back later!
+                    </p>
+                </div>
+            </section>
+        );
     }
 
     return (

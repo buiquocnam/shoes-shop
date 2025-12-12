@@ -2,7 +2,8 @@
 
 import { AddressType } from "@/features/shared/types/address";
 import { Button } from "@/components/ui/button";
-import { Trash2, Bookmark } from "lucide-react";
+import { RadioGroupItem } from "@/components/ui/radio-group";
+import { Trash2 } from "lucide-react";
 import { formatFullAddress } from "@/features/shared/utils/addressHelpers";
 import { useDeleteAddress, useSetDefaultAddress } from "@/features/shared/hooks/useAdress";
 
@@ -11,11 +12,6 @@ interface AddressCardProps {
     className?: string;
 }
 
-/**
- * Component hiển thị một address card
- * Tự xử lý tất cả logic: delete, set default
- * Dùng chung cho cả profile và checkout
- */
 export function AddressCard({
     address,
     className = "",
@@ -23,7 +19,6 @@ export function AddressCard({
     const fullAddress = formatFullAddress(address);
     const deleteAddressMutation = useDeleteAddress(address.userId);
     const setDefaultAddressMutation = useSetDefaultAddress(address.userId);
-
 
     /**
      * Xử lý delete address - dùng shared hook
@@ -35,58 +30,63 @@ export function AddressCard({
     };
 
     /**
-     * Xử lý set default address - dùng shared hook
+     * Xử lý set default address - hook sẽ tự động invalidate và update lại data
      */
     const handleSetDefault = () => {
-        setDefaultAddressMutation.mutate(address.id);
+        if (!address.isDefault) {
+            setDefaultAddressMutation.mutate(address.id);
+        }
     };
 
     return (
-        <div
-            className={`flex flex-col gap-4 rounded-lg p-4 border transition-colors ${address.isDefault
-                ? "border-primary"
-                : "border-border"
+        <label
+            htmlFor={address.id}
+            className={`flex items-start gap-3 rounded-lg p-4 border transition-colors cursor-pointer hover:border-primary/50 ${address.isDefault ? "border-primary" : "border-border"
                 } ${className}`}
         >
-            <div className="flex justify-between items-start gap-2">
-                <div className="flex flex-col gap-1 flex-1">
-                    <p className="text-base font-bold">{address.addressLine}</p>
-                    <p className="text-sm font-normal leading-normal text-muted-foreground">
-                        {fullAddress}
-                    </p>
-                </div>
-                {address.isDefault && (
-                    <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold whitespace-nowrap">
-                        Default
-                    </span>
-                )}
-            </div>
+            <RadioGroupItem
+                value={address.id}
+                id={address.id}
+                className="sr-only"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleSetDefault();
+                }}
+            />
 
-            <div className="flex items-center gap-4 flex-wrap">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleDelete}
-                    disabled={deleteAddressMutation.isPending}
-                    className="flex items-center gap-1 text-sm font-medium hover:text-destructive transition-colors"
-                >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                </Button>
-                {!address.isDefault && (
+            <div className="flex-1 flex flex-col gap-4">
+                <div className="flex justify-between items-start gap-2">
+                    <div className="flex flex-col gap-1 flex-1">
+                        <p className="text-base font-bold">{address.addressLine}</p>
+                        <p className="text-sm font-normal leading-normal text-muted-foreground">
+                            {fullAddress}
+                        </p>
+                    </div>
+                    {address.isDefault && (
+                        <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold whitespace-nowrap">
+                            Default
+                        </span>
+                    )}
+                </div>
+
+                <div className="flex items-center gap-4 flex-wrap">
                     <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={handleSetDefault}
-                        disabled={setDefaultAddressMutation.isPending}
-                        className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete();
+                        }}
+                        disabled={deleteAddressMutation.isPending}
+                        className="flex items-center gap-1 text-sm font-medium hover:text-destructive transition-colors"
                     >
-                        <Bookmark className="w-4 h-4" />
-                        Set as Default
+                        <Trash2 className="w-4 h-4" />
+                        Delete
                     </Button>
-                )}
+                </div>
             </div>
-        </div>
+        </label>
     );
 }
 

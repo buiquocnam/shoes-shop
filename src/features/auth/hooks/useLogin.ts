@@ -18,8 +18,8 @@ export function useLogin() {
   return useMutationWithToast<AuthResponse, LoginFormData>({
     mutationFn: (credentials) => authApi.login(credentials),
     onSuccess: (response) => {
+      // setAuth sẽ tự động set cookie
       setAuth(response.user, response.access_token, response.refresh_token);
-      setAccessTokenCookie(response.access_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
       // Nếu là ADMIN, redirect đến /admin và return ngay

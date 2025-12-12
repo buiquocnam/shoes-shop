@@ -3,10 +3,12 @@
 import { checkoutApi } from "../services/checkout.api";
 import {
   CreateOrderResponse,
+  CreateOrderRequest,
   CheckoutItem,
 } from "../types";
 import { useMutationWithToast } from "@/features/shared";
 import { useRouter } from "next/navigation";
+import { AddressType } from "@/features/shared/types/address";
 
 export const useApplyDiscount = () => {
   return useMutationWithToast<
@@ -24,10 +26,35 @@ export const useApplyDiscount = () => {
 export const useCreateOrder = () => {
   const router = useRouter();
 
-  return useMutationWithToast<CreateOrderResponse, CheckoutItem[]>({
-    mutationFn: (data: CheckoutItem[]) => checkoutApi.createOrder(data),
-    onSuccess: () => {
-      router.push(`/checkout/success`);
+  return useMutationWithToast<
+    CreateOrderResponse,
+    {
+      request: CreateOrderRequest;
+      orderSummary: CheckoutItem[];
+      selectedAddress: AddressType; // Required - không được null
+    }
+  >({
+    mutationFn: ({ request, selectedAddress }) => {
+      // Validate: address phải có
+      if (!selectedAddress) {
+        throw new Error("Vui lòng chọn địa chỉ giao hàng");
+      }
+
+      return checkoutApi.createOrder(request);
+    },
+    onSuccess: (response, variables) => {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(
+          "checkoutSuccessData",
+          JSON.stringify({
+            orderSummary: variables.orderSummary,
+            totalMoney: response.totalMoney,
+            selectedAddress: variables.selectedAddress,
+          })
+        );
+      }
+      // Dùng replace thay vì push để navigate ngay, tránh flash giao diện checkout
+      router.replace(`/checkout/success`);
     },
     successMessage: "Đặt hàng thành công!",
     errorMessage: (error: any) =>

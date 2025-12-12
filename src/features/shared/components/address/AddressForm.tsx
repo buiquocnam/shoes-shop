@@ -109,13 +109,9 @@ export function AddressForm({ userId, onSuccess, onCancel }: AddressFormProps) {
     };
 
     const onSubmit = async (data: AddressFormValues) => {
-        try {
-            await createAddressMutation.mutateAsync(data);
-            form.reset();
-            onSuccess?.();
-        } catch (error) {
-            // Error handling is done in the mutation
-        }
+        await createAddressMutation.mutateAsync(data);
+        form.reset();
+        onSuccess?.();
     };
 
     return (

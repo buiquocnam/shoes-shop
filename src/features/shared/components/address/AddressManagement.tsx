@@ -5,29 +5,37 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Spinner } from "@/components/ui/spinner";
-import { useUsersAddress } from "@/features/shared/hooks/useAdress";
-import { AddressForm } from "./AddressForm";
-import { AddressList } from "./AddressList";
+import { RadioGroup } from "@/components/ui/radio-group";
+import { AddressForm } from "@/features/shared/components/address/AddressForm";
+import { AddressCard } from "@/features/shared/components/address/AddressCard";
+import { AddressType } from "@/features/shared/types/address";
 
 interface AddressManagementProps {
     userId: string;
     className?: string;
+    usersAddress: AddressType[];
+    isLoading: boolean;
+    selectedAddress: AddressType | null;
 }
 
-/**
- * Component quản lý address hoàn chỉnh
- * Dùng chung cho cả profile và checkout
- * Logic handle được xử lý trong AddressCard
- */
 export function AddressManagement({
     userId,
     className = "",
+    usersAddress,
+    selectedAddress,
+    isLoading = false,
 }: AddressManagementProps) {
-    const { data: usersAddress, isLoading } = useUsersAddress(userId);
     const [isFormOpen, setIsFormOpen] = useState(false);
-
     const handleFormSuccess = () => {
         setIsFormOpen(false);
+    };
+
+    /**
+     * Xử lý khi user chọn address - gọi callback nếu có (cho checkout)
+     */
+    const handleAddressChange = (value: string) => {
+        const address = usersAddress?.find((addr) => addr.id === value);
+     
     };
 
     // Loading state
@@ -104,10 +112,15 @@ export function AddressManagement({
             </Collapsible>
 
             <div className="p-4">
-                <AddressList
-                    addresses={usersAddress}
-                    gridCols="2"
-                />
+                <RadioGroup
+                    value={selectedAddress?.id || ""}
+                    onValueChange={handleAddressChange}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                    {usersAddress.map((address) => (
+                        <AddressCard key={address.id} address={address} />
+                    ))}
+                </RadioGroup>
             </div>
         </section>
     );

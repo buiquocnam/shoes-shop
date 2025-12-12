@@ -2,16 +2,18 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { AddressManagement } from "@/features/shared/components/address";
-import { AddressType } from "@/features/shared/types/address";
+import { useUsersAddress } from "@/features/shared/hooks/useAdress";
 
 export function ProfileAddress() {
   const { user } = useAuthStore();
   const userId = user?.id ?? "";
-
+  const { data: usersAddress, isLoading } = useUsersAddress(userId);
 
   return (
     <AddressManagement
       userId={userId}
+      usersAddress={usersAddress}
+      isLoading={isLoading}
     />
   );
 }

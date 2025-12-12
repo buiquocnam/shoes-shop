@@ -18,9 +18,8 @@ export function useRegister() {
   >({
     mutationFn: (data) => authApi.register(data),
     onSuccess: (response) => {
+      // setAuth sẽ tự động set cookie
       setAuth(response.user, response.access_token, response.refresh_token);
-      // Set cookie for middleware authentication
-      setAccessTokenCookie(response.access_token);
       router.push("/");
     },
     successMessage: "Registration successful",

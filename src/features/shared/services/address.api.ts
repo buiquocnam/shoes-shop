@@ -28,7 +28,7 @@ export const addressApi = {
 
   createAddress: async (data: CreateAddressRequest): Promise<AddressType> => {
     const response = await apiClient.post<AddressType>(
-      "/shoes/public/address",
+      "/shoes/public/address/create",
       data
     );
     return response.result;

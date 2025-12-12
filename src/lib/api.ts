@@ -1,7 +1,5 @@
 import type { ApiResponse } from "@/types/api";
-import { isTokenExpired } from "./jwt";
-import { useAuthStore } from "@/store/useAuthStore";
-import { refreshAccessToken } from "@/features/auth/utils/refreshToken";
+import { getHeaders } from "./api-headers";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
@@ -14,53 +12,6 @@ interface RequestOptions {
   method: HttpMethod;
   endpoint: string;
   data?: unknown;
-}
-
-async function getHeaders(
-  endpoint: string,
-  body?: unknown
-): Promise<HeadersInit> {
-  const headers = new Headers();
-  headers.set("Accept", "application/json");
-
-  if (!(body instanceof FormData)) {
-    headers.set("Content-Type", "application/json");
-  }
-
-  try {
-    const { accessToken } = useAuthStore.getState();
-    const isAuthRefreshEndpoint = endpoint.includes("/auth/refresh");
-
-    if (accessToken) {
-      // Luôn gửi access token trong header (dù expired hay không)
-      headers.set("Authorization", `Bearer ${accessToken}`);
-
-      // Nếu token expired và KHÔNG phải endpoint refresh → tự động refresh token
-      if (isTokenExpired(accessToken) && !isAuthRefreshEndpoint) {
-        if (isDev) {
-          console.warn("⚠️ Token expired, refreshing...");
-        }
-
-        const newAccessToken = await refreshAccessToken();
-        if (newAccessToken) {
-          headers.set("Authorization", `Bearer ${newAccessToken}`);
-        }
-      }
-
-      // Nếu là endpoint refresh → gửi expired token (backend đọc refresh token từ cookie/header)
-      if (isAuthRefreshEndpoint && isTokenExpired(accessToken) && isDev) {
-        console.log(
-          "🔄 Calling /auth/refresh with expired access_token in header"
-        );
-      }
-    }
-  } catch (error) {
-    if (isDev) {
-      console.warn("⚠️ Failed to get access token:", error);
-    }
-  }
-
-  return headers;
 }
 
 function prepareBody(data?: unknown) {
@@ -94,13 +45,6 @@ async function request<T>({
 
   // ✅ Truyền endpoint vào getHeaders, nó sẽ tự check
   const headers = await getHeaders(endpoint, data);
-
-  if (isDev) {
-    console.log(
-      `[${method}] ${url}`,
-      data ? { body: data instanceof FormData ? "[FormData]" : data } : ""
-    );
-  }
 
   try {
     const res = await fetch(url, {

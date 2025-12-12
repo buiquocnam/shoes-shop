@@ -12,14 +12,16 @@ interface OrderSummaryProps {
     orderSummary: CheckoutItem[];
     onCheckout: () => void;
     isLoading?: boolean;
+    disabled?: boolean;
 }
 
 export function OrderSummary({
     orderSummary,
     onCheckout,
     isLoading = false,
+    disabled = false,
 }: OrderSummaryProps) {
-   const total = orderSummary.reduce((acc, item) => acc + item.totalPrice, 0);
+    const total = orderSummary.reduce((acc, item) => acc + item.totalPrice, 0);
 
     return (
         <div className="sticky top-8 rounded-lg border bg-secondary p-6">
@@ -34,7 +36,7 @@ export function OrderSummary({
 
                 <PriceBreakdown priceSummary={{ subtotal: total, discount: 0, discountCode: null }} />
 
-                <DiscountSection/>
+                <DiscountSection />
 
                 <div className="flex items-center justify-between border-t pt-4">
                     <p className="text-lg font-bold">Tổng cộng</p>
@@ -43,7 +45,7 @@ export function OrderSummary({
 
                 <Button
                     onClick={onCheckout}
-                    disabled={isLoading || orderSummary.length === 0}
+                    disabled={isLoading || orderSummary.length === 0 || disabled}
                     className="flex h-14 w-full items-center justify-center gap-2 text-base font-bold"
                 >
                     {isLoading ? (

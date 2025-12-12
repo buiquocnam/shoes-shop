@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { addressApi, CreateAddressRequest, UpdateAddressRequest } from "../services/address.api";
+import { addressApi, CreateAddressRequest } from "../services/address.api";
 import { addressQueryKeys } from "../constants/shared-queryKeys";
 import { toast } from "sonner";
-import { AddressType } from "../types/address";
 
 export const useUsersAddress = (userId: string) => {
   return useQuery({
@@ -28,24 +27,6 @@ export const useCreateAddress = (userId: string) => {
   });
 };
 
-/**
- * Hook để update address
- */
-export const useUpdateAddress = (userId: string) => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (data: UpdateAddressRequest) => addressApi.updateAddress(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: addressQueryKeys.usersAddress(userId) });
-      toast.success("Địa chỉ đã được cập nhật thành công");
-    },
-    onError: (error) => {
-      const message = error instanceof Error ? error.message : "Có lỗi xảy ra khi cập nhật địa chỉ";
-      toast.error(message);
-    },
-  });
-};
 
 /**
  * Hook để delete address

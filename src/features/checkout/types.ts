@@ -1,6 +1,12 @@
 export interface CreateOrderRequest {
-  items: CheckoutItem[];
+  items: OrderItem[];
   couponCode: string | null;
+}
+
+export interface OrderItem {
+  variantSizeId: string;
+  quantity: number;
+  totalPrice: number;
 }
 
 export interface CreateOrderResponse {
@@ -27,12 +33,6 @@ export interface CheckoutItem {
     id: string;
     size: string;
   };
-  quantity: number;
-  totalPrice: number;
-}
-
-export interface CheckoutItemApiRequest {
-  variantId: string;
   quantity: number;
   totalPrice: number;
 }

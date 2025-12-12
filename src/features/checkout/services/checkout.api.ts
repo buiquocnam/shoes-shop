@@ -1,9 +1,5 @@
 import { apiClient } from "@/lib/api";
-import {
-  CheckoutItem,
-  CheckoutItemApiRequest,
-  CreateOrderResponse,
-} from "../types";
+import { CheckoutItem, OrderItem, CreateOrderResponse, CreateOrderRequest } from "../types";
 import { convertCheckoutItemsToApiFormat } from "../utils/checkoutHelpers";
 
 export const checkoutApi = {
@@ -19,18 +15,11 @@ export const checkoutApi = {
   },
 
   // Create order/checkout - convert CheckoutItem sang API format trước khi gửi
-  createOrder: async (items: CheckoutItem[]): Promise<CreateOrderResponse> => {
-    const apiData: CheckoutItemApiRequest[] = convertCheckoutItemsToApiFormat(items);
+  createOrder: async (request: CreateOrderRequest): Promise<CreateOrderResponse> => {
     const response = await apiClient.post<CreateOrderResponse>(
       "/shoes/variants/buy",
-      apiData
+      request
     );
     return response.result;
   },
 };
-
-
-
-
-
-
