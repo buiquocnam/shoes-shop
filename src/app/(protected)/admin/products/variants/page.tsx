@@ -9,7 +9,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { ColumnFiltersState } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
 
 export default function AdminVariantsPage() {
     const [page, setPage] = useState(1);
@@ -87,7 +86,6 @@ export default function AdminVariantsPage() {
                     pagination={pagination}
                     onPageChange={handlePageChange}
                     columnFilters={columnFilters}
-                    onColumnFiltersChange={setColumnFilters}
                 />
             </div>
         </div>

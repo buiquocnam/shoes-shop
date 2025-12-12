@@ -1,10 +1,12 @@
-// Product hooks
-export { useProduct, useProducts, useDeleteProduct } from "./useProducts";
+export { useProductFormData, useProducts, useProduct } from "./queries";
 
-// Form-specific hooks
-export { useProductFormData } from "./useProductFormData";
-export { useProductImages } from "./useProductImages";
-export { useProductCreateForm } from "./useProductCreateForm";
-export { useProductEditInfoForm } from "./useProductEditInfoForm";
-export { useProductEditImagesForm } from "./useProductEditImagesForm";
-export { useProductEditVariantsForm } from "./useProductEditVariantsForm";
+export {
+  useCreateProduct,
+  useUpdateProductInfo,
+  useUpdateProductImages,
+  useCreateVariants,
+  useImportStock,
+  useDeleteProduct,
+} from "./mutations";
+
+export { useProductForm, useProductImages } from "./forms";

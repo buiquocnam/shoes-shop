@@ -11,12 +11,3 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
 }
 
-export interface Address {
-  id: string;
-  street: string;
-  city: string;
-  district: string;
-  ward: string;
-  postalCode: string;
-  isDefault: boolean;
-}

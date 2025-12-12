@@ -4,8 +4,12 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { ProfileInfo, ProductListBought } from '@/features/profile';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
+import { ProfileAddress } from '@/features/profile/components/ProfileAddress';
 
 export default function ProfilePage() {
+  const [activeTab, setActiveTab] = useState('address');
   const { logout } = useAuthStore();
 
   const handleLogout = () => {
@@ -32,7 +36,13 @@ export default function ProfilePage() {
             <ProfileInfo />
           </div>
           <div className="col-span-2">
-            <ProductListBought />
+            <Tabs value={activeTab} onValueChange={setActiveTab} >
+              <TabsList className="w-full">
+                <TabsTrigger value="address" className="text-md w-full">Address</TabsTrigger>
+                <TabsTrigger value="orders" className="text-md w-full">Orders</TabsTrigger>
+              </TabsList>
+              <TabsContent value="address"> <ProfileAddress /> </TabsContent>
+            </Tabs>
           </div>
         </div>
 

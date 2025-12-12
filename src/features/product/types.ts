@@ -22,6 +22,15 @@ export interface BrandType {
 export interface ImageType {
   fileName: string;
   url: string;
+  isPrimary: boolean; 
+}
+
+// ===== PRODUCT IMAGE =====
+export interface SizeType {
+  id: string;
+  size: string;
+  stock: number;
+  countSell: number;
 }
 
 // ===== PRODUCT VARIANT =====
@@ -30,12 +39,7 @@ export interface ProductVariant {
   productId: string;
   color: string;
   status: "ACTIVE" | "INACTIVE";
-  countSell: number;
-  stock: number;
-  size: { label: string };
-  sizeLabel?: string;
-  createdDate: string;
-  modifiedDate?: string;
+  sizes: SizeType[];
 }
 
 // ===== PRODUCT =====
@@ -49,21 +53,19 @@ export interface ProductType {
   totalStock: number;
   status: "ACTIVE" | "INACTIVE";
   createdDate: string;
-  modifiedDate?: string;
+  modifiedDate: string;
   countSell: number;
-  averageRating?: number;
-  brand?: BrandType;
-  category?: CategoryType;
-  updated_at?: string;
-  created_at?: string;
+  averageRating: number;
+  brand: BrandType;
+  category: CategoryType;
   imageUrl: ImageType | null;
 }
 
 // ===== PRODUCT DETAIL =====
 export interface ProductDetailType {
   product: ProductType;
-  listImg: ImageType[];
   variants: ProductVariant[];
+  listImg: ImageType[];
 }
 
 // ===== PRODUCT REVIEW =====

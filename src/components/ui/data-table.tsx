@@ -25,8 +25,7 @@ import { Button } from "@/components/ui/button";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
-  // Server-side pagination
+  // Server-side pagination 
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -43,7 +42,6 @@ export function DataTable<TData, TValue>({
   pagination,
   onPageChange,
   columnFilters: externalColumnFilters,
-  onColumnFiltersChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 

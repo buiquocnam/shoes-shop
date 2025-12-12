@@ -1,5 +1,5 @@
 import { StarIcon } from "lucide-react";
-import { ProductDetailType, ProductType, ProductVariant } from "../../types";
+import { ProductDetailType } from "../../types";
 import { formatCurrency } from "@/utils/format";
 import ProductInfoInteractive from "./ProductInfoInteractive";
 
@@ -9,7 +9,7 @@ interface ProductInfoProps {
 
 export default function ProductInfo({ product }: ProductInfoProps) {
 
-    const { product: productInfo, variants } = product;
+    const { product: productInfo } = product;
     return (
         <div className="mx-auto px-4 sm:px-6 lg:px-0">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 mb-2 sm:mb-1">

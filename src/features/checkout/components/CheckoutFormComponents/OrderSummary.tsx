@@ -11,37 +11,15 @@ import { OrderItem, PriceBreakdown, DiscountSection } from './OrderSummaryCompon
 interface OrderSummaryProps {
     orderSummary: CheckoutItem[];
     onCheckout: () => void;
-    onApplyDiscount: (code: string) => void;
     isLoading?: boolean;
 }
 
 export function OrderSummary({
     orderSummary,
     onCheckout,
-    onApplyDiscount,
     isLoading = false,
 }: OrderSummaryProps) {
-    const { subtotal, shipping, discount, total, priceSummary } = useMemo(() => {
-        const subtotal = orderSummary.reduce(
-            (acc, item) => acc + (item.product?.price || 0) * (item.variant?.quantity || 1),
-            0
-        );
-        const shipping = 0;
-        const discount = 0;
-        const total = subtotal + shipping - discount;
-
-        return {
-            subtotal,
-            shipping,
-            discount,
-            total,
-            priceSummary: {
-                subtotal,
-                shipping,
-                discount,
-            },
-        };
-    }, [orderSummary]);
+   const total = orderSummary.reduce((acc, item) => acc + item.totalPrice, 0);
 
     return (
         <div className="sticky top-8 rounded-lg border bg-secondary p-6">
@@ -50,16 +28,13 @@ export function OrderSummary({
 
                 <div className="flex flex-col gap-4">
                     {orderSummary.map((item) => (
-                        <OrderItem key={item.variant?.id} item={item} />
+                        <OrderItem key={item.variant.id} item={item} />
                     ))}
                 </div>
 
-                <PriceBreakdown priceSummary={priceSummary} />
+                <PriceBreakdown priceSummary={{ subtotal: total, discount: 0, discountCode: null }} />
 
-                <DiscountSection
-                    onApplyDiscount={onApplyDiscount}
-                    isApplying={isLoading}
-                />
+                <DiscountSection/>
 
                 <div className="flex items-center justify-between border-t pt-4">
                     <p className="text-lg font-bold">Tổng cộng</p>
@@ -68,7 +43,6 @@ export function OrderSummary({
 
                 <Button
                     onClick={onCheckout}
-                    type="button"
                     disabled={isLoading || orderSummary.length === 0}
                     className="flex h-14 w-full items-center justify-center gap-2 text-base font-bold"
                 >

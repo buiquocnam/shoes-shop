@@ -48,22 +48,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         },
     ];
 
-    const bottomItems = [
-        {
-            label: "Settings",
-            icon: <Settings className="h-5 w-5" />,
-            href: "/admin/settings",
-        },
-        {
-            label: "Logout",
-            icon: <LogOut className="h-5 w-5" />,
-            onClick: () => {
-                alert("Logging out...");
-                router.push("/login");
-            },
-        },
-    ];
-
     return (
         <div className="flex min-h-screen">
             {/* Sidebar Container */}

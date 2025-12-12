@@ -12,17 +12,18 @@ import {
     productImagesSchema,
     productVariantsSchema,
     ProductFormValues,
-} from "../schema";
-import { ProductBasicInfoSection } from "./ProductBasicInfoSection";
-import { ProductVariantsSection } from "./ProductVariantsSection";
-import { ProductMediaSection } from "./ProductMediaSection";
+} from "../../schema";
+import { ProductBasicInfoSection } from "../sections/ProductBasicInfoSection";
+import { ProductVariantsSection } from "../sections/ProductVariantsSection";
+import { ProductMediaSection } from "../sections/ProductMediaSection";
 import { ProductDetailType, CategoryType, BrandType } from "@/features/product/types";
 import {
     transformVariantsToForm,
     getDefaultFormValues,
-} from "../utils/productFormHelpers";
-import { FormMode } from "../utils/productFormHelpers";
+} from "../../utils/productFormHelpers";
+import { FormMode } from "../../utils/productFormHelpers";
 import { Spinner } from "@/components/ui/spinner";
+import { useProductFormData, useProduct } from "../../hooks";
 
 const SCHEMA_MAP = {
     create: productCreateSchema,
@@ -33,9 +34,7 @@ const SCHEMA_MAP = {
 
 interface ProductFormContentProps {
     mode: FormMode;
-    productProp?: ProductDetailType;    
-    categories: CategoryType[];
-    brands: BrandType[];
+    productId?: string;
     images: File[];
     isLoading: boolean;
     onAddImages: (files: FileList | null) => void;
@@ -44,11 +43,13 @@ interface ProductFormContentProps {
     onCancel: () => void;
 }
 
+/**
+ * ProductFormContent - Component render form content
+ * Tách biệt logic form khỏi dialog wrapper
+ */
 export const ProductFormContent: React.FC<ProductFormContentProps> = ({
     mode,
-    productProp,
-    categories,
-    brands,
+    productId,
     images,
     isLoading,
     onAddImages,
@@ -56,18 +57,25 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
     onSubmit,
     onCancel,
 }) => {
+    const { data, isLoading: isLoadingProduct } = useProduct(productId || "");
+    const { categories, brands } = useProductFormData(true);
+
+
+    const productDetail = data?.product;
+    const listImg = data?.listImg;
+    const variants = data?.variants;
     // Tính toán defaultValues trước khi khởi tạo form
     const defaultValues = useMemo((): ProductFormValues => {
-        if (productProp) {
+        if (productDetail) {
             return {
-                name: productProp.product.name || "",
-                description: productProp.product.description || "",
-                category: productProp.product.category?.id || "",
-                brand: productProp.product.brand?.id || "",
-                price: productProp.product.price || 0,
-                discount: productProp.product.discount ?? 0,
+                name: productDetail.name || "",
+                description: productDetail.description || "",
+                category: productDetail.category?.id || "",
+                brand: productDetail.brand?.id || "",
+                price: productDetail.price || 0,
+                discount: productDetail.discount ?? 0,
                 image: undefined,
-                variants: transformVariantsToForm(productProp),
+                variants: transformVariantsToForm(variants || []),
             };
         }
 
@@ -86,8 +94,7 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
             image: undefined,
             variants: [],
         };
-    }, [productProp, mode, categories.length, brands.length]);
-
+    }, [productDetail, mode, categories.length, brands.length]);
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(SCHEMA_MAP[mode]),
@@ -96,48 +103,47 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
 
     // Reset form khi productProp thay đổi từ undefined → có giá trị
     useEffect(() => {
-        if (productProp) {
+        if (productDetail) {
             form.reset({
-                name: productProp.product.name || "",
-                description: productProp.product.description || "",
-                category: productProp.product.category?.id || "",
-                brand: productProp.product.brand?.id || "",
-                price: productProp.product.price || 0,
-                discount: productProp.product.discount ?? 0,
+                name: productDetail.name || "",
+                description: productDetail.description || "",
+                category: productDetail.category?.id || "",
+                brand: productDetail.brand?.id || "",
+                price: productDetail.price || 0,
+                discount: productDetail.discount ?? 0,
                 image: undefined,
-                variants: transformVariantsToForm(productProp),
+                variants: transformVariantsToForm(variants || []),
             });
         }
-    }, [productProp, form]);
+    }, [productDetail, variants, form]);
 
     const renderFormContent = () => {
-        // Render theo mode cụ thể
         if (mode === FormMode.info) {
             return (
-                    <ProductBasicInfoSection
-                        control={form.control}
-                        categories={categories}
-                        brands={brands}
-                    />
+                <ProductBasicInfoSection
+                    control={form.control}
+                    categories={categories}
+                    brands={brands}
+                />
             );
         }
 
         if (mode === FormMode.variants) {
             return (
-                    <ProductVariantsSection control={form.control} />
+                <ProductVariantsSection control={form.control} />
             );
         }
 
         if (mode === FormMode.images) {
             return (
-                    <ProductMediaSection
-                        control={form.control}
-                        images={images}
-                        existingImages={productProp?.listImg || []}
-                        onAddImages={onAddImages}
-                        onRemoveImage={onRemoveImage}
-                        onRemoveExistingImage={undefined}
-                    />
+                <ProductMediaSection
+                    control={form.control}
+                    images={images}
+                    existingImages={listImg || []}
+                    onAddImages={onAddImages}
+                    onRemoveImage={onRemoveImage}
+                    onRemoveExistingImage={undefined}
+                />
             );
         }
 
@@ -156,7 +162,7 @@ export const ProductFormContent: React.FC<ProductFormContentProps> = ({
                     <ProductMediaSection
                         control={form.control}
                         images={images}
-                        existingImages={productProp?.listImg || []}
+                        existingImages={listImg || []}
                         onAddImages={onAddImages}
                         onRemoveImage={onRemoveImage}
                         onRemoveExistingImage={undefined}

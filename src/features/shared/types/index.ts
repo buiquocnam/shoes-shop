@@ -17,5 +17,6 @@ export interface FetchCategoriesParams {
   sort_order?: "asc" | "desc";
 }
 
-export interface CategoryPaginationResponse extends PaginatedResponse<CategoryType> {}
+export interface CategoryPaginationResponse
+  extends PaginatedResponse<CategoryType> {}
 

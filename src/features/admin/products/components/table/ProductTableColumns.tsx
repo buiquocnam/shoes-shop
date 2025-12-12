@@ -1,15 +1,19 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Trash2, Pencil, Image as ImageIcon, Package } from "lucide-react";
+import { Trash2, Pencil, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { ProductType } from "@/features/product/types";
 import { ConfirmAlert } from "@/features/admin/components";
-import { ProductForm } from "./ProductForm";
+import { ProductForm } from "../forms/ProductForm";
 import { Button } from "@/components/ui/button";
-import { useDeleteProduct } from "../hooks";
-import { FormMode } from "../utils/productFormHelpers";
+import { useDeleteProduct } from "../../hooks";
+import { FormMode } from "../../utils/productFormHelpers";
 
+/**
+ * ProductTableColumns - Table columns definition cho product table
+ * Tách riêng để dễ maintain và tái sử dụng
+ */
 export const productColumns: ColumnDef<ProductType>[] = [
     {
         accessorKey: 'name',
@@ -85,7 +89,6 @@ export const productColumns: ColumnDef<ProductType>[] = [
         cell: info => <span className="text-gray-700">{info.getValue() as number}</span>,
         size: 80,
     },
-
     {
         id: 'actions',
         header: 'Actions',
@@ -104,7 +107,7 @@ export const productColumns: ColumnDef<ProductType>[] = [
                     {/* Edit Info */}
                     <ProductForm
                         productId={productId}
-                        mode= {FormMode.info}
+                        mode={FormMode.info}
                         trigger={
                             <Button
                                 variant="ghost"
@@ -120,7 +123,7 @@ export const productColumns: ColumnDef<ProductType>[] = [
                     {/* Edit Images */}
                     <ProductForm
                         productId={productId}
-                        mode= {FormMode.images}
+                        mode={FormMode.images}
                         trigger={
                             <Button
                                 variant="ghost"
@@ -133,21 +136,6 @@ export const productColumns: ColumnDef<ProductType>[] = [
                         }
                     />
 
-                    {/* Edit Variants */}
-                    <ProductForm
-                        productId={productId}
-                        mode={FormMode.variants}
-                        trigger={
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-gray-500 hover:bg-green-50 hover:text-green-600"
-                                title="Edit Product Variants"
-                            >
-                                <Package className="h-4 w-4" />
-                            </Button>
-                        }
-                    />
 
                     <ConfirmAlert
                         onConfirm={handleDelete}
@@ -169,3 +157,4 @@ export const productColumns: ColumnDef<ProductType>[] = [
         size: 80,
     },
 ];
+

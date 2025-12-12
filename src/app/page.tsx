@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   description: 'Discover high-quality sneakers and footwear at Shoe Shop. Best sellers, top-rated shoes, and the latest sneaker trends with unbeatable prices.',
 };
 
-export default function HomePage() {
+
+
+export default function HomePage( { searchParams }: { searchParams: { [key: string]: string | string[] | undefined } } ) {
   return (
     <main className="overflow-hidden">
       <HeroBanner

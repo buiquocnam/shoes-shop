@@ -23,3 +23,10 @@ export const sharedQueryKeys = {
       [...sharedQueryKeys.brand.all, filters] as const,
   },
 } as const;
+
+export const addressQueryKeys = {
+  usersAddress: (userId: string) => ["usersAddress", userId] as const,
+  provinces:  ["provinces"] as const,
+  districts:  (provinceCode: number) => ["districts", provinceCode] as const,
+  wards:  (districtCode: number) => ["wards", districtCode] as const,
+};

@@ -1,38 +1,7 @@
-export interface ShippingAddress {
-  id?: string;
-  type: "home" | "work" | "other";
-  fullName: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone?: string;
-}
-
-export interface ShippingMethod {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  estimatedDays: string;
-}
-
-export type PaymentMethod = "credit_card" | "paypal";
-
-export interface PaymentInfo {
-  method: PaymentMethod;
-  cardNumber?: string;
-  expirationDate?: string;
-  cvv?: string;
-  cardholderName?: string;
-}
-
 export interface CreateOrderRequest {
-    variantId: string;
-    countBuy: number;
-    totalPrice: number;
-}[]
+  items: CheckoutItem[];
+  couponCode: string | null;
+}
 
 export interface CreateOrderResponse {
   id: string;
@@ -42,16 +11,28 @@ export interface CreateOrderResponse {
 }
 
 export interface CheckoutItem {
-  product?: {
+  // Product information for display
+  product: {
     id: string;
     name: string;
-    imageUrl?: string;
     price: number;
+    discount: number;
+    imageUrl: string | null;
   };
-  variant?: {
+  variant: {
     id: string;
-    size?: string;
-    color?: string;
-    quantity: number;
+    color: string;
   };
+  size: {
+    id: string;
+    size: string;
+  };
+  quantity: number;
+  totalPrice: number;
+}
+
+export interface CheckoutItemApiRequest {
+  variantId: string;
+  quantity: number;
+  totalPrice: number;
 }

@@ -57,7 +57,6 @@ export function ProfileFormDialog({ open, onOpenChange }: ProfileFormDialogProps
     if (open && user) {
       form.reset({
         name: user?.name || '',
-        phone: user?.phone || '',
       });
     }
   }, [open, user, form]);

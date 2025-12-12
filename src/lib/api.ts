@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/types/api";
 import { isTokenExpired } from "./jwt";
 import { useAuthStore } from "@/store/useAuthStore";
-import { authApi } from "@/features/auth/services";
+import { refreshAccessToken } from "@/features/auth/utils/refreshToken";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
@@ -28,43 +28,30 @@ async function getHeaders(
   }
 
   try {
-    const { accessToken, refreshToken, user, setAuth } =
-      useAuthStore.getState();
+    const { accessToken } = useAuthStore.getState();
+    const isAuthRefreshEndpoint = endpoint.includes("/auth/refresh");
 
     if (accessToken) {
-      if (!isTokenExpired(accessToken)) {
-        headers.set("Authorization", `Bearer ${accessToken}`);
-      } else {
-        const isAuthRefreshEndpoint = endpoint.includes("/auth/refresh");
+      // Luôn gửi access token trong header (dù expired hay không)
+      headers.set("Authorization", `Bearer ${accessToken}`);
 
-        if (!isAuthRefreshEndpoint && refreshToken) {
-          if (isDev) {
-            console.warn("⚠️ Token expired, refreshing...");
-          }
-
-          try {
-            const response = await authApi.refreshToken(refreshToken);
-
-            if (user && refreshToken) {
-              setAuth(user, response.access_token, refreshToken);
-            }
-
-            headers.set("Authorization", `Bearer ${response.access_token}`);
-
-            if (isDev) {
-              console.log("✅ Token refreshed successfully");
-            }
-          } catch (error) {
-            if (isDev) {
-              console.error("❌ Failed to refresh token:", error);
-            }
-            await authApi.logout();
-          }
-        } else {
-          if (isDev) {
-            console.log("⏭️ Skipping refresh (calling /auth/refresh endpoint)");
-          }
+      // Nếu token expired và KHÔNG phải endpoint refresh → tự động refresh token
+      if (isTokenExpired(accessToken) && !isAuthRefreshEndpoint) {
+        if (isDev) {
+          console.warn("⚠️ Token expired, refreshing...");
         }
+
+        const newAccessToken = await refreshAccessToken();
+        if (newAccessToken) {
+          headers.set("Authorization", `Bearer ${newAccessToken}`);
+        }
+      }
+
+      // Nếu là endpoint refresh → gửi expired token (backend đọc refresh token từ cookie/header)
+      if (isAuthRefreshEndpoint && isTokenExpired(accessToken) && isDev) {
+        console.log(
+          "🔄 Calling /auth/refresh with expired access_token in header"
+        );
       }
     }
   } catch (error) {

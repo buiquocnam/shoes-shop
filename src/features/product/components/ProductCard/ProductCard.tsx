@@ -1,4 +1,4 @@
-import { ProductType } from "../../types";
+import { ImageType, ProductType } from "../../types";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/utils/format";
 import Image from "next/image";
@@ -8,7 +8,8 @@ import ProductCardInteractive from "./ProductCardInteractive";
 export default function ProductCard({ product }: { product: ProductType }) {
     const discountedPrice =
         product.price - (product.price * (product.discount || 0)) / 100;
-
+    const imageUrl = product.imageUrl?.url || "/placeholder.png";
+    console.log(imageUrl);
     const transition300 = "transition-all duration-300 ease-out";
 
     return (
@@ -29,7 +30,7 @@ export default function ProductCard({ product }: { product: ProductType }) {
 
                 <div className="relative w-full  aspect-square overflow-hidden">
                     <Image
-                        src={product.imageUrl?.url || "/placeholder.png"}
+                        src={imageUrl}
                         alt={product.name}
                         fill
                         className={`object-cover ${transition300} group-hover:scale-110 group-hover:brightness-[1.15]`}

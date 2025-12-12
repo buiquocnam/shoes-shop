@@ -1,22 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { checkoutApi } from "../services/checkout.api";
 import {
-  CreateOrderRequest,
   CreateOrderResponse,
-  ShippingMethod,
+  CheckoutItem,
 } from "../types";
-import { useMutationWithToast, queryKeys } from "@/features/shared";
+import { useMutationWithToast } from "@/features/shared";
 import { useRouter } from "next/navigation";
-
-export const useShippingMethods = () => {
-  return useQuery<ShippingMethod[]>({
-    queryKey: queryKeys.checkout.shippingMethods(),
-    queryFn: () => checkoutApi.getShippingMethods(),
-    staleTime: 5 * 60 * 1000,
-  });
-};
 
 export const useApplyDiscount = () => {
   return useMutationWithToast<
@@ -34,8 +24,8 @@ export const useApplyDiscount = () => {
 export const useCreateOrder = () => {
   const router = useRouter();
 
-  return useMutationWithToast<CreateOrderResponse, CreateOrderRequest[]>({
-    mutationFn: (data: CreateOrderRequest[]) => checkoutApi.createOrder(data),
+  return useMutationWithToast<CreateOrderResponse, CheckoutItem[]>({
+    mutationFn: (data: CheckoutItem[]) => checkoutApi.createOrder(data),
     onSuccess: () => {
       router.push(`/checkout/success`);
     },

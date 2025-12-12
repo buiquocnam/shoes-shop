@@ -10,7 +10,7 @@ interface JWTPayload {
   exp: number;
   iat?: number;
   sub?: string;
-  role?: Role;
+  roles?: Role;
   email?: string;
   [key: string]: unknown;
 }
@@ -52,11 +52,11 @@ export function decodeToken(token: string): JWTPayload | null {
  */
 export function getUserRoleFromToken(token: string): Role | null {
   const payload = decodeToken(token);
-  if (!payload?.role) return null;
+  if (!payload?.roles) return null;
 
   // Validate role
-  if (payload.role === Role.ADMIN || payload.role === Role.USER) {
-    return payload.role;
+  if (payload.roles === Role.ADMIN || payload.roles === Role.USER) {
+    return payload.roles;
   }
 
   return null;
@@ -90,12 +90,12 @@ export function isAdmin(request: NextRequest): boolean {
  */
 export function getUserFromToken(
   token: string
-): { role?: Role; sub?: string } | null {
+): { roles?: Role; sub?: string } | null {
   const payload = decodeToken(token);
   if (!payload) return null;
 
   return {
-    role: payload.role,
+    roles: payload.roles,
     sub: payload.sub,
   };
 }

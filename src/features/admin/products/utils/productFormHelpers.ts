@@ -1,4 +1,12 @@
-import { ProductDetailType } from "@/features/product/types";
+import { ProductDetailType, ProductVariant } from "@/features/product/types";
+
+type VariantFormData = Array<{
+  color: string;
+  sizes: Array<{ size: string; stock: number }>;
+}>;
+
+type VariantRequest = Array<{ color: string; size: string }>;
+type StockItem = Array<{ variantId: string; count: number }>;
 
 /**
  * Generate URL-friendly slug from product name
@@ -15,26 +23,21 @@ export const generateSlug = (name: string): string => {
  * Groups variants by color and aggregates sizes with stock
  */
 export const transformVariantsToForm = (
-  product: ProductDetailType
-): Array<{ color: string; sizes: Array<{ size: number; stock: number }> }> => {
-  const variants = product.variants;
-  const variantsByColor = new Map<
-    string,
-    Array<{ size: number; stock: number }>
-  >();
+  variants: ProductVariant[]
+): Array<{ color: string; sizes: Array<{ size: string; stock: number }> }> => {
+  const grouped = new Map<string, Array<{ size: string; stock: number }>>();
 
-  variants.forEach((variant) => {
+  for (const variant of variants) {
     const color = variant.color || "";
-    const size = parseInt(variant.size.label) || 0;
-    const stock = variant.stock || 0;
-
-    if (!variantsByColor.has(color)) {
-      variantsByColor.set(color, []);
+    const size = variant.size?.label || "";
+    if (size) {
+      const sizes = grouped.get(color) || [];
+      sizes.push({ size, stock: variant.stock || 0 });
+      grouped.set(color, sizes);
     }
-    variantsByColor.get(color)?.push({ size, stock });
-  });
+  }
 
-  return Array.from(variantsByColor.entries()).map(([color, sizes]) => ({
+  return Array.from(grouped.entries()).map(([color, sizes]) => ({
     color,
     sizes,
   }));
@@ -56,6 +59,31 @@ export enum FormMode {
   variants = "variants",
   create = "create",
 }
+
+/**
+ * Flatten variants form data to API request format
+ */
+export const flattenVariants = (variants: VariantFormData): VariantRequest => {
+  return variants.flatMap((v) =>
+    v.sizes.map((s) => ({ color: v.color, size: s.size }))
+  );
+};
+
+/**
+ * Map variant results to stock items
+ */
+export const mapVariantsToStockItems = (
+  variants: VariantFormData,
+  variantResults: Array<{ id: string }>
+): StockItem => {
+  let idx = 0;
+  return variants.flatMap((v) =>
+    v.sizes
+      .map((s) => ({ variantId: variantResults[idx++]?.id, count: s.stock }))
+      .filter((item) => item.variantId)
+  );
+};
+
 /**
  * Default form values for create mode
  */
@@ -73,3 +101,71 @@ export const getDefaultFormValues = (
   variants: [{ color: "Black", sizes: [{ size: 41, stock: 0 }] }],
 });
 
+/**
+ * Transform product variants to form format with variantId for stock update
+ */
+export const transformVariantsToFormWithVariantId = (
+  variants: ProductVariant[]
+): Array<{
+  color: string;
+  sizes: Array<{ size: string; stock: number; variantId?: string }>;
+}> => {
+  const grouped = new Map<
+    string,
+    Array<{ size: string; stock: number; variantId?: string }>
+  >();
+
+  for (const variant of variants) {
+    const color = variant.color || "";
+    const size = variant.size?.label || "";
+    if (size) {
+      const sizes = grouped.get(color) || [];
+      sizes.push({
+        size,
+        stock: variant.stock || 0,
+        variantId: variant.id,
+      });
+      grouped.set(color, sizes);
+    }
+  }
+
+  return Array.from(grouped.entries()).map(([color, sizes]) => ({
+    color,
+    sizes: sizes.sort((a, b) => a.size.localeCompare(b.size)),
+  }));
+};
+
+/**
+ * Process variants form data to separate update stock vs create new
+ */
+export const processVariantsForStockUpdate = (
+  variants: Array<{
+    color: string;
+    sizes: Array<{ size: string; stock: number; variantId?: string }>;
+  }>
+) => {
+  const stockItems: Array<{ variantId: string; count: number }> = [];
+  const newVariants: Array<{ color: string; size: string }> = [];
+  const newVariantsStock: number[] = [];
+
+  variants.forEach((variant) => {
+    variant.sizes.forEach((sizeItem) => {
+      if (sizeItem.variantId) {
+        // Existing variant - update stock
+        stockItems.push({
+          variantId: sizeItem.variantId,
+          count: sizeItem.stock,
+        });
+      } else {
+        // New variant - create and import stock
+        newVariants.push({
+          color: variant.color,
+          size: sizeItem.size,
+        });
+        newVariantsStock.push(sizeItem.stock);
+      }
+    });
+  });
+
+  return { stockItems, newVariants, newVariantsStock };
+};

@@ -1,19 +1,12 @@
 import { apiClient } from "@/lib/api";
 import {
-  CreateOrderRequest,
+  CheckoutItem,
+  CheckoutItemApiRequest,
   CreateOrderResponse,
-  ShippingMethod,
 } from "../types";
+import { convertCheckoutItemsToApiFormat } from "../utils/checkoutHelpers";
 
 export const checkoutApi = {
-  // Get available shipping methods
-  getShippingMethods: async (): Promise<ShippingMethod[]> => {
-    const response = await apiClient.get<ShippingMethod[]>(
-      "/checkout/shipping-methods"
-    );
-    return response.result;
-  },
-
   // Apply discount code
   applyDiscountCode: async (
     code: string
@@ -25,15 +18,15 @@ export const checkoutApi = {
     return response.result;
   },
 
-  // Create order/checkout
-  createOrder: async (data: CreateOrderRequest[]): Promise<CreateOrderResponse> => {
+  // Create order/checkout - convert CheckoutItem sang API format trước khi gửi
+  createOrder: async (items: CheckoutItem[]): Promise<CreateOrderResponse> => {
+    const apiData: CheckoutItemApiRequest[] = convertCheckoutItemsToApiFormat(items);
     const response = await apiClient.post<CreateOrderResponse>(
       "/shoes/variants/buy",
-      data
+      apiData
     );
     return response.result;
   },
-
 };
 
 

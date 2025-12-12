@@ -5,37 +5,12 @@ import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ProductFormValues } from "../schema";
+import { ProductFormValues } from "../../schema";
+import { NumberInput } from "../shared/FormFields";
 
 interface ProductVariantsSectionProps {
     control: Control<ProductFormValues>;
 }
-
-const NumberInput: React.FC<{
-    control: Control<ProductFormValues>;
-    name: string;
-    placeholder: string;
-    className?: string;
-}> = ({ control, name, placeholder, className }) => (
-    <FormField
-        control={control}
-        name={name as any}
-        render={({ field }) => (
-            <FormItem className={className}>
-                <FormControl>
-                    <Input
-                        type="number"
-                        placeholder={placeholder}
-                        {...field}
-                        value={field.value ?? ""}
-                        onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-        )}
-    />
-);
 
 const VariantSizesField: React.FC<{
     control: Control<ProductFormValues>;
@@ -50,15 +25,15 @@ const VariantSizesField: React.FC<{
         <div className="space-y-2">
             {fields.map((field, sizeIndex) => (
                 <div key={field.id} className="flex gap-2 items-center">
-                    <NumberInput
+                    <NumberInput<ProductFormValues>
                         control={control}
-                        name={`variants.${variantIndex}.sizes.${sizeIndex}.size`}
+                        name={`variants.${variantIndex}.sizes.${sizeIndex}.size` as any}
                         placeholder="Size (e.g. 41)"
                         className="flex-1"
                     />
-                    <NumberInput
+                    <NumberInput<ProductFormValues>
                         control={control}
-                        name={`variants.${variantIndex}.sizes.${sizeIndex}.stock`}
+                        name={`variants.${variantIndex}.sizes.${sizeIndex}.stock` as any}
                         placeholder="Stock"
                         className="w-32"
                     />
@@ -87,6 +62,10 @@ const VariantSizesField: React.FC<{
     );
 };
 
+/**
+ * ProductVariantsSection - Component hiển thị form fields cho variants
+ * Tách riêng để dễ tái sử dụng và maintain
+ */
 export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({ control }) => {
     const { fields: variantFields, append: appendVariant, remove: removeVariant } = useFieldArray({
         control,
@@ -95,8 +74,6 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({ 
 
     return (
         <div className="bg-white rounded-lg border p-4 space-y-3">
-            <h3 className="text-lg font-semibold text-gray-900">Product Variants</h3>
-
             {variantFields.map((variant, variantIndex) => (
                 <div key={variant.id} className="border rounded-lg p-3 space-y-3">
                     <FormField

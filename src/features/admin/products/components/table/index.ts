@@ -1,0 +1,2 @@
+export { productColumns } from "./ProductTableColumns";
+

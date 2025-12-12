@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { User, ShoppingCartIcon, LogOut, Search, LayoutDashboard } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -12,14 +13,11 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Role } from "@/types/global";
 import { useCartStore } from "@/store/useCartStore";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 
 const navLinks: { name: string; href: string }[] = [
@@ -29,16 +27,6 @@ const navLinks: { name: string; href: string }[] = [
 ];
 
 
-
-
-
-// Mock suggestions
-const allSuggestions = ['Nike Air Max', 'Adidas Ultraboost', 'Jordan 1', 'Converse Chuck', 'Vans Old Skool', 'Puma Suede', 'New Balance 550'];
-
-const SEARCH_HISTORY_KEY = 'search-history';
-const MAX_HISTORY = 10;
-
-// Navigation Component - Dùng chung cho PC và Mobile
 const NavLinks = ({ className, onLinkClick }: { className?: string; onLinkClick?: () => void }) => {
     const pathname = usePathname();
 
@@ -69,42 +57,21 @@ const NavLinks = ({ className, onLinkClick }: { className?: string; onLinkClick?
 
 const Header = () => {
     const { user, isAuthenticated } = useAuthStore();
-    const isAdmin = user?.role === Role.ADMIN;
     const { cart } = useCartStore();
     const pathname = usePathname();
     const router = useRouter();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchHistory, setSearchHistory] = useState<string[]>([]);
+    const searchParams = useSearchParams();
     const { mutateAsync: logout } = useLogout();
-    
+
+    const searchFromUrl = searchParams.get('search') || '';
+    const [searchTerm, setSearchTerm] = useState(searchFromUrl);
+
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem(SEARCH_HISTORY_KEY);
-            if (stored) {
-                try {
-                    setSearchHistory(JSON.parse(stored));
-                } catch {
-                    setSearchHistory([]);
-                }
-            }
-        }
-    }, []);
+        setSearchTerm(searchFromUrl);
+    }, [searchFromUrl]);
 
-    const addToHistory = (query: string) => {
-        if (!query.trim()) return;
-        const filtered = searchHistory.filter(item => item !== query);
-        const newHistory = [query, ...filtered].slice(0, MAX_HISTORY);
-        setSearchHistory(newHistory);
-        localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(newHistory));
-    };
-
-    const filtered = searchQuery
-        ? allSuggestions.filter(item =>
-            item.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        : searchHistory;
-
-    if (pathname.startsWith('/admin')) {
+    const hiddenPaths = ['/login', '/register', '/verify-email', '/forget-password'];
+    if (pathname.startsWith('/admin') || hiddenPaths.includes(pathname)) {
         return null;
     }
 
@@ -114,22 +81,22 @@ const Header = () => {
 
     const accountLinks = [
         { name: 'My Profile', href: '/profile', icon: <User className="w-4 h-4" /> },
-        ...(isAdmin ? [{ name: 'Admin Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> }] : []),
         { name: 'Logout', href: '#', icon: <LogOut className="w-4 h-4" />, onClick: handleLogout },
     ];
 
     const handleSearch = (query?: string) => {
-        const searchTerm = query || searchQuery.trim();
-        if (searchTerm) {
-            addToHistory(searchTerm);
-            router.push(`/products?search=${encodeURIComponent(searchTerm)}`);
-            setSearchQuery('');
+        const term = query || searchTerm;
+        if (term.trim()) {
+            router.push(`/products?search=${encodeURIComponent(term.trim())}`);
         }
     };
 
-    const handleSelectItem = (value: string) => {
-        handleSearch(value);
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
+
 
     return (
         <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
@@ -155,54 +122,14 @@ const Header = () => {
                     {/* RIGHT SECTION */}
                     <div className="flex items-center gap-1.5 sm:gap-2 justify-end">
                         {/* Search Input với Popover - Desktop */}
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <div className="relative hidden lg:block">
-                                    <Input
-                                        className="h-9 w-48 xl:w-64 pl-9 pr-3 text-sm border border-gray-200 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                                        placeholder="Search products..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                handleSearch();
-                                            }
-                                        }}
-                                    />
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                                </div>
-                            </PopoverTrigger>
-
-                            <PopoverContent
-                                className="p-0 w-[var(--radix-popover-trigger-width)]"
-                                align="start"
-                                onOpenAutoFocus={(e) => e.preventDefault()}
-                                onCloseAutoFocus={(e) => e.preventDefault()}
-                            >
-                                <div className="max-h-[300px] overflow-y-auto">
-                                    {filtered.length > 0 ? (
-                                        <>
-                                            <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground border-b">
-                                                {searchQuery ? "Suggestions" : "Recent"}
-                                            </div>
-                                            {filtered.map((item) => (
-                                                <button
-                                                    key={item}
-                                                    onClick={() => handleSelectItem(item)}
-                                                    className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer text-left"
-                                                >
-                                                    {item}
-                                                </button>
-                                            ))}
-                                        </>
-                                    ) : (
-                                        <div className="px-2 py-6 text-center text-sm text-muted-foreground">
-                                            No {searchQuery ? 'suggestions' : 'recent searches'}
-                                        </div>
-                                    )}
-                                </div>
-                            </PopoverContent>
-                        </Popover>
+                        <Input
+                            type="text"
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            className="h-9 w-48 xl:w-64 pr-3 text-sm border border-gray-200 rounded-md bg-background focus:outline-none focus:ring-0"
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
 
                         {/* Search Icon - Mobile/Tablet */}
                         <Button
@@ -248,10 +175,10 @@ const Header = () => {
                                                 asChild={!link.onClick}
                                                 onClick={link.onClick}
                                             >
-                                                    <Link href={link.href} onClick={link?.onClick ? link.onClick : undefined} className="flex items-center gap-2 cursor-pointer w-full">
-                                                        {link.icon}
-                                                        <span>{link.name}</span>
-                                                    </Link>
+                                                <Link href={link.href} onClick={link?.onClick ? link.onClick : undefined} className="flex items-center gap-2 cursor-pointer w-full">
+                                                    {link.icon}
+                                                    <span>{link.name}</span>
+                                                </Link>
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>

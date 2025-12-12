@@ -7,21 +7,17 @@ import type { AuthResponse } from "../types";
 import { setAccessTokenCookie } from "@/lib/middleware/cookies";
 
 export function useRefreshToken() {
-  const { refreshToken: storedRefreshToken, setAuth, user } = useAuthStore();
+  const { user, setAuth } = useAuthStore();
 
   return useMutation<AuthResponse, Error, void>({
     mutationFn: async () => {
-      if (!storedRefreshToken) {
-        throw new Error("No refresh token available");
-      }
-      return authApi.refreshToken(storedRefreshToken);
+      // Backend tự đọc refresh token từ cookie/header
+      return authApi.refreshToken();
     },
     onSuccess: (response) => {
-      // Update access token trong store
-      // Giữ nguyên user và refresh token
-      if (user && storedRefreshToken) {
+      // Cập nhật store với access_token và refresh_token mới từ response
+      if (user) {
         setAuth(user, response.access_token, response.refresh_token);
-        // Update cookie for middleware
         setAccessTokenCookie(response.access_token);
       }
     },
@@ -31,4 +27,3 @@ export function useRefreshToken() {
     },
   });
 }
-

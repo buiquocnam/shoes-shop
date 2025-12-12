@@ -1,14 +1,13 @@
 'use client';
 
-import { CartResponse, CartType } from '@/features/cart/types';
+import { CartResponse } from '@/features/cart/types';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/utils/format';
-import { ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-    Input
+import { Input } from '@/components/ui/input';
+import { CheckoutItem } from '@/features/checkout/types';
+import { setCheckoutItems } from '@/features/checkout/utils/checkoutStorage';
 
-} from '@/components/ui/input';
 interface CartSummaryProps {
     cart: CartResponse;
 }
@@ -16,28 +15,44 @@ interface CartSummaryProps {
 export function CartSummary({ cart }: CartSummaryProps) {
     const router = useRouter();
 
+    /**
+     * Convert cart items to checkout items format và lưu vào sessionStorage
+     * Format giống ProductInfoInteractive - không có variantId ở đầu
+     */
     const handleCheckout = () => {
-        // Convert cart items to checkout items format
-        const checkoutItems = cart.items.map((item) => ({
-            productId: item.product.id,
-            variantId: item.variant.id,
-            quantity: item.quantity,
-            product: {
-                id: item.product.id,
-                name: item.product.name,
-                imageUrl: item.product.imageUrl?.url || '',
-                price: item.product.price,
-            },
-            variant: {
-                id: item.variant.id,
-                size: item.variant.size?.label || '',
-                color: item.variant.color,
-            },
-        }));
+        const checkoutItems: CheckoutItem[] = cart.items.map((item) => {
+            // Tính giá sau discount
+            const discountPercent = item.product.discount || 0;
+            const discountedPrice = item.product.price - (item.product.price * discountPercent) / 100;
+            const totalPrice = discountedPrice * item.quantity;
 
-        // Pass checkout items via URL searchParams
-        const itemsParam = encodeURIComponent(JSON.stringify(checkoutItems));
-        router.push(`/checkout?items=${itemsParam}`);
+
+            // Tạo checkout item với thông tin sản phẩm đầy đủ (không có variantId, quantity, totalPrice ở đầu)
+            return {
+                product: {
+                    id: item.product.id,
+                    name: item.product.name,
+                    price: item.product.price,
+                    discount: discountPercent,
+                    imageUrl: item.product.imageUrl?.url || null,
+                },
+                variant: {
+                    id: item.variant.id,
+                    color: item.variant.color,
+                },
+                size: {
+                    id: item.variant.sizes[0].id,
+                    size: item.variant.sizes[0].size,
+                },
+                quantity: item.quantity,
+                totalPrice: totalPrice,
+            };
+        });
+        console.log(checkoutItems);
+
+        // Lưu vào sessionStorage
+        setCheckoutItems(checkoutItems);
+        router.push('/checkout');
     };
 
     return (

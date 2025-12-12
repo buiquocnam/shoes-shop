@@ -113,18 +113,17 @@ export function ProductListBought() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">Tất cả</TabsTrigger>
-          <TabsTrigger value="delivered">Đã giao</TabsTrigger>
-          <TabsTrigger value="pending">Đang giao</TabsTrigger>
-          <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>
+         
+            <TabsTrigger value="setting">Đã giao</TabsTrigger>
+            <TabsTrigger value="orderr">Đang giao</TabsTrigger>
         </TabsList>
 
         {/* Content */}
-        <div className="mt-6 space-y-4">
+        {/* <div className="mt-6 space-y-4">
           {products.map((product: ProductType) => (
             <ProductCard key={product.id} product={product} />
           ))}
-        </div>
+        </div> */}
       </Tabs>
     </div>
   );

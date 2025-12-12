@@ -1,255 +1,242 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { ProductDetailType, ProductType, ProductVariant } from "../../types";
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { ProductDetailType } from "../../types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCreateCart } from "@/features/cart/hooks/useCart";
 import { AlertLogin } from "@/features/product/components";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
 import { CheckoutItem } from "@/features/checkout/types";
-
-const QuantitySelector = ({
-  quantity,
-  setQuantity,
-  isInStock,
-  stock,
-}: {
-  quantity: number;
-  setQuantity: (q: number) => void;
-  isInStock: boolean;
-  stock: number;
-}) => {
-  return (
-    <div className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full max-w-[140px] bg-white">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-        disabled={quantity <= 1 || !isInStock}
-        className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium"
-      >
-        −{" "}
-      </Button>{" "}
-      <span className="flex-1 text-center text-xs sm:text-sm font-semibold text-gray-800">
-        {quantity}{" "}
-      </span>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setQuantity(Math.min(stock, quantity + 1))}
-        disabled={quantity >= stock || !isInStock}
-        className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium"
-      >
-        +{" "}
-      </Button>{" "}
-    </div>
-  );
-};
+import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
 
 interface ProductInfoInteractiveProps {
   product: ProductDetailType;
 }
 
+/**
+ * Component để chọn số lượng sản phẩm
+ */
+const QuantitySelector = ({
+  quantity,
+  setQuantity,
+  maxStock,
+}: {
+  quantity: number;
+  setQuantity: (q: number) => void;
+  maxStock: number;
+}) => (
+  <div className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full max-w-[140px] bg-white">
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+      disabled={maxStock <= 0}
+      className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium hover:bg-gray-100"
+      aria-label="Decrease quantity"
+    >
+      −
+    </Button>
+    <span className="flex-1 text-center text-xs sm:text-sm font-semibold text-gray-800">
+      {quantity}
+    </span>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
+      disabled={quantity >= maxStock || maxStock <= 0}
+      className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium hover:bg-gray-100"
+      aria-label="Increase quantity"
+    >
+      +
+    </Button>
+  </div>
+);
+
+/**
+ * Component button để chọn size variant
+ */
+const VariantButton = ({
+  size,
+  stock,
+  isSelected,
+  onSelect,
+}: {
+  size: string;
+  stock: number;
+  isSelected: boolean;
+  onSelect: () => void;
+}) => (
+  <Button
+    variant="outline"
+    size="sm"
+    className={cn(
+      "px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border transition-all duration-200 text-xs sm:text-sm font-semibold",
+      isSelected && "bg-red-700 text-white border-red-700 shadow-md hover:bg-red-800",
+      !isSelected &&
+      stock > 0 &&
+      "bg-white text-gray-800 border-gray-300 hover:bg-gray-50 hover:border-red-400 hover:shadow-sm",
+      stock <= 0 &&
+      "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60"
+    )}
+    onClick={onSelect}
+    disabled={stock <= 0}
+    title={stock > 0 ? `Size ${size} - Stock: ${stock}` : "Out of Stock"}
+    aria-label={`Select size ${size}${stock > 0 ? ` (${stock} available)` : " (out of stock)"}`}
+  >
+    {size}
+  </Button>
+);
+
+/**
+ * Component chính để tương tác với sản phẩm: chọn variant, số lượng, thêm vào giỏ, mua ngay
+ */
 export default function ProductInfoInteractive({
   product,
 }: ProductInfoInteractiveProps) {
-  const { variants, listImg, product: productInfo } = product;
   const router = useRouter();
-
-  const [quantity, setQuantity] = useState(1);
-  const { mutate: createCart } = useCreateCart();
   const { isAuthenticated } = useAuthStore();
+  const { mutate: createCart } = useCreateCart();
+  const { variants, listImg, product: productInfo } = product;
+
+  // Tự động chọn size đầu tiên có stock > 0
+  const firstInStockSizeId = useMemo(() => {
+    for (const variant of variants) {
+      const inStockSize = variant.sizes.find((size) => size.stock > 0);
+      if (inStockSize) return inStockSize.id;
+    }
+    return variants[0]?.sizes[0]?.id || "";
+  }, [variants]);
+
+  const [selectedSizeId, setSelectedSizeId] = useState<string>(firstInStockSizeId);
+  const [quantity, setQuantity] = useState(1);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  // --- Available colors & sizes ---
-  const availableColors = useMemo(
-    () => Array.from(new Set(variants.map((v) => v.color))),
-    [variants]
-  );
 
-  const [selectedColor, setSelectedColor] = useState<string | null>(
-    availableColors[0] || null
-  );
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  // Tìm variant và size đã chọn từ selectedSizeId
+  const selectedData = useMemo(() => {
+    for (const variant of variants) {
+      const size = variant.sizes.find((s) => s.id === selectedSizeId);
+      if (size) return { variant, size };
+    }
+    return null;
+  }, [variants, selectedSizeId]);
 
-  // Sizes for selected color
-  const availableSizesForColor = useMemo(() => {
-    if (!selectedColor) return [];
-    return Array.from(
-      new Set(
-        variants
-          .filter((v) => v.color === selectedColor)
-          .map((v) => v.size?.label)
-          .filter(Boolean)
-      )
-    );
-  }, [selectedColor, variants]);
+  const stock = selectedData?.size.stock || 0;
+  const canPurchase = !!selectedData && stock > 0 && quantity > 0;
 
-  // Set default size when color changes
-  useEffect(() => {
-    setSelectedSize(availableSizesForColor[0] || null);
-    setQuantity(1);
-  }, [availableSizesForColor]);
-
-  // Current variant
-  const currentVariant = useMemo(() => {
-    if (!selectedColor || !selectedSize) return null;
-    return variants.find(
-      (v) => v.color === selectedColor && v.size?.label === selectedSize
-    );
-  }, [selectedColor, selectedSize, variants]);
-
-  const isInStock = !!currentVariant?.stock;
-  const isReadyForPurchase = !!currentVariant && isInStock && quantity > 0;
-
+  /**
+   * Xử lý thêm sản phẩm vào giỏ hàng
+   */
   const handleAddToCart = () => {
-    if (!currentVariant) return;
     if (!isAuthenticated) {
       setShowLoginDialog(true);
       return;
     }
-    createCart({ variantId: currentVariant.id, quantity });
+    if (!canPurchase || !selectedData) return;
+    console.log(selectedData);
+    createCart({ variantId: selectedData.variant.id, quantity });
   };
 
+  /**
+   * Xử lý mua ngay - chuyển đến trang checkout với thông tin sản phẩm đầy đủ
+   */
   const handleBuy = () => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
       return;
     }
+    if (!canPurchase || !selectedData) return;
 
-    if (!currentVariant) return;
+    // Tính giá sau discount
+    const discountPercent = productInfo.discount || 0;
+    const discountedPrice = productInfo.price - (productInfo.price * discountPercent) / 100;
+    const totalPrice = discountedPrice * quantity;
 
-    // Create checkout item with product, variant, and quantity
+    // Lấy ảnh sản phẩm (ưu tiên ảnh đầu tiên trong listImg, nếu không có thì dùng imageUrl)
+    const productImage = listImg.find((img) => img.isPrimary)?.url || productInfo.imageUrl?.url || null;
+
+    // Tạo checkout items với thông tin sản phẩm đầy đủ (không có variantId, quantity, totalPrice ở đây)
     const checkoutItem: CheckoutItem = {
       product: {
         id: productInfo.id,
         name: productInfo.name,
-        imageUrl: listImg[0]?.url || '',
         price: productInfo.price,
+        discount: discountPercent,
+        imageUrl: productImage,
       },
       variant: {
-        id: currentVariant.id,
-        size: currentVariant.size?.label || currentVariant.sizeLabel || '',
-        color: currentVariant.color,
-        quantity: quantity,
+        id: selectedData.variant.id,
+        color: selectedData.variant.color,
       },
+      size: {
+        id: selectedData.size.id,
+        size: selectedData.size.size,
+      },
+      quantity: quantity,
+      totalPrice: totalPrice,
     };
 
-    // Encode and pass via URL
-    const itemsParam = encodeURIComponent(JSON.stringify([checkoutItem]));
-    router.push(`/checkout?items=${itemsParam}`);
+    setCheckoutItems([checkoutItem]);
+    router.push('/checkout');
   };
 
-  return variants.length === 0 ? (
-    <>
+  // Nếu không có variant nào, hiển thị thông báo hết hàng
+  if (variants.length === 0) {
+    return (
       <div className="mb-4 sm:mb-6">
-        <span className="text-xs sm:text-lg font-bold text-gray-800 uppercase mb-2 bg-red-500 text-white p-2 rounded-md">
+        <span className="inline-block text-xs sm:text-lg font-bold text-white uppercase bg-red-500 px-4 py-2 rounded-md">
           Out of Stock
         </span>
       </div>
-    </>
-  ) : (
+    );
+  }
+
+  return (
     <>
-      <div className="mb-4 sm:mb-6">
-        <span className="text-xs sm:text-sm font-bold text-gray-800 uppercase mb-2 block">
-          Color
-        </span>
-        <div className="flex gap-2 sm:gap-3 flex-wrap">
-          {availableColors.map((color) => {
-            const isSelected = selectedColor === color;
-            const colorStock = variants
-              .filter((v: ProductVariant) => v.color === color)
-              .reduce((sum: number, v: ProductVariant) => sum + (v.stock || 0), 0);
-            const hasStock = colorStock > 0;
-
-            return (
-              <Button
-                key={color}
-                variant="outline"
-                size="icon"
-                style={{ backgroundColor: color }}
-                className={cn(
-                  "w-6 h-6 rounded-full border-2 transition shadow-sm",
-                  isSelected &&
-                  "ring-2 ring-offset-2 ring-red-500 border-white scale-105",
-                  !isSelected &&
-                  hasStock &&
-                  "border-gray-300 hover:border-red-400",
-                  !hasStock && "opacity-40 !cursor-not-allowed border-gray-300"
-                )}
-                onClick={() => hasStock && setSelectedColor(color)}
-                title={!hasStock ? "Out of Stock" : color}
+      {/* Variant Selector - Grouped by Color */}
+      <div className="mb-4 sm:mb-6 space-y-3">
+        {variants.map((variant) => (
+          <div key={variant.id} className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span
+                className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-sm"
+                style={{ backgroundColor: variant.color }}
+                aria-label={`Color: ${variant.color}`}
               />
-            );
-          })}
-        </div>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">
+                {variant.color}
+              </span>
+            </div>
+            <div className="flex gap-2 flex-wrap ml-8">
+              {variant.sizes.map((size) => (
+                <VariantButton
+                  key={size.id}
+                  size={size.size}
+                  stock={size.stock}
+                  isSelected={selectedSizeId === size.id}
+                  onSelect={() => setSelectedSizeId(size.id)}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Size Selector */}
-      <div className="mb-4 sm:mb-6">
-        <span className="text-xs sm:text-sm font-bold text-gray-800 uppercase mb-2 block">
-          Size
-        </span>
-        <div className="flex gap-2 sm:gap-3 flex-wrap">
-          {availableSizesForColor.map((size) => {
-            const sizeStock = variants
-              .filter(
-                (v) => v.color === selectedColor && v.size?.label === size
-              )
-              .reduce((sum, v) => sum + (v.stock || 0), 0);
-            const isSelected = selectedSize === size;
-            const isSizeInStock = sizeStock > 0;
-
-            return (
-              <Button
-                key={size}
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border transition duration-200 text-xs sm:text-sm font-semibold",
-                  isSelected
-                    ? "bg-red-700 text-white border-red-700 shadow-md"
-                    : isSizeInStock
-                      ? "bg-white text-gray-800 border-gray-300 hover:bg-gray-50 hover:border-red-400"
-                      : "bg-gray-100 text-gray-400 border-gray-200 !cursor-not-allowed opacity-60"
-                )}
-                onClick={() => isSizeInStock && setSelectedSize(size)}
-                title={
-                  !isSizeInStock
-                    ? "Out of Stock"
-                    : `${size} - Stock: ${sizeStock}`
-                }
-              >
-                {size}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Quantity + Actions */}
+      {/* Quantity Selector + Action Buttons */}
       <div className="mb-4 sm:mb-6 border-b border-gray-200 pb-4 sm:pb-6">
-        {selectedSize && (
-          <p
-            className={cn(
-              "text-xs sm:text-sm font-medium mb-3 sm:mb-2",
-              isInStock ? "text-red-700" : "text-red-500"
-            )}
-          >
-            {isInStock
-              ? `${currentVariant?.stock} left in stock for selected size`
-              : "Out of stock for selected size"}
+        {selectedData && (
+          <p className="text-xs sm:text-sm font-medium mb-3 sm:mb-2 text-red-700">
+            {stock} {stock === 1 ? 'item' : 'items'} left in stock
           </p>
         )}
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="w-full sm:w-auto">
             <QuantitySelector
-              stock={currentVariant?.stock || 0}
               quantity={quantity}
               setQuantity={setQuantity}
-              isInStock={isInStock}
+              maxStock={stock}
             />
           </div>
 
@@ -257,8 +244,8 @@ export default function ProductInfoInteractive({
             variant="default"
             size="lg"
             onClick={handleAddToCart}
-            disabled={!isReadyForPurchase}
-            className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base text-white font-bold transition duration-200 shadow-lg"
+            disabled={!canPurchase}
+            className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base text-white font-bold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 hover:bg-red-800"
           >
             Add to Cart
           </Button>
@@ -266,14 +253,15 @@ export default function ProductInfoInteractive({
           <Button
             variant="outline"
             size="lg"
-            disabled={!isReadyForPurchase}
-            className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base font-bold transition duration-200 border-2"
+            disabled={!canPurchase}
             onClick={handleBuy}
+            className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base font-bold transition-all duration-200 border-2 border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Buy Now
           </Button>
         </div>
       </div>
+
       <AlertLogin open={showLoginDialog} onOpenChange={setShowLoginDialog} />
     </>
   );

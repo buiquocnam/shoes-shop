@@ -1,23 +1,14 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useApplyDiscount } from '@/features/checkout/hooks';
 
-interface DiscountSectionProps {
-    onApplyDiscount: (code: string) => void;
-    isApplying?: boolean;
-}
-
-export function DiscountSection({
-    onApplyDiscount,
-    isApplying = false,
-}: DiscountSectionProps) {
+export function DiscountSection() {
+    const { mutate: applyDiscount, isPending } = useApplyDiscount();
     const [discountCode, setDiscountCode] = useState('');
 
     const handleApply = () => {
-        if (discountCode.trim()) {
-            onApplyDiscount(discountCode);
-            setDiscountCode('');
-        }
+        applyDiscount(discountCode);
     };
     return (
         <div className="flex flex-col gap-2 border-t pt-4">
@@ -27,15 +18,14 @@ export function DiscountSection({
                     value={discountCode}
                     onChange={(e) => setDiscountCode(e.target.value)}
                     className="h-12"
-                    disabled={isApplying}
+                    disabled={isPending}
                 />
                 <Button
-                    variant="outline"
                     onClick={handleApply}
                     className="h-12 px-4 whitespace-nowrap"
-                    disabled={!discountCode.trim() || isApplying}
+                    disabled={!discountCode.trim() || isPending}
                 >
-                    {isApplying ? 'Đang xử lý...' : 'Áp dụng'}
+                    {isPending ? 'Đang xử lý...' : 'Áp dụng'}
                 </Button>
             </div>
         </div>
