@@ -7,14 +7,14 @@
 
 export const adminQueryKeys = {
   variants: {
-    all: ["admin", "variants"] as const,
-    lists: () => [...adminQueryKeys.variants.all, "list"] as const,
+    key: ["variants"],
+    lists: () => [...adminQueryKeys.variants.key, "list"] as const,
     list: (filters?: unknown) =>
       [...adminQueryKeys.variants.lists(), filters] as const,
   },
   dashboard: {
-    all: ["admin", "dashboard"] as const,
-    revenue: () => [...adminQueryKeys.dashboard.all, "revenue"] as const,
-    stats: () => [...adminQueryKeys.dashboard.all, "stats"] as const,
+    key: ["dashboard"],
+    revenue: () => [...adminQueryKeys.dashboard.key, "revenue"] as const,
+    stats: () => [...adminQueryKeys.dashboard.key, "stats"] as const,
   },
 } as const;

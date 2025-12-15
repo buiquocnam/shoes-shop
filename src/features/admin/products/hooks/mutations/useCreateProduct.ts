@@ -1,59 +1,27 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
-import { ProductDetailType } from "@/features/product/types";
-import { CreateProductInput } from "../../types";
-import { queryKeys } from "@/features/shared";
-import {
-  flattenVariants,
-  mapVariantsToStockItems,
-} from "../../utils/productFormHelpers";
+import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
 
 /**
- * Hook để tạo product mới
+ * Create Product Mutation
+ * Payload: FormData với JSON body (info) + multipart files (images)
  */
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
-
-  return useMutation<ProductDetailType, Error, CreateProductInput>({
-    mutationFn: async (data: CreateProductInput) => {
-      // Step 1: Create product with images
-      const { variants, images, ...productObject } = data;
-
-      const formData = new FormData();
-      const requestBlob = new Blob([JSON.stringify(productObject)], {
-        type: "application/json",
+  return useMutationWithToast<{ id: string }, FormData>({
+    mutationFn: (data: FormData) => adminProductsApi.create(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: sharedQueryKeys.product.lists(),
       });
-      formData.append("request", requestBlob, "request.json");
-      images.forEach((image) => {
-        formData.append("files", image);
+      queryClient.invalidateQueries({
+        queryKey: sharedQueryKeys.product.detail(data.id),
       });
-
-      const productResult = await adminProductsApi.createProduct(formData);
-      const productId = productResult.id;
-
-      // Step 2: Create variants
-      const variantResults = await adminProductsApi.createVariants({
-        productId,
-        variants: flattenVariants(variants),
-      });
-
-      // Step 3: Import stock
-      const stockItems = mapVariantsToStockItems(variants, variantResults);
-      if (stockItems.length > 0) {
-        await adminProductsApi.importStock({ productId, items: stockItems });
-      }
-
-      // Return product detail by fetching it
-      return await adminProductsApi.getById(productId);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.product.lists() });
-      toast.success("Create product successfully");
-    },
-    onError: (error) => {
-      console.error("Error creating product:", error);
-      toast.error("Failed to create product. Please try again.");
-    },
+    successMessage: "Product created successfully",
+    errorMessage: "Failed to create product",
   });
 };
+
+

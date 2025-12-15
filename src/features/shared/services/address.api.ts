@@ -46,10 +46,9 @@ export const addressApi = {
     await apiClient.delete(`/shoes/public/address/${addressId}`);
   },
 
-  setDefaultAddress: async (addressId: string): Promise<AddressType> => {
-    const response = await apiClient.patch<AddressType>(
-      `/shoes/public/address/${addressId}/set-default`,
-      {}
+  updateDefaultAddress: async (addressId: string): Promise<AddressType> => {
+    const response = await apiClient.put<AddressType>(
+      `/shoes/public/address/${addressId}/default`
     );
     return response.result;
   },

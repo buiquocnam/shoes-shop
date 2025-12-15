@@ -1,3 +1,4 @@
-export { ProductForm } from "./ProductForm";
-export { ProductFormDialog } from "./ProductFormDialog";
-export { ProductFormContent } from "./ProductFormContent";
+export * from "./ProductCreateForm";
+export * from "./ProductInfoForm";
+export * from "./ProductVariantForm";
+export * from "./ProductImageForm";

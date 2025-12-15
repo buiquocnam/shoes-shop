@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { CategoryType } from "@/features/product/types";
 import { adminCategoriesApi } from "@/features/admin/categories/services/categories.api";
-import { queryKeys, useMutationWithToast } from "@/features/shared";
+import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
 
 // Re-export shared useCategories for convenience
 export { useCategories } from "@/features/shared/hooks/useCategories";
@@ -15,7 +16,7 @@ export const useCreateCategory = () => {
     mutationFn: (data) => adminCategoriesApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.shared.category.lists(),
+        queryKey: sharedQueryKeys.category.lists(),
       });
     },
     successMessage: "Category created successfully",
@@ -32,7 +33,7 @@ export const useUpdateCategory = () => {
     mutationFn: ({ id, data }) => adminCategoriesApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.shared.category.lists(),
+        queryKey: sharedQueryKeys.category.lists(),
       });
     },
     successMessage: "Category updated successfully",
@@ -52,7 +53,7 @@ export const useDeleteCategory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.shared.category.lists(),
+        queryKey: sharedQueryKeys.category.lists(),
       });
     },
     successMessage: "Category deleted successfully",

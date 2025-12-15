@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { Trash2 } from "lucide-react";
 import { formatFullAddress } from "@/features/shared/utils/addressHelpers";
-import { useDeleteAddress, useSetDefaultAddress } from "@/features/shared/hooks/useAdress";
+import { useDeleteAddress, useUpdateDefaultAddress } from "@/features/shared/hooks/useAdress";
 
 interface AddressCardProps {
     address: AddressType;
@@ -18,23 +18,19 @@ export function AddressCard({
 }: AddressCardProps) {
     const fullAddress = formatFullAddress(address);
     const deleteAddressMutation = useDeleteAddress(address.userId);
-    const setDefaultAddressMutation = useSetDefaultAddress(address.userId);
+    const updateDefaultAddressMutation = useUpdateDefaultAddress(address.userId);
 
-    /**
-     * Xử lý delete address - dùng shared hook
-     */
+
     const handleDelete = () => {
-        if (confirm("Bạn có chắc chắn muốn xóa địa chỉ này?")) {
+        if (confirm("Are you sure you want to delete this address?")) {
             deleteAddressMutation.mutate(address.id);
         }
     };
 
-    /**
-     * Xử lý set default address - hook sẽ tự động invalidate và update lại data
-     */
-    const handleSetDefault = () => {
+
+    const handleUpdateDefault = () => {
         if (!address.isDefault) {
-            setDefaultAddressMutation.mutate(address.id);
+            updateDefaultAddressMutation.mutate(address.id);
         }
     };
 
@@ -50,7 +46,7 @@ export function AddressCard({
                 className="sr-only"
                 onClick={(e) => {
                     e.stopPropagation();
-                    handleSetDefault();
+                    handleUpdateDefault();
                 }}
             />
 

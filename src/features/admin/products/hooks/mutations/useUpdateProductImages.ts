@@ -1,39 +1,38 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { adminProductsApi } from "../../services/products.api";
-import { ImageType } from "@/features/product/types";
-import { queryKeys } from "@/features/shared";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  adminProductsApi,
+  UpdateImagesInput,
+} from "../../services/products.api";
+import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
+
 
 /**
- * Hook để cập nhật product images
+ * Update Images Mutation
+ * Update danh sách name + primaryName qua JSON
  */
 export const useUpdateProductImages = () => {
   const queryClient = useQueryClient();
-
-  return useMutation<ImageType[], Error, { productId: string; images: File[] }>(
-    {
-      mutationFn: async ({ productId, images }) => {
-        const formData = new FormData();
-        const requestBlob = new Blob([JSON.stringify({ productId })], {
-          type: "application/json",
-        });
-        formData.append("request", requestBlob, "request.json");
-        images.forEach((image) => {
-          formData.append("files", image);
-        });
-        return await adminProductsApi.updateImages(formData);
-      },
-      onSuccess: (_, variables) => {
-        queryClient.invalidateQueries({ queryKey: queryKeys.product.lists() });
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.product.detail(variables.productId),
-        });
-        toast.success("Update product images successfully");
-      },
-      onError: (error) => {
-        console.error("Error updating product images:", error);
-        toast.error("Failed to update product images. Please try again.");
-      },
-    }
-  );
+  return useMutationWithToast<boolean, FormData>({
+    mutationFn: (data: FormData) => adminProductsApi.updateImages(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: sharedQueryKeys.product.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: sharedQueryKeys.product.detail((data as any).productId),
+      });
+    },
+    successMessage: "Images updated successfully",
+    errorMessage: "Failed to update images",
+  });
 };
+
+
+
+
+
+
+
+
+

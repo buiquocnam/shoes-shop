@@ -1,19 +1,14 @@
 "use client";
 
 import { Control } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ProductFormValues } from "../../schema";
+import { InputField, TextareaField, NumberField, SelectField } from "@/components/form";
 import { CategoryType, BrandType } from "@/features/product/types";
-import { NumberInput, SelectField } from "../shared/FormFields";
 
 interface ProductBasicInfoSectionProps {
-    control: Control<ProductFormValues>;
+    control: Control<any>;
     categories: CategoryType[];
     brands: BrandType[];
 }
-
 
 export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = ({
     control,
@@ -23,60 +18,49 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
     return (
         <div className="space-y-4">
             <div className="bg-white rounded-lg border p-4 space-y-3">
-                <FormField
+                <InputField
                     control={control}
                     name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Product Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g. Classic Leather Sneaker" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    label="Product Name"
+                    placeholder="e.g. Classic Leather Sneaker"
                 />
-                <FormField
+                <TextareaField
                     control={control}
                     name="description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Product Description</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Enter a detailed description..." rows={4} {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    label="Product Description"
+                    placeholder="Enter a detailed description..."
+                    rows={4}
                 />
             </div>
 
             <div className="bg-white rounded-lg border p-4 space-y-3">
                 <div className="grid grid-cols-2 gap-4">
-                    <SelectField<ProductFormValues>
+                    <SelectField
                         control={control}
-                        name="brand"
+                        name="brandId"
                         label="Brand"
                         options={brands}
+                        placeholder="Select a brand"
                     />
-                    <SelectField<ProductFormValues>
+                    <SelectField
                         control={control}
-                        name="category"
+                        name="categoryId"
                         label="Categories"
                         options={categories}
+                        placeholder="Select a category"
                     />
                 </div>
             </div>
 
             <div className="bg-white rounded-lg border p-4 space-y-3">
                 <div className="grid grid-cols-2 gap-4">
-                    <NumberInput<ProductFormValues>
+                    <NumberField
                         control={control}
                         name="price"
                         label="Base Price ($)"
                         placeholder="e.g. 120.00"
                     />
-                    <NumberInput<ProductFormValues>
+                    <NumberField
                         control={control}
                         name="discount"
                         label="Discount (%)"
@@ -89,4 +73,3 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
         </div>
     );
 };
-

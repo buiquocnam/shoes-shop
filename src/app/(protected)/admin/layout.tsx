@@ -1,30 +1,45 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
     ShoppingCart,
     Users,
     Bookmark,
-    Settings,
-    LogOut,
-    Trash2
+    Package,
+    ChevronRight,
 } from "lucide-react";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarInset,
+    SidebarMenu,
+    SidebarMenuAction,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
+    SidebarProvider,
+} from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const router = useRouter();
 
     const menuItems = [
         {
             label: "Dashboard",
-            icon: <LayoutDashboard className="h-5 w-5" />,
+            icon: LayoutDashboard,
             href: "/admin",
         },
         {
             label: "Products",
-            icon: <Trash2 className="h-5 w-5" />,
+            icon: Package,
             href: "/admin/products",
             subMenu: [
                 { label: "Product List", href: "/admin/products" },
@@ -33,92 +48,114 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         },
         {
             label: "Orders",
-            icon: <ShoppingCart className="h-5 w-5" />,
+            icon: ShoppingCart,
             href: "/admin/orders",
         },
         {
             label: "Users",
-            icon: <Users className="h-5 w-5" />,
+            icon: Users,
             href: "/admin/users",
         },
         {
             label: "Brands",
-            icon: <Bookmark className="h-5 w-5" />,
+            icon: Bookmark,
             href: "/admin/brands",
         },
     ];
 
     return (
-        <div className="flex min-h-screen">
-            {/* Sidebar Container */}
-            <div className="w-64 bg-gray-100 p-4 flex flex-col border-r border-gray-200">
+        <SidebarProvider>
+            <div className="flex min-h-screen w-full mx-auto">
+                <Sidebar collapsible="none" className="w-64 border-r">
+                    <SidebarHeader>
+                        <div className="flex items-center gap-2 px-2 py-2">
+                            <Package className="h-6 w-6 text-primary" />
+                            <h1 className="text-lg font-semibold">
+                                Shoe<span className="text-primary">Admin</span>
+                            </h1>
+                        </div>
+                    </SidebarHeader>
+                    <SidebarContent>
+                        <SidebarGroup>
+                            <SidebarGroupContent>
+                                <SidebarMenu>
+                                    {menuItems.map((item) => {
+                                        const Icon = item.icon;
+                                        const isActive = item.href === "/admin"
+                                            ? pathname === "/admin" || pathname === "/admin/"
+                                            : pathname.startsWith(item.href);
+                                        const hasSubMenu = item.subMenu && item.subMenu.length > 0;
 
-                {/* Logo and Title */}
-                <div className="flex items-center mb-8 px-2 py-3">
-                    <Trash2 className="h-6 w-6 text-primary" />
-                    <h1 className="text-xl font-bold ml-2 text-gray-900">
-                        Shoe<span className="text-primary">Admin</span>
-                    </h1>
-                </div>
-
-                {/* Top Menu Items */}
-                <div className="flex flex-col space-y-1 flex-1">
-                    {menuItems.map((item) => {
-
-                        let itemIsActive = false;
-
-                        if (item.href === "/admin") {
-                            itemIsActive = pathname === "/admin" || pathname === "/admin/";
-                        } else {
-                            itemIsActive = pathname.startsWith(item.href);
-                        }
-
-                        const itemClass = itemIsActive
-                            ? 'font-semibold bg-primary/10 text-primary'
-                            : 'text-gray-700 hover:bg-gray-100';
-
-                        return (
-                            <div key={item.label} className="flex flex-col">
-                                <Link
-                                    href={item.href}
-                                    className={`flex items-center cursor-pointer w-full px-4 py-2 rounded-lg transition duration-150 ${itemClass}`}
-                                >
-                                    {/* Icon và Label */}
-                                    <span className="mr-2">{item.icon}</span>
-                                    <span>{item.label}</span>
-                                </Link>
-
-                                {/* Sub Menu (giữ nguyên Link bên trong subMenu) */}
-                                {item.subMenu && itemIsActive && (
-                                    <div className="flex flex-col pl-6 mt-1 space-y-1 border-l border-gray-200 ml-5">
-                                        {item.subMenu.map((sub) => {
-                                            const subIsActive = pathname === sub.href;
-                                            const subClass = subIsActive
-                                                ? 'bg-gray-200 font-semibold text-gray-900'
-                                                : 'text-gray-700 hover:bg-gray-100';
-
+                                        if (hasSubMenu) {
                                             return (
-                                                <Link
-                                                    key={sub.label}
-                                                    href={sub.href}
-                                                    className={`px-3 py-1 rounded text-sm transition duration-150 ${subClass}`}
+                                                <Collapsible
+                                                    key={item.label}
+                                                    asChild
+                                                    defaultOpen={isActive}
                                                 >
-                                                    {sub.label}
-                                                </Link>
+                                                    <SidebarMenuItem>
+                                                        <SidebarMenuButton
+                                                            asChild
+                                                            isActive={isActive}
+                                                        >
+                                                            <Link href={item.href}>
+                                                                <Icon />
+                                                                <span>{item.label}</span>
+                                                            </Link>
+                                                        </SidebarMenuButton>
+                                                        <CollapsibleTrigger asChild>
+                                                            <SidebarMenuAction className="data-[state=open]:rotate-90">
+                                                                <ChevronRight />
+                                                                <span className="sr-only">Toggle</span>
+                                                            </SidebarMenuAction>
+                                                        </CollapsibleTrigger>
+                                                        <CollapsibleContent>
+                                                            <SidebarMenuSub>
+                                                                {item.subMenu.map((sub) => {
+                                                                    const subIsActive = pathname === sub.href;
+                                                                    return (
+                                                                        <SidebarMenuSubItem key={sub.label}>
+                                                                            <SidebarMenuSubButton
+                                                                                asChild
+                                                                                isActive={subIsActive}
+                                                                            >
+                                                                                <Link href={sub.href}>
+                                                                                    <span>{sub.label}</span>
+                                                                                </Link>
+                                                                            </SidebarMenuSubButton>
+                                                                        </SidebarMenuSubItem>
+                                                                    );
+                                                                })}
+                                                            </SidebarMenuSub>
+                                                        </CollapsibleContent>
+                                                    </SidebarMenuItem>
+                                                </Collapsible>
                                             );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
+                                        }
 
-            {/* Main Content */}
-            <main className="flex-1 p-8 overflow-y-auto">
-                {children}
-            </main>
-        </div>
+                                        return (
+                                            <SidebarMenuItem key={item.label}>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    isActive={isActive}
+                                                >
+                                                    <Link href={item.href}>
+                                                        <Icon />
+                                                        <span>{item.label}</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        );
+                                    })}
+                                </SidebarMenu>
+                            </SidebarGroupContent>
+                        </SidebarGroup>
+                    </SidebarContent>
+                </Sidebar>
+                <main className="flex-1 overflow-auto">
+                    {children}
+                </main>
+            </div>
+        </SidebarProvider>
     );
 }

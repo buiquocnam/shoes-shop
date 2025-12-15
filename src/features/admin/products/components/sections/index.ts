@@ -1,3 +1,15 @@
-export { ProductBasicInfoSection } from "./ProductBasicInfoSection";
-export { ProductVariantsSection } from "./ProductVariantsSection";
-export { ProductMediaSection } from "./ProductMediaSection";
+export * from "./ProductBasicInfoSection";
+export * from "./ProductMediaSection";
+export * from "./ProductVariantsSection";
+
+
+
+
+
+
+
+
+
+
+
+

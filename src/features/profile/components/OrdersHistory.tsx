@@ -1,130 +1,154 @@
 'use client';
 
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, MessageCircle, RotateCcw } from 'lucide-react';
 import Image from 'next/image';
-import { ProductPaginationResponse, ProductType } from '@/features/product';
+import { useRouter } from 'next/navigation';
+import { PurchasedItem } from '../types';
 import { useProductsPurchased } from '../hooks/useProfile';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Spinner } from '@/components/ui/spinner';
+import { formatCurrency } from '@/utils/format';
+import { Button } from '@/components/ui/button';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
-const ProductCard = ({ product }: { product: ProductType }) => {
+
+const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) => {
+  const router = useRouter();
+
+  const handleProductClick = () => {
+    router.push(`/products/${purchasedItem.product.id}`);
+  };
+
+  const handleViewDetails = () => {
+    // router.push(`/profile/orders/${purchasedItem.product.id}`);
+    console.log(purchasedItem.product.id);
+  };
 
   return (
-    <Card className="p-4 hover:shadow-lg transition-shadow">
-      <div className="flex gap-4">
-        {/* Image */}
-        <div className="relative w-24 h-24 flex-shrink-0">
-          <Image
-            src={product.imageUrl?.url || ''}
-            alt={product.name}
-            fill
-            className="object-cover rounded-lg"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="flex-1">
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className="font-semibold text-lg">{product.name}</h3>
-              <p className="text-sm text-gray-500">Mã đơn: {product.id}</p>
-              <p className="text-xs text-gray-400 mt-1">
-                {new Date(product.createdDate).toLocaleDateString('vi-VN')}
-              </p>
-            </div>
-            {/* <Badge className={statusInfo.color}>{statusInfo.label}</Badge> */}
+    <TableRow className="hover:bg-gray-50 transition-colors">
+      <TableCell className="py-4">
+        <div className="flex items-center gap-4">
+          <div
+            className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 cursor-pointer flex-shrink-0 border border-gray-200 hover:border-primary transition-colors"
+            onClick={handleProductClick}
+          >
+            <Image
+              src={purchasedItem.product.imageUrl?.url || '/images/no-image.png'}
+              alt={purchasedItem.product.name}
+              fill
+              unoptimized
+              className="object-cover"
+            />
           </div>
-
-          <div className="flex justify-between items-end mt-3">
-            <div>
-              <p className="text-sm text-gray-600">
-                Số lượng: <span className="font-semibold">Quantity</span>
-              </p>
-              <p className="text-lg font-bold text-blue-600 mt-1">
-                {/* ${product.totalPrice.toFixed(2)} */}
-                TOTAL
-              </p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2">
-              {/* {product.status === 'delivered' && ( */}
-                <>
-                  {/* {product.rating ? (
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={i < product.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
-                        />
-                      ))}
-                    </div>
-                  ) : ( */}
-                    <Button variant="outline" size="sm" className="gap-1 text-xs">
-                      <Star size={14} />
-                      Đánh giá
-                    </Button>
-                  {/* )} */}
-                  <Button variant="outline" size="sm" className="gap-1 text-xs">
-                    <MessageCircle size={14} />
-                    Bình luận
-                  </Button>
-                </>
-              {/* )} */}
-
-              {/* {product.status === 'pending' && ( */}
-                <Button variant="outline" size="sm" className="gap-1 text-xs">
-                  <RotateCcw size={14} />
-                  Hủy đơn
-                </Button>
-              {/* )} */}
-            </div>
+          <div className="flex-1 min-w-0">
+            <h3
+              className="font-semibold text-gray-900 mb-1 cursor-pointer hover:text-primary transition-colors line-clamp-2"
+              onClick={handleProductClick}
+            >
+              {purchasedItem.product.name}
+            </h3>
           </div>
         </div>
-      </div>
-
-      {/* Review */}
-      {/* {product.review && (
-        <div className="mt-4 pt-4 border-t bg-gray-50 rounded p-3">
-          <p className="text-sm font-semibold mb-1">Đánh giá của bạn:</p>
-          <p className="text-sm text-gray-700">{product.review}</p>
-        </div>
-      )} */}
-    </Card>
+      </TableCell>
+      <TableCell className="py-4">
+        <span className="text-sm text-gray-700 font-medium">{purchasedItem.variant.color}</span>
+      </TableCell>
+      <TableCell className="py-4">
+        <span className="text-sm text-gray-700 font-medium">{purchasedItem.variant.size}</span>
+      </TableCell>
+      <TableCell className="py-4 text-center">
+        <span className="text-sm font-semibold text-gray-900">{purchasedItem.countBuy}</span>
+      </TableCell>
+      <TableCell className="py-4 text-right">
+        <span className="font-bold text-lg text-gray-900">
+          {formatCurrency(purchasedItem.totalMoney)}
+        </span>
+      </TableCell>
+      <TableCell className="py-4 text-right">
+        <Button variant="outline" size="sm" className="gap-1  text-xs "
+        onClick={handleViewDetails}
+        >
+          View details
+        </Button>
+      </TableCell>
+    </TableRow>
   );
 };
 
 export function ProductListBought() {
-  const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState('all');
+  const { data, isLoading } = useProductsPurchased();
+  const purchasedItems = data || [];
 
-  const { data, isLoading } = useProductsPurchased(user?.id || '');
-  const products = data || [];
-  console.log(products);
+  if (isLoading) {
+    return (
+      <div className=" shadow-sm  p-12">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Spinner className="h-8 w-8 text-primary" />
+          <p className="text-gray-600">Loading order history...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (purchasedItems.length === 0) {
+    return (
+      <div className=" shadow-sm  p-12">
+        <div className="flex flex-col items-center justify-center gap-4 text-center">
+          <div className="w-16 h-16  flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">No orders yet</h3>
+            <p className="text-sm text-gray-600">You haven't made any purchases yet.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-semibold mb-6">Lịch sử mua hàng</h2>
-
-
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-         
-            <TabsTrigger value="setting">Đã giao</TabsTrigger>
-            <TabsTrigger value="orderr">Đang giao</TabsTrigger>
-        </TabsList>
-
-        {/* Content */}
-        {/* <div className="mt-6 space-y-4">
-          {products.map((product: ProductType) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div> */}
-      </Tabs>
+    <div className=" shadow-sm  overflow-hidden">
+      <div className="overflow-x-auto">
+        <Table >
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead className="font-semibold">Product</TableHead>
+              <TableHead className="font-semibold">Color</TableHead>
+              <TableHead className="font-semibold">Size</TableHead>
+              <TableHead className="font-semibold text-center">Quantity</TableHead>
+              <TableHead className="font-semibold text-right">Total Price</TableHead>
+              <TableHead className="font-semibold text-right"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {purchasedItems.map((purchasedItem: PurchasedItem, index: number) => (
+              <OrderHistoryItem
+                key={index}
+                purchasedItem={purchasedItem}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

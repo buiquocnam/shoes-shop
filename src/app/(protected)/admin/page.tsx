@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+
 import RevenueChart from "@/components/admin/RevenueChart";
 import DateRangePicker from "@/components/admin/DateRangePicker";
 
@@ -100,7 +101,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
-      <div className="max-w-[1200px] mx-auto">
+      <div className=" mx-auto">
         {/* Header */}
         <header className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>

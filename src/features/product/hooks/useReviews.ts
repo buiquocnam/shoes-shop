@@ -2,7 +2,8 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createReview, getReviews } from "../services/review.api";
-import { queryKeys, useMutationWithToast } from "@/features/shared";
+import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
 import {
   CreateProductReviewType,
   ProductReviewResponse,
@@ -11,7 +12,7 @@ import {
 
 export function useReviews(productId: string) {
   return useQuery<ProductReviewResponse>({
-    queryKey: queryKeys.review.lists(productId),
+    queryKey: userQueryKeys.review.lists(productId),
     queryFn: () => getReviews(productId),
     enabled: !!productId,
     placeholderData: (previousData) => previousData,
@@ -25,7 +26,7 @@ export function useCreateReview(productId: string) {
     mutationFn: (review) => createReview(review),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.review.lists(productId),
+        queryKey: userQueryKeys.review.lists(productId),
       });
     },
     successMessage: "Review submitted successfully",

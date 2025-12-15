@@ -10,7 +10,8 @@ import {
 import { CartResponse, AddToCartRequest } from "@/features/cart/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryKeys, useMutationWithToast } from "@/features/shared";
+import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
 
 /**
  * Hook to fetch and manage cart data
@@ -25,7 +26,7 @@ export const useCart = () => {
     error,
     refetch,
   } = useQuery<CartResponse>({
-    queryKey: queryKeys.cart.current(),
+    queryKey: userQueryKeys.cart.current(),
     queryFn: async () => await getCart(),
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
@@ -46,16 +47,13 @@ export const useCreateCart = () => {
   const { setCart } = useCartStore();
   const queryClient = useQueryClient();
 
-  return useMutationWithToast<
-    CartResponse,
-    AddToCartRequest
-  >({
+  return useMutationWithToast<CartResponse, AddToCartRequest>({
     mutationFn: async (request: AddToCartRequest) => {
       return await addToCart(request);
-      },
-      onSuccess: (data) => {
+    },
+    onSuccess: (data) => {
       setCart(data);
-      queryClient.invalidateQueries({ queryKey: queryKeys.cart.current() });
+      queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
     },
     successMessage: "Added to cart successfully",
     errorMessage: "Error adding to cart",
@@ -72,7 +70,7 @@ export const useRemoveCartItem = () => {
     },
     onSuccess: (data) => {
       setCart(data);
-      queryClient.invalidateQueries({ queryKey: queryKeys.cart.current() });
+      queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
     },
     successMessage: "Removed from cart successfully",
     errorMessage: "Error removing from cart",
@@ -92,7 +90,7 @@ export const useUpdateCartItem = () => {
     },
     onSuccess: (data) => {
       setCart(data);
-      queryClient.invalidateQueries({ queryKey: queryKeys.cart.current() });
+      queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
     },
     errorMessage: "Error updating cart item",
   });

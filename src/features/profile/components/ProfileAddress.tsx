@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { AddressManagement } from "@/features/shared/components/address";
 import { useUsersAddress } from "@/features/shared/hooks/useAdress";
+import { Spinner } from "@/components/ui/spinner";
 
 export function ProfileAddress() {
   const { user } = useAuthStore();

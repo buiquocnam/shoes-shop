@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api';
-import { UpdateProfileRequest, ChangePasswordRequest, Address } from '../types';
+import { UpdateProfileRequest, ChangePasswordRequest, PurchasedItem } from '../types';
 import { User } from '@/types';
 import { ProductPaginationResponse } from '@/features/product/types';
 
@@ -12,8 +12,8 @@ export const profileApi = {
     return response.result;
   },
 
-  productsPurchased: async (userId: string): Promise<ProductPaginationResponse> => {
-    const response = await apiClient.get<ProductPaginationResponse>(`/shoes/products/purchased?userId=${userId}`);
+  productsPurchased: async (): Promise<PurchasedItem[]> => {
+    const response = await apiClient.get<PurchasedItem[]>(`/shoes/products/purchased`);
     return response.result;
   },
 };

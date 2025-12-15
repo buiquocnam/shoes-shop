@@ -143,7 +143,7 @@ export default function ProductInfoInteractive({
     const discountedPrice = productInfo.price - (productInfo.price * discountPercent) / 100;
     const totalPrice = discountedPrice * quantity;
 
-    const productImage = listImg.find((img) => img.isPrimary)?.url || productInfo.imageUrl?.url || null;
+    const productImage = listImg?.find((img) => img.isPrimary)?.url || productInfo.imageUrl?.url || "";
 
     const checkoutItem: CheckoutItem = {
       product: {

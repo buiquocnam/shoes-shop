@@ -10,6 +10,7 @@ import {
   useCategories,
   useCreateCategory,
 } from "@/features/admin/categories";
+import Loading from "@/features/admin/components/Loading";
 
 const AdminCategoriesPage: React.FC = () => {
   const { data: categories, isLoading } = useCategories();
@@ -23,9 +24,7 @@ const AdminCategoriesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-8 text-xl text-gray-700">
-        Loading categories...
-      </div>
+      <Loading />
     );
   }
 

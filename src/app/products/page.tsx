@@ -35,7 +35,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 md:gap-8">
                     {/* Sidebar - Mobile: ở trên, không sticky (có thể scroll), Desktop: sticky bên trái */}
-                    <aside className="md:sticky md:top-32 md:self-start md:h-fit">
+                    <aside className="md:sticky md:top-32 md:self-start md:h-fit border-none shadow-lg">
                         <Sidebar
                             selectedCategory={params?.category_id || ''}
                             categories={categories as CategoryType[]}

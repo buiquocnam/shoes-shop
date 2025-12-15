@@ -7,30 +7,30 @@
 export const userQueryKeys = {
   // Cart
   cart: {
-    all: ["cart"] as const,
-    current: () => [...userQueryKeys.cart.all, "current"] as const,
+    key: ["cart"],
+    current: () => [...userQueryKeys.cart.key, "current"] as const,
   },
 
   // Checkout
   checkout: {
-    all: ["checkout"] as const,
+    key: ["checkout"],
     shippingMethods: () =>
-      [...userQueryKeys.checkout.all, "shipping-methods"] as const,
+      [...userQueryKeys.checkout.key, "shipping-methods"] as const,
     discount: (code?: string) =>
-      [...userQueryKeys.checkout.all, "discount", code] as const,
+      [...userQueryKeys.checkout.key, "discount", code] as const,
   },
 
   // Profile
   profile: {
-    all: ["profile"] as const,
-    purchasedProducts: (userId: string) =>
-      [...userQueryKeys.profile.all, "purchased-products", userId] as const,
+    key: ["profile"],
+    purchasedProducts: () =>
+      [...userQueryKeys.profile.key, "purchased-products"] as const,
   },
 
   // Reviews
   review: {
-    all: ["review"] as const,
+    key: ["review"],
     lists: (productId: string) =>
-      [...userQueryKeys.review.all, productId] as const,
+      [...userQueryKeys.review.key, productId] as const,
   },
 } as const;

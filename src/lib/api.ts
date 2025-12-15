@@ -74,7 +74,7 @@ export const apiClient = {
     return request<T>({ method: "POST", endpoint, data });
   },
 
-  async put<T>(endpoint: string, data: unknown): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return request<T>({ method: "PUT", endpoint, data });
   },
 

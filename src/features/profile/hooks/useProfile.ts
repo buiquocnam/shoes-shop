@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { profileApi } from "../services/profile.api";
 import { UpdateProfileRequest } from "../types";
 import { toast } from "sonner";
-import { queryKeys } from "@/features/shared";
+import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
@@ -12,7 +12,7 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (data: UpdateProfileRequest) => profileApi.updateProfile(data),
     onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.profile.all, data);
+      queryClient.setQueryData(userQueryKeys.profile.key, data);
       toast.success("Cập nhật profile thành công");
     },
     onError: (error: any) => {
@@ -23,11 +23,10 @@ export const useUpdateProfile = () => {
   });
 };
 
-export const useProductsPurchased = (userId: string) => {
+export const useProductsPurchased = () => {
   return useQuery({
-    queryKey: queryKeys.profile.purchasedProducts(userId),
-    queryFn: () => profileApi.productsPurchased(userId),
-    enabled: !!userId,
+    queryKey: userQueryKeys.profile.purchasedProducts(),
+    queryFn: () => profileApi.productsPurchased(),
     staleTime: 60 * 1000,
     placeholderData: (previousData) => previousData,
   });

@@ -1,27 +1,30 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { adminProductsApi } from "../../services/products.api";
-import { ImportStockInput } from "../../types";
-import { queryKeys } from "@/features/shared";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  adminProductsApi,
+  ImportStockInput,
+} from "../../services/products.api";
+import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
 
 /**
- * Hook để import/update stock cho variants
+ * Import Stock Mutation
+ * Gọi API import stock riêng, không gộp với create/update variant
  */
 export const useImportStock = () => {
   const queryClient = useQueryClient();
-
-  return useMutation<void, Error, ImportStockInput>({
+  return useMutationWithToast<boolean, ImportStockInput>({
     mutationFn: (data: ImportStockInput) => adminProductsApi.importStock(data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.product.lists() });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.product.detail(variables.productId),
+        queryKey: sharedQueryKeys.product.lists(),
       });
-      toast.success("Stock updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: sharedQueryKeys.product.detail(variables.productId),
+      });
     },
-    onError: (error) => {
-      console.error("Error importing stock:", error);
-      toast.error("Failed to update stock. Please try again.");
-    },
+    successMessage: "Stock imported successfully",
+    errorMessage: "Failed to import stock",
   });
 };
+
+

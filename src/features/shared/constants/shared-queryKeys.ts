@@ -5,28 +5,28 @@
 
 export const sharedQueryKeys = {
   product: {
-    all: ["product"] as const,
-    lists: () => [...sharedQueryKeys.product.all, "list"] as const,
+    key: ["product"],
+    lists: () => [...sharedQueryKeys.product.key, "list"] as const,
     list: (filters?: unknown) =>
       [...sharedQueryKeys.product.lists(), filters] as const,
-    detail: (id: string) => [...sharedQueryKeys.product.all, id] as const,
-    topRated: () => [...sharedQueryKeys.product.all, "top-rated"] as const,
+    detail: (id: string) => [...sharedQueryKeys.product.key, id] as const,
+    topRated: () => [...sharedQueryKeys.product.key, "top-rated"] as const,
   },
 
   category: {
-    all: ["shared", "category"] as const,
-    lists: () => [...sharedQueryKeys.category.all, "list"] as const,
+    key: ["category"],
+    lists: () => [...sharedQueryKeys.category.key, "list"] as const,
   },
   brand: {
-    all: ["shared", "brand"] as const,
+    key: ["brand"] as const,
     lists: (filters?: unknown) =>
-      [...sharedQueryKeys.brand.all, filters] as const,
+      [...sharedQueryKeys.brand.key, filters] as const,
   },
 } as const;
 
 export const addressQueryKeys = {
+  provinces: ["provinces"] as const,
+  districts: (provinceCode: number) => ["districts", provinceCode] as const,
+  wards: (districtCode: number) => ["wards", districtCode] as const,
   usersAddress: (userId: string) => ["usersAddress", userId] as const,
-  provinces:  ["provinces"] as const,
-  districts:  (provinceCode: number) => ["districts", provinceCode] as const,
-  wards:  (districtCode: number) => ["wards", districtCode] as const,
 };

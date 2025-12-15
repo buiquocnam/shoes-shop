@@ -1,2 +1,0 @@
-export { ConfirmAlert } from './components';
-

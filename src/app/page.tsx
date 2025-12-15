@@ -1,7 +1,4 @@
-import HeroBanner from '@/features/home/components/HeroBanner';
-import HomeSection from '@/features/home/components/HomeSection';
-import TopRated from '@/features/home/components/TopRated';
-import HomeLoading from '@/features/home/components/HomeLoading';
+import { HomeSection, BrandList, BrandListSkeleton, HomeLoading, HeroBanner } from '@/features/home/components';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
@@ -12,7 +9,7 @@ export const metadata: Metadata = {
 
 
 
-export default function HomePage( { searchParams }: { searchParams: { [key: string]: string | string[] | undefined } } ) {
+export default function HomePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   return (
     <main className="overflow-hidden">
       <HeroBanner
@@ -21,9 +18,12 @@ export default function HomePage( { searchParams }: { searchParams: { [key: stri
         description="Discover the best shoes for your feet"
       />
 
+      <Suspense fallback={<BrandListSkeleton />}>
+        <BrandList />
+      </Suspense>
+
       <Suspense fallback={<HomeLoading />}>
         <HomeSection />
-        <TopRated />
       </Suspense>
     </main>
   );

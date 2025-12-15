@@ -25,30 +25,24 @@ export function AddressManagement({
     selectedAddress,
     isLoading = false,
 }: AddressManagementProps) {
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-60">
+                <Spinner />
+                <p className="text-sm text-gray-500">Loading addresses...</p>
+            </div>
+        );
+    }
+
     const [isFormOpen, setIsFormOpen] = useState(false);
     const handleFormSuccess = () => {
         setIsFormOpen(false);
     };
 
-    /**
-     * Xử lý khi user chọn address - gọi callback nếu có (cho checkout)
-     */
-    const handleAddressChange = (value: string) => {
-        const address = usersAddress?.find((addr) => addr.id === value);
-     
-    };
 
-    // Loading state
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-60">
-                <Spinner />
-            </div>
-        );
-    }
 
     // Empty state
-    if (!usersAddress || usersAddress.length === 0) {
+    if (!usersAddress) {
         return (
             <div className={`flex flex-col p-4 mt-8 ${className}`}>
                 <div className="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed px-6 py-14">
@@ -114,7 +108,6 @@ export function AddressManagement({
             <div className="p-4">
                 <RadioGroup
                     value={selectedAddress?.id || ""}
-                    onValueChange={handleAddressChange}
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
                     {usersAddress.map((address) => (

@@ -1,98 +1,89 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
-import { ProductType } from "@/features/product/types";
-import { useProducts } from "@/features/admin/products/hooks";
-import { productColumns, ProductForm } from "@/features/admin/products/components";
-import { FormMode } from "@/features/admin/products/utils/productFormHelpers";
-import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
+import Loading from "@/features/admin/components/Loading";
 
-const AdminProductsPage: React.FC = () => {
-    const [page, setPage] = useState(1);
-    const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
-    const inputRef = useRef<HTMLInputElement>(null);
+import { columns } from "@/features/admin/products/components/column";
+import { useProducts } from "@/features/product/hooks/useProducts";
+import { ProductFilters, ProductType } from "@/features/product/types";
+import { useUpdateParams } from "@/features/admin/util/updateParams";
 
-    // Filters
-    const filters = useMemo(
-        () => ({
-            page,
-            limit: 10,
-            name: searchQuery,
-        }),
-        [page, searchQuery]
-    );
+const AdminProductsPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const updateParams = useUpdateParams();
+  /** ---------------- derive filters from URL ---------------- */
+  const page = Number(searchParams.get("page") || 1);
+  const size = Number(searchParams.get("size") || 10);
+  const name = searchParams.get("name") || "";
 
-    const { data, isLoading, isFetching } = useProducts(filters);
-    const products: ProductType[] = data?.data || [];
+  const filters: ProductFilters = {
+    page,
+    size,
+    name,
+  };
 
-    const pagination = useMemo(
-        () => ({
-            currentPage: data?.currentPage ?? 1,
-            totalPages: data?.totalPages ?? 1,
-            totalElements: data?.totalElements ?? 0,
-            pageSize: data?.pageSize ?? 10,
-        }),
-        [data]
-    );
+  /** ---------------- fetch ---------------- */
+  const { data, isLoading } = useProducts(filters);
 
-    return (
-        <div className="p-8">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-semibold text-gray-800">Manage Products</h1>
+  const products: ProductType[] = data?.data || [];
 
-                <ProductForm
-                    mode={FormMode.create}
-                    trigger={
-                        <Button className="bg-red-700 hover:bg-red-800">
-                            + Add Product
-                        </Button>
-                    }
-                />
-            </div>
+  const pagination = {
+    currentPage: data?.currentPage || 1,
+    totalPages: data?.totalPages || 1,
+    totalElements: data?.totalElements || 0,
+    pageSize: data?.pageSize || size,
+  };
 
-            <div className="relative w-full max-w-sm mb-4 mt-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none z-10" />
-                <Input
-                    ref={inputRef}
-                    placeholder="Search product... (Press Enter)"
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            const value = inputRef.current?.value.trim() || "";
-                            setSearchQuery(value || undefined);
-                            setPage(1);
-                        }
-                    }}
-                    className="pl-10 pr-3 rounded-lg bg-gray-100"
-                />
-            </div>
 
-            {/* Table */}
-            <div className="rounded-xl overflow-hidden relative">
-                {isLoading && !data && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
-                        <Spinner className="size-8" />
-                    </div>
-                )}
+  if (isLoading) return <Loading />;
 
-                <DataTable
-                    columns={productColumns}
-                    data={products}
-                    pagination={pagination}
-                    onPageChange={(p) => setPage(p)}
-                />
+  return (
+    <div className="p-8 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-semibold">Manage Products</h1>
 
-                {isFetching && data && (
-                    <div className="absolute top-2 right-2">
-                        <Spinner className="size-4" />
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+        <Link href="/admin/products/new">
+          <Button className="bg-red-700 hover:bg-red-800">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Product
+          </Button>
+        </Link>
+      </div>
+
+      {/* Search */}
+      <div className="flex gap-4">
+        <Input
+          placeholder="Search product name..."
+          defaultValue={name}
+          className="w-64"
+          onChange={(e) =>
+            updateParams({
+              name: e.target.value,
+              page: 1,
+            })
+          }
+        />
+      </div>
+
+      {/* Table */}
+      <DataTable
+        columns={columns}
+        data={products}
+        pagination={pagination}
+        onPageChange={(newPage) =>
+          updateParams({ page: newPage })
+        }
+      />
+    </div>
+  );
 };
 
 export default AdminProductsPage;

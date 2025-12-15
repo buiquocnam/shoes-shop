@@ -10,6 +10,7 @@ import {
   useBrands,
   useCreateBrand
 } from "@/features/admin/brands";
+import Loading from "@/features/admin/components/Loading";
 
 const AdminBrandsPage: React.FC = () => {
   const { data, isLoading } = useBrands({});
@@ -22,9 +23,7 @@ const AdminBrandsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-8 text-xl text-gray-700">
-        Loading brands...
-      </div>
+      <Loading />
     );
   }
 

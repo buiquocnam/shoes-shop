@@ -50,17 +50,17 @@ export const useDeleteAddress = (userId: string) => {
 /**
  * Hook để set default address
  */
-export const useSetDefaultAddress = (userId: string) => {
+export const useUpdateDefaultAddress = (userId: string) => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (addressId: string) => addressApi.setDefaultAddress(addressId),
+    mutationFn: (addressId: string) => addressApi.updateDefaultAddress(addressId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: addressQueryKeys.usersAddress(userId) });
-      toast.success("Đã đặt địa chỉ mặc định thành công");
+      toast.success("Changed default address successfully");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Có lỗi xảy ra khi đặt địa chỉ mặc định";
+      const message = error instanceof Error ? error.message : "An error occurred while changing the default address";
       toast.error(message);
     },
   });

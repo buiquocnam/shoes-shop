@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { BrandType } from "@/features/product/types";
 import { adminBrandsApi } from "@/features/admin/brands/services/brands.api";
-import { queryKeys, useMutationWithToast } from "@/features/shared";
+import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
 
 // Re-export shared useBrands for convenience
 export { useBrands } from "@/features/shared/hooks/useBrands";
@@ -12,7 +13,7 @@ export const useCreateBrand = () => {
     mutationFn: (data: FormData) => adminBrandsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.shared.brand.lists(),
+        queryKey: sharedQueryKeys.brand.lists(),
       });
     },
     successMessage: "Brand created successfully",
@@ -26,7 +27,7 @@ export const useUpdateBrand = () => {
     mutationFn: ({ id, data }) => adminBrandsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.shared.brand.lists(),
+        queryKey: sharedQueryKeys.brand.lists(),
       });
     },
     successMessage: "Brand updated successfully",
@@ -46,7 +47,7 @@ export const useDeleteBrand = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.shared.brand.lists(),
+        queryKey: sharedQueryKeys.brand.lists(),
       });
     },
     successMessage: "Brand deleted successfully",

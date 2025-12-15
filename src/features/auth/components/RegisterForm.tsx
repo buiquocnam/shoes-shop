@@ -17,11 +17,13 @@ import { Button } from '@/components/ui/button';
 import { registerSchema, type RegisterFormData } from '@/features/auth/schema';
 import { useRegister } from '@/features/auth/hooks';
 import { Spinner } from '@/components/ui/spinner';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
     const { mutate: register, isPending, error } = useRegister();
-
+    const router = useRouter();
     const form = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -35,6 +37,8 @@ export default function RegisterForm() {
     function onSubmit(values: RegisterFormData) {
         const { confirmPassword, ...registerData } = values;
         register(registerData as Omit<RegisterFormData, 'confirmPassword'>);
+        router.push("/verify-otp");
+        toast.success("Please check your email for verification");
     }
 
     return (

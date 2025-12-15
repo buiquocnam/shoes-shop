@@ -1,29 +1,30 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { adminProductsApi } from "../../services/products.api";
-import { ProductDetailType } from "@/features/product/types";
-import { ProductContentInput } from "../../types";
-import { queryKeys } from "@/features/shared";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  adminProductsApi,
+  UpdateProductInfoInput,
+} from "../../services/products.api";
+import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { useMutationWithToast } from "@/features/shared";
+import { ProductType } from "@/features/product/types";
 
 /**
- * Hook để cập nhật product info
+ * Update Product Info Mutation
+ * Chỉ update info, không xử lý variant hoặc image
  */
 export const useUpdateProductInfo = () => {
   const queryClient = useQueryClient();
-
-  return useMutation<ProductDetailType, Error, ProductContentInput>({
-    mutationFn: (data: ProductContentInput) =>
-      adminProductsApi.updateContent(data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.product.lists() });
+  return useMutationWithToast<ProductType, UpdateProductInfoInput>({
+    mutationFn: (data: UpdateProductInfoInput) =>
+      adminProductsApi.updateInfo(data),
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.product.detail(data.product.id),
+        queryKey: sharedQueryKeys.product.lists(),
       });
-      toast.success("Update product successfully");
+      queryClient.invalidateQueries({
+        queryKey: sharedQueryKeys.product.detail(variables.productId),
+      });
     },
-    onError: (error) => {
-      console.error("Error updating product:", error);
-      toast.error("Failed to update product. Please try again.");
-    },
+    successMessage: "Product info updated successfully",
+    errorMessage: "Failed to update product info",
   });
 };

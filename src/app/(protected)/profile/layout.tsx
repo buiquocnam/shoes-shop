@@ -16,11 +16,11 @@ export default function ProfileLayout() {
     const handleLogout = () => logout();
 
     const tabs = [
-        { label: 'Địa chỉ', value: 'address' },
-        { label: 'Đơn hàng', value: 'orders' },
+        { label: 'Address', value: 'address' },
+        { label: 'Orders', value: 'orders' },
     ];
 
-    // Sync hash với tab
+    // Sync hash with tab
     useEffect(() => {
         const hash = window.location.hash.slice(1); // Remove #
         if (hash === 'address' || hash === 'orders') {
@@ -42,14 +42,14 @@ export default function ProfileLayout() {
             <div className="max-w-[1200px] mx-auto px-4">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-10">
-                    <h1 className="text-4xl font-bold text-gray-900">Tài khoản của tôi</h1>
+                    <h1 className="text-4xl font-bold text-gray-900">My Account</h1>
                     <Button
                         variant="destructive"
                         className="gap-2 font-medium"
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4" />
-                        Đăng xuất
+                        Log out
                     </Button>
                 </div>
 
@@ -60,7 +60,7 @@ export default function ProfileLayout() {
                         <ProfileInfo />
                     </div>
 
-                    {/* Tabs và content */}
+                    {/* Tabs and content */}
                     <div className="col-span-2 bg-white rounded-xl shadow border border-gray-100 p-0">
                         <Tabs
                             value={activeTab}
