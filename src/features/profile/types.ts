@@ -1,7 +1,7 @@
 import { ProductType } from "../product";
 
+
 export interface UpdateProfileRequest {
-  id: string;
   name: string;
   phone?: string;
   avatar?: string;
@@ -13,6 +13,7 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
 }
 
+
 export interface PurchasedItem {
   product: ProductType;
   variant: {
@@ -20,11 +21,12 @@ export interface PurchasedItem {
     productId: string;
     stock: number;
     color: string;
-    status: "ACTIVE" | "INACTIVE";
+    status: 'ACTIVE' | 'INACTIVE';
     countSell: number;
     size: string;
   };
   countBuy: number;
   totalMoney: number;
   userId: string;
-}
+} 
+

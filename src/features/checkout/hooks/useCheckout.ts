@@ -8,7 +8,6 @@ import {
   CheckoutItem,
 } from "../types/checkout";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { AddressType } from "@/features/shared/types/address";
 import { toast } from "sonner";
 import { useCartStore } from "@/store/useCartStore";
@@ -21,7 +20,6 @@ import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 import { clearCart as clearCartApi } from "@/features/cart/services";
 
 export const useCreateOrder = () => {
-  const router = useRouter();
   const { clearCart: clearCartStore, setCart } = useCartStore();
   const queryClient = useQueryClient();
 
@@ -43,15 +41,6 @@ export const useCreateOrder = () => {
     },
     onSuccess: async (response, variables) => {
       if (typeof window !== "undefined") {
-        sessionStorage.setItem(
-          "checkoutSuccessData",
-          JSON.stringify({
-            orderSummary: variables.orderSummary,
-            totalMoney: response.totalMoney,
-            selectedAddress: variables.selectedAddress,
-          })
-        );
-
         const checkoutSource = getCheckoutSource();
         if (checkoutSource === "cart") {
           await clearCartApi();
@@ -63,7 +52,6 @@ export const useCreateOrder = () => {
           clearCheckoutItems();
         }
       }
-      router.replace(`/checkout/success`);
     },
     onError: (error: any) => {
       const message =

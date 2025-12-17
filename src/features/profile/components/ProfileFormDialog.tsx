@@ -57,7 +57,6 @@ export function ProfileFormDialog({ open, onOpenChange }: ProfileFormDialogProps
     if (open && user) {
       form.reset({
         name: user?.name || '',
-        phone: user?.phone || '',
       });
     }
   }, [open, user, form]);
@@ -89,15 +88,15 @@ export function ProfileFormDialog({ open, onOpenChange }: ProfileFormDialogProps
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <Input
-                value={user?.email || ''}
-                disabled
-                className="bg-gray-100 cursor-not-allowed"
-              />
-              <p className="text-xs text-gray-500">Email không thể thay đổi</p>
+            
+           <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <Input
+                    value={user?.email || ''}
+                    disabled
+                    className="bg-gray-100 cursor-not-allowed"
+                />
+                <p className="text-xs text-gray-500">Email không thể thay đổi</p>
             </div>
 
             {/* Name */}

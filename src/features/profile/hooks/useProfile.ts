@@ -5,19 +5,14 @@ import { profileApi } from "../services/profile.api";
 import { UpdateProfileRequest } from "../types";
 import { toast } from "sonner";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
-  const { updateUser } = useAuthStore();
 
   return useMutation({
     mutationFn: (data: UpdateProfileRequest) => profileApi.updateProfile(data),
     onSuccess: (data) => {
-      // Update user in auth store
-      updateUser(data);
-      // Update query cache
-      queryClient.setQueryData(userQueryKeys.profile.key, data);
+      queryClient.setQueryData(userQueryKeys.profile.key, data.id);
       toast.success("Cập nhật profile thành công");
     },
     onError: (error: any) => {

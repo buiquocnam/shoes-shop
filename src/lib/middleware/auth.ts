@@ -23,12 +23,14 @@ export function getTokenFromRequest(request: NextRequest): string | null {
   // Try to get from cookie first
   const tokenFromCookie = request.cookies.get("accessToken")?.value;
   if (tokenFromCookie) {
+    console.log("🔍 Token found in cookie:", tokenFromCookie);
     return tokenFromCookie;
   }
 
   // Try to get from Authorization header
   const authHeader = request.headers.get("authorization");
   if (authHeader?.startsWith("Bearer ")) {
+    console.log("🔍 Token found in authorization header:", authHeader.substring(7));
     return authHeader.substring(7);
   }
 

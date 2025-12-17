@@ -1,151 +1,186 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
-import { CheckoutItem } from '@/features/checkout/types/checkout';
-import { formatCurrency } from '@/utils/format';
-import { AddressType } from '@/features/shared/types/address';
-import { formatFullAddress } from '@/features/shared/utils/addressHelpers';
+import { Spinner } from '@/components/ui/spinner';
 
-interface CheckoutSuccessData {
-    orderSummary: CheckoutItem[];
-    totalMoney: number;
-    selectedAddress: AddressType | null;
+import { CheckoutItem, CreateOrderRequest } from '@/features/checkout/types/checkout';
+import { AddressType } from '@/features/shared/types/address';
+import { formatCurrency } from '@/utils/format';
+import { formatFullAddress } from '@/features/shared/utils/addressHelpers';
+import { useCreateOrder } from '@/features/checkout/hooks/useCheckout';
+
+interface CheckoutData {
+  orderSummary: CheckoutItem[];
+  selectedAddress: AddressType;
+  totalAmount: number;
+  couponCode: string | null;
+  totalMoney?: number;
 }
 
 export default function CheckoutSuccessPage() {
-    const router = useRouter();
+  const router = useRouter();
+  const { mutate: createOrder, isPending } = useCreateOrder();
 
-    const getInitialData = (): CheckoutSuccessData | null => {
-        if (typeof window === "undefined") return null;
+  const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-        const storedData = sessionStorage.getItem('checkoutSuccessData');
-        if (!storedData) return null;
+  // 🔒 đảm bảo createOrder chỉ chạy 1 lần duy nhất
+  const hasCreatedOrderRef = useRef(false);
 
-        try {
-            return JSON.parse(storedData) as CheckoutSuccessData;
-        } catch (error) {
-            console.error('Error parsing checkout success data:', error);
-            return null;
-        }
-    };
+  useEffect(() => {
+    if (hasCreatedOrderRef.current) return;
 
-    const successData = getInitialData();
+    const storedData = sessionStorage.getItem('checkoutData');
 
-    useEffect(() => {
-        // Nếu không có data, redirect về checkout
-        if (!successData) {
-            router.push('/checkout');
-        }
-    }, [successData, router]);
-
-    // Nếu không có data, không render gì (đang redirect)
-    if (!successData) {
-        return null;
+    if (!storedData) {
+      // Không có data → quay lại checkout
+      router.replace('/checkout');
+      return;
     }
 
-    const totalAmount =
-        typeof successData.totalMoney === 'number'
-            ? successData.totalMoney
-            : Array.isArray(successData.orderSummary)
-                ? successData.orderSummary.reduce((sum, item) => sum + item.totalPrice, 0)
-                : 0;
+    const data: CheckoutData = JSON.parse(storedData);
+   
 
-    return (
-        <main className="flex-grow flex items-center justify-center min-h-[calc(100vh-200px)]">
-            <div className="container mx-auto px-4 py-12 lg:px-8">
-                <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-                    <div className="flex items-center align-center gap-2 text-primary">
-                        <CheckCircle2 className="h-12 w-12 " />
-                        <h1 className="mb-3 text-3xl lg:text-4xl">
-                            Thank You for Your Purchase!
-                        </h1>
-                    </div>
-                    <p className="mb-10 text-lg ">
-                        Your order has been placed successfully.
-                    </p>
+    setCheckoutData(data);
 
-                    {/* Order Details Card */}
-                    <div className="w-full overflow-hidden rounded-xl border ">
-                        {/* Shipping Address */}
-                        {successData.selectedAddress && (
-                            <div className="border-b p-6">
-                                <div className="text-left">
-                                    <p className="text-xs font-bold uppercase  mb-2">
-                                        Shipping Address
-                                    </p>
-                                    <p className="font-semibold text-foreground">
-                                        {formatFullAddress(successData.selectedAddress)}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
+    const orderRequest: CreateOrderRequest = {
+      items: data.orderSummary.map((item: CheckoutItem) => ({
+        variantSizeId: item.size.id,
+        quantity: item.quantity,
+      })),
+      couponCode: data.couponCode,
+      addressId: data.selectedAddress.id,
+    };
 
-                        {/* Order Items */}
-                        <div className="flex flex-col gap-4 p-6 text-left">
-                            {Array.isArray(successData.orderSummary) && successData.orderSummary.length > 0 ? (
-                                successData.orderSummary.map((item) => (
-                                    <div key={`${item.product.id}-${item.variant.id}-${item.size.id}`} className="flex items-center gap-4">
-                                        <div
-                                            className="aspect-square w-16 flex-shrink-0 rounded-md bg-cover bg-center border"
-                                            style={{
-                                                backgroundImage: item.product.imageUrl ? `url('${item.product.imageUrl}')` : undefined,
-                                                backgroundColor: item.product.imageUrl ? undefined : 'var(--muted)',
-                                            }}
-                                            aria-label={item.product.name}
-                                        />
-                                        <div className="flex-grow">
-                                            <p className="font-semibold text-foreground">{item.product.name}</p>
-                                            <p className="text-sm ">
-                                                Size: {item.size.size} / Qty: {item.quantity}
-                                            </p>
-                                        </div>
-                                        <p className="font-semibold text-foreground">
-                                            {formatCurrency(item.totalPrice)}
-                                        </p>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="py-4 text-center ">
-                                    No items found in this order.
-                                </div>
-                            )}
-                        </div>
+    hasCreatedOrderRef.current = true;
 
-                        {/* Total Amount */}
-                        <div className="bg-background p-6 border-t">
-                            <div className="flex justify-between items-center">
-                                <p className="text-base font-medium ">Total Amount</p>
-                                <p className="text-xl font-black text-foreground">
-                                    {formatCurrency(totalAmount)}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="mt-10 flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="w-full sm:w-auto"
-                            asChild
-                        >
-                            <Link href="/profile/orders">View Order Details</Link>
-                        </Button>
-                        <Button
-                            size="lg"
-                            className="w-full sm:w-auto"
-                            asChild
-                        >
-                            <Link href="/products">Continue Shopping</Link>
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </main>
+    createOrder(
+      {
+        request: orderRequest,
+        orderSummary: data.orderSummary,
+        selectedAddress: data.selectedAddress,
+      },
+      {
+        onError: (err: any) => {
+          setError(err?.message || 'Không thể tạo đơn hàng');
+        },
+        onSuccess: () => {
+          sessionStorage.removeItem('checkoutData');
+        },
+      }
     );
+  }, [createOrder, router]);
+
+  // ===== Loading =====
+  if (isPending || !checkoutData) {
+    return (
+      <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Spinner className="h-8 w-8 text-primary" />
+          <p className="text-lg font-semibold">Đang tạo đơn hàng...</p>
+          <p className="text-sm text-muted-foreground">
+            Vui lòng đợi trong giây lát
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  // ===== Error =====
+  if (error) {
+    return (
+      <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <p className="text-lg font-semibold text-destructive">{error}</p>
+          <Button onClick={() => router.replace('/checkout')}>
+            Quay lại checkout
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  const totalAmount =
+    checkoutData.totalMoney ?? checkoutData.totalAmount;
+
+  // ===== Success UI =====
+  return (
+    <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
+      <div className="container mx-auto px-4 py-12 lg:px-8">
+        <div className="mx-auto flex max-w-xl flex-col items-center text-center">
+          <div className="flex items-center gap-2 text-primary">
+            <CheckCircle2 className="h-12 w-12" />
+            <h1 className="text-3xl lg:text-4xl">
+              Thank you for your purchase!
+            </h1>
+          </div>
+
+          <p className="mb-10 text-lg">
+            Your order has been placed successfully.
+          </p>
+
+          <div className="w-full overflow-hidden rounded-xl border">
+            {/* Address */}
+            <div className="border-b p-6 text-left">
+              <p className="mb-2 text-xs font-bold uppercase">
+                Shipping Address
+              </p>
+              <p className="font-semibold">
+                {formatFullAddress(checkoutData.selectedAddress)}
+              </p>
+            </div>
+
+            {/* Items */}
+            <div className="flex flex-col gap-4 p-6 text-left">
+              {checkoutData.orderSummary.map((item) => (
+                <div
+                  key={`${item.product.id}-${item.variant.id}-${item.size.id}`}
+                  className="flex items-center gap-4"
+                >
+                  <div
+                    className="aspect-square w-16 rounded-md border bg-cover bg-center"
+                    style={{
+                      backgroundImage: item.product.imageUrl
+                        ? `url('${item.product.imageUrl}')`
+                        : undefined,
+                    }}
+                  />
+                  <div className="flex-grow">
+                    <p className="font-semibold">{item.product.name}</p>
+                    <p className="text-sm">
+                      Size: {item.size.size} / Qty: {item.quantity}
+                    </p>
+                  </div>
+                  <p className="font-semibold">
+                    {formatCurrency(item.totalPrice)}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Total */}
+            <div className="border-t p-6">
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total</span>
+                <span>{formatCurrency(totalAmount)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/profile/orders">View Orders</Link>
+            </Button>
+            <Button size="lg" asChild>
+              <Link href="/products">Continue Shopping</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }

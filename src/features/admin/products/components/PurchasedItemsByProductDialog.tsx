@@ -1,21 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { usePurchasedItemsByProduct } from "../hooks/queries/usePurchasedItemsByProduct";
 import { PurchasedItemsDialog } from "@/features/admin/components";
 
 interface PurchasedItemsByProductDialogProps {
     productId: string;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
 }
 
 export function PurchasedItemsByProductDialog({
     productId,
-    open: controlledOpen,
-    onOpenChange: controlledOnOpenChange,
 }: PurchasedItemsByProductDialogProps) {
+    const [open, setOpen] = useState(false);
     const { data: purchasedItems, isLoading } = usePurchasedItemsByProduct(
-        controlledOpen ? productId : null
+        open ? productId : null
     );
 
     return (
@@ -23,8 +21,8 @@ export function PurchasedItemsByProductDialog({
             purchasedItems={purchasedItems}
             isLoading={isLoading}
             showUserId={true}
-            open={controlledOpen}
-            onOpenChange={controlledOnOpenChange}
+            open={open}
+            onOpenChange={setOpen}
         />
     );
 }

@@ -8,7 +8,11 @@ import {
 
 const isDev = process.env.NODE_ENV === "development";
 
-async function refreshAccessToken(): Promise<string> {
+/**
+ * Refresh access token and update auth store
+ * @throws Error with message "Session expired. Please login again." if refresh fails
+ */
+export async function refreshAccessToken(): Promise<string> {
   const { setAuth, logout } = useAuthStore.getState();
   const { clearCart } = useCartStore.getState();
 
@@ -18,8 +22,15 @@ async function refreshAccessToken(): Promise<string> {
 
     // setAuth sẽ tự động set cookie
     setAuth(user, access_token, refresh_token);
-    if (isDev) {
-      console.log("✅ Token refreshed and auth store updated");
+
+    // Ensure cookie is set immediately (especially important for middleware)
+    if (typeof window !== "undefined") {
+      setAccessTokenCookie(access_token);
+      if (isDev) {
+        console.log("✅ Token refreshed and auth store updated, cookie synced");
+      }
+    } else if (isDev) {
+      console.log("✅ Token refreshed and auth store updated (server-side)");
     }
 
     return access_token;
@@ -32,12 +43,23 @@ async function refreshAccessToken(): Promise<string> {
     clearCart();
     removeAccessTokenCookie();
 
+    // Redirect to login only on client-side when refresh fails
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      // Only redirect if not already on login page
+      if (!currentPath.startsWith("/login")) {
+        const redirectPath = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        window.location.href = redirectPath;
+      }
+    }
+
     throw new Error("Session expired. Please login again.");
   }
 }
 
 /**
- * Tạo headers cho API request, tự động refresh token nếu expired
+ * Tạo headers cho API request
+ * Note: Token refresh is handled in api.ts when receiving 401 response
  */
 export async function getHeaders(
   endpoint: string,
@@ -61,30 +83,11 @@ export async function getHeaders(
         console.log("🔄 Calling /auth/refresh with refresh_token in header");
       }
     } else if (accessToken) {
-      // Các endpoint khác → dùng access token
+      // Các endpoint khác → dùng access token hiện có
+      // Không refresh ở đây, để api.ts xử lý khi nhận 401
       headers.set("Authorization", `Bearer ${accessToken}`);
-
-      if (isTokenExpired(accessToken)) {
-        if (isDev) {
-          console.warn("⚠️ Token expired, refreshing...");
-        }
-
-        try {
-          const newAccessToken = await refreshAccessToken();
-          headers.set("Authorization", `Bearer ${newAccessToken}`);
-        } catch (error) {
-          // Refresh thất bại → đã logout trong refreshAccessToken
-          // Throw error để request fail, client-side sẽ handle redirect
-          throw error;
-        }
-      }
     }
   } catch (error) {
-    // Nếu error là từ refresh token thất bại → throw lại để request fail
-    if (error instanceof Error && error.message.includes("Session expired")) {
-      throw error;
-    }
-
     if (isDev) {
       console.warn("⚠️ Failed to get access token:", error);
     }

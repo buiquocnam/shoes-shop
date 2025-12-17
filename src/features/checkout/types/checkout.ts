@@ -1,6 +1,7 @@
 export interface CreateOrderRequest {
   items: OrderItem[];
   couponCode: string | null;
+  addressId: string;
 }
 
 export interface OrderItem {

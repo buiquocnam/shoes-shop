@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import ProductCard from "./ProductCard";
@@ -48,25 +47,19 @@ export default function ProductList() {
         page: currentPage,
         category_id: searchParams.get('category_id') || undefined,
         brand_id: searchParams.get('brand_id') || undefined,
-        name: searchParams.get('name') || undefined,
+        search: searchParams.get('search') || undefined,
         min_price: searchParams.get('min_price') ? Number(searchParams.get('min_price')) : undefined,
         max_price: searchParams.get('max_price') ? Number(searchParams.get('max_price')) : undefined,
         sort_by: searchParams.get('sort_by') || undefined,
         sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || undefined,
     };
 
-    const { data: products, isFetching } = useProducts(filters);
+    const { data: products, isLoading } = useProducts(filters);
     const productList = products?.data || [];
     const currentPageNum = products?.currentPage || 1;
     const totalPages = products?.totalPages || 1;
 
-    // Scroll to top when filters change
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [currentPage, searchParams.toString()]);
-
-    // Show loading on initial load
-    if (isFetching) {
+    if (isLoading) {
         return <HomeLoading />;
     }
 

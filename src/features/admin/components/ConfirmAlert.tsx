@@ -29,7 +29,7 @@ export function ConfirmAlert({
     title = "Confirm Delete",
     description,
 }: ConfirmAlertProps) {
-    const defaultDescription = `Are you sure you want to delete **${itemName}**? This action will delete all related data and **cannot be undone**.`;
+    const defaultDescription = `Are you sure you want to delete *${itemName}*? This action will delete all related data and *cannot be undone*.`;
 
     return (
         <AlertDialog>
@@ -55,7 +55,7 @@ export function ConfirmAlert({
                     </AlertDialogCancel>
 
                     <AlertDialogAction asChild onClick={onConfirm}>
-                        <Button variant="destructive">Delete Permanently</Button>
+                        <Button variant="default">Delete Permanently</Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

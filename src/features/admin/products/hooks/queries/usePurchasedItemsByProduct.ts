@@ -20,3 +20,4 @@ export const usePurchasedItemsByProduct = (productId: string | null) => {
     refetchOnWindowFocus: false,
   });
 };
+

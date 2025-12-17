@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@/types/api";
-import { getHeaders } from "./api-headers";
+import { getHeaders, refreshAccessToken } from "./api-headers";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
@@ -12,6 +12,7 @@ interface RequestOptions {
   method: HttpMethod;
   endpoint: string;
   data?: unknown;
+  retryCount?: number;
 }
 
 function prepareBody(data?: unknown) {
@@ -39,9 +40,11 @@ async function request<T>({
   method,
   endpoint,
   data,
+  retryCount = 0,
 }: RequestOptions): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
   const body = prepareBody(data);
+  const isAuthRefreshEndpoint = endpoint.includes("/auth/refresh");
 
   // ✅ Truyền endpoint vào getHeaders, nó sẽ tự check
   const headers = await getHeaders(endpoint, data);
@@ -53,12 +56,54 @@ async function request<T>({
       ...(body && { body }),
     });
 
+    // Handle 401 Unauthorized - token expired or invalid
+    // Only retry once and skip if it's the refresh endpoint itself
+    if (res.status === 401 && !isAuthRefreshEndpoint && retryCount === 0) {
+      if (isDev) {
+        console.warn(
+          "⚠️ Received 401, attempting to refresh token and retry..."
+        );
+      }
+
+      try {
+        // Refresh token
+        await refreshAccessToken();
+
+        // Retry the original request with new token
+        if (isDev) {
+          console.log("🔄 Retrying original request with new token...");
+        }
+
+        const newHeaders = await getHeaders(endpoint, data);
+        const retryRes = await fetch(url, {
+          method,
+          headers: newHeaders,
+          ...(body && { body }),
+        });
+
+        if (!retryRes.ok) {
+          await handleErrorResponse(retryRes);
+        }
+
+        return (await retryRes.json()) as ApiResponse<T>;
+      } catch (refreshError) {
+        // Refresh failed - error already handled in refreshAccessToken
+        // (logout, clear cart, throw error)
+        throw refreshError;
+      }
+    }
+
     if (!res.ok) {
       await handleErrorResponse(res);
     }
 
     return (await res.json()) as ApiResponse<T>;
   } catch (err) {
+    // If error is from refresh token failure, re-throw it
+    if (err instanceof Error && err.message.includes("Session expired")) {
+      throw err;
+    }
+
     const errorMessage = err instanceof Error ? err.message : "Network error";
     throw new Error(errorMessage);
   }

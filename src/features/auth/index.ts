@@ -12,13 +12,7 @@ export {
   type RegisterFormData,
   type ForgotPasswordFormData,
 } from "./schema";
-export {
-  LoginForm,
-  RegisterForm,
-  ForgetForm,
-  VerifyOtp,
-  ChangePasswordForm,
-} from "./components";
+export { LoginForm, RegisterForm, ForgetForm, VerifyOtp } from "./components";
 export {
   useLogin,
   useRegister,
@@ -27,6 +21,5 @@ export {
   useVerifyOTP,
   useChangePassword,
   useRefreshToken,
-  useGoogleLogin,
 } from "./hooks";
 export { authApi } from "./services";

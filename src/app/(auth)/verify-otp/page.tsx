@@ -3,7 +3,6 @@ import { VerifyOtp } from '@/features/auth/components';
 import { Suspense } from 'react';
 import { Spinner } from '@/components/ui/spinner';
 import { getOtpData } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: 'Verify OTP - ShoeShop',
@@ -12,15 +11,9 @@ export const metadata: Metadata = {
 
 export default async function VerifyOtpPage() {
     const otpData = await getOtpData();
-
-    // Redirect to register if no OTP data found
-    if (!otpData || !otpData.email) {
-        redirect('/register');
-    }
-
     return (
         <Suspense fallback={<div className="flex justify-center items-center h-full"><Spinner className="size-8" /></div>}>
-            <VerifyOtp email={otpData.email} status={otpData.status} />
+            <VerifyOtp email={otpData!.email} status={otpData!.status} />
         </Suspense>
     );
 }

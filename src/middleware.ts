@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isAuthenticated, isAdmin } from "@/lib/middleware/auth";
+import {
+  isAuthenticated,
+  isAdmin,
+  getTokenFromRequest,
+} from "@/lib/middleware/auth";
 
 // Gộp logic check auth chung
 function redirectToLogin(request: NextRequest): NextResponse {
@@ -10,11 +14,17 @@ function redirectToLogin(request: NextRequest): NextResponse {
 }
 
 function handleAdminAuth(request: NextRequest): NextResponse {
-  if (!isAuthenticated(request)) {
+  const token = getTokenFromRequest(request);
+
+  // Only redirect if no token at all - allow expired tokens to pass through
+  // so client-side can refresh them
+  if (!token) {
     return redirectToLogin(request);
   }
 
-  if (!isAdmin(request)) {
+  // If token exists but expired, allow access so client can refresh
+  // Only check role if token is valid
+  if (isAuthenticated(request) && !isAdmin(request)) {
     const forbiddenUrl = new URL("/", request.url);
     return NextResponse.redirect(forbiddenUrl);
   }
@@ -23,7 +33,11 @@ function handleAdminAuth(request: NextRequest): NextResponse {
 }
 
 function handleProtectedAuth(request: NextRequest): NextResponse {
-  if (!isAuthenticated(request)) {
+  const token = getTokenFromRequest(request);
+
+  // Only redirect if no token at all - allow expired tokens to pass through
+  // so client-side can refresh them
+  if (!token) {
     return redirectToLogin(request);
   }
 
@@ -38,9 +52,9 @@ export function middleware(request: NextRequest) {
     return handleAdminAuth(request);
   }
 
-  // Protected routes: chỉ check auth
+  // Protected routes: chỉ check auth (includes /checkout/success)
   const protectedRoutes = ["/profile", "/cart", "/checkout"];
-  if (protectedRoutes.some(route => pathname.startsWith(route))) {
+  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     return handleProtectedAuth(request);
   }
 

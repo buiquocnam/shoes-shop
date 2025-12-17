@@ -5,4 +5,3 @@ export { useSendResetPasswordEmail } from "./useSendResetPasswordEmail";
 export { useVerifyOTP } from "./useVerifyOTP";
 export { useChangePassword } from "./useChangePassword";
 export { useRefreshToken } from "./useRefreshToken";
-export { useGoogleLogin } from "./useGoogleLogin";

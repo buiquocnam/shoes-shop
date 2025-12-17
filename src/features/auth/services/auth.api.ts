@@ -48,7 +48,7 @@ export const authApi = {
     data: ChangePasswordType
   ): Promise<{ message: string }> => {
     const response = await apiClient.post<{ message: string }>(
-      `/auth/change-pass`,
+      `/auth/email/change-password`,
       {
         email: data.email,
         password: data.password,
