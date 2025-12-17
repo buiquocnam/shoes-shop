@@ -42,12 +42,7 @@ export function PurchasedItemsDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {trigger || (
-                    <Button variant="outline" size="sm" className="gap-2">
-                        <ShoppingBag className="h-4 w-4" />
-                        View Purchases
-                    </Button>
-                )}
+                {trigger}
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>

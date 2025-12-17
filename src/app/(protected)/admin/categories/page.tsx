@@ -26,11 +26,14 @@ const AdminCategoriesPage: React.FC = () => {
   const page = Number(searchParams.get("page") || 1);
   const size = Number(searchParams.get("size") || 10);
   const name = searchParams.get("name") || "";
-  const filters: CategoryFilters = {
-    page,
-    size,
-    name,
-  };
+  const filters: CategoryFilters = React.useMemo(
+    () => ({
+      page,
+      size,
+      name,
+    }),
+    [page, size, name]
+  );
   
   const { data: categories, isLoading } = useCategories(filters);
   const updateParams = useUpdateParams();

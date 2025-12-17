@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
@@ -49,7 +49,6 @@ const AdminProductsPage = () => {
 
   return (
     <div className="p-8 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold">Manage Products</h1>
 
@@ -61,22 +60,19 @@ const AdminProductsPage = () => {
         </Link>
       </div>
 
-      {/* Search */}
       <div className="flex gap-4">
         <Input
           placeholder="Search product name..."
           defaultValue={name}
           className="w-64"
-          onChange={(e) =>
-            updateParams({
-              name: e.target.value,
-              page: 1,
-            })
-          }
+          onChange={(e) => {
+            if (e.target.value !== name) {
+              updateParams({ name: e.target.value, page: 1 });
+            }
+          }}
         />
       </div>
 
-      {/* Table */}
       <DataTable
         columns={columns}
         data={products}
