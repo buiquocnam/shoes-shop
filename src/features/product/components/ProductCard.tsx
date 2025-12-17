@@ -28,9 +28,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 
 
     return (
-        <Card 
-        onClick={handleCardClick}
-        className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:scale-105 cursor-pointer
+        <Card
+            onClick={handleCardClick}
+            className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:scale-105 cursor-pointer
                  transition-all duration-300 border flex flex-col border-none"
         >
             <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
@@ -57,7 +57,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     unoptimized
                 />
 
-               
+
             </div>
 
             <CardContent className="p-5 flex flex-col flex-1">

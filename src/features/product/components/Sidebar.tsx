@@ -77,10 +77,7 @@ export default function Sidebar() {
   };
 
   return (
-    <Card className="w-full min-w-[280px] border-none shadow-xl">
-      <CardHeader>
-        <CardTitle>Filters</CardTitle>
-      </CardHeader>
+    <Card className="w-full min-w-[280px] border-none shadow-xl pt-4">
       <CardContent className="space-y-6">
         {/* Category Filter */}
         <div className="space-y-3">

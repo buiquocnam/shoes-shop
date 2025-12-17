@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,13 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
         resolver: zodResolver(productInfoSchema),
         defaultValues,
     });
+
+    // Reset form when data changes (when productId changes or data is fetched)
+    useEffect(() => {
+        if (data && !loadingProduct) {
+            form.reset(defaultValues);
+        }
+    }, [data, loadingProduct, productId, defaultValues, form]);
 
     const onSubmit = async (data: InfoFormValues) => {
         const input: ProductContentInput = {

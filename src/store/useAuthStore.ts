@@ -35,7 +35,6 @@ export const useAuthStore = create<AuthState>()(
       updateUser: (updatedUser) => {
         set((state) => ({
           user: updatedUser,
-       
         }));
       },
 

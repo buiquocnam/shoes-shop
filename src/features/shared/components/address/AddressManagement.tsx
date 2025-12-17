@@ -42,7 +42,7 @@ export function AddressManagement({
 
 
     // Empty state
-    if (!usersAddress) {
+    if (!usersAddress || usersAddress.length === 0) {
         return (
             <div className={`flex flex-col p-4 mt-8 ${className}`}>
                 <div className="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed px-6 py-14">

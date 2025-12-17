@@ -52,7 +52,7 @@ export default function Header() {
     const searchParams = useSearchParams();
     const { mutateAsync: logout } = useLogout();
 
-    const searchFromUrl = searchParams.get('search') || '';
+    const searchFromUrl = searchParams.get('name') || '';
     const [searchTerm, setSearchTerm] = useState(searchFromUrl);
 
     useEffect(() => {
@@ -82,7 +82,7 @@ export default function Header() {
         (query?: string) => {
             const term = query || searchTerm;
             if (term.trim()) {
-                router.push(`/products?search=${encodeURIComponent(term.trim())}`);
+                router.push(`/products?name=${encodeURIComponent(term.trim())}`);
             }
         },
         [searchTerm, router]

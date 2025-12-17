@@ -71,6 +71,18 @@ export const columns: ColumnDef<ProductType>[] = [
         },
     },
     {
+        accessorKey: "discount",
+        header: "Discount",
+        cell: ({ row }: { row: Row<ProductType> }) => {
+            const discount = row.original.discount;
+            return (
+                <span className="font-semibold text-red-500">
+                    {discount}%
+                </span>
+            );
+        },
+    },
+    {
         accessorKey: "brand",
         header: "Brand",
         cell: ({ row }: { row: Row<ProductType> }) => {
@@ -125,65 +137,83 @@ function ProductActions({ product }: { product: ProductType }) {
         await deleteProduct(product.id);
     };
 
+    const handleStopPropagation = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open menu</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                    <Link href={`/admin/products/${product.id}/info`} className="flex items-center gap-2">
-                        <Pencil className="h-4 w-4" />
-                        <span>Edit Product</span>
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href={`/admin/products/${product.id}/variants`} className="flex items-center gap-2">
-                        <Package className="h-4 w-4" />
-                        <span>Manage Variants</span>
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href={`/admin/products/${product.id}/images`} className="flex items-center gap-2">
-                        <ImageIcon className="h-4 w-4" />
-                        <span>Manage Images</span>
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                            className="text-destructive focus:text-destructive focus:bg-destructive/10"
+        <div onClick={handleStopPropagation}>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                    >
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Open menu</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={`/admin/products/${product.id}/info`}
+                            className="flex items-center gap-2"
                         >
-                            <Trash2 className="h-4 w-4" />
-                            <span>Delete Product</span>
-                        </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete the product{" "}
-                                <span className="font-semibold">{product.name}</span> and all its data.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                                onClick={handleDelete}
-                                disabled={isPending}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            <Pencil className="h-4 w-4" />
+                            <span>Edit Product</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={`/admin/products/${product.id}/variants`}
+                            className="flex items-center gap-2"
+                        >
+                            <Package className="h-4 w-4" />
+                            <span>Manage Variants</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={`/admin/products/${product.id}/images`}
+                            className="flex items-center gap-2"
+                        >
+                            <ImageIcon className="h-4 w-4" />
+                            <span>Manage Images</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <DropdownMenuItem
+                                className="text-destructive focus:text-destructive focus:bg-destructive/10"
                             >
-                                {isPending ? "Deleting..." : "Delete"}
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                                <Trash2 className="h-4 w-4" />
+                                <span>Delete Product</span>
+                            </DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete the product{" "}
+                                    <span className="font-semibold">{product.name}</span> and all its data.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleDelete}
+                                    disabled={isPending}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                    {isPending ? "Deleting..." : "Delete"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
     );
 }
