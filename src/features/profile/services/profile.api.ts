@@ -2,10 +2,11 @@ import { apiClient } from "@/lib/api";
 import {
   UpdateProfileRequest,
   ChangePasswordRequest,
-  PurchasedItem,
+  PurchasedItemPaginationResponse,
+  PurchasedItemFilters,
 } from "../types";
 import { User } from "@/types";
-import { ProductPaginationResponse } from "@/features/product/types";
+import { toQueryString } from "@/utils/queryString";
 
 export const profileApi = {
   // Cập nhật thông tin profile
@@ -17,9 +18,11 @@ export const profileApi = {
     return response.result;
   },
 
-  productsPurchased: async (): Promise<PurchasedItem[]> => {
-    const response = await apiClient.get<PurchasedItem[]>(
-      `/shoes/products/purchased`
+  productsPurchased: async (
+    filters?: PurchasedItemFilters
+  ): Promise<PurchasedItemPaginationResponse> => {
+    const response = await apiClient.get<PurchasedItemPaginationResponse>(
+      `/shoes/products/purchased${toQueryString(filters)}`
     );
     return response.result;
   },

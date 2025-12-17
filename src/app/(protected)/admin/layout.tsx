@@ -9,6 +9,7 @@ import {
     Bookmark,
     Package,
     ListOrdered,
+    MessageSquare,
 } from "lucide-react";
 import {
     Sidebar,
@@ -64,6 +65,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             label: "Brands",
             icon: Bookmark,
             href: "/admin/brands",
+        },
+        {
+            label: "Chat",
+            icon: MessageSquare,
+            href: "/admin/chat",
         },
     ];
 

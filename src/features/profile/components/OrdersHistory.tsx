@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { PurchasedItem } from '../types';
@@ -7,6 +8,7 @@ import { useProductsPurchased } from '../hooks/useProfile';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
 import { formatCurrency } from '@/utils/format';
+import { getPageNumbers } from '@/utils/pagination';
 import { Button } from '@/components/ui/button';
 import {
   Pagination,
@@ -16,7 +18,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
 
 
 const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) => {
@@ -73,7 +75,7 @@ const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) =
       </TableCell>
       <TableCell className="py-4 text-right">
         <Button variant="outline" size="sm" className="gap-1  text-xs "
-        onClick={handleViewDetails}
+          onClick={handleViewDetails}
         >
           View details
         </Button>
@@ -83,8 +85,21 @@ const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) =
 };
 
 export function ProductListBought() {
-  const { data, isLoading } = useProductsPurchased();
-  const purchasedItems = data || [];
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const { data, isLoading } = useProductsPurchased({
+    page: currentPage,
+    limit: pageSize,
+  });
+
+  const purchasedItems = data?.data || [];
+  const pagination = {
+    currentPage: data?.currentPage ?? 1,
+    totalPages: data?.totalPages ?? 1,
+    totalElements: data?.totalElements ?? 0,
+    pageSize: data?.pageSize ?? pageSize,
+  }
 
   if (isLoading) {
     return (
@@ -126,29 +141,102 @@ export function ProductListBought() {
   }
 
   return (
-    <div className=" shadow-sm  overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table >
-          <TableHeader>
-            <TableRow className="bg-gray-50">
-              <TableHead className="font-semibold">Product</TableHead>
-              <TableHead className="font-semibold">Color</TableHead>
-              <TableHead className="font-semibold">Size</TableHead>
-              <TableHead className="font-semibold text-center">Quantity</TableHead>
-              <TableHead className="font-semibold text-right">Total Price</TableHead>
-              <TableHead className="font-semibold text-right"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {purchasedItems.map((purchasedItem: PurchasedItem, index: number) => (
-              <OrderHistoryItem
-                key={index}
-                purchasedItem={purchasedItem}
-              />
-            ))}
-          </TableBody>
-        </Table>
+    <div className="space-y-4">
+      <div className="shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead className="font-semibold">Product</TableHead>
+                <TableHead className="font-semibold">Color</TableHead>
+                <TableHead className="font-semibold">Size</TableHead>
+                <TableHead className="font-semibold text-center">Quantity</TableHead>
+                <TableHead className="font-semibold text-right">Total Price</TableHead>
+                <TableHead className="font-semibold text-right"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {purchasedItems.map((purchasedItem: PurchasedItem, index: number) => (
+                <OrderHistoryItem
+                  key={`${purchasedItem.product.id}-${purchasedItem.variant.id}-${index}`}
+                  purchasedItem={purchasedItem}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
+
+      {pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between py-4">
+          <div className="text-sm text-muted-foreground">
+            Showing <span className="font-medium text-foreground">{purchasedItems.length}</span> of{" "}
+            <span className="font-medium text-foreground">{pagination.totalElements}</span> results
+            <span className="ml-2">
+              (Page <span className="font-medium text-foreground">{pagination.currentPage}</span> /{" "}
+              <span className="font-medium text-foreground">{pagination.totalPages}</span>)
+            </span>
+          </div>
+
+          <Pagination>
+            <PaginationContent>
+              {pagination.currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(pagination.currentPage - 1);
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+              )}
+
+              {getPageNumbers(pagination.currentPage, pagination.totalPages).map(
+                (page, index) => {
+                  if (page === 'ellipsis') {
+                    return (
+                      <PaginationItem key={`ellipsis-${index}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentPage(page);
+                        }}
+                        isActive={page === pagination.currentPage}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                }
+              )}
+
+              {pagination.currentPage < pagination.totalPages && (
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(pagination.currentPage + 1);
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }

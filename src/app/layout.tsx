@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header';
 import { CartProvider, QueryProvider, } from '@/providers';
 import { Toaster } from 'sonner';
 import { Footer } from '@/components/layout/Footer';
+import { ChatProvider } from '@/features/chat/components';
 
 export const metadata: Metadata = {
   title: 'Shoe Shop',
@@ -23,6 +24,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          <ChatProvider />
           <Toaster position="top-right" />
         </QueryProvider>
       </body>

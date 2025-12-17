@@ -23,8 +23,8 @@ export const userQueryKeys = {
   // Profile
   profile: {
     key: ["profile"],
-    purchasedProducts: () =>
-      [...userQueryKeys.profile.key, "purchased-products"] as const,
+    purchasedProducts: (filters?: unknown) =>
+      [...userQueryKeys.profile.key, "purchased-products", filters] as const,
   },
 
   // Reviews

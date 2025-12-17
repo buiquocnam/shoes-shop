@@ -45,7 +45,7 @@ export function AddressManagement({
     if (!usersAddress || usersAddress.length === 0) {
         return (
             <div className={`flex flex-col p-4 mt-8 ${className}`}>
-                <div className="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed px-6 py-14">
+                <div className="flex flex-col items-center gap-6 rounded-lg border-1 border-dashed px-6 py-14">
                     <div className="flex max-w-[480px] flex-col items-center gap-2">
                         <p className="text-lg font-bold max-w-[480px] text-center">
                             No Saved Addresses
