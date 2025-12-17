@@ -19,6 +19,7 @@ import { useRegister } from '@/features/auth/hooks';
 import { Spinner } from '@/components/ui/spinner';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { setOtpData } from '@/lib/auth';
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -36,9 +37,13 @@ export default function RegisterForm() {
 
     function onSubmit(values: RegisterFormData) {
         const { confirmPassword, ...registerData } = values;
-        register(registerData as Omit<RegisterFormData, 'confirmPassword'>);
-        router.push("/verify-otp");
-        toast.success("Please check your email for verification");
+        register(registerData as Omit<RegisterFormData, 'confirmPassword'>, {
+            onSuccess: async () => {
+                // Save email to cookie before redirecting
+                await setOtpData(registerData.email, 'REGISTER');
+                router.push("/verify-otp");
+            },
+        });
     }
 
     return (

@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
 import { OrderSummary } from './CheckoutFormComponents/OrderSummary';
 import { CheckoutItem } from '../types/checkout';
-import { useCreateOrder } from '../hooks/useCheckout';
+import { useVnPayPayment } from '../hooks/useCheckout';
 import { AddressManagement } from '@/features/shared/components/address';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AddressType } from '@/features/shared/types/address';
@@ -17,7 +17,7 @@ interface CheckoutFormProps {
 }
 
 export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
-    const { mutate: createOrder, isPending, isError } = useCreateOrder();
+    const { mutate: createVnPayPayment, isPending, isError } = useVnPayPayment();
     const { user } = useAuthStore();
     const userId = user?.id ?? '';
     const { data: usersAddress, isLoading: isLoadingAddress } = useUsersAddress(userId);
@@ -40,26 +40,30 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
     }, [isError, isNavigating]);
 
     const handleCheckout = useCallback(
-        (coupon: Coupon | null) => {
+        (coupon: Coupon | null, totalAmount: number) => {
             if (!selectedAddress) {
                 toast.error('Vui lòng chọn địa chỉ giao hàng');
                 return;
             }
 
+            if (orderSummary.length === 0) {
+                toast.error('Không có sản phẩm nào để thanh toán');
+                return;
+            }
+
+            // Get first item's variantSizeId
+            // Note: If multiple items, you may need to handle payment for each item separately
+            const firstItem = orderSummary[0];
+            const variantSizeId = firstItem.size.id;
+
             setIsNavigating(true);
-            createOrder({
-                request: {
-                    items: orderSummary.map((item) => ({
-                        variantSizeId: item.size.id,
-                        quantity: item.quantity,
-                    })),
-                    couponCode: coupon?.code || null,
-                },
-                orderSummary,
-                selectedAddress,
+            createVnPayPayment({
+                amount: totalAmount,
+                bankCode: 'NCB',
+                variantSizeId,
             });
         },
-        [orderSummary, createOrder, selectedAddress]
+        [orderSummary, createVnPayPayment, selectedAddress]
     );
 
     const showLoading = isPending || isNavigating;

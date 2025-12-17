@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { CheckCircle2 } from 'lucide-react';
 import { CheckoutItem } from '@/features/checkout/types/checkout';
 import { formatCurrency } from '@/utils/format';

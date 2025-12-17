@@ -12,7 +12,13 @@ export {
   type RegisterFormData,
   type ForgotPasswordFormData,
 } from "./schema";
-export { LoginForm, RegisterForm, ForgetForm, VerifyOtp } from "./components";
+export {
+  LoginForm,
+  RegisterForm,
+  ForgetForm,
+  VerifyOtp,
+  ChangePasswordForm,
+} from "./components";
 export {
   useLogin,
   useRegister,

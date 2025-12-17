@@ -1,6 +1,7 @@
 "use client";
 
-import { checkoutApi } from "../services/checkout.api";
+import { checkoutApi, VnPayPaymentRequest } from "../services/checkout.api";
+
 import {
   CreateOrderResponse,
   CreateOrderRequest,
@@ -53,13 +54,13 @@ export const useCreateOrder = () => {
 
         const checkoutSource = getCheckoutSource();
         if (checkoutSource === "cart") {
-            await clearCartApi();
-            clearCartStore();
-            setCart(null);
-            queryClient.removeQueries({
-              queryKey: userQueryKeys.cart.current(),
-            });
-            clearCheckoutItems();
+          await clearCartApi();
+          clearCartStore();
+          setCart(null);
+          queryClient.removeQueries({
+            queryKey: userQueryKeys.cart.current(),
+          });
+          clearCheckoutItems();
         }
       }
       router.replace(`/checkout/success`);
@@ -68,6 +69,26 @@ export const useCreateOrder = () => {
       const message =
         error?.response?.data?.message ||
         "Đặt hàng thất bại. Vui lòng thử lại.";
+      toast.error(message);
+    },
+  });
+};
+
+export const useVnPayPayment = () => {
+  return useMutation({
+    mutationFn: (request: VnPayPaymentRequest) => {
+      return checkoutApi.createVnPayPayment(request);
+    },
+    onSuccess: (response) => {
+      if (response.message === "success") {
+        window.location.href = response.paymentUrl;
+      } else {
+        toast.error("Không thể tạo link thanh toán. Vui lòng thử lại.");
+      }
+    },
+    onError: (error: any) => {
+      const message =
+        error?.message || "Tạo link thanh toán thất bại. Vui lòng thử lại.";
       toast.error(message);
     },
   });

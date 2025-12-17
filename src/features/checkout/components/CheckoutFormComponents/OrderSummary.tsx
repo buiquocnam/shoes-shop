@@ -13,7 +13,7 @@ import { Coupon } from '../../types/coupon';
 
 interface OrderSummaryProps {
     orderSummary: CheckoutItem[];
-    onCheckout: (coupon: Coupon | null) => void;
+    onCheckout: (coupon: Coupon | null, totalAmount: number) => void;
     isLoading?: boolean;
     disabled?: boolean;
 }
@@ -43,7 +43,7 @@ export function OrderSummary({
     };
 
     const handleCheckout = () => {
-        onCheckout(selectedCoupon);
+        onCheckout(selectedCoupon, Math.round(total));
     };
 
     return (

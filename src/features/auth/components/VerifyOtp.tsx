@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { authApi } from '@/features/auth/services/auth.api';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { clearOtpData, setOtpData } from '@/lib/auth';
 
 const otpSchema = z.object({
@@ -61,7 +61,14 @@ export default function VerifyOtp({ email, status }: { email: string, status: 'R
             if (response) {
                 await clearOtpData();
                 toast.success('OTP verified successfully!');
-                router.push('/login');
+                // Redirect based on status
+                if (status === 'FORGET_PASS') {
+                    // Save email to cookie for change password page
+                    await setOtpData(email, status);
+                    router.push('/change-password');
+                } else {
+                    router.push('/login');
+                }
             } else {
                 toast.error('Invalid OTP. Please try again.');
             }
@@ -100,17 +107,17 @@ export default function VerifyOtp({ email, status }: { email: string, status: 'R
                                                 {...field}
                                             >
                                                 <InputOTPGroup>
-                                                    <InputOTPSlot index={0} className='h-12 w-12'/>
-                                                    <InputOTPSlot index={1} className='h-12 w-12'/>
-                                                    <InputOTPSlot index={2} className='h-12 w-12'/>
-                                                    <InputOTPSlot index={3} className='h-12 w-12'/>
-                                                    <InputOTPSlot index={4} className='h-12 w-12'/>
-                                                    <InputOTPSlot index={5} className='h-12 w-12'/>
+                                                    <InputOTPSlot index={0} className='h-12 w-12' />
+                                                    <InputOTPSlot index={1} className='h-12 w-12' />
+                                                    <InputOTPSlot index={2} className='h-12 w-12' />
+                                                    <InputOTPSlot index={3} className='h-12 w-12' />
+                                                    <InputOTPSlot index={4} className='h-12 w-12' />
+                                                    <InputOTPSlot index={5} className='h-12 w-12' />
                                                 </InputOTPGroup>
                                             </InputOTP>
                                         </div>
                                     </FormControl>
-                                    <FormMessage  className='text-red-500 text-center'/>
+                                    <FormMessage className='text-red-500 text-center' />
                                 </FormItem>
                             )}
                         />
