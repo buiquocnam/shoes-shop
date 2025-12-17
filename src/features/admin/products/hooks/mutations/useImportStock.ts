@@ -1,10 +1,10 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   adminProductsApi,
   ImportStockInput,
 } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { useMutationWithToast } from "@/features/shared";
+import { toast } from "sonner";
 
 /**
  * Import Stock Mutation
@@ -12,7 +12,7 @@ import { useMutationWithToast } from "@/features/shared";
  */
 export const useImportStock = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<boolean, ImportStockInput>({
+  return useMutation<boolean, Error, ImportStockInput>({
     mutationFn: (data: ImportStockInput) => adminProductsApi.importStock(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -21,9 +21,11 @@ export const useImportStock = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
+      toast.success("Stock imported successfully");
     },
-    successMessage: "Stock imported successfully",
-    errorMessage: "Failed to import stock",
+    onError: () => {
+      toast.error("Failed to import stock");
+    },
   });
 };
 

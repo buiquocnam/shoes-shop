@@ -1,7 +1,7 @@
-import { useMutationWithToast } from "@/features/shared";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export interface DeleteVariantInput {
   variantId: string;
@@ -10,15 +10,17 @@ export interface DeleteVariantInput {
 
 export const useDeleteVariant = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<boolean, DeleteVariantInput>({
+  return useMutation<boolean, Error, DeleteVariantInput>({
     mutationFn: (data: DeleteVariantInput) =>
       adminProductsApi.deleteVariant(data.variantId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
+      toast.success("Variant deleted successfully");
     },
-    successMessage: "Variant deleted successfully",
-    errorMessage: "Failed to delete variant",
+    onError: () => {
+      toast.error("Failed to delete variant");
+    },
   });
 };

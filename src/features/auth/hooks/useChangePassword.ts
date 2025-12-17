@@ -4,24 +4,26 @@ import { authApi } from "../services/auth.api";
 import type { ChangePasswordType } from "../types";
 import { useRouter } from "next/navigation";
 import { clearOtpData } from "@/lib/auth";
-import { useMutationWithToast } from "@/features/shared";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function useChangePassword() {
   const router = useRouter();
 
-  return useMutationWithToast<{ message: string }, ChangePasswordType>({
+  return useMutation<{ message: string }, Error, ChangePasswordType>({
     mutationFn: (data) => authApi.changePassword(data),
     onSuccess: async (_, variables) => {
       await clearOtpData();
+      toast.success("Password changed successfully!");
       if (variables.status === "FORGET_PASS") {
         router.push("/login");
       } else {
         router.push("/profile");
       }
     },
-    successMessage: "Password changed successfully!",
-    errorMessage: (error) =>
-      error.message || "Failed to change password. Please try again.",
+    onError: (error) => {
+      toast.error(error.message || "Failed to change password. Please try again.");
+    },
   });
 }
 

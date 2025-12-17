@@ -15,12 +15,11 @@ export const sharedQueryKeys = {
 
   category: {
     key: ["category"],
-    lists: () => [...sharedQueryKeys.category.key, "list"] as const,
+    list: () => [...sharedQueryKeys.category.key, "list"] as const,
   },
   brand: {
     key: ["brand"] as const,
-    lists: (filters?: unknown) =>
-      [...sharedQueryKeys.brand.key, filters] as const,
+    list: () => [...sharedQueryKeys.brand.key, "list"] as const,
   },
 } as const;
 

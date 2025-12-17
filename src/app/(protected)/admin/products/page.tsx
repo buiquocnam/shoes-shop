@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-
+import { useSearchParams } from "next/navigation";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
@@ -13,9 +13,9 @@ import { columns } from "@/features/admin/products/components/column";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import { ProductFilters, ProductType } from "@/features/product/types";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
-
+import { PurchasedItemsByProductDialog } from "@/features/admin/products/components/PurchasedItemsByProductDialog";
 const AdminProductsPage = () => {
-  const router = useRouter();
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
   const searchParams = useSearchParams();
   const updateParams = useUpdateParams();
   /** ---------------- derive filters from URL ---------------- */
@@ -23,11 +23,14 @@ const AdminProductsPage = () => {
   const size = Number(searchParams.get("size") || 10);
   const name = searchParams.get("name") || "";
 
-  const filters: ProductFilters = {
-    page,
-    size,
-    name,
-  };
+  const filters: ProductFilters = useMemo(
+    () => ({
+      page,
+      size,
+      name,
+    }),
+    [page, size, name]
+  );
 
   /** ---------------- fetch ---------------- */
   const { data, isLoading } = useProducts(filters);
@@ -81,7 +84,17 @@ const AdminProductsPage = () => {
         onPageChange={(newPage) =>
           updateParams({ page: newPage })
         }
+        onRowClick={(row: ProductType) => setSelectedProduct(row)}
       />
+      {selectedProduct && (
+        <PurchasedItemsByProductDialog
+          productId={selectedProduct.id}
+          open={!!selectedProduct}
+          onOpenChange={(open) => {
+            if (!open) setSelectedProduct(null);
+          }}
+        />
+      )}
     </div>
   );
 };

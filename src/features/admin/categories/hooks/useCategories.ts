@@ -1,49 +1,54 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { CategoryType } from "@/features/product/types";
 import { adminCategoriesApi } from "@/features/admin/categories/services/categories.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { useMutationWithToast } from "@/features/shared";
-
+import { toast } from "sonner";
 // Re-export shared useCategories for convenience
 export { useCategories } from "@/features/shared/hooks/useCategories";
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<
+  return useMutation<
     CategoryType,
+    Error,
     { name: string; description: string }
   >({
     mutationFn: (data) => adminCategoriesApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.lists(),
+        queryKey: sharedQueryKeys.category.list(),
       });
+      toast.success("Category created successfully");
     },
-    successMessage: "Category created successfully",
-    errorMessage: "Failed to create category",
+    onError: () => {
+      toast.error("Failed to create category");
+    },
   });
 };
 
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<
+  return useMutation<
     CategoryType,
+    Error,
     { id: string; data: { name: string; description: string } }
   >({
     mutationFn: ({ id, data }) => adminCategoriesApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.lists(),
+        queryKey: sharedQueryKeys.category.list(),
       });
+      toast.success("Category updated successfully");
     },
-    successMessage: "Category updated successfully",
-    errorMessage: "Failed to update category",
+    onError: () => {
+      toast.error("Failed to update category");
+    },
   });
 };
 
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<boolean, string>({
+  return useMutation<boolean, Error, string>({
     mutationFn: async (id: string) => {
       const result = await adminCategoriesApi.delete(id);
       if (!result) {
@@ -53,10 +58,12 @@ export const useDeleteCategory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.lists(),
+        queryKey: sharedQueryKeys.category.list(),
       });
+      toast.success("Category deleted successfully");
     },
-    successMessage: "Category deleted successfully",
-    errorMessage: "Failed to delete category",
+    onError: () => {
+      toast.error("Failed to delete category");
+    },
   });
 };

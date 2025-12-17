@@ -23,6 +23,6 @@ export interface CartType {
 }
 
 export interface AddToCartRequest {
-    variantId: string;
+    varianSizeId: string;
     quantity: number;
 }

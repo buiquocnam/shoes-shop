@@ -11,9 +11,29 @@ import {
   useCreateCategory,
 } from "@/features/admin/categories";
 import Loading from "@/features/admin/components/Loading";
+import { Input } from "@/components/ui/input";
+import { useUpdateParams } from "@/features/admin/util/updateParams";
+import { useSearchParams } from "next/navigation";
+
+interface CategoryFilters {
+  page?: number;
+  size?: number;
+  name?: string;
+}
 
 const AdminCategoriesPage: React.FC = () => {
-  const { data: categories, isLoading } = useCategories();
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page") || 1);
+  const size = Number(searchParams.get("size") || 10);
+  const name = searchParams.get("name") || "";
+  const filters: CategoryFilters = {
+    page,
+    size,
+    name,
+  };
+  
+  const { data: categories, isLoading } = useCategories(filters);
+  const updateParams = useUpdateParams();
   const createCategoryMutation = useCreateCategory();
 
   const categoriesData: CategoryType[] = categories || [];
@@ -32,7 +52,15 @@ const AdminCategoriesPage: React.FC = () => {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold text-gray-800">Manage Categories</h1>
-
+        <div className="flex justify-end gap-2">
+          <Input
+            placeholder="Search category name..."
+            className="w-64"
+            onChange={(e) =>
+              updateParams({ name: e.target.value, page: 1 })
+            }
+          />
+        </div>
         <CategoryForm
           onSubmit={handleCreateCategory}
           isLoading={createCategoryMutation.isPending}

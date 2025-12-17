@@ -3,7 +3,6 @@ export { OrderSummary } from "./CheckoutFormComponents/OrderSummary";
 
 // Sub-components
 export {
-  OrderItem,
-  PriceBreakdown,
+  OrderRow,
   DiscountSection,
 } from "./CheckoutFormComponents/OrderSummaryComponents";

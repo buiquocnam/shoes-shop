@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api";
 import { ProductType, ProductDetailType } from "@/features/product/types";
+import { PurchasedItem } from "@/features/profile/types";
 
 export interface CreateProductInput {
   name: string;
@@ -152,8 +153,6 @@ export const adminProductsApi = {
           sizes: variant.sizes.map((size) => ({
             id: size.id,
             size: size.size,
-            // Stock có thể gửi trong upsert nhưng theo logic hiện tại, stock được import riêng
-            // Nên không gửi stock ở đây
           })),
         })),
       }
@@ -176,7 +175,6 @@ export const adminProductsApi = {
     return response.result;
   },
 
-
   /**
    * Update Images
    * Update danh sách name + primaryName qua JSON
@@ -185,6 +183,26 @@ export const adminProductsApi = {
     const response = await apiClient.post<boolean>(
       `/shoes/products/update/image`,
       data
+    );
+    return response.result;
+  },
+
+  /**
+   * Delete Product
+   */
+  delete: async (productId: string): Promise<boolean> => {
+    const response = await apiClient.delete<boolean>(
+      `/shoes/products/delete?productId=${productId}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Get Purchased Items by Product
+   */
+  getPurchasedItems: async (productId: string): Promise<PurchasedItem[]> => {
+    const response = await apiClient.get<PurchasedItem[]>(
+      `/shoes/products/purchased/by-product/${productId}`
     );
     return response.result;
   },

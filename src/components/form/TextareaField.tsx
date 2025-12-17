@@ -13,8 +13,9 @@ export const TextareaField = <T extends FieldValues>({
     name,
     label,
     className,
+    height,
     ...textareaProps
-}: BaseFieldProps<T> & React.ComponentProps<typeof Textarea>) => {
+}: BaseFieldProps<T> & React.ComponentProps<typeof Textarea> & { height?: string }) => {
     return (
         <Controller
             control={control}
@@ -22,7 +23,7 @@ export const TextareaField = <T extends FieldValues>({
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className={className}>
                     {label && <FieldLabel>{label}</FieldLabel>}
-                    <Textarea {...field} {...textareaProps} />
+                    <Textarea {...field} {...textareaProps} style={{ height: height }} />
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
             )}

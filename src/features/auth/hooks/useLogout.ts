@@ -3,28 +3,27 @@
 import { authApi } from "../services/auth.api";
 import { useAuthStore, useCartStore } from "@/store";
 import { useRouter } from "next/navigation";
-import { useMutationWithToast } from "@/features/shared";
+import { useMutation } from "@tanstack/react-query";
 import { removeAccessTokenCookie } from "@/lib/middleware/cookies";
+import { toast } from "sonner";
 
 export function useLogout() {
   const router = useRouter();
   const { logout } = useAuthStore();
   const { clearCart } = useCartStore();
 
-  return useMutationWithToast<void, void>({
+  return useMutation<void, Error, void>({
     mutationFn: async () => {
       await Promise.all([logout(), clearCart()]);
-      // Remove cookie for middleware
       removeAccessTokenCookie();
     },
     onSuccess: () => {
+      toast.success("Logged out successfully");
       router.push("/login");
     },
-    onError: () => {
+    onError: (error) => {
+      toast.error(error.message || "Failed to logout. Please try again.");
       router.push("/login");
     },
-    successMessage: "Logged out successfully",
-    errorMessage: (error) =>
-      error.message || "Failed to logout. Please try again.",
   });
 }

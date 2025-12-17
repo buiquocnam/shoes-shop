@@ -17,4 +17,11 @@ export const adminQueryKeys = {
     revenue: () => [...adminQueryKeys.dashboard.key, "revenue"] as const,
     stats: () => [...adminQueryKeys.dashboard.key, "stats"] as const,
   },
+
+  users: {
+    key: ["users"],
+    list: () => [...adminQueryKeys.users.key, "list"] as const,
+    purchasedItems: (userId: string) =>
+      [...adminQueryKeys.users.key, "purchased-items", userId] as const,
+  },
 } as const;

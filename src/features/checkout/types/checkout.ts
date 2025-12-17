@@ -6,7 +6,6 @@ export interface CreateOrderRequest {
 export interface OrderItem {
   variantSizeId: string;
   quantity: number;
-  totalPrice: number;
 }
 
 export interface CreateOrderResponse {

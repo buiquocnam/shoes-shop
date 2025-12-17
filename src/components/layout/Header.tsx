@@ -1,61 +1,50 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { User, ShoppingCartIcon, LogOut, Search, LayoutDashboard } from "lucide-react";
+import { User, ShoppingCart, LogOut, Search, Menu } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useCartStore } from "@/store/useCartStore";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLogout } from "@/features/auth/hooks/useLogout";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
     NavigationMenu,
     NavigationMenuItem,
+    NavigationMenuLink,
     NavigationMenuList,
-    navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useCartStore } from "@/store/useCartStore";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useLogout } from "@/features/auth/hooks/useLogout";
 
-const navLinks: { name: string; href: string }[] = [
+const NAV_LINKS = [
     { name: 'Home', href: '/' },
     { name: 'Shoes', href: '/products' },
     { name: 'Contact', href: '/contact' },
-];
+] as const;
 
+const HIDDEN_PATHS = ['/login', '/register', '/verify-email', '/forget-password'] as const;
 
-const NavLinks = ({ className, onLinkClick }: { className?: string; onLinkClick?: () => void }) => {
-    const pathname = usePathname();
-
-    return (
-        <>
-            {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                    <NavigationMenuItem key={link.name}>
-                        <Link
-                            href={link.href}
-                            onClick={onLinkClick}
-                            className={cn(
-                                navigationMenuTriggerStyle(),
-                                "text-sm sm:text-base",
-                                isActive && "text-primary bg-primary/10",
-                                className
-                            )}
-                        >
-                            {link.name}
-                        </Link>
-                    </NavigationMenuItem>
-                );
-            })}
-        </>
-    );
-};
-
-const Header = () => {
+export default function Header() {
     const { user, isAuthenticated } = useAuthStore();
     const { cart } = useCartStore();
     const pathname = usePathname();
@@ -70,117 +59,190 @@ const Header = () => {
         setSearchTerm(searchFromUrl);
     }, [searchFromUrl]);
 
-    const hiddenPaths = ['/login', '/register', '/verify-email', '/forget-password'];
-    if (pathname.startsWith('/admin') || hiddenPaths.includes(pathname)) {
+    const shouldHide = useMemo(
+        () => pathname.startsWith('/admin') || HIDDEN_PATHS.includes(pathname as any),
+        [pathname]
+    );
+
+    const cartCount = useMemo(() => cart?.count ?? 0, [cart?.count]);
+
+    const handleLogout = useCallback(() => {
+        logout();
+    }, [logout]);
+
+    const accountLinks = useMemo(
+        () => [
+            { name: 'My Profile', href: '/profile', icon: User },
+            { name: 'Logout', href: '#', icon: LogOut, onClick: handleLogout },
+        ],
+        [handleLogout]
+    );
+
+    const handleSearch = useCallback(
+        (query?: string) => {
+            const term = query || searchTerm;
+            if (term.trim()) {
+                router.push(`/products?search=${encodeURIComponent(term.trim())}`);
+            }
+        },
+        [searchTerm, router]
+    );
+
+    const handleSearchKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        },
+        [handleSearch]
+    );
+
+    const handleSearchClick = useCallback(() => {
+        router.push('/products');
+    }, [router]);
+
+    if (shouldHide) {
         return null;
     }
 
-    const handleLogout = () => {
-        logout();
-    };
-
-    const accountLinks = [
-        { name: 'My Profile', href: '/profile', icon: <User className="w-4 h-4" /> },
-        { name: 'Logout', href: '#', icon: <LogOut className="w-4 h-4" />, onClick: handleLogout },
-    ];
-
-    const handleSearch = (query?: string) => {
-        const term = query || searchTerm;
-        if (term.trim()) {
-            router.push(`/products?search=${encodeURIComponent(term.trim())}`);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    };
-
-
     return (
-        <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-2 sm:py-3">
-                <div className="grid grid-cols-[auto_1fr_auto] md:grid-cols-3 items-center gap-2 sm:gap-4 min-h-[3.5rem] sm:min-h-[4rem]">
-                    {/* LOGO */}
-                    <Link href="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-primary" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
-                        </svg>
-                        <h1 className="text-base sm:text-xl md:text-2xl font-bold tracking-tight text-gray-900">
-                            <span className="text-primary">Sole</span>Mate
-                        </h1>
-                    </Link>
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-3 items-center h-16 gap-4">
+                    {/* Logo Section */}
+                    <div className="flex items-center">
+                        <Link
+                            href="/"
+                            className="flex items-center gap-2 transition-opacity hover:opacity-80"
+                        >
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                                <span className="text-lg font-bold text-primary-foreground">S</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-lg font-bold leading-none">
+                                    <span className="text-primary">Sole</span>
+                                    <span className="text-foreground">Mate</span>
+                                </span>
+                                <span className="text-[10px] leading-none text-muted-foreground">Premium Shoes</span>
+                            </div>
+                        </Link>
+                    </div>
 
-                    {/* NAVIGATION - Center (PC) */}
-                    <NavigationMenu className="hidden md:flex justify-self-center align-center">
-                        <NavigationMenuList className=" w-full">
-                            <NavLinks />
-                        </NavigationMenuList>
-                    </NavigationMenu>
+                    {/* Navigation Section - Desktop */}
+                    <div className="flex justify-center">
+                        <NavigationMenu className="hidden md:flex">
+                            <NavigationMenuList>
+                                {NAV_LINKS.map((link) => {
+                                    const isActive = pathname === link.href;
+                                    return (
+                                        <NavigationMenuItem key={link.name}>
+                                            <NavigationMenuLink asChild>
+                                                <Link
+                                                    href={link.href}
+                                                    className={cn(
+                                                        "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent data-[active]:text-accent-foreground",
+                                                        isActive && "bg-primary text-primary-foreground hover:bg-primary/90"
+                                                    )}
+                                                >
+                                                    {link.name}
+                                                </Link>
+                                            </NavigationMenuLink>
+                                        </NavigationMenuItem>
+                                    );
+                                })}
+                            </NavigationMenuList>
+                        </NavigationMenu>
+                    </div>
 
-                    {/* RIGHT SECTION */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 justify-end">
-                        {/* Search Input với Popover - Desktop */}
-                        <Input
-                            type="text"
-                            placeholder="Search products..."
-                            value={searchTerm}
-                            className="h-9 w-48 xl:w-64 pr-3 text-sm border border-gray-200 rounded-md bg-background focus:outline-none focus:ring-0"
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
+                    {/* Actions Section */}
+                    <div className="flex items-center justify-end gap-2">
+                        {/* Search - Desktop */}
+                        <div className="hidden lg:block">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={searchTerm}
+                                    className="h-9 w-64 pl-9 pr-4 transition-all focus:w-72"
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyDown={handleSearchKeyDown}
+                                />
+                            </div>
+                        </div>
 
-                        {/* Search Icon - Mobile/Tablet */}
+                        {/* Search Button - Mobile/Tablet */}
                         <Button
                             variant="ghost"
                             size="icon"
                             className="lg:hidden"
-                            onClick={() => router.push('/products')}
+                            onClick={handleSearchClick}
                         >
                             <Search className="h-4 w-4" />
+                            <span className="sr-only">Search</span>
                         </Button>
 
-                        {/* Cart - Dùng Button + Badge */}
+                        {/* Cart */}
                         <Button variant="ghost" size="icon" asChild className="relative">
                             <Link href="/cart">
-                                <ShoppingCartIcon className="h-4 w-4" />
-                                {cart?.count && cart.count > 0 && (
+                                <ShoppingCart className="h-4 w-4" />
+                                {cartCount > 0 && (
                                     <Badge
-                                        className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs "
+                                        variant="destructive"
+                                        className="absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-semibold"
                                     >
-                                        {cart.count > 9 ? '9+' : cart.count}
+                                        {cartCount > 9 ? '9+' : cartCount}
                                     </Badge>
                                 )}
+                                <span className="sr-only">Shopping cart</span>
                             </Link>
                         </Button>
 
-                        {/* User - Dùng Avatar */}
+                        {/* User Menu */}
                         {isAuthenticated && user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon" className="rounded-full">
-                                        <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                                            <AvatarFallback className="bg-orange-100 text-gray-800">
+                                        <Avatar className="h-8 w-8">
+                                            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
                                                 {user.name?.[0]?.toUpperCase() ?? 'U'}
                                             </AvatarFallback>
                                         </Avatar>
+                                        <span className="sr-only">User menu</span>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" sideOffset={8} className="w-48">
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuLabel>
+                                        <div className="flex flex-col space-y-1">
+                                            <p className="text-sm font-medium leading-none">{user.name}</p>
+                                            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                                        </div>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {accountLinks.map((link) => (
-                                            <DropdownMenuItem
-                                                key={link.name}
-                                                asChild={!link.onClick}
-                                                onClick={link.onClick}
-                                            >
-                                                <Link href={link.href} onClick={link?.onClick ? link.onClick : undefined} className="flex items-center gap-2 cursor-pointer w-full">
-                                                    {link.icon}
-                                                    <span>{link.name}</span>
-                                                </Link>
-                                            </DropdownMenuItem>
-                                        ))}
+                                        {accountLinks.map((link) => {
+                                            const Icon = link.icon;
+                                            return (
+                                                <DropdownMenuItem
+                                                    key={link.name}
+                                                    asChild={!link.onClick}
+                                                    onClick={link.onClick}
+                                                    className="cursor-pointer"
+                                                >
+                                                    {link.onClick ? (
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            <Icon className="h-4 w-4" />
+                                                            <span>{link.name}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <Link href={link.href} className="flex items-center gap-2 w-full">
+                                                            <Icon className="h-4 w-4" />
+                                                            <span>{link.name}</span>
+                                                        </Link>
+                                                    )}
+                                                </DropdownMenuItem>
+                                            );
+                                        })}
                                     </DropdownMenuGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -188,23 +250,81 @@ const Header = () => {
                             <Button variant="ghost" size="icon" asChild>
                                 <Link href="/login">
                                     <User className="h-4 w-4" />
+                                    <span className="sr-only">Login</span>
                                 </Link>
                             </Button>
                         )}
+
+                        {/* Mobile Menu */}
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="md:hidden">
+                                    <Menu className="h-5 w-5" />
+                                    <span className="sr-only">Toggle menu</span>
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="w-80">
+                                <SheetHeader>
+                                    <SheetTitle>Menu</SheetTitle>
+                                </SheetHeader>
+                                <div className="mt-6 flex flex-col gap-6">
+                                    {/* Navigation */}
+                                    <div className="space-y-2">
+                                        <h3 className="text-sm font-semibold text-muted-foreground">Navigation</h3>
+                                        <Separator />
+                                        <nav className="flex flex-col gap-1">
+                                            {NAV_LINKS.map((link) => {
+                                                const isActive = pathname === link.href;
+                                                return (
+                                                    <Link
+                                                        key={link.name}
+                                                        href={link.href}
+                                                        className={cn(
+                                                            "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                                                            isActive
+                                                                ? "bg-primary text-primary-foreground"
+                                                                : "hover:bg-accent hover:text-accent-foreground"
+                                                        )}
+                                                    >
+                                                        {link.name}
+                                                    </Link>
+                                                );
+                                            })}
+                                        </nav>
+                                    </div>
+
+                                    {/* Account */}
+                                    {isAuthenticated && (
+                                        <>
+                                            <Separator />
+                                            <div className="space-y-2">
+                                                <h3 className="text-sm font-semibold text-muted-foreground">Account</h3>
+                                                <Separator />
+                                                <div className="flex flex-col gap-1">
+                                                    {accountLinks.map((link) => {
+                                                        const Icon = link.icon;
+                                                        return (
+                                                            <Link
+                                                                key={link.name}
+                                                                href={link.href}
+                                                                onClick={link.onClick}
+                                                                className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                                                            >
+                                                                <Icon className="h-4 w-4" />
+                                                                {link.name}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
-
-                {/* Mobile Navigation - Dùng chung NavLinks component */}
-                <nav className="md:hidden border-t border-gray-200 pt-2 mt-2">
-                    <NavigationMenu className="flex justify-center align-center w-full" >
-                        <NavigationMenuList className="flex justify-center align-center w-full">
-                            <NavLinks />
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                </nav>
             </div>
         </header>
     );
-};
-
-export default Header;
+}

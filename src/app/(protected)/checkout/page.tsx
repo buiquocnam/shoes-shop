@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckoutItem } from '@/features/checkout/types';
+import { CheckoutItem } from '@/features/checkout/types/checkout';
 import { getCheckoutItems } from '@/features/checkout/utils/checkoutStorage';
 import { CheckoutForm } from '@/features/checkout/components/CheckoutForm';
 import { Button } from '@/components/ui/button';

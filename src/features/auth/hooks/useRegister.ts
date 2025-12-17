@@ -4,20 +4,23 @@ import { authApi } from "../services/auth.api";
 import type { RegisterFormData } from "../schema";
 import type { AuthResponse } from "../types";
 import { useRouter } from "next/navigation";
-import { useMutationWithToast } from "@/features/shared";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function useRegister() {
   const router = useRouter();
 
-  return useMutationWithToast<
+  return useMutation<
     AuthResponse,
+    Error,
     Omit<RegisterFormData, "confirmPassword">
   >({
     mutationFn: (data) => authApi.register(data),
     onSuccess: () => {
+      toast.success("Please check your email for verification");
     },
-    successMessage: "Please check your email for verification",
-    errorMessage: (error) =>
-      error.message || "Registration failed. Please try again.",
+    onError: (error) => {
+      toast.error(error.message || "Registration failed. Please try again.");
+    },
   });
 }

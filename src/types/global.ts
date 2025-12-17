@@ -9,7 +9,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  phone?: string;
   role?: Role;
+  status?: boolean;
 }
 
 export interface PaginationParams {

@@ -1,4 +1,4 @@
-import { CheckoutItem, CheckoutItemApiRequest } from "../types";
+import { CheckoutItem, CheckoutItemApiRequest } from "../types/checkout";
 
 /**
  * Convert CheckoutItem (có đầy đủ thông tin) sang format API (chỉ variantId, quantity, totalPrice)

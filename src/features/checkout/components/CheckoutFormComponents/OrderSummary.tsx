@@ -1,16 +1,19 @@
 'use client';
 
-import { useMemo } from 'react';
-import { CheckoutItem } from '../../types';
+import { useState, useMemo } from 'react';
+import { CheckoutItem } from '../../types/checkout';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { formatCurrency } from '@/utils/format';
 import { Lock } from 'lucide-react';
-import { OrderItem, PriceBreakdown, DiscountSection } from './OrderSummaryComponents';
+import { OrderRow, DiscountSection } from './OrderSummaryComponents';
+import { Coupon } from '../../types/coupon';
 
 interface OrderSummaryProps {
     orderSummary: CheckoutItem[];
-    onCheckout: () => void;
+    onCheckout: (coupon: Coupon | null) => void;
     isLoading?: boolean;
     disabled?: boolean;
 }
@@ -21,47 +24,76 @@ export function OrderSummary({
     isLoading = false,
     disabled = false,
 }: OrderSummaryProps) {
-    const total = orderSummary.reduce((acc, item) => acc + item.totalPrice, 0);
+    const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+
+    const subtotal = useMemo(
+        () => orderSummary.reduce((acc, item) => acc + item.totalPrice, 0),
+        [orderSummary]
+    );
+
+    const discountAmount = useMemo(() => {
+        if (!selectedCoupon) return 0;
+        return (subtotal * selectedCoupon.discountPercent) / 100;
+    }, [subtotal, selectedCoupon]);
+
+    const total = subtotal - discountAmount;
+
+    const handleSetDiscountCode = (coupon: Coupon | null) => {
+        setSelectedCoupon(coupon);
+    };
+
+    const handleCheckout = () => {
+        onCheckout(selectedCoupon);
+    };
 
     return (
-        <div className="sticky top-8 rounded-lg border bg-secondary p-6">
-            <div className="flex flex-col gap-6">
-                <h2 className="text-xl font-bold">Tóm tắt đơn hàng</h2>
-
-                <div className="flex flex-col gap-4">
+        <Card className="sticky top-8">
+            <CardHeader>
+                <CardTitle>Tóm tắt đơn hàng</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="space-y-4">
                     {orderSummary.map((item) => (
-                        <OrderItem key={item.variant.id} item={item} />
+                        <OrderRow key={`${item.variant.id}-${item.size.id}`} item={item} />
                     ))}
                 </div>
 
-                <PriceBreakdown priceSummary={{ subtotal: total, discount: 0, discountCode: null }} />
+                <Separator />
 
-                <DiscountSection />
+                <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Tạm tính</span>
+                    <span className="text-lg font-semibold">{formatCurrency(subtotal)}</span>
+                </div>
 
-                <div className="flex items-center justify-between border-t pt-4">
-                    <p className="text-lg font-bold">Tổng cộng</p>
-                    <p className="text-2xl font-black">{formatCurrency(total)}</p>
+                <DiscountSection price={subtotal} setDiscountCode={handleSetDiscountCode} />
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold">Tổng cộng</span>
+                    <span className="text-2xl font-bold">{formatCurrency(total)}</span>
                 </div>
 
                 <Button
-                    onClick={onCheckout}
+                    onClick={handleCheckout}
                     disabled={isLoading || orderSummary.length === 0 || disabled}
-                    className="flex h-14 w-full items-center justify-center gap-2 text-base font-bold"
+                    className="h-12 w-full gap-2"
+                    size="lg"
                 >
                     {isLoading ? (
                         <>
-                            <Spinner className="h-5 w-5" />
+                            <Spinner className="h-4 w-4" />
                             <span>Đang xử lý...</span>
                         </>
                     ) : (
                         <>
-                            <Lock className="h-5 w-5" />
+                            <Lock className="h-4 w-4" />
                             <span>Thanh toán ngay</span>
                         </>
                     )}
                 </Button>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }
 

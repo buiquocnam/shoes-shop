@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CheckCircle2 } from 'lucide-react';
-import { CheckoutItem } from '@/features/checkout/types';
+import { CheckoutItem } from '@/features/checkout/types/checkout';
 import { formatCurrency } from '@/utils/format';
 import { AddressType } from '@/features/shared/types/address';
 import { formatFullAddress } from '@/features/shared/utils/addressHelpers';
@@ -20,7 +20,6 @@ interface CheckoutSuccessData {
 export default function CheckoutSuccessPage() {
     const router = useRouter();
 
-    // Đọc data ngay khi component mount (client-side only)
     const getInitialData = (): CheckoutSuccessData | null => {
         if (typeof window === "undefined") return null;
 
@@ -35,7 +34,7 @@ export default function CheckoutSuccessPage() {
         }
     };
 
-    const [successData, setSuccessData] = useState<CheckoutSuccessData | null>(getInitialData);
+    const successData = getInitialData();
 
     useEffect(() => {
         // Nếu không có data, redirect về checkout

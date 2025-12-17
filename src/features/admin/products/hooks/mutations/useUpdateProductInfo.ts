@@ -1,11 +1,11 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   adminProductsApi,
   UpdateProductInfoInput,
 } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { useMutationWithToast } from "@/features/shared";
 import { ProductType } from "@/features/product/types";
+import { toast } from "sonner";
 
 /**
  * Update Product Info Mutation
@@ -13,7 +13,7 @@ import { ProductType } from "@/features/product/types";
  */
 export const useUpdateProductInfo = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<ProductType, UpdateProductInfoInput>({
+  return useMutation<ProductType, Error, UpdateProductInfoInput>({
     mutationFn: (data: UpdateProductInfoInput) =>
       adminProductsApi.updateInfo(data),
     onSuccess: (_, variables) => {
@@ -23,8 +23,10 @@ export const useUpdateProductInfo = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
+      toast.success("Product info updated successfully");
     },
-    successMessage: "Product info updated successfully",
-    errorMessage: "Failed to update product info",
+    onError: () => {
+      toast.error("Failed to update product info");
+    },
   });
 };

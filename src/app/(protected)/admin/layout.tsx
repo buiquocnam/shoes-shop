@@ -1,14 +1,14 @@
 'use client';
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
-    ShoppingCart,
     Users,
     Bookmark,
     Package,
-    ChevronRight,
+    ListOrdered,
 } from "lucide-react";
 import {
     Sidebar,
@@ -16,9 +16,7 @@ import {
     SidebarGroup,
     SidebarGroupContent,
     SidebarHeader,
-    SidebarInset,
     SidebarMenu,
-    SidebarMenuAction,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
@@ -26,10 +24,17 @@ import {
     SidebarMenuSubItem,
     SidebarProvider,
 } from "@/components/ui/sidebar";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
+function getInitialActive(pathname: string): string {
+    if (pathname === "/admin/") {
+        return "/admin";
+    }
+    return pathname;
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const [activePath, setActivePath] = useState<string>(getInitialActive(pathname));
 
     const menuItems = [
         {
@@ -40,16 +45,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {
             label: "Products",
             icon: Package,
-            href: "/admin/products",
             subMenu: [
                 { label: "Product List", href: "/admin/products" },
                 { label: "History Variants", href: "/admin/products/variants" },
             ],
         },
         {
-            label: "Orders",
-            icon: ShoppingCart,
-            href: "/admin/orders",
+            label: "Categories",
+            icon: ListOrdered,
+            href: "/admin/categories",
         },
         {
             label: "Users",
@@ -81,69 +85,60 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <SidebarMenu>
                                     {menuItems.map((item) => {
                                         const Icon = item.icon;
-                                        const isActive = item.href === "/admin"
-                                            ? pathname === "/admin" || pathname === "/admin/"
-                                            : pathname.startsWith(item.href);
                                         const hasSubMenu = item.subMenu && item.subMenu.length > 0;
-
-                                        if (hasSubMenu) {
-                                            return (
-                                                <Collapsible
-                                                    key={item.label}
-                                                    asChild
-                                                    defaultOpen={isActive}
-                                                >
-                                                    <SidebarMenuItem>
-                                                        <SidebarMenuButton
-                                                            asChild
-                                                            isActive={isActive}
-                                                        >
-                                                            <Link href={item.href}>
-                                                                <Icon />
-                                                                <span>{item.label}</span>
-                                                            </Link>
-                                                        </SidebarMenuButton>
-                                                        <CollapsibleTrigger asChild>
-                                                            <SidebarMenuAction className="data-[state=open]:rotate-90">
-                                                                <ChevronRight />
-                                                                <span className="sr-only">Toggle</span>
-                                                            </SidebarMenuAction>
-                                                        </CollapsibleTrigger>
-                                                        <CollapsibleContent>
-                                                            <SidebarMenuSub>
-                                                                {item.subMenu.map((sub) => {
-                                                                    const subIsActive = pathname === sub.href;
-                                                                    return (
-                                                                        <SidebarMenuSubItem key={sub.label}>
-                                                                            <SidebarMenuSubButton
-                                                                                asChild
-                                                                                isActive={subIsActive}
-                                                                            >
-                                                                                <Link href={sub.href}>
-                                                                                    <span>{sub.label}</span>
-                                                                                </Link>
-                                                                            </SidebarMenuSubButton>
-                                                                        </SidebarMenuSubItem>
-                                                                    );
-                                                                })}
-                                                            </SidebarMenuSub>
-                                                        </CollapsibleContent>
-                                                    </SidebarMenuItem>
-                                                </Collapsible>
-                                            );
-                                        }
+                                        const isActive = hasSubMenu
+                                            ? item.subMenu.some(sub => activePath === sub.href)
+                                            : activePath === item.href;
 
                                         return (
                                             <SidebarMenuItem key={item.label}>
                                                 <SidebarMenuButton
-                                                    asChild
+                                                    asChild={!hasSubMenu}
                                                     isActive={isActive}
                                                 >
-                                                    <Link href={item.href}>
-                                                        <Icon />
-                                                        <span>{item.label}</span>
-                                                    </Link>
+                                                    {hasSubMenu ? (
+                                                        <div className="flex items-center gap-2 w-full">
+                                                            <Icon />
+                                                            <span>{item.label}</span>
+                                                        </div>
+                                                    ) : (
+                                                        item.href && (
+                                                            <Link
+                                                                href={item.href}
+                                                                onClick={() => {
+                                                                    setActivePath(item.href!);
+                                                                }}
+                                                            >
+                                                                <Icon />
+                                                                <span>{item.label}</span>
+                                                            </Link>
+                                                        )
+                                                    )}
                                                 </SidebarMenuButton>
+                                                {hasSubMenu && (
+                                                    <SidebarMenuSub>
+                                                        {item.subMenu.map((sub) => {
+                                                            const subIsActive = activePath === sub.href;
+                                                            return (
+                                                                <SidebarMenuSubItem key={sub.label}>
+                                                                    <SidebarMenuSubButton
+                                                                        asChild
+                                                                        isActive={subIsActive}
+                                                                    >
+                                                                        <Link
+                                                                            href={sub.href}
+                                                                            onClick={() => {
+                                                                                setActivePath(sub.href);
+                                                                            }}
+                                                                        >
+                                                                            <span>{sub.label}</span>
+                                                                        </Link>
+                                                                    </SidebarMenuSubButton>
+                                                                </SidebarMenuSubItem>
+                                                            );
+                                                        })}
+                                                    </SidebarMenuSub>
+                                                )}
                                             </SidebarMenuItem>
                                         );
                                     })}

@@ -4,9 +4,10 @@ import { brandsApi } from "@/features/shared/services/brands.api";
 import { BrandType } from "@/features/product/types";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default async function BrandList() {
-    const brandsResponse = await brandsApi.search({ size: 6 });
+    const brandsResponse = await brandsApi.search({ size: 5 });
 
     if (!brandsResponse || !brandsResponse.data || brandsResponse.data.length === 0) {
         return null;
@@ -15,25 +16,39 @@ export default async function BrandList() {
     const displayBrands = brandsResponse.data;
 
     return (
-        <section className="py-14 bg-white">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="flex justify-between items-end mb-8">
+        <section className="py-16 bg-white">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header Section */}
+                <div className="flex justify-between items-end mb-12">
                     <div>
-                        <h2 className="text-2xl font-bold mb-2">Shop by Brand</h2>
-                        <p className="text-gray-600">Find the perfect pair for every occasion.</p>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="h-1 w-8 bg-primary rounded-full" />
+                            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em]">Featured</span>
+                        </div>
+                        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+                            Our Top <span className="text-primary">Brands</span>
+                        </h2>
                     </div>
-                    <Link
-                        href="/products"
-                        className="text-primary font-medium hover:underline flex items-center gap-1"
+
+                    <Button 
+                        asChild
+                        variant="default"
+                        className="rounded-full hover:bg-white hover:text-primary px-6 transition-all duration-300 shadow-lg "
                     >
-                        View All
-                        <ArrowRight className="text-sm" />
-                    </Link>
+                        <Link href="/products" className="flex items-center gap-2">
+                            View All
+                            <ArrowRight className="h-4 w-4 "/>
+                        </Link>
+                    </Button>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                {/* Brands Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
                     {displayBrands.map((brand) => (
-                        <BrandItem key={brand.id} brand={brand} />
+                        <BrandItem 
+                            key={brand.id} 
+                            brand={brand} 
+                        />
                     ))}
                 </div>
             </div>
@@ -41,44 +56,39 @@ export default async function BrandList() {
     );
 }
 
-interface BrandItemProps {
-    brand: BrandType;
-}
-
-function BrandItem({ brand }: BrandItemProps) {
+function BrandItem({ brand }: { brand: BrandType }) {
     const brandImage = brand.logo || "/placeholder.png";
 
     return (
         <Link
             href={`/products?brand_id=${brand.id}`}
-            className="group flex flex-col items-center gap-3"
+            className="group flex flex-col items-center"
         >
             <div
                 className={cn(
-                    "w-full aspect-square rounded-full bg-gray-100 overflow-hidden",
-                    "flex items-center justify-center p-6",
-                    "border border-transparent group-hover:border-primary/30",
-                    "transition-all duration-300"
+                    "relative w-full aspect-square rounded-full flex items-center justify-center p-8",
+                    "shadow-md transition-all duration-200",
+                    "border border-transparent", // ban đầu không có border
+                    "hover:shadow-xl hover:-translate-y-2", // shadow và translate giữ nguyên
+                    "hover:border-primary" // hover vào thì border primary
                 )}
             >
-                <Image
-                    src={brandImage}
-                    alt={brand.name}
-                    width={120}
-                    height={120}
-                    className={cn(
-                        "w-full h-full object-contain",
-                        "group-hover:scale-110 transition-transform duration-300",
-                        "opacity-80 group-hover:opacity-100",
-                        "grayscale group-hover:grayscale-0"
-                    )}
-                    unoptimized
-                />
+                <div className="relative w-full h-full">
+                    <Image
+                        src={brandImage}
+                        alt={brand.name}
+                        fill
+                        className="object-contain transition-transform duration-200 group-hover:scale-110"
+                        unoptimized
+                    />
+                </div>
             </div>
-            <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                {brand.name}
-            </h3>
+
+            <div className="mt-4 text-center">
+                <h3 className="font-bold text-sm text-slate-700 group-hover:text-primary transition-colors">
+                    {brand.name}
+                </h3>
+            </div>
         </Link>
     );
 }
-

@@ -20,3 +20,8 @@ export interface FetchCategoriesParams {
 export interface CategoryPaginationResponse
   extends PaginatedResponse<CategoryType> {}
 
+export interface Filters {
+  page?: number;
+  size?: number;
+  name?: string;
+}

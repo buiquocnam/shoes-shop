@@ -7,4 +7,4 @@ export { default as ProductGallery } from "./ProductGallery";
 export { default as ProductReview } from "./ProductReview";
 export { default as Sidebar } from "./Sidebar";
 export { default as AlertLogin } from "./AlertLogin";
-export { default as ProductListServer } from "./ProductList/ProductListServer";
+export { default as ProductList } from "./ProductList";

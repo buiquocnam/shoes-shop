@@ -19,21 +19,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 
   pagination: {
-    currentPage: number;     
+    currentPage: number;
     totalPages: number;
     totalElements: number;
     pageSize: number;
   };
 
   onPageChange?: (page: number) => void;
-
+  onRowClick?: (row: TData) => void;
   columnFilters?: ColumnFiltersState;
 }
 
@@ -42,6 +50,7 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   onPageChange,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -73,23 +82,23 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4 p-1">
-      <div className="rounded-lg border bg-gray-100 shadow-sm">
+    <div className="space-y-4">
+      <div className="rounded-lg border border-border/50 bg-card shadow-sm">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className="border-b border-border/50 hover:bg-transparent">
                 {hg.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-primary"
+                    className="h-12 whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-muted-foreground"
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -101,9 +110,13 @@ export function DataTable<TData, TValue>({
               data.map((_, rowIndex) => {
                 const row = table.getRowModel().rows[rowIndex];
                 return (
-                  <TableRow key={row.id} className="hover:bg-gray-50">
+                  <TableRow
+                    key={row.id}
+                    className="border-b border-border/50 transition-colors hover:bg-muted/50 cursor-pointer"
+                    onClick={() => onRowClick?.(row.original)}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-1">
+                      <TableCell key={cell.id} className="py-4">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -117,7 +130,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-gray-500"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   No data found.
                 </TableCell>
@@ -129,35 +142,106 @@ export function DataTable<TData, TValue>({
 
       {/* Pagination */}
       <div className="flex items-center justify-between py-4">
-        <div className="text-sm text-gray-500">
-          Showing {data.length} of {pagination.totalElements} results
+        <div className="text-sm text-muted-foreground">
+          Showing <span className="font-medium text-foreground">{data.length}</span> of{" "}
+          <span className="font-medium text-foreground">{pagination.totalElements}</span> results
           {pagination.totalPages > 1 && (
             <span className="ml-2">
-              (Page {pagination.currentPage} / {pagination.totalPages})
+              (Page <span className="font-medium text-foreground">{pagination.currentPage}</span> /{" "}
+              <span className="font-medium text-foreground">{pagination.totalPages}</span>)
             </span>
           )}
         </div>
 
         {pagination.totalPages > 1 && (
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange?.(pagination.currentPage - 1)}
-              disabled={pagination.currentPage <= 1}
-            >
-              Previous
-            </Button>
+          <Pagination>
+            <PaginationContent>
+              {pagination.currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange?.(pagination.currentPage - 1);
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+              )}
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange?.(pagination.currentPage + 1)}
-              disabled={pagination.currentPage >= pagination.totalPages}
-            >
-              Next
-            </Button>
-          </div>
+              {(() => {
+                const pages: (number | 'ellipsis')[] = [];
+                const maxVisible = 5;
+
+                if (pagination.totalPages <= maxVisible) {
+                  for (let i = 1; i <= pagination.totalPages; i++) {
+                    pages.push(i);
+                  }
+                } else {
+                  if (pagination.currentPage <= 3) {
+                    for (let i = 1; i <= 4; i++) {
+                      pages.push(i);
+                    }
+                    pages.push('ellipsis');
+                    pages.push(pagination.totalPages);
+                  } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                    pages.push(1);
+                    pages.push('ellipsis');
+                    for (let i = pagination.totalPages - 3; i <= pagination.totalPages; i++) {
+                      pages.push(i);
+                    }
+                  } else {
+                    pages.push(1);
+                    pages.push('ellipsis');
+                    for (let i = pagination.currentPage - 1; i <= pagination.currentPage + 1; i++) {
+                      pages.push(i);
+                    }
+                    pages.push('ellipsis');
+                    pages.push(pagination.totalPages);
+                  }
+                }
+
+                return pages.map((page, index) => {
+                  if (page === 'ellipsis') {
+                    return (
+                      <PaginationItem key={`ellipsis-${index}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onPageChange?.(page);
+                        }}
+                        isActive={page === pagination.currentPage}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                });
+              })()}
+
+              {pagination.currentPage < pagination.totalPages && (
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange?.(pagination.currentPage + 1);
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
         )}
       </div>
     </div>

@@ -5,7 +5,7 @@ import { sharedQueryKeys } from "../constants/shared-queryKeys";
 
 export function useBrands(filters?: FetchBrandsParams) {
   return useQuery<BrandPaginationResponse>({
-    queryKey: sharedQueryKeys.brand.lists(filters),
+    queryKey: sharedQueryKeys.brand.list(),
     queryFn: () => brandsApi.search(filters),
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 10,

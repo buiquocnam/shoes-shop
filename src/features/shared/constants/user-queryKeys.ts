@@ -33,4 +33,11 @@ export const userQueryKeys = {
     lists: (productId: string) =>
       [...userQueryKeys.review.key, productId] as const,
   },
+
+  // Coupon
+  coupon: {
+    key: ["coupon"],
+    get: (code: string) => [...userQueryKeys.coupon.key, code] as const,
+    list: () => [...userQueryKeys.coupon.key, "list"] as const,
+  },
 } as const;

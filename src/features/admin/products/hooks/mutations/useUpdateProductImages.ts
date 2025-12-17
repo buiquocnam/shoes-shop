@@ -1,11 +1,10 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   adminProductsApi,
   UpdateImagesInput,
 } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { useMutationWithToast } from "@/features/shared";
-
+import { toast } from "sonner";
 
 /**
  * Update Images Mutation
@@ -13,7 +12,7 @@ import { useMutationWithToast } from "@/features/shared";
  */
 export const useUpdateProductImages = () => {
   const queryClient = useQueryClient();
-  return useMutationWithToast<boolean, FormData>({
+  return useMutation<boolean, Error, FormData>({
     mutationFn: (data: FormData) => adminProductsApi.updateImages(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
@@ -22,9 +21,11 @@ export const useUpdateProductImages = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail((data as any).productId),
       });
+      toast.success("Images updated successfully");
     },
-    successMessage: "Images updated successfully",
-    errorMessage: "Failed to update images",
+    onError: () => {
+      toast.error("Failed to update images");
+    },
   });
 };
 

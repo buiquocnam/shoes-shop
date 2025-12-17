@@ -3,11 +3,13 @@
 import { CartType } from '@/features/cart/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { useUpdateCartItem, useRemoveCartItem } from '../hooks/useCart';
+import { cn } from '@/lib/utils';
 
 interface CartItemProps {
     item: CartType;
@@ -38,11 +40,11 @@ export function CartItem({ item }: CartItemProps) {
     };
 
     return (
-        <TableRow className="hover:bg-gray-50 transition-colors">
+        <TableRow className="hover:bg-muted/50 transition-colors">
             <TableCell className="py-6">
                 <div className="flex items-center gap-4">
                     <div
-                        className="relative w-24 h-24 rounded-lg overflow-hidden bg-gray-100 cursor-pointer flex-shrink-0 border border-gray-200 hover:border-primary transition-colors"
+                        className="relative h-24 w-24 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-border bg-muted transition-colors hover:border-primary"
                         onClick={handleProductClick}
                     >
                         <Image
@@ -51,27 +53,22 @@ export function CartItem({ item }: CartItemProps) {
                             fill
                             unoptimized
                             className="object-cover"
+                            sizes="96px"
                         />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                         <h3
-                            className="font-semibold text-gray-900 mb-2 cursor-pointer hover:text-primary transition-colors line-clamp-2"
+                            className="mb-2 line-clamp-2 cursor-pointer font-semibold transition-colors hover:text-primary"
                             onClick={handleProductClick}
                         >
                             {item.product.name}
                         </h3>
-                        <div className="text-sm text-gray-600 space-y-1">
+                        <div className="space-y-1 text-sm text-muted-foreground">
                             <p>
-                                Color:{' '}
-                                <span className="font-medium text-gray-900">
-                                    {item.variant.color}
-                                </span>
+                                Color: <span className="font-medium text-foreground">{item.variant.color}</span>
                             </p>
                             <p>
-                                Size:{' '}
-                                <span className="font-medium text-gray-900">
-                                    {item.variant.sizeLabel}
-                                </span>
+                                Size: <span className="font-medium text-foreground">{item.variant.sizeLabel}</span>
                             </p>
                         </div>
                     </div>
@@ -80,66 +77,62 @@ export function CartItem({ item }: CartItemProps) {
 
             <TableCell className="text-center py-6">
                 <div className="flex flex-col items-center gap-1">
-                        <span className="font-semibold text-gray-900">{formatCurrency(discountedPrice)}</span>
-                    <div className="flex items-center gap-2">
-                        {item.product.discount > 0 && (
-                            <>
-                                <span className="text-xs line-through text-gray-400">
-                                    {formatCurrency(item.product.price)}
-                                </span>
-                                <span className="text-xs text-red-600 font-semibold inline-block bg-red-50 px-2 py-0.5 rounded ml-1">
-                                    -{item.product.discount}%
-                                </span>
-                            </>
-                        )}
-                    </div>
+                    <span className="font-semibold">{formatCurrency(discountedPrice)}</span>
+                    {item.product.discount > 0 && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground line-through">
+                                {formatCurrency(item.product.price)}
+                            </span>
+                            <Badge variant="default" className="text-xs">
+                                -{item.product.discount}%
+                            </Badge>
+                        </div>
+                    )}
                 </div>
             </TableCell>
 
             <TableCell className="text-center py-6">
                 <div className="flex flex-col items-center gap-2">
-                    <div className="flex items-center gap-1 border border-gray-300 rounded-lg bg-white">
+                    <div className="flex items-center gap-1 rounded-lg border border-border bg-background">
                         <Button
                             variant="ghost"
-                            size="icon-sm"
+                            size="icon"
                             onClick={() => handleQuantityChange(item.quantity - 1)}
                             disabled={isUpdating || item.quantity <= 1}
-                            className="h-9 w-9 rounded-r-none hover:bg-gray-100"
+                            className="h-9 w-9 rounded-r-none"
                         >
                             <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="w-12 text-center font-semibold text-sm text-gray-900">
+                        <span className="w-12 text-center text-sm font-semibold">
                             {item.quantity}
                         </span>
                         <Button
                             variant="ghost"
-                            size="icon-sm"
+                            size="icon"
                             onClick={() => handleQuantityChange(item.quantity + 1)}
                             disabled={isUpdating || item.quantity >= item.variant.stock}
-                            className="h-9 w-9 rounded-l-none hover:bg-gray-100"
+                            className="h-9 w-9 rounded-l-none"
                         >
                             <Plus className="h-4 w-4" />
                         </Button>
                     </div>
                     {item.quantity >= item.variant.stock && (
-                        <p className="text-xs text-red-600 font-medium">Max stock</p>
+                        <p className="text-xs font-medium text-destructive">Max stock</p>
                     )}
                 </div>
             </TableCell>
 
             <TableCell className="text-right py-6">
-                <span className="font-bold text-lg text-gray-900">
-                    {formatCurrency(itemTotal)}
-                </span>
+                <span className="text-lg font-bold">{formatCurrency(itemTotal)}</span>
             </TableCell>
 
             <TableCell className="text-right py-6">
                 <Button
                     variant="ghost"
-                    size="icon-sm"
+                    size="icon"
                     onClick={handleRemove}
                     disabled={isRemoving}
-                    className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                    className="h-9 w-9 hover:text-primary hover:bg-primary/10"
                     title="Remove item"
                 >
                     <Trash2 className="h-4 w-4" />

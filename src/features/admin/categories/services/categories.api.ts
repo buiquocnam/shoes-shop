@@ -3,7 +3,6 @@ import { CategoryType } from '@/features/product/types';
 import { categoriesApi } from '@/features/shared/services/categories.api';
 
 export const adminCategoriesApi = {
-  getAll: categoriesApi.getAll,
 
   create: async (data: { name: string; description: string }): Promise<CategoryType> => {
     const response = await apiClient.post<CategoryType>('/shoes/categories/create', data);

@@ -9,9 +9,9 @@ import {
 } from "@/features/cart/services";
 import { CartResponse, AddToCartRequest } from "@/features/cart/types";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
-import { useMutationWithToast } from "@/features/shared";
+import { toast } from "sonner";
 
 /**
  * Hook to fetch and manage cart data
@@ -47,16 +47,18 @@ export const useCreateCart = () => {
   const { setCart } = useCartStore();
   const queryClient = useQueryClient();
 
-  return useMutationWithToast<CartResponse, AddToCartRequest>({
+  return useMutation<CartResponse, Error, AddToCartRequest>({
     mutationFn: async (request: AddToCartRequest) => {
       return await addToCart(request);
     },
     onSuccess: (data) => {
       setCart(data);
       queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
+      toast.success("Added to cart successfully");
     },
-    successMessage: "Added to cart successfully",
-    errorMessage: "Error adding to cart",
+    onError: () => {
+      toast.error("Error adding to cart");
+    },
   });
 };
 
@@ -64,16 +66,18 @@ export const useRemoveCartItem = () => {
   const { setCart } = useCartStore();
   const queryClient = useQueryClient();
 
-  return useMutationWithToast<CartResponse, string>({
+  return useMutation<CartResponse, Error, string>({
     mutationFn: async (itemId: string) => {
       return await removeCartItem(itemId);
     },
     onSuccess: (data) => {
       setCart(data);
       queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
+      toast.success("Removed from cart successfully");
     },
-    successMessage: "Removed from cart successfully",
-    errorMessage: "Error removing from cart",
+    onError: () => {
+      toast.error("Error removing from cart");
+    },
   });
 };
 
@@ -81,8 +85,9 @@ export const useUpdateCartItem = () => {
   const { setCart } = useCartStore();
   const queryClient = useQueryClient();
 
-  return useMutationWithToast<
+  return useMutation<
     CartResponse,
+    Error,
     { itemId: string; quantity: number }
   >({
     mutationFn: async ({ itemId, quantity }) => {
@@ -92,6 +97,8 @@ export const useUpdateCartItem = () => {
       setCart(data);
       queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
     },
-    errorMessage: "Error updating cart item",
+    onError: () => {
+      toast.error("Error updating cart item");
+    },
   });
 };

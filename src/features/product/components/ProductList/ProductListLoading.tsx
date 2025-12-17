@@ -1,13 +1,21 @@
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductListLoading() {
     return (
-        <div className="flex items-center justify-center py-16">
-            <div className="text-center">
-                <Spinner className="mx-auto mb-4 size-8 text-primary" />
-                <p className="text-gray-600 text-lg font-medium">Loading products...</p>
-                <p className="text-gray-400 text-sm mt-2">Please wait a moment</p>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                </div>
+            ))}
         </div>
     );
 }
+
+
+
+
+
+

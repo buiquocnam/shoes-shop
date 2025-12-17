@@ -1,38 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CategoryType } from "../types";
+import { useCategories } from "@/features/shared/hooks/useCategories";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-
-interface SidebarProps {
-  selectedCategory?: string;
-  categories?: CategoryType[];
-}
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MIN_PRICE = 50;
 const MAX_PRICE = 500;
 
-export default function Sidebar({
-  selectedCategory,
-  categories,
-}: SidebarProps) {
+export default function Sidebar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: categories, isLoading } = useCategories();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(
-    selectedCategory || ""
+    searchParams.get('category_id') || ""
   );
   const [priceRange, setPriceRange] = useState<number[]>([
-    MIN_PRICE,
-    MAX_PRICE,
+    Number(searchParams.get('min_price')) || MIN_PRICE,
+    Number(searchParams.get('max_price')) || MAX_PRICE,
   ]);
+
+  useEffect(() => {
+    setSelectedCategoryId(searchParams.get('category_id') || "");
+    setPriceRange([
+      Number(searchParams.get('min_price')) || MIN_PRICE,
+      Number(searchParams.get('max_price')) || MAX_PRICE,
+    ]);
+  }, [searchParams]);
 
   const buildFilterParams = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -76,7 +77,7 @@ export default function Sidebar({
   };
 
   return (
-    <Card className="w-full min-w-[280px] ">
+    <Card className="w-full min-w-[280px] border-none shadow-xl">
       <CardHeader>
         <CardTitle>Filters</CardTitle>
       </CardHeader>
@@ -84,33 +85,41 @@ export default function Sidebar({
         {/* Category Filter */}
         <div className="space-y-3">
           <h3 className="font-semibold text-sm">Category</h3>
-          <RadioGroup
-            value={selectedCategoryId}
-            onValueChange={setSelectedCategoryId}
-            className="space-y-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="" id="all" />
-              <Label
-                htmlFor="all"
-                className="text-sm font-normal cursor-pointer"
-              >
-                All Categories
-              </Label>
+          {isLoading ? (
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-5 w-full" />
+              ))}
             </div>
-
-            {categories?.map((category) => (
-              <div key={category.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={category.id} id={category.id} />
+          ) : (
+            <RadioGroup
+              value={selectedCategoryId}
+              onValueChange={setSelectedCategoryId}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="" id="all" />
                 <Label
-                  htmlFor={category.id}
+                  htmlFor="all"
                   className="text-sm font-normal cursor-pointer"
                 >
-                  {category.name}
+                  All Categories
                 </Label>
               </div>
-            ))}
-          </RadioGroup>
+
+              {categories?.map((category) => (
+                <div key={category.id} className="flex items-center space-x-2">
+                  <RadioGroupItem value={category.id} id={category.id} />
+                  <Label
+                    htmlFor={category.id}
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    {category.name}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          )}
         </div>
 
         <Separator />

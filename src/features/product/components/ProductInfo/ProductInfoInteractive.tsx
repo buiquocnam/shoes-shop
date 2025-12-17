@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useCreateCart } from "@/features/cart/hooks/useCart";
 import { AlertLogin } from "@/features/product/components";
 import { useAuthStore } from "@/store/useAuthStore";
-import { CheckoutItem } from "@/features/checkout/types";
+import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
 import { AddToCartRequest } from "@/features/cart/types";
 interface ProductInfoInteractiveProps {
@@ -129,7 +129,7 @@ export default function ProductInfoInteractive({
     }
     if (!canPurchase || !selectedData) return;
     console.log(selectedData);
-    createCart({ variantId: selectedSizeId, quantity } as AddToCartRequest);
+    createCart({ varianSizeId: selectedSizeId, quantity } as AddToCartRequest);
   };
 
   const handleBuy = () => {
@@ -165,7 +165,7 @@ export default function ProductInfoInteractive({
       totalPrice: totalPrice,
     };
 
-    setCheckoutItems([checkoutItem]);
+    setCheckoutItems([checkoutItem], 'product');
     router.push('/checkout');
   };
 

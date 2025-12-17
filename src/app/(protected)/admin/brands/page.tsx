@@ -11,9 +11,31 @@ import {
   useCreateBrand
 } from "@/features/admin/brands";
 import Loading from "@/features/admin/components/Loading";
+import { useSearchParams } from "next/navigation";
+import { useUpdateParams } from "@/features/admin/util/updateParams";
+import { Input } from "@/components/ui/input";
+
+
+type Filters = {
+  page?: number;
+  size?: number;
+  search?: string;
+};
 
 const AdminBrandsPage: React.FC = () => {
-  const { data, isLoading } = useBrands({});
+  const searchParams = useSearchParams();
+  const updateParams = useUpdateParams();
+  /** ---------------- derive filters from URL ---------------- */
+  const page = Number(searchParams.get("page") || 1);
+  const size = Number(searchParams.get("size") || 10);
+  const search = searchParams.get("search") || "";
+  const filters: Filters = {
+    page,
+    size,
+    search,
+  };
+  
+  const { data, isLoading } = useBrands(filters);
   const createBrandMutation = useCreateBrand();
   const brands: BrandType[] = data?.data || [];
 
@@ -32,6 +54,13 @@ const AdminBrandsPage: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold text-gray-800">Manage Brands</h1>
 
+        <div className="flex justify-end gap-2">
+          <Input
+            placeholder="Search brand name..."
+            className="w-64"
+              onChange={(e) => updateParams({ search: e.target.value, page: 1 })}
+          />
+        </div>
         <BrandForm
           onSubmit={handleCreateBrand}
           isLoading={createBrandMutation.isPending}

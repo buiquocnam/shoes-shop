@@ -27,5 +27,6 @@ export interface PurchasedItem {
   };
   countBuy: number;
   totalMoney: number;
+  userId: string;
 } 
 

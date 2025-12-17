@@ -22,8 +22,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                         <StarIcon
                             key={index}
                             className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${index < Math.floor(Number(productInfo.averageRating || 0))
-                                    ? "text-red-500 fill-red-500"
-                                    : "text-gray-300 fill-gray-300"
+                                ? "text-red-500 fill-red-500"
+                                : "text-gray-300 fill-gray-300"
                                 }`}
                         />
                     ))}

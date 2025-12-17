@@ -1,27 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogClose,
-} from "@/components/ui/dialog";
+import {InputField} from "@/components/form/InputField";
+import {TextareaField} from "@/components/form/TextareaField";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose} from "@/components/ui/dialog";
 import { categorySchema, CategoryFormValues } from "../schema";
 import { CategoryType } from "@/features/product/types";
 
@@ -70,63 +56,33 @@ export default function CategoryForm({
                     </DialogTitle>
                 </DialogHeader>
 
-                <Form {...form}>
+                <FormProvider {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleFormSubmit)}
                         className="space-y-6"
                     >
-                        <FormField
+                        <InputField
                             control={form.control}
                             name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Category Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Enter category name"
-                                            {...field}
-                                            className="h-11"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Category Name"
+                            placeholder="Enter category name"
+                            className="h-11"
                         />
 
-                        <FormField
+                        <TextareaField
                             control={form.control}
                             name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Description</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="Enter category description"
-                                            {...field}
-                                            className="min-h-[100px] resize-none"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Description"
+                            height="200px"
+                            placeholder="Enter category description"
+                            className="min-h-[100px] resize-none"
                         />
 
-                        <div className="flex justify-end gap-3 pt-4">
-                            <DialogClose asChild>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={isLoading}
-                                >
-                                    Cancel
-                                </Button>
-                            </DialogClose>
-                            <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Saving..." : category ? "Update" : "Create"}
-                            </Button>
-                        </div>
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? "Saving..." : category ? "Update" : "Create"}
+                        </Button>
                     </form>
-                </Form>
+                </FormProvider>
             </DialogContent>
         </Dialog>
     );

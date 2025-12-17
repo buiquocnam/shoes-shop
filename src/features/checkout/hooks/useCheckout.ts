@@ -5,44 +5,42 @@ import {
   CreateOrderResponse,
   CreateOrderRequest,
   CheckoutItem,
-} from "../types";
-import { useMutationWithToast } from "@/features/shared";
+} from "../types/checkout";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { AddressType } from "@/features/shared/types/address";
-
-export const useApplyDiscount = () => {
-  return useMutationWithToast<
-    { discount: number; discountCode: string },
-    string
-  >({
-    mutationFn: (code: string) => checkoutApi.applyDiscountCode(code),
-    successMessage: (data) =>
-      `Áp dụng mã giảm giá thành công! Giảm ${data.discount}đ`,
-    errorMessage: (error: any) =>
-      error?.response?.data?.message || "Mã giảm giá không hợp lệ",
-  });
-};
+import { toast } from "sonner";
+import { useCartStore } from "@/store/useCartStore";
+import {
+  getCheckoutSource,
+  clearCheckoutItems,
+} from "../utils/checkoutStorage";
+import { useQueryClient } from "@tanstack/react-query";
+import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { clearCart as clearCartApi } from "@/features/cart/services";
 
 export const useCreateOrder = () => {
   const router = useRouter();
+  const { clearCart: clearCartStore, setCart } = useCartStore();
+  const queryClient = useQueryClient();
 
-  return useMutationWithToast<
+  return useMutation<
     CreateOrderResponse,
+    any,
     {
       request: CreateOrderRequest;
       orderSummary: CheckoutItem[];
-      selectedAddress: AddressType; // Required - không được null
+      selectedAddress: AddressType;
     }
   >({
     mutationFn: ({ request, selectedAddress }) => {
-      // Validate: address phải có
       if (!selectedAddress) {
         throw new Error("Vui lòng chọn địa chỉ giao hàng");
       }
 
       return checkoutApi.createOrder(request);
     },
-    onSuccess: (response, variables) => {
+    onSuccess: async (response, variables) => {
       if (typeof window !== "undefined") {
         sessionStorage.setItem(
           "checkoutSuccessData",
@@ -52,12 +50,25 @@ export const useCreateOrder = () => {
             selectedAddress: variables.selectedAddress,
           })
         );
+
+        const checkoutSource = getCheckoutSource();
+        if (checkoutSource === "cart") {
+            await clearCartApi();
+            clearCartStore();
+            setCart(null);
+            queryClient.removeQueries({
+              queryKey: userQueryKeys.cart.current(),
+            });
+            clearCheckoutItems();
+        }
       }
-      // Dùng replace thay vì push để navigate ngay, tránh flash giao diện checkout
       router.replace(`/checkout/success`);
     },
-    successMessage: "Đặt hàng thành công!",
-    errorMessage: (error: any) =>
-      error?.response?.data?.message || "Đặt hàng thất bại. Vui lòng thử lại.",
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        "Đặt hàng thất bại. Vui lòng thử lại.";
+      toast.error(message);
+    },
   });
 };

@@ -36,11 +36,11 @@ const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) =
       <TableCell className="py-4">
         <div className="flex items-center gap-4">
           <div
-            className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 cursor-pointer flex-shrink-0 border border-gray-200 hover:border-primary transition-colors"
+            className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 cursor-pointer hover:border-primary transition-colors"
             onClick={handleProductClick}
           >
             <Image
-              src={purchasedItem.product.imageUrl?.url || '/images/no-image.png'}
+              src={purchasedItem.product.imageUrl?.fileName || '/images/no-image.png'}
               alt={purchasedItem.product.name}
               fill
               unoptimized
