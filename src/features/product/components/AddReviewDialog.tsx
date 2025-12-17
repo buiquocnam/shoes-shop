@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -33,6 +32,7 @@ export default function AddReviewDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(productId, rating, comment);
     createReview(
       {
         productId,
@@ -82,15 +82,23 @@ export default function AddReviewDialog({
             className="min-h-[100px]"
             required
           />
-          <DialogClose asChild>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => onOpenChange(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
-              className="w-full"
+              className="flex-1"
               disabled={isPending || rating === 0 || !comment.trim()}
             >
               {isPending ? <Spinner /> : "Submit Review"}
             </Button>
-          </DialogClose>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -188,7 +188,7 @@ export default function Header() {
                                 <ShoppingCart className="h-4 w-4" />
                                 {cartCount > 0 && (
                                     <Badge
-                                        variant="destructive"
+                                        variant="default"
                                         className="absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-semibold"
                                     >
                                         {cartCount > 9 ? '9+' : cartCount}

@@ -68,4 +68,14 @@ export const authApi = {
       useCartStore.getState().clearCart(),
     ]);
   },
+
+  loginWithGoogle: async (code: string): Promise<AuthResponse> => {
+    const formData = new FormData();
+    formData.append("code", code);
+    const response = await apiClient.post<AuthResponse>(
+      "/auth/login/oauth2",
+      formData
+    );
+    return response.result;
+  },
 };

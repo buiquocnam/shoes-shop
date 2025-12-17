@@ -12,6 +12,7 @@ interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  updateUser: (user: User) => void;
   logout: () => void;
 }
 
@@ -29,6 +30,13 @@ export const useAuthStore = create<AuthState>()(
         if (typeof window !== "undefined") {
           setAccessTokenCookie(accessToken);
         }
+      },
+
+      updateUser: (updatedUser) => {
+        set((state) => ({
+          user: updatedUser,
+       
+        }));
       },
 
       logout: () => {

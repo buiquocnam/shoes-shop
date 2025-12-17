@@ -8,9 +8,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import { ProfileAddress } from '@/features/profile/components/ProfileAddress';
 import { ProductListBought } from '@/features/profile';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 
 export default function ProfileLayout() {
-    const { logout } = useAuthStore();
+    const { mutate: logout } = useLogout();
     const [activeTab, setActiveTab] = useState('address');
 
     const handleLogout = () => logout();
@@ -44,7 +45,7 @@ export default function ProfileLayout() {
                 <div className="flex justify-between items-center mb-10">
                     <h1 className="text-4xl font-bold text-gray-900">My Account</h1>
                     <Button
-                        variant="destructive"
+                        variant="default"
                         className="gap-2 font-medium"
                         onClick={handleLogout}
                     >

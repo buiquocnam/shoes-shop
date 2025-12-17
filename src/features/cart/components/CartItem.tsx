@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { useUpdateCartItem, useRemoveCartItem } from '../hooks/useCart';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 interface CartItemProps {
     item: CartType;
@@ -103,9 +104,14 @@ export function CartItem({ item }: CartItemProps) {
                         >
                             <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="w-12 text-center text-sm font-semibold">
-                            {item.quantity}
-                        </span>
+                        <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => handleQuantityChange(Number(e.target.value))}
+                            className="w-10 h-full text-center border-none shadow-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+                            min={1}
+                            max={item.variant.stock}
+                            />
                         <Button
                             variant="ghost"
                             size="icon"

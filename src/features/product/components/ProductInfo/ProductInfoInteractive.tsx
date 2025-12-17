@@ -11,6 +11,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
 import { AddToCartRequest } from "@/features/cart/types";
+
+import { Input } from "@/components/ui/input";
+
 interface ProductInfoInteractiveProps {
   product: ProductDetailType;
 }
@@ -36,9 +39,15 @@ const QuantitySelector = ({
     >
       −
     </Button>
-    <span className="flex-1 text-center text-xs sm:text-sm font-semibold text-gray-800">
-      {quantity}
-    </span>
+
+    <Input
+      type="number"
+      value={quantity}
+      onChange={(e) => setQuantity(Number(e.target.value))}
+      className="w-10 h-full text-center border-none shadow-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+      min={1}
+      max={maxStock}
+    />
     <Button
       variant="ghost"
       size="icon"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { OrderSummary } from './CheckoutFormComponents/OrderSummary';
 import { CheckoutItem } from '../types/checkout';
 import { useVnPayPayment } from '../hooks/useCheckout';
@@ -17,12 +17,11 @@ interface CheckoutFormProps {
 }
 
 export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
-    const { mutate: createVnPayPayment, isPending, isError } = useVnPayPayment();
+    const { mutate: createVnPayPayment, isPending } = useVnPayPayment();
     const { user } = useAuthStore();
     const userId = user?.id ?? '';
     const { data: usersAddress, isLoading: isLoadingAddress } = useUsersAddress(userId);
     const [selectedAddress, setSelectedAddress] = useState<AddressType | null>(null);
-    const [isNavigating, setIsNavigating] = useState(false);
 
     useEffect(() => {
         if (usersAddress && usersAddress.length > 0) {
@@ -32,12 +31,6 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
             setSelectedAddress(null);
         }
     }, [usersAddress]);
-
-    useEffect(() => {
-        if (isError && isNavigating) {
-            setIsNavigating(false);
-        }
-    }, [isError, isNavigating]);
 
     const handleCheckout = useCallback(
         (coupon: Coupon | null, totalAmount: number) => {
@@ -56,7 +49,6 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
             const firstItem = orderSummary[0];
             const variantSizeId = firstItem.size.id;
 
-            setIsNavigating(true);
             createVnPayPayment({
                 amount: totalAmount,
                 bankCode: 'NCB',
@@ -66,7 +58,7 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
         [orderSummary, createVnPayPayment, selectedAddress]
     );
 
-    const showLoading = isPending || isNavigating;
+    const showLoading = isPending;
 
     return (
         <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">

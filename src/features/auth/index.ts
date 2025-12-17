@@ -27,5 +27,6 @@ export {
   useVerifyOTP,
   useChangePassword,
   useRefreshToken,
+  useGoogleLogin,
 } from "./hooks";
 export { authApi } from "./services";
