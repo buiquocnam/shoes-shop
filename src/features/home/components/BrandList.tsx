@@ -11,7 +11,7 @@ export default async function BrandList() {
 
     if (!brandsResponse || !brandsResponse.data || brandsResponse.data.length === 0) {
         return null;
-    }
+    } 
 
     const displayBrands = brandsResponse.data;
 

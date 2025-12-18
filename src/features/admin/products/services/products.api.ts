@@ -67,16 +67,6 @@ export interface VariantResponse {
   }[];
 }
 
-export interface VariantSizeResponse {
-  id: string;
-  productId: string;
-  stock: number;
-  color: string;
-  status: "ACTIVE" | "INACTIVE";
-  countSell: number;
-  size: string;
-}
-
 export const adminProductsApi = {
   /**
    * Get Products with filters
@@ -127,12 +117,11 @@ export const adminProductsApi = {
   /**
    * Upsert Variants
    * Create or update variants and their sizes
-   * Returns flat array of variant sizes
    */
   upsertVariants: async (
     data: UpsertVariantsInput
-  ): Promise<VariantSizeResponse[]> => {
-    const response = await apiClient.post<VariantSizeResponse[]>(
+  ): Promise<VariantResponse[]> => {
+    const response = await apiClient.post<VariantResponse[]>(
       `/shoes/variants/upsert`,
       data
     );

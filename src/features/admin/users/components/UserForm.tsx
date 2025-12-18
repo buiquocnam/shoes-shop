@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { InputField } from "@/components/form/InputField";
+import { InputField } from "@/features/shared/components/InputField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Spinner } from "@/components/ui/spinner";
 import { useUpdateUser, useDeleteUser } from "../hooks";
@@ -77,7 +77,6 @@ export function UserForm({
                             name="name"
                             label="Name"
                             placeholder="Enter name"
-                            className="h-11"
                         />
 
                         <InputField
@@ -85,7 +84,6 @@ export function UserForm({
                             name="email"
                             label="Email"
                             placeholder="Enter email"
-                            className="h-11"
                             disabled={true}
                         />
 
@@ -94,7 +92,6 @@ export function UserForm({
                             name="phone"
                             label="Phone"
                             placeholder="Enter phone"
-                            className="h-11"
                         />
 
                         <Checkbox

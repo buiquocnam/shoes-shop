@@ -60,7 +60,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
       id: variant.id, // Có id → UPDATE variant này
       color: variant.color,
       sizes: variant.sizes.map((size) => ({
-        id: size.id,
+        id: size.id, 
         size: size.size.toString(),
       })),
     }));
@@ -71,19 +71,22 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     });
 
     // Step 2: Import Stock (gọi API riêng)
-    // Response là flat array của VariantSizeResponse (variant sizes)
+    // Response là array flat của variant sizes, cần map lại với form data
     const allVariantSizes: Array<{ variantSizeId: string; count: number }> = [];
+
+    // Map response (flat array) với form variants
+    // Response được sắp xếp theo thứ tự: variant1.size1, variant1.size2, variant2.size1, ...
+    let responseIndex = 0;
 
     data.variants.forEach((formVariant) => {
       formVariant.sizes.forEach((formSize) => {
         // Tìm variant size trong response theo color và size
-        const responseSize = result.find(
+        const responseItem = result.find(
           (item) =>
-            item.color === formVariant.color &&
-            String(item.size) === String(formSize.size)
+            item.color === formVariant.color 
         );
 
-        if (responseSize) {
+        if (responseItem) {
           const currentStock = formSize.currentStock ?? 0;
           const deltaStock = formSize.stock ?? 0;
 
@@ -98,7 +101,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
           // Chỉ import nếu có thay đổi (delta !== 0)
           if (deltaStock !== 0) {
             allVariantSizes.push({
-              variantSizeId: responseSize.id, // variantSizeId từ response
+              variantSizeId: responseItem.id, // variantSizeId từ response
               count: deltaStock, // API nhận delta (số lượng thay đổi)
             });
           }
@@ -108,6 +111,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
 
 
+    console.log("allVariantSizes", allVariantSizes);
     // Import stock nếu có thay đổi
     if (allVariantSizes.length > 0) {
       await importStock.mutateAsync({

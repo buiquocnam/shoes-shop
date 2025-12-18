@@ -14,13 +14,8 @@ export const useDeleteVariant = () => {
     mutationFn: (data: DeleteVariantInput) =>
       adminProductsApi.deleteVariant(data.variantId),
     onSuccess: (_, variables) => {
-      // Invalidate product detail để refresh data
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
-      });
-      // Invalidate product list để refresh danh sách
-      queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.lists(),
       });
       toast.success("Variant deleted successfully");
     },

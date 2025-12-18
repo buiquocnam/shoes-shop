@@ -2,7 +2,7 @@
 
 import { Controller, FieldValues } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel, FieldContent } from "@/components/ui/field";
 import { BaseFieldProps } from "./types";
 
 /**
@@ -39,6 +39,7 @@ export const NumberField = <T extends FieldValues>({
         />
     );
 };
+
 
 
 

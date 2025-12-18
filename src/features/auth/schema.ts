@@ -19,7 +19,7 @@ export const registerSchema = z
   });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string(),
+  email: z.string().email("Invalid email address"),
 });
 
 export const changePasswordSchema = z

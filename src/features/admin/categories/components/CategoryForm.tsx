@@ -3,11 +3,10 @@
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {InputField} from "@/components/form/InputField";
-import {TextareaField} from "@/components/form/TextareaField";
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose} from "@/components/ui/dialog";
+import { InputField } from "@/components/form/InputField";
+import { TextareaField } from "@/components/form/TextareaField";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { categorySchema, CategoryFormValues } from "../schema";
 import { CategoryType } from "@/features/product/types";
 
@@ -61,30 +60,31 @@ export default function CategoryForm({
                         onSubmit={form.handleSubmit(handleFormSubmit)}
                         className="space-y-6"
                     >
-                        <InputField
-                            control={form.control}
-                            name="name"
-                            label="Category Name"
-                            placeholder="Enter category name"
-                            className="h-11"
-                        />
+                        <div className="space-y-3">
+                            <InputField
+                                control={form.control}
+                                name="name"
+                                label="Category Name"
+                                placeholder="Enter category name"
+                            />
 
-                        <TextareaField
-                            control={form.control}
-                            name="description"
-                            label="Description"
-                            height="200px"
-                            placeholder="Enter category description"
-                            className="min-h-[100px] resize-none"
-                        />
+                            <TextareaField
+                                control={form.control}
+                                name="description"
+                                label="Description"
+                                placeholder="Enter category description"
+                                rows={4}
+                            />
+                        </div>
 
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? "Saving..." : category ? "Update" : "Create"}
-                        </Button>
+                        <div className="flex justify-end pt-2">
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? "Saving..." : category ? "Update" : "Create"}
+                            </Button>
+                        </div>
                     </form>
                 </FormProvider>
             </DialogContent>
         </Dialog>
     );
 }
-
