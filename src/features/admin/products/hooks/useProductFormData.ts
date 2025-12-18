@@ -6,7 +6,7 @@ import { useCategories } from "@/features/shared/hooks/useCategories";
  */
 export const useProductFormData = (enabled: boolean = true) => {
   const { data: brandsData } = useBrands({}, { enabled });
-  const { data: categories } = useCategories({ enabled });
+  const { data: categories } = useCategories({}, { enabled });
 
   const brands = brandsData?.data || [];
 
@@ -15,22 +15,3 @@ export const useProductFormData = (enabled: boolean = true) => {
     brands,
   };
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

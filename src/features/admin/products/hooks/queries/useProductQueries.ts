@@ -8,7 +8,7 @@ import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 export const useProduct = (productId: string) => {
   return useQuery({
     queryKey: sharedQueryKeys.product.detail(productId),
-    queryFn: () => adminProductsApi.getById(productId),
+    queryFn: () => adminProductsApi.getProductById(productId),
     enabled: !!productId,
   });
 };

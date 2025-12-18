@@ -4,7 +4,11 @@ import { User } from "@/types/global";
 import { toQueryString } from "@/utils/queryString";
 import { Filters } from "@/features/shared/types";
 import { UserUpdate } from "../types";
-import { PurchasedItem } from "@/features/profile/types";
+import {
+  PurchasedItem,
+  PurchasedItemPaginationResponse,
+  PurchasedItemFilters,
+} from "@/features/profile/types";
 
 export const adminUsersApi = {
   getUsers: async (filters?: Filters): Promise<User[]> => {
@@ -25,9 +29,18 @@ export const adminUsersApi = {
     return response.result;
   },
 
-  getPurchasedItems: async (userId: string): Promise<PurchasedItem[]> => {
-    const response = await apiClient.get<PurchasedItem[]>(
-      `/shoes/products/purchased/by-user/${userId}`
+  getPurchasedItems: async (
+    userId: string,
+    filters?: PurchasedItemFilters
+  ): Promise<PurchasedItemPaginationResponse> => {
+    const queryParams = filters
+      ? toQueryString({
+          page: filters.page,
+          limit: filters.limit,
+        })
+      : "";
+    const response = await apiClient.get<PurchasedItemPaginationResponse>(
+      `/shoes/products/purchased/by-user/${userId}${queryParams}`
     );
     return response.result;
   },

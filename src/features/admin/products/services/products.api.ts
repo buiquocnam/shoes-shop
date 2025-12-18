@@ -1,106 +1,113 @@
-import { apiClient } from "@/lib/api";
-import { ProductType, ProductDetailType } from "@/features/product/types";
-import { PurchasedItem } from "@/features/profile/types";
+"use client";
+
+import { apiClient } from "@/lib";
+import {
+  ProductType,
+  ProductFilters,
+  ProductPaginationResponse,
+  ProductDetailType,
+} from "@/features/product/types";
+import {
+  PurchasedItem,
+  PurchasedItemPaginationResponse,
+  PurchasedItemFilters,
+} from "@/features/profile/types";
+import { toQueryString } from "@/utils/queryString";
 
 export interface CreateProductInput {
   name: string;
   description: string;
-  brandId: string;
   categoryId: string;
-  price: number;
-  discount: number;
-  slug?: string;
+  brandId: string;
+  status: "ACTIVE" | "INACTIVE";
 }
 
 export interface UpdateProductInfoInput {
   productId: string;
-  name: string;
-  description: string;
-  brandId: string;
-  categoryId: string;
-  price: number;
-  discount: number;
-  slug?: string;
+  name?: string;
+  description?: string;
+  categoryId?: string;
+  brandId?: string;
+  status?: "ACTIVE" | "INACTIVE";
 }
 
-export interface CreateVariantInput {
-  productId: string;
+export interface VariantInput {
+  variantId?: string;
   color: string;
-  sizes: Array<{ size: number }>;
-}
-
-export interface CreateVariantsInput {
-  productId: string;
-  variants: Array<{
-    id?: string;
-    color: string;
-    sizes: Array<{ id?: string; size: number }>;
-  }>;
+  sizes: {
+    sizeId?: string;
+    size: string;
+    stock?: number;
+  }[];
 }
 
 export interface UpsertVariantsInput {
   productId: string;
-  variants: Array<{
-    id?: string; // Có id → UPDATE, không có id → CREATE
-    color: string;
-    sizes: Array<{
-      id?: string; // Có id → UPDATE size, không có id → CREATE size
-      size: number;
-      stock?: number; // Stock có thể gửi trong upsert (optional)
-    }>;
-  }>;
+  variants: VariantInput[];
 }
 
-/**
- * Response từ upsert variants API
- * Trả về array flat của variant sizes (không phải nested)
- */
-export interface UpsertVariantSizeResponse {
-  id: string; // variantSizeId
+export interface ImportStockInput {
+  productId: string;
+  items: {
+    variantSizeId: string;
+    count: number;
+  }[];
+}
+
+export interface VariantResponse {
+  id: string;
+  productId: string;
+  color: string;
+  status: "ACTIVE" | "INACTIVE";
+  sizes: {
+    id: string;
+    variantId: string;
+    size: string;
+    stock: number;
+  }[];
+}
+
+export interface VariantSizeResponse {
+  id: string;
   productId: string;
   stock: number;
   color: string;
   status: "ACTIVE" | "INACTIVE";
   countSell: number;
-  size: string; // size value
-}
-
-export type UpsertVariantsResponse = UpsertVariantSizeResponse[];
-
-export interface UpdateVariantInput {
-  variantId: string;
-  color: string;
-  sizes: Array<{ id?: string; size: number }>;
-}
-
-export interface ImportStockInput {
-  productId: string;
-  items: Array<{
-    variantSizeId: string;
-    count: number;
-  }>;
-}
-
-export interface UpdateImagesInput {
-  productId: string;
-  imageNames: string[];
-  primaryName: string;
-}
-
-export interface VariantResponse {
-  id: string;
-  color: string;
-  sizes: Array<{ id: string; size: number }>;
+  size: string;
 }
 
 export const adminProductsApi = {
   /**
-   * Create Product
-   * Payload: FormData với JSON body (info) + multipart files (images)
+   * Get Products with filters
    */
-  create: async (data: FormData): Promise<{ id: string }> => {
-    const response = await apiClient.post<{ id: string }>(
-      "/shoes/products/create-product",
+  getProducts: async (
+    filters?: ProductFilters
+  ): Promise<ProductPaginationResponse> => {
+    const queryParams = filters ? toQueryString(filters) : "";
+    const response = await apiClient.get<ProductPaginationResponse>(
+      `/shoes/products/get-all${queryParams}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Get Product by ID
+   */
+  getProductById: async (productId: string): Promise<ProductDetailType> => {
+    const response = await apiClient.get<ProductDetailType>(
+      `/shoes/products/get-by-id/${productId}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Create Product
+   * Payload: FormData với JSON body (request) + multipart files (files)
+   */
+  create: async (data: FormData): Promise<ProductType> => {
+    const response = await apiClient.post<ProductType>(
+      `/shoes/products/create`,
       data
     );
     return response.result;
@@ -108,7 +115,6 @@ export const adminProductsApi = {
 
   /**
    * Update Product Info
-   * Chỉ update info, không xử lý variant hoặc image
    */
   updateInfo: async (data: UpdateProductInfoInput): Promise<ProductType> => {
     const response = await apiClient.patch<ProductType>(
@@ -118,44 +124,17 @@ export const adminProductsApi = {
     return response.result;
   },
 
-  deleteVariant: async (variantId: string): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(
-      `/shoes/variants/delete/${variantId}`
-    );
-    return response.result;
-  },
-
-  /**
-   * Get Product by ID
-   */
-  getById: async (id: string): Promise<ProductDetailType> => {
-    const response = await apiClient.get<ProductDetailType>(
-      `/shoes/products/get-by-id/${id}`
-    );
-    return response.result;
-  },
-
   /**
    * Upsert Variants
-   * Gọi một lần để CREATE/UPDATE nhiều variants
-   * Có id → UPDATE, không có id → CREATE
+   * Create or update variants and their sizes
+   * Returns flat array of variant sizes
    */
   upsertVariants: async (
     data: UpsertVariantsInput
-  ): Promise<UpsertVariantsResponse> => {
-    const response = await apiClient.post<UpsertVariantsResponse>(
+  ): Promise<VariantSizeResponse[]> => {
+    const response = await apiClient.post<VariantSizeResponse[]>(
       `/shoes/variants/upsert`,
-      {
-        productId: data.productId,
-        variants: data.variants.map((variant) => ({
-          id: variant.id,
-          color: variant.color,
-          sizes: variant.sizes.map((size) => ({
-            id: size.id,
-            size: size.size,
-          })),
-        })),
-      }
+      data
     );
     return response.result;
   },
@@ -198,11 +177,40 @@ export const adminProductsApi = {
   },
 
   /**
+   * Delete Variant
+   */
+  deleteVariant: async (variantId: string): Promise<boolean> => {
+    const response = await apiClient.delete<boolean>(
+      `/shoes/variants/delete/${variantId}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Delete Variant Size
+   */
+  deleteVariantSize: async (sizeId: string): Promise<boolean> => {
+    const response = await apiClient.delete<boolean>(
+      `/shoes/variants/delete-size/${sizeId}`
+    );
+    return response.result;
+  },
+
+  /**
    * Get Purchased Items by Product
    */
-  getPurchasedItems: async (productId: string): Promise<PurchasedItem[]> => {
-    const response = await apiClient.get<PurchasedItem[]>(
-      `/shoes/products/purchased/by-product/${productId}`
+  getPurchasedItems: async (
+    productId: string,
+    filters?: PurchasedItemFilters
+  ): Promise<PurchasedItemPaginationResponse> => {
+    const queryParams = filters
+      ? toQueryString({
+          page: filters.page,
+          limit: filters.limit,
+        })
+      : "";
+    const response = await apiClient.get<PurchasedItemPaginationResponse>(
+      `/shoes/products/purchased/by-product/${productId}${queryParams}`
     );
     return response.result;
   },

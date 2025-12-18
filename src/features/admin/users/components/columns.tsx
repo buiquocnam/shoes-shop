@@ -7,7 +7,50 @@ import { useUpdateUser, useDeleteUser } from '../hooks';
 import { ConfirmAlert } from '@/features/admin/components';
 import { User } from '@/types/global';
 import { UserForm } from './UserForm';
-import { PurchasedItemsDialog } from './PurchasedItemsDialog';
+import { PurchasedItemsDialog } from '@/features/admin/components';
+import { usePurchasedItems } from '../hooks';
+import { PurchasedItemFilters } from '@/features/profile/types';
+import { useState } from 'react';
+
+function PurchasedItemsDialogWrapper({ userId }: { userId: string }) {
+  const [open, setOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const filters: PurchasedItemFilters = {
+    page: currentPage,
+    limit: pageSize,
+  };
+
+  const { data, isLoading } = usePurchasedItems(
+    open ? userId : null,
+    open ? filters : undefined
+  );
+
+  return (
+    <PurchasedItemsDialog
+      data={data}
+      isLoading={isLoading}
+      showUserId={false}
+      trigger={
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
+          title="View purchased items"
+        >
+          <ShoppingBag className="h-4 w-4" />
+        </Button>
+      }
+      open={open}
+      onOpenChange={setOpen}
+      currentPage={currentPage}
+      onPageChange={(page) => {
+        setCurrentPage(page);
+      }}
+    />
+  );
+}
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -16,7 +59,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }: { row: Row<User> }) => {
       const name = row.original.name;
       return (
-          <span className="">{name}</span>
+        <span className="">{name}</span>
       );
     },
     enableSorting: false,
@@ -52,10 +95,10 @@ export const columns: ColumnDef<User>[] = [
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-        const updateUserMutation = useUpdateUser();
+      const updateUserMutation = useUpdateUser();
       const deleteUserMutation = useDeleteUser();
 
-    
+
 
       const handleDelete = async () => {
         await deleteUserMutation.mutateAsync(row.original.id);
@@ -63,19 +106,7 @@ export const columns: ColumnDef<User>[] = [
 
       return (
         <div className="flex space-x-1">
-          <PurchasedItemsDialog
-            userId={row.original.id}
-            trigger={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
-                title="View purchased items"
-              >
-                <ShoppingBag className="h-4 w-4" />
-              </Button>
-            }
-          />
+          <PurchasedItemsDialogWrapper userId={row.original.id} />
           <UserForm
             user={row.original}
             isLoading={updateUserMutation.isPending || deleteUserMutation.isPending}

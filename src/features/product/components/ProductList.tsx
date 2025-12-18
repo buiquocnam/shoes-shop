@@ -15,29 +15,7 @@ import {
 } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
 import { HomeLoading } from "@/features/home/components";
-
-function createPaginationUrl(params: URLSearchParams, page: number) {
-    const newParams = new URLSearchParams(params.toString());
-    newParams.set('page', page.toString());
-    return `/products?${newParams.toString()}`;
-}
-
-function getPageNumbers(currentPage: number, totalPages: number): (number | 'ellipsis')[] {
-    const maxVisible = 5;
-    if (totalPages <= maxVisible) {
-        return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    if (currentPage <= 3) {
-        return [1, 2, 3, 4, 'ellipsis', totalPages];
-    }
-
-    if (currentPage >= totalPages - 2) {
-        return [1, 'ellipsis', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-    }
-
-    return [1, 'ellipsis', currentPage - 1, currentPage, currentPage + 1, 'ellipsis', totalPages];
-}
+import { getPageNumbers, createPaginationUrl } from "@/utils/pagination";
 
 export default function ProductList() {
     const searchParams = useSearchParams();
@@ -126,4 +104,3 @@ export default function ProductList() {
         </>
     );
 }
-

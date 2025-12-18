@@ -3,17 +3,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminUsersApi } from "../services/users.api";
 import { adminQueryKeys } from "@/features/shared";
-import { PurchasedItem } from "@/features/profile/types";
+import {
+  PurchasedItemPaginationResponse,
+  PurchasedItemFilters,
+} from "@/features/profile/types";
 
-export const usePurchasedItems = (userId: string | null) => {
-  return useQuery<PurchasedItem[]>({
-    queryKey: adminQueryKeys.users.purchasedItems(userId || ""),
-    queryFn: () => adminUsersApi.getPurchasedItems(userId!),
+export const usePurchasedItems = (
+  userId: string | null,
+  filters?: PurchasedItemFilters
+) => {
+  return useQuery<PurchasedItemPaginationResponse>({
+    queryKey: adminQueryKeys.users.purchasedItems(
+      userId || "",
+      filters?.page || 1,
+      filters?.limit || 10
+    ),
+    queryFn: () => adminUsersApi.getPurchasedItems(userId!, filters),
     enabled: !!userId,
   });
 };
-
-
-
-
-

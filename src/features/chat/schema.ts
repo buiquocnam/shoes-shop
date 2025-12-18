@@ -18,3 +18,4 @@ export type CreateConversationFormData = z.infer<
   typeof createConversationSchema
 >;
 export type CreateMessageFormData = z.infer<typeof createMessageSchema>;
+

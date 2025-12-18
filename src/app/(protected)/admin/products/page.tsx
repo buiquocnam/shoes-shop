@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
@@ -13,9 +13,14 @@ import { columns } from "@/features/admin/products/components/column";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import { ProductFilters, ProductType } from "@/features/product/types";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
-import { PurchasedItemsByProductDialog } from "@/features/admin/products/components/PurchasedItemsByProductDialog";
+import { PurchasedItemsDialog } from "@/features/admin/components";
+import { usePurchasedItemsByProduct } from "@/features/admin/products/hooks/queries/usePurchasedItemsByProduct";
+import { PurchasedItemFilters } from "@/features/profile/types";
+
 const AdminProductsPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   const searchParams = useSearchParams();
   const updateParams = useUpdateParams();
   /** ---------------- derive filters from URL ---------------- */
@@ -44,6 +49,18 @@ const AdminProductsPage = () => {
     pageSize: data?.pageSize || size,
   };
 
+  const isDialogOpen = !!selectedProduct;
+
+  // Purchased items filters
+  const purchasedItemsFilters: PurchasedItemFilters = {
+    page: currentPage,
+    limit: pageSize,
+  };
+
+  const { data: purchasedItemsData, isLoading: isLoadingPurchasedItems } = usePurchasedItemsByProduct(
+    isDialogOpen ? selectedProduct!.id : null,
+    isDialogOpen ? purchasedItemsFilters : undefined
+  );
 
   if (isLoading) return <Loading />;
 
@@ -83,12 +100,19 @@ const AdminProductsPage = () => {
         onRowClick={(row: ProductType) => setSelectedProduct(row)}
       />
       {selectedProduct && (
-        <PurchasedItemsByProductDialog
-          productId={selectedProduct.id}
-          open={!!selectedProduct}
+        <PurchasedItemsDialog
+          data={purchasedItemsData}
+          isLoading={isLoadingPurchasedItems}
+          showUserId={true}
+          open={isDialogOpen}
           onOpenChange={(open) => {
-            if (!open) setSelectedProduct(null);
+            if (!open) {
+              setSelectedProduct(null);
+              setCurrentPage(1);
+            }
           }}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
         />
       )}
     </div>

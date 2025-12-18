@@ -2,7 +2,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   adminProductsApi,
   UpsertVariantsInput,
-  UpsertVariantsResponse,
+  VariantSizeResponse,
 } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
  */
 export const useUpsertVariants = () => {
   const queryClient = useQueryClient();
-  return useMutation<UpsertVariantsResponse, Error, UpsertVariantsInput>({
+  return useMutation<VariantSizeResponse[], Error, UpsertVariantsInput>({
     mutationFn: (data: UpsertVariantsInput) =>
       adminProductsApi.upsertVariants(data),
     onSuccess: (_, variables) => {

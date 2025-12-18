@@ -9,35 +9,62 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { ShoppingBag } from "lucide-react";
-import { PurchasedItem } from "@/features/profile/types";
+import {
+    PurchasedItem,
+    PurchasedItemPaginationResponse,
+} from "@/features/profile/types";
 import { formatCurrency } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { OrderDetailDialog } from "./OrderDetailDialog";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+    PaginationEllipsis,
+} from "@/components/ui/pagination";
+import { getPageNumbers } from "@/utils/pagination";
 
 interface PurchasedItemsDialogProps {
-    purchasedItems: PurchasedItem[] | undefined;
+    data: PurchasedItemPaginationResponse | undefined;
     isLoading: boolean;
     showUserId?: boolean;
     trigger?: React.ReactNode;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    currentPage?: number;
+    onPageChange?: (page: number) => void;
 }
 
 export function PurchasedItemsDialog({
-    purchasedItems,
+    data,
     isLoading,
     showUserId = false,
     trigger,
     open: controlledOpen,
     onOpenChange: controlledOnOpenChange,
+    currentPage = 1,
+    onPageChange,
 }: PurchasedItemsDialogProps) {
     const [internalOpen, setInternalOpen] = useState(false);
+    const [internalPage, setInternalPage] = useState(1);
     const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
     const setOpen = controlledOnOpenChange || setInternalOpen;
+    const page = onPageChange ? currentPage : internalPage;
+    const setPage = onPageChange || setInternalPage;
+
+    const purchasedItems = data?.data || [];
+    const totalPages = data?.totalPages || 1;
+    const currentPageNum = data?.currentPage || 1;
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -76,15 +103,76 @@ export function PurchasedItemsDialog({
                         </p>
                     </div>
                 ) : (
-                    <div className="space-y-4">
-                        {purchasedItems.map((item, index) => (
-                            <PurchasedItemCard
-                                key={index}
-                                item={item}
-                                showUserId={showUserId}
-                            />
-                        ))}
-                    </div>
+                    <>
+                        <div className="space-y-4">
+                            {purchasedItems.map((item, index) => (
+                                <PurchasedItemCard
+                                    key={`${item.product.id}-${item.variant.id}-${index}`}
+                                    item={item}
+                                    showUserId={showUserId}
+                                />
+                            ))}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="mt-6 pt-4 border-t">
+                                <Pagination>
+                                    <PaginationContent>
+                                        {currentPageNum > 1 && (
+                                            <PaginationItem>
+                                                <PaginationPrevious
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handlePageChange(currentPageNum - 1);
+                                                    }}
+                                                    className="cursor-pointer"
+                                                />
+                                            </PaginationItem>
+                                        )}
+
+                                        {getPageNumbers(currentPageNum, totalPages).map((pageNum, index) => {
+                                            if (pageNum === 'ellipsis') {
+                                                return (
+                                                    <PaginationItem key={`ellipsis-${index}`}>
+                                                        <PaginationEllipsis />
+                                                    </PaginationItem>
+                                                );
+                                            }
+
+                                            return (
+                                                <PaginationItem key={pageNum}>
+                                                    <PaginationLink
+                                                        href="#"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            handlePageChange(pageNum);
+                                                        }}
+                                                        isActive={pageNum === currentPageNum}
+                                                        className="cursor-pointer"
+                                                    >
+                                                        {pageNum}
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                            );
+                                        })}
+
+                                        {currentPageNum < totalPages && (
+                                            <PaginationItem>
+                                                <PaginationNext
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handlePageChange(currentPageNum + 1);
+                                                    }}
+                                                    className="cursor-pointer"
+                                                />
+                                            </PaginationItem>
+                                        )}
+                                    </PaginationContent>
+                                </Pagination>
+                            </div>
+                        )}
+                    </>
                 )}
             </DialogContent>
         </Dialog>
@@ -172,5 +260,3 @@ function PurchasedItemCard({
         </>
     );
 }
-
-

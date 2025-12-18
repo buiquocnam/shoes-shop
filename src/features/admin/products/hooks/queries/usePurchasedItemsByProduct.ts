@@ -3,16 +3,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { PurchasedItem } from "@/features/profile/types";
+import {
+  PurchasedItemPaginationResponse,
+  PurchasedItemFilters,
+} from "@/features/profile/types";
 
-export const usePurchasedItemsByProduct = (productId: string | null) => {
-  return useQuery<PurchasedItem[]>({
+export const usePurchasedItemsByProduct = (
+  productId: string | null,
+  filters?: PurchasedItemFilters
+) => {
+  return useQuery<PurchasedItemPaginationResponse>({
     queryKey: [
       ...sharedQueryKeys.product.key,
       "purchased-items",
       productId || "",
+      filters?.page || 1,
+      filters?.limit || 10,
     ],
-    queryFn: () => adminProductsApi.getPurchasedItems(productId!),
+    queryFn: () => adminProductsApi.getPurchasedItems(productId!, filters),
     enabled: !!productId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
@@ -20,4 +28,3 @@ export const usePurchasedItemsByProduct = (productId: string | null) => {
     refetchOnWindowFocus: false,
   });
 };
-

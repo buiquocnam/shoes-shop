@@ -21,7 +21,13 @@ export const adminQueryKeys = {
   users: {
     key: ["users"],
     list: () => [...adminQueryKeys.users.key, "list"] as const,
-    purchasedItems: (userId: string) =>
-      [...adminQueryKeys.users.key, "purchased-items", userId] as const,
+    purchasedItems: (userId: string, page?: number, limit?: number) =>
+      [
+        ...adminQueryKeys.users.key,
+        "purchased-items",
+        userId,
+        page,
+        limit,
+      ] as const,
   },
 } as const;

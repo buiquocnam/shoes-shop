@@ -6,3 +6,4 @@ export { ChatList } from "./admin";
 
 // Shared components
 export { ChatWindow, MessageList, MessageInput } from "./shared";
+

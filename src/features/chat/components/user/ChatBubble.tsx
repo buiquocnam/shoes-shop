@@ -24,3 +24,4 @@ export function ChatBubble({ onClick, className }: ChatBubbleProps) {
     </Button>
   );
 }
+

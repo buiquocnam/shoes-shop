@@ -9,6 +9,7 @@ import { productImagesSchema, ImagesFormValues } from "../../schemas";
 import { ProductMediaSection } from "../sections/ProductMediaSection";
 import { useProduct } from "../../hooks";
 import { useUpdateProductImages } from "../../hooks/mutations";
+import { ImageType } from "@/features/product/types";
 
 interface ProductImageFormProps {
   productId: string;
@@ -34,8 +35,8 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
   const form = useForm<ImagesFormValues>({
     resolver: zodResolver(productImagesSchema),
     defaultValues: {
-      imageNames: existingImages.map((img) => img.fileName),
-      primaryName: existingImages.find((img) => img.isPrimary)?.fileName || "",
+      imageNames: existingImages.map((img: ImageType) => img.fileName),
+      primaryName: existingImages.find((img: ImageType) => img.isPrimary)?.fileName || "",
     },
   });
 
@@ -66,7 +67,7 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
       type: "application/json",
     });
     formData.append("request", jsonBlob);
-    await updateImages.mutateAsync(formData);
+    await updateImages.mutateAsync({ productId, data: formData });
     onSuccess();
   };
 

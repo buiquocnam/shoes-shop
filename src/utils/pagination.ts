@@ -1,9 +1,4 @@
-/**
- * Generate page numbers for pagination with ellipsis
- * @param currentPage - Current page number (1-based)
- * @param totalPages - Total number of pages
- * @returns Array of page numbers and ellipsis markers
- */
+
 export function getPageNumbers(
   currentPage: number,
   totalPages: number
@@ -40,4 +35,15 @@ export function getPageNumbers(
   }
 
   return pages;
+}
+
+
+export function createPaginationUrl(
+  params: URLSearchParams,
+  page: number,
+  basePath: string = "/products"
+): string {
+  const newParams = new URLSearchParams(params.toString());
+  newParams.set("page", page.toString());
+  return `${basePath}?${newParams.toString()}`;
 }

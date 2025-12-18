@@ -5,7 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NumberField, CustomField } from "@/components/form";
-import { useDeleteVariant } from "../../hooks/mutations";
+import { useDeleteVariant, useDeleteVariantSize } from "../../hooks/mutations";
 import { Spinner } from "@/components/ui/spinner";
 
 interface ProductVariantsSectionProps {
@@ -16,14 +16,40 @@ interface ProductVariantsSectionProps {
 const VariantSizesField = ({
     control,
     variantIndex,
+    productId,
 }: {
     control: Control<any>;
     variantIndex: number;
+    productId: string;
 }) => {
     const { fields, append, remove } = useFieldArray({
         control,
         name: `variants.${variantIndex}.sizes`,
     });
+    const deleteVariantSize = useDeleteVariantSize();
+
+    const handleRemoveSize = async (sizeIndex: number) => {
+        const variant = control._formValues.variants[variantIndex];
+        const size = variant?.sizes?.[sizeIndex];
+        const sizeId = size?.id;
+
+        // Nếu size có id (đã tồn tại trên server), gọi API xóa
+        if (sizeId) {
+            try {
+                await deleteVariantSize.mutateAsync({
+                    sizeId,
+                    productId,
+                });
+                // Sau khi xóa thành công, remove khỏi form
+                remove(sizeIndex);
+            } catch (error) {
+                // Error đã được xử lý trong hook
+            }
+        } else {
+            // Size chưa có trên server, chỉ remove khỏi form
+            remove(sizeIndex);
+        }
+    };
 
     return (
         <div className="space-y-3">
@@ -69,11 +95,15 @@ const VariantSizesField = ({
                             type="button"
                             variant="ghost"
                             size="icon"
-                            onClick={() => remove(sizeIndex)}
-                            disabled={fields.length === 1}
+                            onClick={() => handleRemoveSize(sizeIndex)}
+                            disabled={fields.length === 1 || deleteVariantSize.isPending}
                             className="text-gray-500  hover:text-red-500 "
                         >
-                            <Trash2 className="h-5 w-5" />
+                            {deleteVariantSize.isPending ? (
+                                <Spinner className="h-5 w-5" />
+                            ) : (
+                                <Trash2 className="h-5 w-5" />
+                            )}
                         </Button>
                     </div>
                 );
@@ -103,7 +133,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
         name: "variants",
     });
     const deleteVariant = useDeleteVariant();
-  
+
     const handleRemoveVariant = async (variantIndex: number) => {
         const variant = control._formValues.variants[variantIndex];
         const variantId = variant?.id;
@@ -115,9 +145,13 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
                     variantId,
                     productId,
                 });
+                // Sau khi xóa thành công, remove khỏi form
+                // Data sẽ được refresh tự động qua invalidateQueries
             } catch (error) {
+                // Error đã được xử lý trong hook
             }
         } else {
+            // Variant chưa có trên server, chỉ remove khỏi form
             removeVariant(variantIndex);
         }
     };
@@ -145,6 +179,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
                         <VariantSizesField
                             control={control}
                             variantIndex={variantIndex}
+                            productId={productId}
                         />
                     </div>
 
