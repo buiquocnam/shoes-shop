@@ -33,14 +33,14 @@ export default function AlertLogin({ open, onOpenChange }: AlertLoginProps) {
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Login Required</AlertDialogTitle>
+                    <AlertDialogTitle>Yêu cầu đăng nhập</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Please login to add items to your cart.
+                        Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleLogin}>Login</AlertDialogAction>
+                    <AlertDialogCancel onClick={handleCancel}>Hủy</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogin}>Đăng nhập</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

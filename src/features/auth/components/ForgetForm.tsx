@@ -52,10 +52,10 @@ export default function ForgetForm() {
         <div className="w-full max-w-md mx-auto">
             <div className="flex flex-col items-center justify-center gap-2 mb-8">
                 <p className="text-4xl font-bold">
-                    Reset your password
+                    Đặt lại mật khẩu
                 </p>
                 <p className="text-gray-500 mt-2 text-center">
-                    Enter your email address and we'll send you a link to reset your password.
+                    Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
                 </p>
             </div>
 
@@ -69,7 +69,7 @@ export default function ForgetForm() {
                                 <FormControl>
                                     <Input
                                         type="text"
-                                        placeholder="Enter your email"
+                                        placeholder="Nhập email của bạn"
                                         className="w-full h-12"
                                         {...field}
                                     />
@@ -84,15 +84,15 @@ export default function ForgetForm() {
                         className="w-full rounded-lg bg-primary h-12 px-6 font-bold hover:bg-primary/90 text-white"
                         disabled={isLoading}
                     >
-                        {isLoading ? <Spinner className="size-6" /> : <span>Send Reset Link</span>}
+                        {isLoading ? <Spinner className="size-6" /> : <span>Gửi liên kết đặt lại</span>}
                     </Button>
                 </form>
             </Form>
 
             <p className="text-center text-base mt-8">
-                Remember your password?{' '}
+                Nhớ mật khẩu của bạn?{' '}
                 <Link className="font-semibold text-primary hover:underline" href="/login">
-                    Log In
+                    Đăng nhập
                 </Link>
             </p>
         </div>

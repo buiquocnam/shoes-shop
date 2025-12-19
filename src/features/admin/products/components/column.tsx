@@ -32,7 +32,7 @@ import { useDeleteProduct } from "../hooks/mutations/useDeleteProduct";
 export const columns: ColumnDef<ProductType>[] = [
     {
         accessorKey: "image",
-        header: "Image",
+        header: "Hình ảnh",
         cell: ({ row }: { row: Row<ProductType> }) => {
             const image = row.original.imageUrl?.url || " ";
 
@@ -51,7 +51,7 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "name",
-        header: "Product Name",
+        header: "Tên sản phẩm",
         cell: ({ row }: { row: Row<ProductType> }) => (
             <div className="max-w-[300px]">
                 <p className="font-medium text-foreground">{row.original.name}</p>
@@ -60,7 +60,7 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "price",
-        header: "Price",
+        header: "Giá",
         cell: ({ row }: { row: Row<ProductType> }) => {
             const price = row.original.price;
             return (
@@ -72,7 +72,7 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "discount",
-        header: "Discount",
+        header: "Giảm giá",
         cell: ({ row }: { row: Row<ProductType> }) => {
             const discount = row.original.discount;
             return (
@@ -84,9 +84,9 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "brand",
-        header: "Brand",
+        header: "Thương hiệu",
         cell: ({ row }: { row: Row<ProductType> }) => {
-            const brandName = row.original.brand?.name || "N/A";
+            const brandName = row.original.brand?.name || "Chưa có";
             return (
                 <Badge variant="secondary" className="font-normal">
                     {brandName}
@@ -96,9 +96,9 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "category",
-        header: "Category",
+        header: "Danh mục",
         cell: ({ row }: { row: Row<ProductType> }) => {
-            const categoryName = row.original.category?.name || "N/A";
+            const categoryName = row.original.category?.name || "Chưa có";
             return (
                 <Badge variant="outline" className="font-normal">
                     {categoryName}
@@ -108,7 +108,7 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "totalStock",
-        header: "Stock",
+        header: "Tồn kho",
         cell: ({ row }: { row: Row<ProductType> }) => {
             const stock = row.original.totalStock ?? 0;
             return (
@@ -123,7 +123,7 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         id: "actions",
-        header: "Actions",
+        header: "Thao tác",
         cell: ({ row }: { row: Row<ProductType> }) => {
             return <ProductActions product={row.original} />;
         },
@@ -151,7 +151,7 @@ function ProductActions({ product }: { product: ProductType }) {
                         className="h-8 w-8"
                     >
                         <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">Mở menu</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -161,7 +161,7 @@ function ProductActions({ product }: { product: ProductType }) {
                             className="flex items-center gap-2"
                         >
                             <Pencil className="h-4 w-4" />
-                            <span>Edit Product</span>
+                            <span>Chỉnh sửa sản phẩm</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -170,7 +170,7 @@ function ProductActions({ product }: { product: ProductType }) {
                             className="flex items-center gap-2"
                         >
                             <Package className="h-4 w-4" />
-                            <span>Manage Variants</span>
+                            <span>Quản lý biến thể</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -179,7 +179,7 @@ function ProductActions({ product }: { product: ProductType }) {
                             className="flex items-center gap-2"
                         >
                             <ImageIcon className="h-4 w-4" />
-                            <span>Manage Images</span>
+                            <span>Quản lý hình ảnh</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -189,25 +189,25 @@ function ProductActions({ product }: { product: ProductType }) {
                                 className="text-destructive focus:text-destructive focus:bg-destructive/10"
                             >
                                 <Trash2 className="h-4 w-4" />
-                                <span>Delete Product</span>
+                                <span>Xóa sản phẩm</span>
                             </DropdownMenuItem>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete the product{" "}
-                                    <span className="font-semibold">{product.name}</span> and all its data.
+                                    Hành động này không thể hoàn tác. Điều này sẽ xóa vĩnh viễn sản phẩm{" "}
+                                    <span className="font-semibold">{product.name}</span> và tất cả dữ liệu của nó.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel>Hủy</AlertDialogCancel>
                                 <AlertDialogAction
                                     onClick={handleDelete}
                                     disabled={isPending}
                                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
-                                    {isPending ? "Deleting..." : "Delete"}
+                                    {isPending ? "Đang xóa..." : "Xóa"}
                                 </AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>

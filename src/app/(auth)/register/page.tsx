@@ -4,8 +4,8 @@ import { Suspense } from 'react';
 import { Spinner } from '@/components/ui/spinner';
 
 export const metadata: Metadata = {
-  title: 'Register - Shoe Shop',
-  description: 'Create a new Shoe Shop account',
+  title: 'Đăng ký - Cửa hàng giày',
+  description: 'Tạo tài khoản Cửa hàng giày mới',
 };
 
 export default function RegisterPage() {

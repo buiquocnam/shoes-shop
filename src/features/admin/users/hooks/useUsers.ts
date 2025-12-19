@@ -3,31 +3,52 @@ import { adminUsersApi } from "@/features/admin/users/services/users.api";
 import { adminQueryKeys } from "@/features/shared";
 import { User } from "@/types/global";
 import { UserUpdate } from "../types";
+import { toast } from "sonner";
 
-
-
- export const useGetUsers = () => {
+export const useGetUsers = () => {
   return useQuery<User[]>({
     queryKey: adminQueryKeys.users.list(),
     queryFn: () => adminUsersApi.getUsers(),
   });
 };
 
-
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation<User, Error, UserUpdate>({
     mutationFn: (user) => adminUsersApi.updateUser(user),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      // Invalidate users list
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.users.list(),
       });
+      toast.success("Cập nhật người dùng thành công");
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...adminQueryKeys.users.key,
+          "purchased-items",
+          variables.id,
+        ],
+      });
+    },
+    onError: () => {
+      toast.error("Cập nhật người dùng thất bại");
     },
   });
 };
 
 export const useDeleteUser = () => {
-  return useMutation<boolean, Error, string>({
-    mutationFn: (id) => adminUsersApi.deleteUser(id),
+  const queryClient = useQueryClient();
+  return useMutation<boolean, Error, string[]>({
+    mutationFn: (userIds) => adminUsersApi.deleteUser(userIds),
+    onSuccess: () => {
+      // Invalidate users list after deletion
+      queryClient.invalidateQueries({
+        queryKey: adminQueryKeys.users.list(),
+      });
+      toast.success("Xóa người dùng thành công");
+    },
+    onError: () => {
+      toast.error("Xóa người dùng thất bại");
+    },
   });
-};  
+};

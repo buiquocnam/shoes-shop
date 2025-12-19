@@ -18,11 +18,11 @@ export function useLogout() {
       removeAccessTokenCookie();
     },
     onSuccess: () => {
-      toast.success("Logged out successfully");
+      toast.success("Đăng xuất thành công");
       router.push("/login");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to logout. Please try again.");
+      toast.error(error.message || "Đăng xuất thất bại. Vui lòng thử lại.");
       router.push("/login");
     },
   });

@@ -20,10 +20,10 @@ export const useCreateProduct = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(data.id),
       });
-      toast.success("Product created successfully");
+      toast.success("Tạo sản phẩm thành công");
     },
     onError: () => {
-      toast.error("Failed to create product");
+      toast.error("Tạo sản phẩm thất bại");
     },
   });
 };

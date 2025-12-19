@@ -11,7 +11,7 @@ export default async function BrandList() {
 
     if (!brandsResponse || !brandsResponse.data || brandsResponse.data.length === 0) {
         return null;
-    } 
+    }
 
     const displayBrands = brandsResponse.data;
 
@@ -23,21 +23,21 @@ export default async function BrandList() {
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <span className="h-1 w-8 bg-primary rounded-full" />
-                            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em]">Featured</span>
+                            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em]">Nổi bật</span>
                         </div>
-                        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
-                            Our Top <span className="text-primary">Brands</span>
+                        <h2 className="text-3xl font-bold ">
+                            Thương hiệu <span className="text-primary">Hàng đầu</span>
                         </h2>
                     </div>
 
-                    <Button 
+                    <Button
                         asChild
                         variant="default"
                         className="rounded-full hover:bg-white hover:text-primary px-6 transition-all duration-300 shadow-lg "
                     >
                         <Link href="/products" className="flex items-center gap-2">
-                            View All
-                            <ArrowRight className="h-4 w-4 "/>
+                            Xem tất cả
+                            <ArrowRight className="h-4 w-4 " />
                         </Link>
                     </Button>
                 </div>
@@ -45,9 +45,9 @@ export default async function BrandList() {
                 {/* Brands Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
                     {displayBrands.map((brand) => (
-                        <BrandItem 
-                            key={brand.id} 
-                            brand={brand} 
+                        <BrandItem
+                            key={brand.id}
+                            brand={brand}
                         />
                     ))}
                 </div>

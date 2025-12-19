@@ -16,13 +16,13 @@ import {
 } from "@/features/shared/hooks/useAdress";
 
 export const addressFormSchema = z.object({
-    userId: z.string().min(1, { message: "User ID is required" }),
+    userId: z.string().min(1, { message: "ID người dùng là bắt buộc" }),
     provinceCode: z.number().int({ message: "Vui lòng chọn tỉnh/thành phố" }).min(1, "Vui lòng chọn tỉnh/thành phố"),
-    provinceName: z.string().min(1, { message: "Province name is required" }),
+    provinceName: z.string().min(1, { message: "Tên tỉnh/thành phố là bắt buộc" }),
     districtCode: z.number().int({ message: "Vui lòng chọn quận/huyện" }).min(1, "Vui lòng chọn quận/huyện"),
-    districtName: z.string().min(1, { message: "District name is required" }),
+    districtName: z.string().min(1, { message: "Tên quận/huyện là bắt buộc" }),
     wardCode: z.number().int({ message: "Vui lòng chọn phường/xã" }).min(1, "Vui lòng chọn phường/xã"),
-    wardName: z.string().min(1, { message: "Ward name is required" }),
+    wardName: z.string().min(1, { message: "Tên phường/xã là bắt buộc" }),
     addressLine: z.string().min(1, { message: "Địa chỉ chi tiết không được để trống" }),
     isDefault: z.boolean(),
 });

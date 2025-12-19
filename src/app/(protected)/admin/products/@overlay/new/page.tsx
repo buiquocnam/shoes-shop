@@ -42,7 +42,7 @@ export default function CreateProductPage() {
 
   return (
     <DrawerOverlay
-      title="Create New Product"
+      title="Tạo sản phẩm mới"
       open={open}
       onOpenChange={handleOpenChange}
       side="right"

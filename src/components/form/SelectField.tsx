@@ -18,7 +18,7 @@ export const SelectField = <T extends FieldValues>({
     name,
     label,
     options,
-    placeholder = "Select an option",
+    placeholder = "Chọn một tùy chọn",
     className,
 }: BaseFieldProps<T> & {
     options: SelectOption[];
@@ -49,6 +49,9 @@ export const SelectField = <T extends FieldValues>({
         />
     );
 };
+
+
+
 
 
 

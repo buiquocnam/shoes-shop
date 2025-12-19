@@ -14,7 +14,7 @@ export function useChangePassword() {
     mutationFn: (data) => authApi.changePassword(data),
     onSuccess: async (_, variables) => {
       await clearOtpData();
-      toast.success("Password changed successfully!");
+      toast.success("Đổi mật khẩu thành công!");
       if (variables.status === "FORGET_PASS") {
         router.push("/login");
       } else {
@@ -22,8 +22,7 @@ export function useChangePassword() {
       }
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to change password. Please try again.");
+      toast.error(error.message || "Đổi mật khẩu thất bại. Vui lòng thử lại.");
     },
   });
 }
-

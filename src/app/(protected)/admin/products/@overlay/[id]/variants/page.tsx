@@ -45,7 +45,7 @@ export default function EditProductVariantsPage() {
 
   return (
     <DrawerOverlay
-      title="Edit Product Variants & Stock"
+      title="Chỉnh sửa biến thể và tồn kho sản phẩm"
       open={open}
       onOpenChange={handleOpenChange}
       side="right"

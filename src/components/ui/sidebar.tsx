@@ -289,7 +289,7 @@ const SidebarTrigger = React.forwardRef<
       {...props}
     >
       <PanelLeft />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">Chuyển đổi thanh bên</span>
     </Button>
   )
 })
@@ -305,7 +305,7 @@ const SidebarRail = React.forwardRef<
     <button
       ref={ref}
       data-sidebar="rail"
-      aria-label="Toggle Sidebar"
+      aria-label="Chuyển đổi thanh bên"
       tabIndex={-1}
       onClick={toggleSidebar}
       title="Toggle Sidebar"

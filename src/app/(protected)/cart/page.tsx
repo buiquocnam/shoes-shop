@@ -4,8 +4,8 @@ import { CartContent } from '@/features/cart/components/CartContent';
 import { Spinner } from '@/components/ui/spinner';
 
 export const metadata: Metadata = {
-    title: 'Shopping Cart - Shoe Shop',
-    description: 'Review your cart items and proceed to checkout',
+    title: 'Giỏ hàng - Cửa hàng giày',
+    description: 'Xem lại các sản phẩm trong giỏ hàng và tiến hành thanh toán',
 };
 
 export default function CartPage() {
@@ -17,7 +17,7 @@ export default function CartPage() {
                         <div className="flex items-center justify-center py-16">
                             <div className="flex flex-col items-center gap-4">
                                 <Spinner className="h-8 w-8 text-primary" />
-                                <p className="text-muted-foreground">Loading cart...</p>
+                                <p className="text-muted-foreground">Đang tải giỏ hàng...</p>
                             </div>
                         </div>
                     }

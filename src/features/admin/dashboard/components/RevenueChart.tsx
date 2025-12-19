@@ -11,7 +11,7 @@ interface RevenueChartProps {
 
 const chartConfig = {
     revenue: {
-        label: 'Revenue',
+        label: 'Doanh thu',
         color: 'var(--chart-1)',
     },
 } satisfies ChartConfig;
@@ -20,7 +20,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
     if (!data || data.length === 0) {
         return (
             <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                No data available
+                Không có dữ liệu
             </div>
         );
     }
@@ -76,7 +76,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
                         <ChartTooltipContent
                             indicator="dot"
                             formatter={(value) => formatCurrency(Number(value))}
-                            labelFormatter={(value) => `Month: ${value}`}
+                            labelFormatter={(value) => `Tháng: ${value}`}
                         />
                     }
                 />

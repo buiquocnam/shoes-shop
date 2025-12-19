@@ -42,10 +42,10 @@ export default function AddReviewDialog({
       {
         onError: (error: Error) => {
           console.error("Create review error:", error);
-          toast.error(error.message || "Failed to submit review");
+          toast.error(error.message || "Gửi đánh giá thất bại");
         },
         onSuccess: () => {
-          toast.success("Review submitted successfully");
+          toast.success("Gửi đánh giá thành công");
           setRating(0);
           setComment("");
           onOpenChange(false); // Đóng dialog sau khi submit thành công
@@ -59,7 +59,7 @@ export default function AddReviewDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-center">
-            Write a Review
+            Viết đánh giá
           </DialogTitle>
         </DialogHeader>
 
@@ -76,7 +76,7 @@ export default function AddReviewDialog({
             ))}
           </div>
           <Textarea
-            placeholder="Write your review..."
+            placeholder="Viết đánh giá của bạn..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="min-h-[100px]"
@@ -89,14 +89,14 @@ export default function AddReviewDialog({
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
-              Cancel
+              Hủy
             </Button>
             <Button
               type="submit"
               className="flex-1"
               disabled={isPending || rating === 0 || !comment.trim()}
             >
-              {isPending ? <Spinner /> : "Submit Review"}
+              {isPending ? <Spinner /> : "Gửi đánh giá"}
             </Button>
           </div>
         </form>

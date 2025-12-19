@@ -23,10 +23,10 @@ export const useUpdateProductInfo = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
-      toast.success("Product info updated successfully");
+      toast.success("Cập nhật thông tin sản phẩm thành công");
     },
     onError: () => {
-      toast.error("Failed to update product info");
+      toast.error("Cập nhật thông tin sản phẩm thất bại");
     },
   });
 };

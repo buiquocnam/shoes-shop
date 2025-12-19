@@ -1,13 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatList, ChatWindow } from "@/features/chat";
+import { getSocket, disconnectSocket } from "@/lib/socket";
+import { useAuthStore } from "@/store";
 
 export default function ChatPage() {
   const [selectedConversationId, setSelectedConversationId] =
     useState<string | null>(null);
   const [selectedConversationName, setSelectedConversationName] =
     useState<string>("");
+  const { isAuthenticated, accessToken } = useAuthStore();
+
+  // Connect socket for admin chat
+  useEffect(() => {
+    if (!isAuthenticated || !accessToken) {
+      disconnectSocket();
+      return;
+    }
+
+    const socket = getSocket();
+    if (socket && !socket.connected) {
+      socket.connect();
+    }
+
+    socket?.on("connect", () => {
+      console.log("✅ Admin chat socket connected", socket.id);
+    });
+
+    socket?.on("disconnect", () => {
+      console.log("❌ Admin chat socket disconnected");
+    });
+
+    socket?.on("connect_error", async (err) => {
+      if (err.message === "Unauthorized") {
+        socket.auth = {
+          token: accessToken,
+        };
+        socket.connect();
+      }
+    });
+
+    return () => {
+      socket?.off("connect");
+      socket?.off("disconnect");
+      socket?.off("connect_error");
+    };
+  }, [isAuthenticated, accessToken]);
 
   const handleSelectConversation = (
     conversationId: string,
@@ -20,9 +59,9 @@ export default function ChatPage() {
   return (
     <div className="container mx-auto py-6 px-4">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Chat Management</h1>
+        <h1 className="text-3xl font-bold">Quản lý trò chuyện</h1>
         <p className="text-muted-foreground mt-2">
-          Manage all conversations
+          Quản lý tất cả cuộc trò chuyện
         </p>
       </div>
 

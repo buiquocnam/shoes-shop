@@ -1,3 +1,2 @@
-export { default as BrandForm } from './BrandForm';
-export { columns as brandColumns } from './columns';
-
+export { default as BrandForm } from "./BrandForm";
+export { brandColumns } from "./columns";

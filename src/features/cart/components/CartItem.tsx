@@ -66,7 +66,7 @@ export function CartItem({ item }: CartItemProps) {
                         </h3>
                         <div className="space-y-1 text-sm text-muted-foreground">
                             <p>
-                                Color: <span className="font-medium text-foreground">{item.variant.color}</span>
+                                Màu: <span className="font-medium text-foreground">{item.variant.color}</span>
                             </p>
                             <p>
                                 Size: <span className="font-medium text-foreground">{item.variant.sizeLabel}</span>
@@ -111,7 +111,7 @@ export function CartItem({ item }: CartItemProps) {
                             className="w-10 h-full text-center border-none shadow-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
                             min={1}
                             max={item.variant.stock}
-                            />
+                        />
                         <Button
                             variant="ghost"
                             size="icon"
@@ -123,7 +123,7 @@ export function CartItem({ item }: CartItemProps) {
                         </Button>
                     </div>
                     {item.quantity >= item.variant.stock && (
-                        <p className="text-xs font-medium text-destructive">Max stock</p>
+                        <p className="text-xs font-medium text-destructive">Tối đa</p>
                     )}
                 </div>
             </TableCell>
@@ -139,7 +139,7 @@ export function CartItem({ item }: CartItemProps) {
                     onClick={handleRemove}
                     disabled={isRemoving}
                     className="h-9 w-9 hover:text-primary hover:bg-primary/10"
-                    title="Remove item"
+                    title="Xóa sản phẩm"
                 >
                     <Trash2 className="h-4 w-4" />
                 </Button>

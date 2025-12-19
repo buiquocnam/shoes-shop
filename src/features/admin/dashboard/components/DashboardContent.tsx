@@ -15,26 +15,26 @@ import { RevenueSummary } from './RevenueSummary';
 const STATS_CARDS = [
     {
         key: 'totalRevenue' as const,
-        label: 'Total Revenue',
+        label: 'Tổng doanh thu',
         isCurrency: true,
         icon: DollarSign,
         color: 'bg-chart-1/10 text-chart-1 border-chart-1/20',
     },
     {
         key: 'totalOrders' as const,
-        label: 'Total Orders',
+        label: 'Tổng đơn hàng',
         icon: ShoppingBag,
         color: 'bg-chart-2/10 text-chart-2 border-chart-2/20',
     },
     {
         key: 'totalUsers' as const,
-        label: 'Total Users',
+        label: 'Tổng người dùng',
         icon: Users,
         color: 'bg-chart-3/10 text-chart-3 border-chart-3/20',
     },
     {
         key: 'totalProducts' as const,
-        label: 'Products',
+        label: 'Sản phẩm',
         icon: Package,
         color: 'bg-chart-4/10 text-chart-4 border-chart-4/20',
     },
@@ -95,8 +95,8 @@ export function DashboardContent() {
                 <Card>
                     <CardHeader>
                         <div>
-                            <CardTitle className="text-xl">Revenue Overview</CardTitle>
-                            <CardDescription className="mt-1">Monthly revenue breakdown</CardDescription>
+                            <CardTitle className="text-xl">Tổng quan doanh thu</CardTitle>
+                            <CardDescription className="mt-1">Phân tích doanh thu theo tháng</CardDescription>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -111,18 +111,18 @@ export function DashboardContent() {
                 {/* Recent Orders */}
                 <Card >
                     <CardHeader>
-                        <CardTitle className="text-xl">Recent Orders</CardTitle>
-                        <CardDescription>A list of recent orders from your store</CardDescription>
+                        <CardTitle className="text-xl">Đơn hàng gần đây</CardTitle>
+                        <CardDescription>Danh sách các đơn hàng gần đây từ cửa hàng của bạn</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Order ID</TableHead>
-                                    <TableHead>User ID</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead className="text-right">Total</TableHead>
-                                    <TableHead className="text-right">Quantity</TableHead>
+                                    <TableHead>Mã đơn hàng</TableHead>
+                                    <TableHead>ID người dùng</TableHead>
+                                    <TableHead>Ngày</TableHead>
+                                    <TableHead className="text-right">Tổng tiền</TableHead>
+                                    <TableHead className="text-right">Số lượng</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -161,7 +161,7 @@ export function DashboardContent() {
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                                            No orders found
+                                            Không tìm thấy đơn hàng
                                         </TableCell>
                                     </TableRow>
                                 )}

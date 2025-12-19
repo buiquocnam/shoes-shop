@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -10,6 +10,7 @@ import {
     Package,
     ListOrdered,
     MessageSquare,
+    CreditCard,
 } from "lucide-react";
 import {
     Sidebar,
@@ -37,39 +38,49 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const pathname = usePathname();
     const [activePath, setActivePath] = useState<string>(getInitialActive(pathname));
 
+    // Sync activePath với pathname khi pathname thay đổi
+    useEffect(() => {
+        setActivePath(getInitialActive(pathname));
+    }, [pathname]);
+
     const menuItems = [
         {
-            label: "Dashboard",
+            label: "Bảng điều khiển",
             icon: LayoutDashboard,
             href: "/admin",
         },
         {
-            label: "Products",
+            label: "Sản phẩm",
             icon: Package,
             subMenu: [
-                { label: "Product List", href: "/admin/products" },
-                { label: "History Variants", href: "/admin/products/variants" },
+                { label: "Danh sách sản phẩm", href: "/admin/products" },
+                { label: "Lịch sử biến thể", href: "/admin/products/history" },
             ],
         },
         {
-            label: "Categories",
+            label: "Danh mục",
             icon: ListOrdered,
             href: "/admin/categories",
         },
         {
-            label: "Users",
+            label: "Người dùng",
             icon: Users,
             href: "/admin/users",
         },
         {
-            label: "Brands",
+            label: "Thương hiệu",
             icon: Bookmark,
             href: "/admin/brands",
         },
         {
-            label: "Chat",
+            label: "Trò chuyện",
             icon: MessageSquare,
             href: "/admin/chat",
+        },
+        {
+            label: "Thanh toán",
+            icon: CreditCard,
+            href: "/admin/payments",
         },
     ];
 

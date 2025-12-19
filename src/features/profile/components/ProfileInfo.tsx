@@ -25,10 +25,10 @@ export function ProfileInfo() {
             <User className="w-12 h-12 text-gray-400" />
           </div>
         </div>
-        <h3 className="text-xl font-semibold text-center">{user?.name || 'N/A'}</h3>
+        <h3 className="text-xl font-semibold text-center">{user?.name || 'Chưa có'}</h3>
         <p className="text-gray-500 text-sm text-center mt-1 flex items-center justify-center gap-2">
           <Mail className="w-4 h-4 text-gray-400" />
-          {user?.email || 'N/A'}
+          {user?.email || 'Chưa có'}
         </p>
         <p className="text-gray-500 text-sm text-center mt-1 flex items-center justify-center gap-2">
           <Phone className="w-4 h-4 text-gray-400" />
@@ -39,7 +39,7 @@ export function ProfileInfo() {
           className="w-full mt-6 gap-2"
         >
           <Edit2 className="w-4 h-4" />
-          Edit
+          Chỉnh sửa
         </Button>
       </Card>
 

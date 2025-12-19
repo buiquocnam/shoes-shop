@@ -23,10 +23,10 @@ export const useUpdateProductImages = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
-      toast.success("Images updated successfully");
+      toast.success("Cập nhật hình ảnh thành công");
     },
     onError: () => {
-      toast.error("Failed to update images");
+      toast.error("Cập nhật hình ảnh thất bại");
     },
   });
 };

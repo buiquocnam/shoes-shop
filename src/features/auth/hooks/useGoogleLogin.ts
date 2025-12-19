@@ -23,14 +23,16 @@ export function useGoogleLogin() {
         router.replace("/admin");
         return;
       }
-   
+
       requestAnimationFrame(() => {
         router.replace("/");
       });
-      toast.success("Login with Google successful");
+      toast.success("Đăng nhập với Google thành công");
     },
     onError: (error) => {
-      toast.error(error.message || "Google login failed. Please try again.");
+      toast.error(
+        error.message || "Đăng nhập Google thất bại. Vui lòng thử lại."
+      );
     },
   });
 }

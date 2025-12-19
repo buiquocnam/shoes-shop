@@ -7,8 +7,8 @@ import { Footer } from '@/components/layout/Footer';
 import { ChatProvider } from '@/features/chat/components';
 
 export const metadata: Metadata = {
-  title: 'Shoe Shop',
-  description: 'Your favorite shoe shop',
+  title: 'Cửa hàng giày',
+  description: 'Cửa hàng giày yêu thích của bạn',
 };
 
 export default function RootLayout({

@@ -21,14 +21,14 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
                 <InputField
                     control={control}
                     name="name"
-                    label="Product Name"
-                    placeholder="e.g. Classic Leather Sneaker"
+                    label="Tên sản phẩm"
+                    placeholder="Ví dụ: Giày thể thao da cổ điển"
                 />
                 <TextareaField
                     control={control}
                     name="description"
-                    label="Product Description"
-                    placeholder="Enter a detailed description..."
+                    label="Mô tả sản phẩm"
+                    placeholder="Nhập mô tả chi tiết..."
                     rows={4}
                 />
             </div>
@@ -38,16 +38,16 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
                     <SelectField
                         control={control}
                         name="brandId"
-                        label="Brand"
+                        label="Thương hiệu"
                         options={brands}
-                        placeholder="Select a brand"
+                        placeholder="Chọn thương hiệu"
                     />
                     <SelectField
                         control={control}
                         name="categoryId"
-                        label="Categories"
+                        label="Danh mục"
                         options={categories}
-                        placeholder="Select a category"
+                        placeholder="Chọn danh mục"
                     />
                 </div>
             </div>
@@ -57,14 +57,14 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
                     <NumberField
                         control={control}
                         name="price"
-                        label="Base Price ($)"
-                        placeholder="e.g. 120.00"
+                        label="Giá cơ bản (VNĐ)"
+                        placeholder="Ví dụ: 1200000"
                     />
                     <NumberField
                         control={control}
                         name="discount"
-                        label="Discount (%)"
-                        placeholder="e.g. 15"
+                        label="Giảm giá (%)"
+                        placeholder="Ví dụ: 15"
                         min={0}
                         max={100}
                     />

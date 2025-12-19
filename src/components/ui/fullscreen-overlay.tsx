@@ -44,7 +44,7 @@ export function FullscreenOverlay({
               className="h-8 w-8"
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">Đóng</span>
             </Button>
           )}
         </div>
@@ -57,6 +57,9 @@ export function FullscreenOverlay({
     </div>
   );
 }
+
+
+
 
 
 

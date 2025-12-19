@@ -45,7 +45,7 @@ export default function EditProductInfoPage() {
 
   return (
     <DrawerOverlay
-      title="Edit Product Info"
+      title="Chỉnh sửa thông tin sản phẩm"
       open={open}
       onOpenChange={handleOpenChange}
       side="right"

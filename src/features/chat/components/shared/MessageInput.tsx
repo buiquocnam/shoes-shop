@@ -51,7 +51,7 @@ export function MessageInput({
       <Textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type your message..."
+        placeholder="Nhập tin nhắn của bạn..."
         className="min-h-[60px] max-h-[120px] resize-none  "
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {

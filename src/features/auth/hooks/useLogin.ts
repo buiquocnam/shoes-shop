@@ -33,10 +33,10 @@ export function useLogin() {
       requestAnimationFrame(() => {
         router.replace(redirectPath);
       });
-      toast.success("Login successful");
+      toast.success("Đăng nhập thành công");
     },
     onError: (error) => {
-      toast.error(error.message || "Login failed. Please try again.");
+      toast.error(error.message || "Đăng nhập thất bại. Vui lòng thử lại.");
     },
   });
 }

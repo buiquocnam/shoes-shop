@@ -24,10 +24,10 @@ export const useUpsertVariants = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
-      toast.success("Variants updated successfully");
+      toast.success("Cập nhật biến thể thành công");
     },
     onError: () => {
-      toast.error("Failed to update variants");
+      toast.error("Cập nhật biến thể thất bại");
     },
   });
 };

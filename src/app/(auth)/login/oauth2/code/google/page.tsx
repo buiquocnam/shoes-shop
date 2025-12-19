@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useGoogleLogin } from '@/features/auth/hooks';
+import { useGoogleLogin } from '@/features/auth/hooks/useGoogleLogin';
 import { Spinner } from '@/components/ui/spinner';
 
 export default function GoogleOAuthCallbackPage() {

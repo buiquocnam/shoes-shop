@@ -43,7 +43,7 @@ export default function CheckoutSuccessPage() {
     }
 
     const data: CheckoutData = JSON.parse(storedData);
-   
+
 
     setCheckoutData(data);
 
@@ -115,19 +115,19 @@ export default function CheckoutSuccessPage() {
           <div className="flex items-center gap-2 text-primary">
             <CheckCircle2 className="h-12 w-12" />
             <h1 className="text-3xl lg:text-4xl">
-              Thank you for your purchase!
+              Cảm ơn bạn đã mua hàng!
             </h1>
           </div>
 
           <p className="mb-10 text-lg">
-            Your order has been placed successfully.
+            Đơn hàng của bạn đã được đặt thành công.
           </p>
 
           <div className="w-full overflow-hidden rounded-xl border">
             {/* Address */}
             <div className="border-b p-6 text-left">
               <p className="mb-2 text-xs font-bold uppercase">
-                Shipping Address
+                Địa chỉ giao hàng
               </p>
               <p className="font-semibold">
                 {formatFullAddress(checkoutData.selectedAddress)}
@@ -152,7 +152,7 @@ export default function CheckoutSuccessPage() {
                   <div className="flex-grow">
                     <p className="font-semibold">{item.product.name}</p>
                     <p className="text-sm">
-                      Size: {item.size.size} / Qty: {item.quantity}
+                      Size: {item.size.size} / Số lượng: {item.quantity}
                     </p>
                   </div>
                   <p className="font-semibold">
@@ -165,7 +165,7 @@ export default function CheckoutSuccessPage() {
             {/* Total */}
             <div className="border-t p-6">
               <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
+                <span>Tổng cộng</span>
                 <span>{formatCurrency(totalAmount)}</span>
               </div>
             </div>
@@ -173,10 +173,10 @@ export default function CheckoutSuccessPage() {
 
           <div className="mt-10 flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
             <Button variant="outline" size="lg" asChild>
-              <Link href="/profile/orders">View Orders</Link>
+              <Link href="/profile/orders">Xem đơn hàng</Link>
             </Button>
             <Button size="lg" asChild>
-              <Link href="/products">Continue Shopping</Link>
+              <Link href="/products">Tiếp tục mua sắm</Link>
             </Button>
           </div>
         </div>

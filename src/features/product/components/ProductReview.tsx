@@ -81,7 +81,7 @@ const RatingBar = ({
 
 const ReviewItem = ({ review }: { review: ProductReviewType }) => {
   const avatarUrl = null;
-  const userName = review.user?.name || "Anonymous User";
+  const userName = review.user?.name || "Người dùng ẩn danh";
   const initial = userName?.[0]?.toUpperCase() || "U";
 
   return (
@@ -107,7 +107,7 @@ const ReviewItem = ({ review }: { review: ProductReviewType }) => {
               {userName}
             </h4>
             <span className="text-xs text-gray-400">
-              {review.created ? formatDate(review.created) : ""} ago
+              {review.created ? formatDate(review.created) : ""} trước
             </span>
           </div>
           {/* Rating Sao bên phải - Màu VÀNG */}
@@ -142,7 +142,7 @@ export default function ProductReview({ productId }: { productId: string }) {
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-white rounded-xl shadow-lg">
-        <div className="text-center py-8 text-gray-600">Loading reviews...</div>
+        <div className="text-center py-8 text-gray-600">Đang tải đánh giá...</div>
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function ProductReview({ productId }: { productId: string }) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-white rounded-xl shadow-lg">
         <div className="text-center py-8 text-red-500">
-          Failed to load reviews
+          Không thể tải đánh giá
         </div>
       </div>
     );
@@ -173,7 +173,7 @@ export default function ProductReview({ productId }: { productId: string }) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-primary/3 rounded-xl shadow-xl mt-8 ">
-      <h2 className="text-3xl font-bold mb-12 mt-20 text-center uppercase">Customer Reviews</h2>
+      <h2 className="text-3xl font-bold mb-12 mt-20 text-center uppercase">Đánh giá khách hàng</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* CỘT TRÁI (1/3): ĐIỂM TRUNG BÌNH & NÚT */}
         <div className="md:col-span-1 text-center">
@@ -198,7 +198,7 @@ export default function ProductReview({ productId }: { productId: string }) {
             ))}
           </div>
           <p className="text-sm text-gray-500 mb-6">
-            Based on {totalValidReviews} reviews
+            Dựa trên {totalValidReviews} đánh giá
           </p>
           <div className="flex justify-center">
             <div className="w-full max-w-xs">
@@ -208,7 +208,7 @@ export default function ProductReview({ productId }: { productId: string }) {
                 className="gap-2 cursor-pointer border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-150 font-semibold px-5 py-2 rounded-full shadow"
               >
                 <MessageCircle className="w-5 h-5" />
-                Write a Review
+                Viết đánh giá
               </Button>
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function ProductReview({ productId }: { productId: string }) {
       <div className="mt-10 border-t border-gray-200 pt-8">
         {isEmpty ? (
           <div className="text-center text-gray-500 py-4">
-            No reviews yet. Be the first to review!
+            Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!
           </div>
         ) : (
           <div className="space-y-4">

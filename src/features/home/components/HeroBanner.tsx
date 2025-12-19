@@ -4,13 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export type HeroBannerProps = {
-  image?: string;
-  alt?: string;
-  description?: string;
-};
-
-const HeroBanner = ({ image, alt }: HeroBannerProps) => {
+const HeroBanner = () => {
   return (
     <section className="relative overflow-hidden bg-gray-100 pt-12 pb-24 lg:pt-24 lg:pb-40">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -46,19 +40,18 @@ const HeroBanner = ({ image, alt }: HeroBannerProps) => {
                 "text-sm font-semibold tracking-wide uppercase mb-2"
               )}
             >
-              New Season Arrivals
+              Sản phẩm mùa mới
             </Badge>
 
-            <h1 className="text-4xl lg:text-6xl font-extrabold leading-tight text-gray-900">
-              Step into <span className="text-primary">Style</span> &{" "}
+            <h1 className="text-4xl lg:text-6xl font-serif font-black leading-tight text-gray-900">
+              Bước vào <span className="text-primary">Phong cách</span> &{" "}
               <br />
-              Walk with <span className="text-primary">Comfort</span>.
+              Đi cùng <span className="text-primary">Thoải mái</span>.
             </h1>
 
             <p className="text-lg text-gray-600 max-w-lg">
-              Discover our latest collection of premium footwear designed for
-              the modern lifestyle. Elegant, durable, and crafted for your
-              journey.
+              Khám phá bộ sưu tập giày cao cấp mới nhất được thiết kế cho
+              lối sống hiện đại. Thanh lịch, bền bỉ và được chế tác cho hành trình của bạn.
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">
@@ -67,37 +60,26 @@ const HeroBanner = ({ image, alt }: HeroBannerProps) => {
                   size="lg"
                   className="px-8 py-3 bg-primary text-white font-semibold rounded-lg shadow-lg hover:bg-primary/90 transition-transform hover:-translate-y-1"
                 >
-                  Shop Collection
+                  Mua sắm ngay
                 </Button>
               </Link>
-              <Link href="/products?sort_by=countSell">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg shadow-md border hover:bg-gray-50 transition-transform hover:-translate-y-1"
-                >
-                  Explore Sales
-                </Button>
-              </Link>
+
             </div>
           </div>
 
           <div className="lg:w-1/2 relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full blur-3xl -z-10" />
-            <div className="relative z-10 aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+            <div className="relative z-10 aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl rotate-6 hover:rotate-0 transition-transform duration-500">
               <Image
-                src={
-                  image ||
-                  "https://lh3.googleusercontent.com/aida-public/AB6AXuCt58UjMWfiimtdfqtx3Q3V-6Tv-y4GwyROy2FMFEHyWGymQ7QV13jqq1QROni01KdszZ6Jf_Oh6LQdDSi1YLjJEUOmudFamG7S7k7nbqL9RY3VXpZpDZ_jvwSbPFnhvQi7n6DwdXpWfNB3CgLAuJ4Hp1odFNlZ8x3ZMZi_AyQ6Fz2vevExz4Chn0_7jitOvBVOTff0XiEuOrdOlBrVStn4H605KQlnL2P3irEBFv8W1eSCGBscwC7T0_WkdqbFGdNmQhKuF0ktSl_z"
-                }
-                alt={alt || "Premium Shoe Banner"}
+                src="/images/hero-banner.jpg"
+                alt="Banner giày cao cấp"
                 fill
                 className="object-cover"
                 unoptimized
                 priority
               />
             </div>
-           
+
           </div>
         </div>
       </div>

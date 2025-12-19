@@ -1,2 +1,2 @@
 export { UserForm } from "./UserForm";
-export { columns } from "./columns";
+export { userColumns } from "./columns";

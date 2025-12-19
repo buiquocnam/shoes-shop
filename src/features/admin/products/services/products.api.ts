@@ -12,6 +12,7 @@ import {
   PurchasedItemPaginationResponse,
   PurchasedItemFilters,
 } from "@/features/profile/types";
+import { PaginatedResponse } from "@/types/global";
 import { toQueryString } from "@/utils/queryString";
 
 export interface CreateProductInput {
@@ -66,6 +67,32 @@ export interface VariantResponse {
     stock: number;
   }[];
 }
+
+// ===== VARIANT HISTORY =====
+export interface VariantHistoryItem {
+  id: string;
+  product: ProductType;
+  color: string;
+  size: string;
+  count: number;
+  variant: {
+    id: string;
+    productId: string;
+    stock: number;
+    color: string;
+    status: "ACTIVE" | "INACTIVE";
+    countSell: number;
+    size: string;
+  };
+}
+
+export interface VariantHistoryFilters {
+  page?: number;
+  size?: number;
+}
+
+export interface VariantHistoryPaginationResponse
+  extends PaginatedResponse<VariantHistoryItem> {}
 
 export const adminProductsApi = {
   /**
@@ -200,6 +227,19 @@ export const adminProductsApi = {
       : "";
     const response = await apiClient.get<PurchasedItemPaginationResponse>(
       `/shoes/products/purchased/by-product/${productId}${queryParams}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Get Variant History
+   */
+  getVariantHistory: async (
+    filters?: VariantHistoryFilters
+  ): Promise<VariantHistoryPaginationResponse> => {
+    const queryParams = filters ? toQueryString(filters) : "";
+    const response = await apiClient.get<VariantHistoryPaginationResponse>(
+      `/shoes/variants/history${queryParams}`
     );
     return response.result;
   },

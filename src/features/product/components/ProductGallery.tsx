@@ -25,7 +25,7 @@ export default function ProductGallery({ images }: { images: ImageType[] }) {
     return (
       <div className="w-full flex flex-col items-center">
         <div className="relative w-full max-w-md aspect-square border rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center">
-          <p className="text-gray-400">No images available</p>
+          <p className="text-gray-400">Không có hình ảnh</p>
         </div>
       </div>
     );

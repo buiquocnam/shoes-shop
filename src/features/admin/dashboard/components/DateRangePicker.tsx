@@ -36,32 +36,32 @@ export function DateRangePicker({ onChange, defaultFrom, defaultTo }: DateRangeP
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn('w-[280px] justify-start text-left font-normal', !selected && 'text-muted-foreground')}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {selected?.from && selected?.to ? (
-              <>
-                {format(selected.from, 'dd/MM/yyyy')} - {format(selected.to, 'dd/MM/yyyy')}
-              </>
-            ) : (
-              <span>Pick a date range</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
-          <Calendar
-            mode="range"
-            defaultMonth={selected?.from}
-            selected={selected}
-            onSelect={handleSelect}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
-  
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className={cn('w-[280px] justify-start text-left font-normal', !selected && 'text-muted-foreground')}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {selected?.from && selected?.to ? (
+            <>
+              {format(selected.from, 'dd/MM/yyyy')} - {format(selected.to, 'dd/MM/yyyy')}
+            </>
+          ) : (
+            <span>Chọn khoảng thời gian</span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="end">
+        <Calendar
+          mode="range"
+          defaultMonth={selected?.from}
+          selected={selected}
+          onSelect={handleSelect}
+          numberOfMonths={2}
+        />
+      </PopoverContent>
+    </Popover>
+
   );
 }
 

@@ -28,10 +28,10 @@ export function useCreateReview(productId: string) {
       queryClient.invalidateQueries({
         queryKey: userQueryKeys.review.lists(productId),
       });
-      toast.success("Review submitted successfully");
+      toast.success("Gửi đánh giá thành công");
     },
     onError: () => {
-      toast.error("Failed to submit review");
+      toast.error("Gửi đánh giá thất bại");
     },
   });
 }

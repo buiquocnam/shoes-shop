@@ -24,8 +24,15 @@ export const adminUsersApi = {
     return response.result;
   },
 
-  deleteUser: async (id: string): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(`/auth/users/delete-user`);
+  /**
+   * Delete Users
+   * Body: array of user IDs ["id1", "id2", ...]
+   */
+  deleteUser: async (userIds: string[]): Promise<boolean> => {
+    const response = await apiClient.delete<boolean>(
+      `/auth/users/delete-user`,
+      userIds
+    );
     return response.result;
   },
 

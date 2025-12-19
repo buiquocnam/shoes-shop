@@ -51,24 +51,24 @@ export function CartSummary({ cart }: CartSummaryProps) {
         <div className="sticky top-4">
             <Card>
                 <CardHeader>
-                    <CardTitle>Order Summary</CardTitle>
+                    <CardTitle>Tóm tắt đơn hàng</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-3">
                         <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Items ({cart.count})</span>
+                            <span className="text-muted-foreground">Sản phẩm ({cart.count})</span>
                             <span className="font-semibold">{formatCurrency(cart.totalPrice)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Shipping</span>
-                            <span className="font-semibold text-green-600 dark:text-green-400">Free</span>
+                            <span className="text-muted-foreground">Vận chuyển</span>
+                            <span className="font-semibold text-green-600 dark:text-green-400">Miễn phí</span>
                         </div>
                     </div>
 
                     <Separator />
 
                     <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold">Total</span>
+                        <span className="text-lg font-bold">Tổng cộng</span>
                         <span className="text-2xl font-bold">{formatCurrency(cart.totalPrice)}</span>
                     </div>
 
@@ -78,11 +78,11 @@ export function CartSummary({ cart }: CartSummaryProps) {
                         size="lg"
                         disabled={cart.count === 0}
                     >
-                        Proceed to Checkout
+                        Tiến hành thanh toán
                     </Button>
 
                     <p className="text-xs text-center text-muted-foreground">
-                        You won't be charged until the next step
+                        Bạn sẽ không bị tính phí cho đến bước tiếp theo
                     </p>
                 </CardContent>
             </Card>

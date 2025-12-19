@@ -37,9 +37,9 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-    { name: 'Home', href: '/' },
-    { name: 'Shoes', href: '/products' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Trang chủ', href: '/' },
+    { name: 'Giày', href: '/products' },
+    { name: 'Liên hệ', href: '/contact' },
 ] as const;
 
 const HIDDEN_PATHS = ['/login', '/register', '/verify-email', '/forget-password'] as const;
@@ -72,8 +72,8 @@ export default function Header() {
 
     const accountLinks = useMemo(
         () => [
-            { name: 'My Profile', href: '/profile', icon: User },
-            { name: 'Logout', href: '#', icon: LogOut, onClick: handleLogout },
+            { name: 'Hồ sơ của tôi', href: '/profile', icon: User },
+            { name: 'Đăng xuất', href: '#', icon: LogOut, onClick: handleLogout },
         ],
         [handleLogout]
     );
@@ -106,7 +106,7 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full shadow-xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-3 items-center h-16 gap-4">
                     {/* Logo Section */}
@@ -162,7 +162,7 @@ export default function Header() {
                                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     type="text"
-                                    placeholder="Search products..."
+                                    placeholder="Tìm kiếm sản phẩm..."
                                     value={searchTerm}
                                     className="h-9 w-64 pl-9 pr-4 transition-all focus:w-72"
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -179,7 +179,7 @@ export default function Header() {
                             onClick={handleSearchClick}
                         >
                             <Search className="h-4 w-4" />
-                            <span className="sr-only">Search</span>
+                            <span className="sr-only">Tìm kiếm</span>
                         </Button>
 
                         {/* Cart */}
@@ -194,7 +194,7 @@ export default function Header() {
                                         {cartCount > 9 ? '9+' : cartCount}
                                     </Badge>
                                 )}
-                                <span className="sr-only">Shopping cart</span>
+                                <span className="sr-only">Giỏ hàng</span>
                             </Link>
                         </Button>
 
@@ -208,7 +208,7 @@ export default function Header() {
                                                 {user.name?.[0]?.toUpperCase() ?? 'U'}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="sr-only">User menu</span>
+                                        <span className="sr-only">Menu người dùng</span>
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-56">
@@ -250,7 +250,7 @@ export default function Header() {
                             <Button variant="ghost" size="icon" asChild>
                                 <Link href="/login">
                                     <User className="h-4 w-4" />
-                                    <span className="sr-only">Login</span>
+                                    <span className="sr-only">Đăng nhập</span>
                                 </Link>
                             </Button>
                         )}
@@ -260,7 +260,7 @@ export default function Header() {
                             <SheetTrigger asChild>
                                 <Button variant="ghost" size="icon" className="md:hidden">
                                     <Menu className="h-5 w-5" />
-                                    <span className="sr-only">Toggle menu</span>
+                                    <span className="sr-only">Chuyển đổi menu</span>
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="right" className="w-80">
@@ -270,7 +270,7 @@ export default function Header() {
                                 <div className="mt-6 flex flex-col gap-6">
                                     {/* Navigation */}
                                     <div className="space-y-2">
-                                        <h3 className="text-sm font-semibold text-muted-foreground">Navigation</h3>
+                                        <h3 className="text-sm font-semibold text-muted-foreground">Điều hướng</h3>
                                         <Separator />
                                         <nav className="flex flex-col gap-1">
                                             {NAV_LINKS.map((link) => {
@@ -298,7 +298,7 @@ export default function Header() {
                                         <>
                                             <Separator />
                                             <div className="space-y-2">
-                                                <h3 className="text-sm font-semibold text-muted-foreground">Account</h3>
+                                                <h3 className="text-sm font-semibold text-muted-foreground">Tài khoản</h3>
                                                 <Separator />
                                                 <div className="flex flex-col gap-1">
                                                     {accountLinks.map((link) => {

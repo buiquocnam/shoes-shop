@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,8 @@ interface CategoryFormProps {
     isLoading?: boolean;
     category?: CategoryType;
     trigger?: React.ReactNode;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
 export default function CategoryForm({
@@ -22,8 +23,9 @@ export default function CategoryForm({
     isLoading,
     category,
     trigger,
+    open,
+    onOpenChange,
 }: CategoryFormProps) {
-    const [open, setOpen] = useState(false);
 
     const form = useForm<CategoryFormValues>({
         resolver: zodResolver(categorySchema),
@@ -37,21 +39,19 @@ export default function CategoryForm({
         try {
             await onSubmit(data);
             form.reset();
-            setOpen(false);
+            onOpenChange(false);
         } catch (err) {
             console.error(err);
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {trigger || <Button>Add Category</Button>}
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">
-                        {category ? "Edit Category" : "Create New Category"}
+                        {category ? "Chỉnh sửa danh mục" : "Tạo danh mục mới"}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -64,22 +64,22 @@ export default function CategoryForm({
                             <InputField
                                 control={form.control}
                                 name="name"
-                                label="Category Name"
-                                placeholder="Enter category name"
+                                label="Tên danh mục"
+                                placeholder="Nhập tên danh mục"
                             />
 
                             <TextareaField
                                 control={form.control}
                                 name="description"
-                                label="Description"
-                                placeholder="Enter category description"
+                                label="Mô tả"
+                                placeholder="Nhập mô tả danh mục"
                                 rows={4}
                             />
                         </div>
 
                         <div className="flex justify-end pt-2">
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Saving..." : category ? "Update" : "Create"}
+                                {isLoading ? "Đang lưu..." : category ? "Cập nhật" : "Tạo"}
                             </Button>
                         </div>
                     </form>

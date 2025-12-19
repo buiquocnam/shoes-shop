@@ -81,7 +81,7 @@ export default function Sidebar() {
       <CardContent className="space-y-6">
         {/* Category Filter */}
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm">Category</h3>
+          <h3 className="font-semibold text-sm">Danh mục</h3>
           {isLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -100,7 +100,7 @@ export default function Sidebar() {
                   htmlFor="all"
                   className="text-sm font-normal cursor-pointer"
                 >
-                  All Categories
+                  Tất cả danh mục
                 </Label>
               </div>
 
@@ -123,7 +123,7 @@ export default function Sidebar() {
 
         {/* Price Range Filter */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-sm">Price Range</h3>
+          <h3 className="font-semibold text-sm">Khoảng giá</h3>
           <div className="px-1">
             <Slider
               value={priceRange}
@@ -134,8 +134,8 @@ export default function Sidebar() {
               className="mb-4"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>${priceRange[0]}</span>
-              <span>${priceRange[1]}</span>
+              <span>{priceRange[0]}K</span>
+              <span>{priceRange[1]}K</span>
             </div>
           </div>
         </div>
@@ -145,14 +145,14 @@ export default function Sidebar() {
         {/* Action Buttons */}
         <div className="space-y-2">
           <Button onClick={handleApplyFilters} className="w-full">
-            Apply Filters
+            Áp dụng bộ lọc
           </Button>
           <Button
             variant="ghost"
             onClick={handleReset}
             className="w-full"
           >
-            Reset
+            Đặt lại
           </Button>
         </div>
       </CardContent>

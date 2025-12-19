@@ -55,7 +55,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel className="text-gray-900 dark:text-gray-100 text-base font-medium leading-normal pb-2 block">
-                                        Product Images
+                                        Hình ảnh sản phẩm
                                     </FieldLabel>
                                     <label
                                         htmlFor="file-upload"
@@ -63,7 +63,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                     >
                                         <Upload className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" />
                                         <p className="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">
-                                            <span className="font-semibold text-red-600 dark:text-red-500">Click to upload</span> or drag and drop
+                                            <span className="font-semibold text-red-600 dark:text-red-500">Nhấp để tải lên</span> hoặc kéo thả
                                         </p>
                                         <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">
                                             PNG, JPG, GIF
@@ -92,9 +92,9 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                     {allImages.length > 0 && (
                         <div>
                             <p className="text-gray-900 dark:text-gray-100 text-base font-medium leading-normal pb-3">
-                                Image Preview
+                                Xem trước hình ảnh
                                 <span className="text-gray-500 dark:text-gray-400 font-normal ml-2">
-                                    ({allImages.length} {allImages.length === 1 ? 'image' : 'images'})
+                                    ({allImages.length} {allImages.length === 1 ? 'hình ảnh' : 'hình ảnh'})
                                 </span>
                             </p>
                             {isCreateMode ? (
@@ -135,7 +135,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                             />
                                                             {item.type === 'new' && (
                                                                 <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded font-medium shadow-sm z-10">
-                                                                    New
+                                                                    Mới
                                                                 </div>
                                                             )}
                                                             {isPrimary && (
@@ -145,7 +145,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                             )}
                                                             {!isPrimary && item.type === 'new' && (
                                                                 <div className="absolute bottom-2 left-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded text-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                                                    Click to set as primary
+                                                                    Nhấp để đặt làm ảnh chính
                                                                 </div>
                                                             )}
                                                             {onRemoveImage && (
@@ -158,7 +158,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                                         }
                                                                     }}
                                                                     className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg backdrop-blur-sm z-10"
-                                                                    title="Remove image"
+                                                                    title="Xóa hình ảnh"
                                                                 >
                                                                     <X className="h-3.5 w-3.5" />
                                                                 </button>
@@ -193,7 +193,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                             />
                                             {item.type === 'new' && (
                                                 <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded font-medium shadow-sm z-10">
-                                                    New
+                                                    Mới
                                                 </div>
                                             )}
                                             {onRemoveImage && (
@@ -205,7 +205,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                         }
                                                     }}
                                                     className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg backdrop-blur-sm z-10"
-                                                    title="Remove image"
+                                                    title="Xóa hình ảnh"
                                                 >
                                                     <X className="h-3.5 w-3.5" />
                                                 </button>

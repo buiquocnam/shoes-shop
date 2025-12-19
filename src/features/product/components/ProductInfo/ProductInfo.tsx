@@ -45,7 +45,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
             <div className="mt-4 sm:mt-6">
                 <h2 className="text-base sm:text-lg font-bold uppercase text-gray-900 mb-2 sm:mb-3">
-                    Description
+                    Mô tả
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
                     {productInfo.description}

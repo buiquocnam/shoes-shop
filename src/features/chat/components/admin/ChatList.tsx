@@ -40,7 +40,7 @@ export function ChatList({
       const otherParticipantName =
         !msg.me
           ? msg.senderName
-          : existing?.otherParticipantName || "Unknown";
+          : existing?.otherParticipantName || "Không xác định";
 
       if (isNewer) {
         conversationsMap.set(msg.conversationId, {
@@ -64,7 +64,7 @@ export function ChatList({
       <Card className={cn("h-full", className)}>
         <CardContent className="p-4">
           <div className="text-center text-muted-foreground">
-            Loading conversations...
+            Đang tải cuộc trò chuyện...
           </div>
         </CardContent>
       </Card>
@@ -74,21 +74,21 @@ export function ChatList({
   return (
     <Card className={cn("flex flex-col h-full", className)}>
       <CardContent className="p-4 border-b">
-        <h2 className="text-lg font-semibold">Conversations</h2>
+        <h2 className="text-lg font-semibold">Cuộc trò chuyện</h2>
       </CardContent>
       <CardContent className="flex-1 overflow-y-auto p-0">
         {conversations.length === 0 ? (
           <div className="p-4 text-center text-muted-foreground">
-            No conversations yet.
+            Chưa có cuộc trò chuyện nào.
           </div>
         ) : (
           <div className="flex flex-col">
             {conversations.map((conv) => {
               const { latestMessage, otherParticipantName } = conv;
               const isOwnMessage = latestMessage.me;
-              const displayName = otherParticipantName || "Chat";
+              const displayName = otherParticipantName || "Trò chuyện";
               const previewMessage = isOwnMessage
-                ? `You: ${latestMessage.message}`
+                ? `Bạn: ${latestMessage.message}`
                 : latestMessage.message;
 
               return (

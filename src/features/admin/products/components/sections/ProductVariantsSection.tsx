@@ -29,8 +29,8 @@ const VariantSizesField = ({
         <div className="space-y-3">
             <div className="grid grid-cols-[1fr_100px_120px_auto] gap-4 items-center text-sm">
                 <label className="font-medium text-gray-500 dark:text-gray-400">Size</label>
-                <label className="font-medium text-gray-500 dark:text-gray-400">Current Stock</label>
-                <label className="font-medium text-gray-500 dark:text-gray-400">New Stock Qty</label>
+                <label className="font-medium text-gray-500 dark:text-gray-400">Tồn kho hiện tại</label>
+                <label className="font-medium text-gray-500 dark:text-gray-400">Số lượng mới</label>
                 <div className="w-8"></div>
             </div>
 
@@ -59,7 +59,7 @@ const VariantSizesField = ({
                         <NumberField
                             control={control}
                             name={`variants.${variantIndex}.sizes.${sizeIndex}.stock`}
-                            placeholder="+/- qty"
+                            placeholder="+/- số lượng"
                             className="bg-gray-50"
                             showLabel={false}
                         />
@@ -88,7 +88,7 @@ const VariantSizesField = ({
                 className="text-primary hover:text-primary/80"
             >
                 <Plus className="h-4 w-4 mr-2" />
-                Add new size
+                Thêm size mới
             </Button>
         </div>
     );
@@ -103,7 +103,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
         name: "variants",
     });
     const deleteVariant = useDeleteVariant();
-  
+
     const handleRemoveVariant = async (variantIndex: number) => {
         const variant = control._formValues.variants[variantIndex];
         const variantId = variant?.id;
@@ -133,7 +133,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
                             <div className="flex items-center gap-2">
                                 <div className="w-5 h-5 rounded-full bg-gray-300 border-gray-400 "></div>
                                 <Input
-                                    placeholder="e.g. Burgundy Red"
+                                    placeholder="Ví dụ: Đỏ đậm"
                                     {...field}
                                     className="flex-1"
                                 />
@@ -162,7 +162,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
                             ) : (
                                 <Trash2 className="h-4 w-4 mr-2" />
                             )}
-                            Remove Variant
+                            Xóa biến thể
                         </Button>
                     )}
                 </div>
@@ -175,7 +175,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
                 onClick={() => appendVariant({ color: "", sizes: [{ size: 0, stock: 0, currentStock: 0 }] })}
             >
                 <Plus className="h-4 w-4 mr-2" />
-                Add New Color Variant
+                Thêm biến thể màu mới
             </Button>
         </div>
     );

@@ -2,34 +2,32 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.string(),
-  password: z.string().min(4, "Password must be at least 6 characters"),
+  password: z.string().min(4, "Mật khẩu phải có ít nhất 6 ký tự"),
 });
 
 export const registerSchema = z
   .object({
     ...loginSchema.shape,
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    confirmPassword: z
-      .string()
-      .min(6, "Password must be at least 6 characters"),
+    name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
+    confirmPassword: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Mật khẩu không khớp",
     path: ["confirmPassword"],
   });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Địa chỉ email không hợp lệ"),
 });
 
 export const changePasswordSchema = z
   .object({
     password: z.string().optional(),
-    newPass: z.string().min(6, "New password must be at least 6 characters"),
-    confirmNewPass: z.string().min(6, "Please confirm your new password"),
+    newPass: z.string().min(6, "Mật khẩu mới phải có ít nhất 6 ký tự"),
+    confirmNewPass: z.string().min(6, "Vui lòng xác nhận mật khẩu mới của bạn"),
   })
   .refine((data) => data.newPass === data.confirmNewPass, {
-    message: "New passwords don't match",
+    message: "Mật khẩu mới không khớp",
     path: ["confirmNewPass"],
   });
 

@@ -21,7 +21,7 @@ export function MessageList({ conversationId, className }: MessageListProps) {
           className
         )}
       >
-        Select a conversation to start chatting
+        Chọn một cuộc trò chuyện để bắt đầu
       </div>
     );
   }
@@ -34,7 +34,7 @@ export function MessageList({ conversationId, className }: MessageListProps) {
           className
         )}
       >
-        Loading messages...
+        Đang tải tin nhắn...
       </div>
     );
   }
@@ -47,7 +47,7 @@ export function MessageList({ conversationId, className }: MessageListProps) {
           className
         )}
       >
-        No messages yet. Start the conversation!
+        Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
       </div>
     );
   }
@@ -85,17 +85,17 @@ export function MessageList({ conversationId, className }: MessageListProps) {
               <div className="text-sm whitespace-pre-wrap break-words">
                 {message.message}
               </div>
-                <div
-                  className={cn(
-                    "text-xs mt-1 opacity-70",
-                    isOwnMessage ? "text-right" : "text-left"
-                  )}
-                >
-                  {new Date(message.createdDate || "").toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
+              <div
+                className={cn(
+                  "text-xs mt-1 opacity-70",
+                  isOwnMessage ? "text-right" : "text-left"
+                )}
+              >
+                {new Date(message.createdDate || "").toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
             </Card>
           </div>
         );

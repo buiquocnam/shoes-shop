@@ -21,12 +21,14 @@ export const useImportStock = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
-      toast.success("Stock imported successfully");
+      // Invalidate variant-history queries to refresh history data
+      queryClient.invalidateQueries({
+        queryKey: [...sharedQueryKeys.product.key, "variant-history"],
+      });
+      toast.success("Nhập kho thành công");
     },
     onError: () => {
-      toast.error("Failed to import stock");
+      toast.error("Nhập kho thất bại");
     },
   });
 };
-
-

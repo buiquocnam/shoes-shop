@@ -9,7 +9,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, User } from "lucide-react";
 import {
     PurchasedItem,
     PurchasedItemPaginationResponse,
@@ -33,7 +33,6 @@ import { getPageNumbers } from "@/utils/pagination";
 interface PurchasedItemsDialogProps {
     data: PurchasedItemPaginationResponse | undefined;
     isLoading: boolean;
-    showUserId?: boolean;
     trigger?: React.ReactNode;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
@@ -44,7 +43,6 @@ interface PurchasedItemsDialogProps {
 export function PurchasedItemsDialog({
     data,
     isLoading,
-    showUserId = false,
     trigger,
     open: controlledOpen,
     onOpenChange: controlledOnOpenChange,
@@ -73,9 +71,9 @@ export function PurchasedItemsDialog({
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Purchased Items</DialogTitle>
+                    <DialogTitle>Sản phẩm đã mua</DialogTitle>
                     <DialogDescription>
-                        List of purchased items
+                        Danh sách sản phẩm đã mua
                     </DialogDescription>
                 </DialogHeader>
 
@@ -96,10 +94,10 @@ export function PurchasedItemsDialog({
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                         <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
                         <p className="text-lg font-medium text-muted-foreground">
-                            No purchases found
+                            Không tìm thấy giao dịch mua
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
-                            No purchases available
+                            Không có giao dịch mua nào
                         </p>
                     </div>
                 ) : (
@@ -109,7 +107,6 @@ export function PurchasedItemsDialog({
                                 <PurchasedItemCard
                                     key={`${item.product.id}-${item.variant.id}-${index}`}
                                     item={item}
-                                    showUserId={showUserId}
                                 />
                             ))}
                         </div>
@@ -181,10 +178,8 @@ export function PurchasedItemsDialog({
 
 function PurchasedItemCard({
     item,
-    showUserId,
 }: {
     item: PurchasedItem;
-    showUserId?: boolean;
 }) {
     const product = item.product;
     const variant = item.variant;
@@ -194,9 +189,21 @@ function PurchasedItemCard({
     return (
         <>
             <div
-                className="flex gap-4 p-4 rounded-lg hover:border-primary/50 border border-border transition-colors cursor-pointer"
+                className="relative flex gap-4 p-4 rounded-lg hover:border-primary/50 border border-border transition-colors cursor-pointer"
                 onClick={() => setShowOrderDetail(true)}
             >
+                {/* User Info - Top Right */}
+                {item.user && (
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 border border-primary/20">
+                        <User className="h-3.5 w-3.5 text-primary" />
+                        <div className="flex items-center gap-1.5 text-xs">
+                            <span className="font-semibold text-foreground">{item.user.name}</span>
+                            <span className="text-muted-foreground">•</span>
+                            <span className="text-muted-foreground">{item.user.email}</span>
+                        </div>
+                    </div>
+                )}
+
                 {/* Product Image */}
                 <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
                     {imageUrl ? (
@@ -209,7 +216,7 @@ function PurchasedItemCard({
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                            No Image
+                            Không có hình ảnh
                         </div>
                     )}
                 </div>
@@ -228,22 +235,21 @@ function PurchasedItemCard({
                                 <Badge variant="outline" className="text-xs">
                                     Size: {variant.size}
                                 </Badge>
-                                {showUserId ? (
+                                {product.brand && (
                                     <Badge variant="secondary" className="text-xs">
-                                        User ID: {item.userId.slice(0, 8)}
+                                        {product.brand.name}
                                     </Badge>
-                                ) : (
-                                    product.brand && (
-                                        <Badge variant="secondary" className="text-xs">
-                                            {product.brand.name}
-                                        </Badge>
-                                    )
                                 )}
                             </div>
-                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                                <span>Quantity: {item.countBuy}</span>
-                                <span>•</span>
-                                <span className="font-semibold text-foreground">
+                            <div className="flex items-center gap-4 mt-3">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground">Số lượng:</span>
+                                    <Badge variant="default" className="text-sm font-bold px-2.5 py-0.5">
+                                        {item.countBuy}
+                                    </Badge>
+                                </div>
+                                <span className="text-muted-foreground">•</span>
+                                <span className="font-semibold text-foreground text-base">
                                     {formatCurrency(item.totalMoney)}
                                 </span>
                             </div>
@@ -252,10 +258,9 @@ function PurchasedItemCard({
                 </div>
             </div>
             <OrderDetailDialog
-                item={item}
+                orderId={item.id}
                 open={showOrderDetail}
                 onOpenChange={setShowOrderDetail}
-                showUserId={showUserId}
             />
         </>
     );

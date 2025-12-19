@@ -16,24 +16,28 @@ import { Button } from "@/components/ui/button";
 
 interface ConfirmAlertProps {
     onConfirm: () => void;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     itemName?: string;
     title?: string;
     description?: string;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
 export function ConfirmAlert({
     onConfirm,
     children,
-    itemName = "this item",
-    title = "Confirm Delete",
+    itemName = "mục này",
+    title = "Xác nhận xóa",
     description,
+    open: controlledOpen,
+    onOpenChange,
 }: ConfirmAlertProps) {
-    const defaultDescription = `Are you sure you want to delete *${itemName}*? This action will delete all related data and *cannot be undone*.`;
+    const defaultDescription = `Bạn có chắc chắn muốn xóa *${itemName}*? Hành động này sẽ xóa tất cả dữ liệu liên quan và *không thể hoàn tác*.`;
 
     return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+        <AlertDialog open={controlledOpen} onOpenChange={onOpenChange}>
+            {children && <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>}
 
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -51,11 +55,11 @@ export function ConfirmAlert({
 
                 <AlertDialogFooter>
                     <AlertDialogCancel asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">Hủy</Button>
                     </AlertDialogCancel>
 
                     <AlertDialogAction asChild onClick={onConfirm}>
-                        <Button variant="default">Delete Permanently</Button>
+                        <Button variant="default">Xóa vĩnh viễn</Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

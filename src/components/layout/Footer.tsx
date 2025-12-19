@@ -17,7 +17,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Contact Us */}
           <div>
-            <h3 className="font-bold text-lg mb-2">Contact Us</h3>
+            <h3 className="font-bold text-lg mb-2">Liên hệ với chúng tôi</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               123 Shoe Lane, Style City, 45678
             </p>
@@ -25,30 +25,30 @@ export function Footer() {
               Email: support@solestyle.com
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Phone: (123) 456-7890
+              Điện thoại: (123) 456-7890
             </p>
           </div>
 
           {/* Newsletter */}
           <div>
-            <h3 className="font-bold text-lg mb-2">Newsletter</h3>
+            <h3 className="font-bold text-lg mb-2">Bản tin</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              Sign up for our newsletter to get the latest updates and offers.
+              Đăng ký nhận bản tin để nhận các cập nhật và ưu đãi mới nhất.
             </p>
             <form className="flex" onSubmit={handleNewsletterSubmit}>
               <Input
-                placeholder="Enter your email"
+                placeholder="Nhập email của bạn"
                 type="email"
                 className="w-full mr-2"
                 required
               />
-              <Button type="submit">Subscribe</Button>
+              <Button type="submit">Đăng ký</Button>
             </form>
           </div>
 
           {/* Follow Us */}
           <div className="justify-self-center text-center">
-            <h3 className="font-bold text-lg mb-2">Follow Us</h3>
+            <h3 className="font-bold text-lg mb-2">Theo dõi chúng tôi</h3>
             <div className="flex space-x-4">
               <Link
                 className="text-gray-500 hover:text-primary "

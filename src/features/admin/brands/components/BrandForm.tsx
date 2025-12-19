@@ -33,6 +33,8 @@ interface BrandFormProps {
     isLoading?: boolean;
     brand?: BrandType;
     trigger?: React.ReactNode;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
 export default function BrandForm({
@@ -40,8 +42,9 @@ export default function BrandForm({
     isLoading,
     brand,
     trigger,
+    open,
+    onOpenChange,
 }: BrandFormProps) {
-    const [open, setOpen] = useState(false);
     const [logoPreview, setLogoPreview] = useState<string | null>(
         brand?.logo || null
     );
@@ -57,9 +60,14 @@ export default function BrandForm({
     const handleFormSubmit = async (data: BrandFormValues) => {
         const formData = new FormData();
 
-        const brandData = {
+        const brandData: { name: string; id?: string } = {
             name: data.name,
         };
+
+        // Nếu có id thì thêm vào để update, không có thì create
+        if (brand?.id) {
+            brandData.id = brand.id;
+        }
 
         const requestBlob = new Blob([JSON.stringify(brandData)], {
             type: "application/json",
@@ -74,7 +82,7 @@ export default function BrandForm({
             await onSubmit(formData);
             form.reset();
             setLogoPreview(null);
-            setOpen(false);
+            onOpenChange(false);
         } catch (err) {
             console.error(err);
         }
@@ -101,14 +109,12 @@ export default function BrandForm({
 
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {trigger || <Button>Add Brand</Button>}
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">
-                        {brand ? "Edit Brand" : "Create New Brand"}
+                        {brand ? "Chỉnh sửa thương hiệu" : "Tạo thương hiệu mới"}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -122,10 +128,10 @@ export default function BrandForm({
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Brand Name</FormLabel>
+                                    <FormLabel>Tên thương hiệu</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Enter brand name"
+                                            placeholder="Nhập tên thương hiệu"
                                             {...field}
                                             className="h-11"
                                         />
@@ -140,14 +146,14 @@ export default function BrandForm({
                             name="logo"
                             render={({ field: { value, onChange, ...field } }) => (
                                 <FormItem>
-                                    <FormLabel>Brand Logo</FormLabel>
+                                    <FormLabel>Logo thương hiệu</FormLabel>
                                     <FormControl>
                                         <div className="space-y-4">
                                             {logoPreview ? (
                                                 <div className="relative w-full h-40 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center">
                                                     <Image
                                                         src={logoPreview}
-                                                        alt="Brand logo preview"
+                                                        alt="Xem trước logo thương hiệu"
                                                         fill
                                                         className="object-contain p-4"
                                                     />
@@ -168,12 +174,12 @@ export default function BrandForm({
                                                         <Upload className="h-10 w-10 text-gray-400 mb-3" />
                                                         <p className="mb-2 text-sm text-gray-500">
                                                             <span className="font-semibold">
-                                                                Click to upload
+                                                                Nhấp để tải lên
                                                             </span>{" "}
-                                                            or drag and drop
+                                                            hoặc kéo thả
                                                         </p>
                                                         <p className="text-xs text-gray-500">
-                                                            PNG, JPG, GIF up to 10MB
+                                                            PNG, JPG, GIF tối đa 10MB
                                                         </p>
                                                     </div>
                                                     <Input
@@ -200,11 +206,11 @@ export default function BrandForm({
                                     variant="outline"
                                     disabled={isLoading}
                                 >
-                                    Cancel
+                                    Hủy
                                 </Button>
                             </DialogClose>
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Saving..." : brand ? "Update" : "Create"}
+                                {isLoading ? "Đang lưu..." : brand ? "Cập nhật" : "Tạo"}
                             </Button>
                         </div>
                         {isLoading &&

@@ -1,5 +1,5 @@
-import { ProductType } from "../product";
-import { PaginatedResponse, PaginationParams } from "@/types/global";
+import { PaginatedResponse, PaginationParams, User } from "@/types/global";
+import { ProductType } from "../product/types";
 
 export interface UpdateProfileRequest {
   id: string;
@@ -14,20 +14,24 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
 }
 
+export interface PurchasedItemVariant {
+  id: string;
+  productId: string;
+  stock: number;
+  color: string;
+  status: "ACTIVE" | "INACTIVE";
+  countSell: number;
+  size: string;
+}
+
 export interface PurchasedItem {
+  id: string;
   product: ProductType;
-  variant: {
-    id: string;
-    productId: string;
-    stock: number;
-    color: string;
-    status: "ACTIVE" | "INACTIVE";
-    countSell: number;
-    size: string;
-  };
+  variant: PurchasedItemVariant;
   countBuy: number;
   totalMoney: number;
   userId: string;
+  user: User | null;
 }
 
 export interface PurchasedItemPaginationResponse

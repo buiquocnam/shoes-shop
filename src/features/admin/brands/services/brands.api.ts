@@ -2,17 +2,15 @@ import { apiClient } from "@/lib";
 import { BrandType } from "@/features/product/types";
 
 export const adminBrandsApi = {
-  create: async (data: FormData): Promise<BrandType> => {
+  /**
+   * Upsert Brand (Create or Update)
+   * Dùng chung API /shoes/brands/create
+   * - Nếu có id trong FormData: update
+   * - Nếu không có id: create
+   */
+  upsert: async (data: FormData): Promise<BrandType> => {
     const response = await apiClient.post<BrandType>(
-      "/shoes/brands/create",
-      data
-    );
-    return response.result;
-  },
-
-  update: async (id: string, data: FormData): Promise<BrandType> => {
-    const response = await apiClient.put<BrandType>(
-      `/shoes/brands/update/${id}`,
+      "/shoes/brands/create-or-update",
       data
     );
     return response.result;

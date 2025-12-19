@@ -14,6 +14,7 @@ function redirectToLogin(request: NextRequest): NextResponse {
 }
 
 function handleAdminAuth(request: NextRequest): NextResponse {
+  // Cache token once to avoid multiple calls
   const token = getTokenFromRequest(request);
 
   // Only redirect if no token at all - allow expired tokens to pass through
@@ -24,7 +25,8 @@ function handleAdminAuth(request: NextRequest): NextResponse {
 
   // If token exists but expired, allow access so client can refresh
   // Only check role if token is valid
-  if (isAuthenticated(request) && !isAdmin(request)) {
+  // Pass token directly to avoid re-fetching
+  if (isAuthenticated(token) && !isAdmin(token)) {
     const forbiddenUrl = new URL("/", request.url);
     return NextResponse.redirect(forbiddenUrl);
   }

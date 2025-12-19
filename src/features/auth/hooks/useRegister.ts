@@ -17,10 +17,10 @@ export function useRegister() {
   >({
     mutationFn: (data) => authApi.register(data),
     onSuccess: () => {
-      toast.success("Please check your email for verification");
+      toast.success("Vui lòng kiểm tra email để xác thực");
     },
     onError: (error) => {
-      toast.error(error.message || "Registration failed. Please try again.");
+      toast.error(error.message || "Đăng ký thất bại. Vui lòng thử lại.");
     },
   });
 }

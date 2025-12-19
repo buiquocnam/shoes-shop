@@ -97,7 +97,7 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
           disabled={updateImages.isPending}
           onClick={onCancel}
         >
-          Cancel
+          Hủy
         </Button>
         <Button
           type="submit"
@@ -106,7 +106,7 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
           {updateImages.isPending ? (
             <Spinner />
           ) : (
-            "Save"
+            "Lưu"
           )}
         </Button>
       </div>

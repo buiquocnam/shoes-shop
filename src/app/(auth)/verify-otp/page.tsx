@@ -5,8 +5,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { getOtpData } from '@/lib/auth';
 
 export const metadata: Metadata = {
-    title: 'Verify OTP - ShoeShop',
-    description: 'Verify your email with OTP code',
+    title: 'Xác thực OTP - ShoeShop',
+    description: 'Xác thực email của bạn bằng mã OTP',
 };
 
 export default async function VerifyOtpPage() {

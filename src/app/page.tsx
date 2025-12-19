@@ -3,8 +3,8 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Shoe Shop',
-  description: 'Discover high-quality sneakers and footwear at Shoe Shop. Best sellers, top-rated shoes, and the latest sneaker trends with unbeatable prices.',
+  title: 'Cửa hàng giày',
+  description: 'Khám phá giày thể thao và giày dép chất lượng cao tại Cửa hàng giày. Sản phẩm bán chạy nhất, giày được đánh giá cao và xu hướng giày thể thao mới nhất với giá không thể đánh bại.',
 };
 
 
@@ -12,11 +12,7 @@ export const metadata: Metadata = {
 export default function HomePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   return (
     <main className="overflow-hidden">
-      <HeroBanner
-        image="https://thumbs.dreamstime.com/z/design-mock-up-banner-illustration-white-sport-sneaker-shoes-banner-footwear-commercials-retail-offers-isolated-335060242.jpg?ct=jpeg"
-        alt="Hero Banner"
-        description="Discover the best shoes for your feet"
-      />
+      <HeroBanner />
 
       <Suspense fallback={<BrandListSkeleton />}>
         <BrandList />

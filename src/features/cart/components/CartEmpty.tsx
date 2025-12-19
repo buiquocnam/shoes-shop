@@ -13,12 +13,12 @@ export function CartEmpty() {
             <Card className="w-full max-w-md">
                 <CardContent className="flex flex-col items-center justify-center py-12 px-6 text-center">
                     <ShoppingCart className="h-24 w-24 text-muted-foreground mb-6" />
-                    <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
+                    <h2 className="text-2xl font-bold mb-2">Giỏ hàng của bạn đang trống</h2>
                     <p className="text-muted-foreground mb-6 max-w-sm">
-                        Looks like you haven't added any items to your cart yet. Start shopping to fill it up!
+                        Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ hàng. Hãy bắt đầu mua sắm để làm đầy giỏ hàng!
                     </p>
                     <Button onClick={() => router.push('/')} size="lg">
-                        Continue Shopping
+                        Tiếp tục mua sắm
                     </Button>
                 </CardContent>
             </Card>

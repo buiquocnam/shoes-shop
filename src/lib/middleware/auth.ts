@@ -26,14 +26,6 @@ export function getTokenFromRequest(request: NextRequest): string | null {
     console.log("🔍 Token found in cookie:", tokenFromCookie);
     return tokenFromCookie;
   }
-
-  // Try to get from Authorization header
-  const authHeader = request.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    console.log("🔍 Token found in authorization header:", authHeader.substring(7));
-    return authHeader.substring(7);
-  }
-
   return null;
 }
 
@@ -66,9 +58,13 @@ export function getUserRoleFromToken(token: string): Role | null {
 
 /**
  * Check if user is authenticated (has valid token)
+ * Overload: accepts token directly or request
  */
-export function isAuthenticated(request: NextRequest): boolean {
-  const token = getTokenFromRequest(request);
+export function isAuthenticated(tokenOrRequest: string | NextRequest): boolean {
+  const token =
+    typeof tokenOrRequest === "string"
+      ? tokenOrRequest
+      : getTokenFromRequest(tokenOrRequest);
   if (!token) return false;
 
   return !isTokenExpired(token);
@@ -76,9 +72,13 @@ export function isAuthenticated(request: NextRequest): boolean {
 
 /**
  * Check if user has ADMIN role
+ * Overload: accepts token directly or request
  */
-export function isAdmin(request: NextRequest): boolean {
-  const token = getTokenFromRequest(request);
+export function isAdmin(tokenOrRequest: string | NextRequest): boolean {
+  const token =
+    typeof tokenOrRequest === "string"
+      ? tokenOrRequest
+      : getTokenFromRequest(tokenOrRequest);
   if (!token) return false;
 
   if (isTokenExpired(token)) return false;

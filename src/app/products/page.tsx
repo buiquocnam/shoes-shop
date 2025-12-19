@@ -5,8 +5,8 @@ import ProductListLoading from "@/features/product/components/ProductList/Produc
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Products - Shoe Shop",
-    description: "Browse our collection of shoes",
+    title: "Sản phẩm - Shoe Shop",
+    description: "Duyệt bộ sưu tập giày của chúng tôi",
 };
 
 export default function ProductPage() {

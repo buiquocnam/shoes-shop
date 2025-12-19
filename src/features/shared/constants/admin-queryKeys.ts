@@ -30,4 +30,10 @@ export const adminQueryKeys = {
         limit,
       ] as const,
   },
+  payments: {
+    key: ["payments"],
+    list: () => [...adminQueryKeys.payments.key, "list"] as const,
+    detail: (id: string) =>
+      [...adminQueryKeys.payments.key, "detail", id] as const,
+  },
 } as const;

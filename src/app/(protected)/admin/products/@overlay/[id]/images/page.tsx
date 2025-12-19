@@ -45,7 +45,7 @@ export default function EditProductImagesPage() {
 
   return (
     <DrawerOverlay
-      title="Edit Product Images"
+      title="Chỉnh sửa hình ảnh sản phẩm"
       open={open}
       onOpenChange={handleOpenChange}
       side="right"

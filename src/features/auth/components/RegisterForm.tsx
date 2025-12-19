@@ -49,10 +49,10 @@ export default function RegisterForm() {
         <div className="w-full max-w-md space-y-8">
             <div className="text-center lg:text-left">
                 <p className="text-3xl sm:text-4xl">
-                    Create an Account
+                    Tạo tài khoản
                 </p>
                 <p className="font-normal leading-normal mt-2">
-                    Get access to exclusive offers and faster checkout.
+                    Nhận quyền truy cập các ưu đãi độc quyền và thanh toán nhanh hơn.
                 </p>
             </div>
 
@@ -68,12 +68,12 @@ export default function RegisterForm() {
                             <FormItem>
                                 <div className="flex flex-col">
                                     <label className="font-medium pb-2">
-                                        Full Name
+                                        Họ và tên
                                     </label>
                                     <FormControl>
                                         <Input
                                             id="full-name"
-                                            placeholder="Enter your full name"
+                                            placeholder="Nhập họ và tên của bạn"
                                             className="w-full h-12 focus:border-primary"
                                             {...field}
                                         />
@@ -115,14 +115,14 @@ export default function RegisterForm() {
                             <FormItem>
                                 <div className="flex flex-col">
                                     <label className="font-medium pb-2">
-                                        Password
+                                        Mật khẩu
                                     </label>
                                     <div className="relative flex w-full flex-1 items-stretch">
                                         <FormControl>
                                             <Input
                                                 id="password"
                                                 type={showPassword ? "text" : "password"}
-                                                placeholder="Create a password"
+                                                placeholder="Tạo mật khẩu"
                                                 className="w-full h-12 focus:border-primary"
                                                 {...field}
                                             />
@@ -175,15 +175,15 @@ export default function RegisterForm() {
                         className="w-full rounded-lg bg-primary h-12 px-6 font-bold hover:bg-primary/90"
                         disabled={isPending}
                     >
-                        {isPending ? <Spinner className="size-6" /> : <span className="text-white">Create Account</span>}
+                        {isPending ? <Spinner className="size-6" /> : <span className="text-white">Tạo tài khoản</span>}
                     </Button>
                 </form>
             </Form>
 
             <p className="text-center text-base font-normal text-subtle-light dark:text-subtle-dark">
-                Already have an account?{' '}
+                Đã có tài khoản?{' '}
                 <Link className="font-bold text-primary hover:underline" href="/login">
-                    Log In
+                    Đăng nhập
                 </Link>
             </p>
         </div>

@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { InputField } from "@/features/shared/components/InputField";
+import { InputField } from "@/components/form/InputField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Spinner } from "@/components/ui/spinner";
-import { useUpdateUser, useDeleteUser } from "../hooks";
 import {
     Dialog,
     DialogContent,
@@ -20,19 +18,22 @@ import { userSchema, UserFormValues } from "../schema";
 import { User } from "@/types/global";
 
 interface UserFormProps {
+    onSubmit: (data: { id: string; name: string; phone?: string; status?: boolean }) => void;
     isLoading?: boolean;
     user?: User;
     trigger?: React.ReactNode;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
 export function UserForm({
+    onSubmit,
     isLoading,
     user,
     trigger,
+    open,
+    onOpenChange,
 }: UserFormProps) {
-    const [open, setOpen] = useState(false);
-    const updateUserMutation = useUpdateUser();
-
     const form = useForm<UserFormValues>({
         resolver: zodResolver(userSchema),
         defaultValues: {
@@ -45,28 +46,26 @@ export function UserForm({
 
     const handleFormSubmit = async (data: UserFormValues) => {
         try {
-            await updateUserMutation.mutateAsync({
+            await onSubmit({
                 id: user!.id,
                 name: data.name,
                 phone: data.phone || "",
                 status: data.status,
             });
             form.reset();
-            setOpen(false);
+            onOpenChange(false);
         } catch (err) {
             console.error(err);
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {trigger || <Button>Add User</Button>}
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">
-                        {user ? "Edit User" : "Create New User"}
+                        {user ? "Chỉnh sửa người dùng" : "Tạo người dùng mới"}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -75,23 +74,23 @@ export function UserForm({
                         <InputField
                             control={form.control}
                             name="name"
-                            label="Name"
-                            placeholder="Enter name"
+                            label="Tên"
+                            placeholder="Nhập tên"
                         />
 
                         <InputField
                             control={form.control}
                             name="email"
                             label="Email"
-                            placeholder="Enter email"
+                            placeholder="Nhập email"
                             disabled={true}
                         />
 
                         <InputField
                             control={form.control}
                             name="phone"
-                            label="Phone"
-                            placeholder="Enter phone"
+                            label="Điện thoại"
+                            placeholder="Nhập số điện thoại"
                         />
 
                         <Checkbox
@@ -107,11 +106,11 @@ export function UserForm({
                                     variant="outline"
                                     disabled={isLoading}
                                 >
-                                    Cancel
+                                    Hủy
                                 </Button>
                             </DialogClose>
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Saving..." : user ? "Update" : "Create"}
+                                {isLoading ? "Đang lưu..." : user ? "Cập nhật" : "Tạo"}
                             </Button>
                         </div>
                         {isLoading &&

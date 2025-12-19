@@ -20,11 +20,11 @@ export function CartList({ items }: CartListProps) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[300px]">Product</TableHead>
-                            <TableHead className="text-center">Price</TableHead>
-                            <TableHead className="text-center">Quantity</TableHead>
-                            <TableHead className="text-right">Subtotal</TableHead>
-                            <TableHead className="text-right w-[80px]">Action</TableHead>
+                            <TableHead className="w-[300px]">Sản phẩm</TableHead>
+                            <TableHead className="text-center">Giá</TableHead>
+                            <TableHead className="text-center">Số lượng</TableHead>
+                            <TableHead className="text-right">Tổng tiền</TableHead>
+                            <TableHead className="text-right w-[80px]">Thao tác</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

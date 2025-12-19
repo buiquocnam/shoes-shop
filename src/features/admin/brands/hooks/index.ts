@@ -1,2 +1,7 @@
-export { useBrands, useCreateBrand, useUpdateBrand, useDeleteBrand } from './useBrands';
-
+export {
+  useBrands,
+  useUpsertBrand,
+  useCreateBrand,
+  useUpdateBrand,
+  useDeleteBrand,
+} from "./useBrands";

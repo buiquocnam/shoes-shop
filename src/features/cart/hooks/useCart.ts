@@ -54,10 +54,10 @@ export const useCreateCart = () => {
     onSuccess: (data) => {
       setCart(data);
       queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
-      toast.success("Added to cart successfully");
+      toast.success("Đã thêm vào giỏ hàng thành công");
     },
     onError: () => {
-      toast.error("Error adding to cart");
+      toast.error("Lỗi khi thêm vào giỏ hàng");
     },
   });
 };
@@ -73,10 +73,10 @@ export const useRemoveCartItem = () => {
     onSuccess: (data) => {
       setCart(data);
       queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
-      toast.success("Removed from cart successfully");
+      toast.success("Đã xóa khỏi giỏ hàng thành công");
     },
     onError: () => {
-      toast.error("Error removing from cart");
+      toast.error("Lỗi khi xóa khỏi giỏ hàng");
     },
   });
 };
@@ -85,20 +85,20 @@ export const useUpdateCartItem = () => {
   const { setCart } = useCartStore();
   const queryClient = useQueryClient();
 
-  return useMutation<
-    CartResponse,
-    Error,
-    { itemId: string; quantity: number }
-  >({
-    mutationFn: async ({ itemId, quantity }) => {
-      return await updateCartItem(itemId, quantity);
-    },
-    onSuccess: (data) => {
-      setCart(data);
-      queryClient.invalidateQueries({ queryKey: userQueryKeys.cart.current() });
-    },
-    onError: () => {
-      toast.error("Error updating cart item");
-    },
-  });
+  return useMutation<CartResponse, Error, { itemId: string; quantity: number }>(
+    {
+      mutationFn: async ({ itemId, quantity }) => {
+        return await updateCartItem(itemId, quantity);
+      },
+      onSuccess: (data) => {
+        setCart(data);
+        queryClient.invalidateQueries({
+          queryKey: userQueryKeys.cart.current(),
+        });
+      },
+      onError: () => {
+        toast.error("Lỗi khi cập nhật sản phẩm trong giỏ hàng");
+      },
+    }
+  );
 };

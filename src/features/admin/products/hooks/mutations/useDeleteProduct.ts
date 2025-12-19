@@ -11,19 +11,11 @@ export const useDeleteProduct = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.lists(),
       });
-      toast.success("Product deleted successfully");
+      toast.success("Xóa sản phẩm thành công");
     },
     onError: () => {
-      toast.error("Failed to delete product");
+      toast.error("Xóa sản phẩm thất bại");
     },
   });
 };
-
-
-
-
-
-
-
-
 

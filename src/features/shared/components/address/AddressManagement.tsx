@@ -29,7 +29,7 @@ export function AddressManagement({
         return (
             <div className="flex items-center justify-center h-60">
                 <Spinner />
-                <p className="text-sm text-gray-500">Loading addresses...</p>
+                <p className="text-sm text-gray-500">Đang tải địa chỉ...</p>
             </div>
         );
     }
@@ -48,10 +48,10 @@ export function AddressManagement({
                 <div className="flex flex-col items-center gap-6 rounded-lg border-1 border-dashed px-6 py-14">
                     <div className="flex max-w-[480px] flex-col items-center gap-2">
                         <p className="text-lg font-bold max-w-[480px] text-center">
-                            No Saved Addresses
+                            Chưa có địa chỉ đã lưu
                         </p>
                         <p className="text-sm font-normal leading-normal max-w-[480px] text-center">
-                            You have no saved addresses. Add one for a faster checkout!
+                            Bạn chưa có địa chỉ đã lưu. Thêm một địa chỉ để thanh toán nhanh hơn!
                         </p>
                     </div>
                     <Button
@@ -60,7 +60,7 @@ export function AddressManagement({
                         onClick={() => setIsFormOpen(true)}
                     >
                         <Plus className="w-4 h-4" />
-                        <span className="truncate">Add New Address</span>
+                        <span className="truncate">Thêm địa chỉ mới</span>
                     </Button>
                 </div>
 
@@ -89,7 +89,7 @@ export function AddressManagement({
                     onClick={() => setIsFormOpen(!isFormOpen)}
                 >
                     <Plus className="w-4 h-4" />
-                    <span className="truncate">Add New Address</span>
+                    <span className="truncate">Thêm địa chỉ mới</span>
                 </Button>
             </div>
 

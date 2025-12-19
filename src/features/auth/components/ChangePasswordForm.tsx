@@ -47,12 +47,12 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
         <div className="w-full max-w-md mx-auto">
             <div className="flex flex-col items-center justify-center gap-2 mb-8">
                 <p className="text-4xl font-bold">
-                    Change Password
+                    Đổi mật khẩu
                 </p>
                 <p className="text-gray-500 mt-2 text-center">
                     {status === 'FORGET_PASS'
-                        ? 'Enter your new password to reset your account.'
-                        : 'Enter your current password and new password.'}
+                        ? 'Nhập mật khẩu mới để đặt lại tài khoản của bạn.'
+                        : 'Nhập mật khẩu hiện tại và mật khẩu mới.'}
                 </p>
             </div>
 
@@ -68,13 +68,13 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel className="font-medium pb-2">
-                                        Current Password
+                                        Mật khẩu hiện tại
                                     </FieldLabel>
                                     <div className="relative flex w-full flex-1 items-stretch">
                                         <Input
                                             id="password"
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="Enter your current password"
+                                            placeholder="Nhập mật khẩu hiện tại của bạn"
                                             className="w-full h-12 focus:border-primary"
                                             {...field}
                                         />
@@ -99,13 +99,13 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel className="font-medium pb-2">
-                                    New Password
+                                    Mật khẩu mới
                                 </FieldLabel>
                                 <div className="relative flex w-full flex-1 items-stretch">
                                     <Input
                                         id="new-password"
                                         type={showNewPassword ? "text" : "password"}
-                                        placeholder="Enter your new password"
+                                        placeholder="Nhập mật khẩu mới của bạn"
                                         className="w-full h-12 focus:border-primary"
                                         {...field}
                                     />
@@ -129,13 +129,13 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel className="font-medium pb-2">
-                                    Confirm New Password
+                                    Xác nhận mật khẩu mới
                                 </FieldLabel>
                                 <div className="relative flex w-full flex-1 items-stretch">
                                     <Input
                                         id="confirm-new-password"
                                         type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Confirm your new password"
+                                        placeholder="Xác nhận mật khẩu mới của bạn"
                                         className="w-full h-12 focus:border-primary"
                                         {...field}
                                     />
@@ -158,15 +158,15 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                         className="w-full rounded-lg bg-primary h-12 px-6 font-bold hover:bg-primary/90 text-white"
                         disabled={isPending}
                     >
-                        {isPending ? <Spinner className="size-6" /> : <span>Change Password</span>}
+                        {isPending ? <Spinner className="size-6" /> : <span>Đổi mật khẩu</span>}
                     </Button>
                 </form>
             </Form>
 
             <p className="text-center text-base mt-8">
-                Remember your password?{' '}
+                Nhớ mật khẩu của bạn?{' '}
                 <Link className="font-semibold text-primary hover:underline" href="/login">
-                    Log In
+                    Đăng nhập
                 </Link>
             </p>
         </div>

@@ -22,7 +22,7 @@ export function AddressCard({
 
 
     const handleDelete = () => {
-        if (confirm("Are you sure you want to delete this address?")) {
+        if (confirm("Bạn có chắc chắn muốn xóa địa chỉ này?")) {
             deleteAddressMutation.mutate(address.id);
         }
     };
@@ -60,7 +60,7 @@ export function AddressCard({
                     </div>
                     {address.isDefault && (
                         <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold whitespace-nowrap">
-                            Default
+                            Mặc định
                         </span>
                     )}
                 </div>
@@ -78,7 +78,7 @@ export function AddressCard({
                         className="flex items-center gap-1 text-sm font-medium hover:text-destructive transition-colors"
                     >
                         <Trash2 className="w-4 h-4" />
-                        Delete
+                        Xóa
                     </Button>
                 </div>
             </div>

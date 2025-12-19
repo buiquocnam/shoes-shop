@@ -127,7 +127,7 @@ export const apiClient = {
     return request<T>({ method: "PATCH", endpoint, data });
   },
 
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    return request<T>({ method: "DELETE", endpoint });
+  async delete<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+    return request<T>({ method: "DELETE", endpoint, data });
   },
 };

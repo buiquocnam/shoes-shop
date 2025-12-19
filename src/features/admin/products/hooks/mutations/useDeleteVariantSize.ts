@@ -17,10 +17,10 @@ export const useDeleteVariantSize = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
-      toast.success("Size deleted successfully");
+      toast.success("Xóa size thành công");
     },
     onError: () => {
-      toast.error("Failed to delete size");
+      toast.error("Xóa size thất bại");
     },
   });
 };

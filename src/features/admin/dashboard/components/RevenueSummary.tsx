@@ -40,7 +40,7 @@ export function RevenueSummary() {
             {/* Today Revenue */}
             <Card className="border-2 bg-gradient-to-br from-chart-1/5 to-chart-1/10 border-chart-1/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Revenue Today</CardTitle>
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Doanh thu hôm nay</CardTitle>
                     <div className="rounded-lg p-2 bg-chart-1/20 text-chart-1">
                         <Calendar className="h-5 w-5" />
                     </div>
@@ -63,7 +63,7 @@ export function RevenueSummary() {
             {/* This Month Revenue */}
             <Card className="border-2 bg-gradient-to-br from-chart-2/5 to-chart-2/10 border-chart-2/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Revenue This Month</CardTitle>
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Doanh thu tháng này</CardTitle>
                     <div className="rounded-lg p-2 bg-chart-2/20 text-chart-2">
                         <TrendingUp className="h-5 w-5" />
                     </div>

@@ -35,7 +35,7 @@ const QuantitySelector = ({
       onClick={() => setQuantity(Math.max(1, quantity - 1))}
       disabled={maxStock <= 0}
       className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium hover:bg-gray-100"
-      aria-label="Decrease quantity"
+      aria-label="Giảm số lượng"
     >
       −
     </Button>
@@ -54,7 +54,7 @@ const QuantitySelector = ({
       onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
       disabled={quantity >= maxStock || maxStock <= 0}
       className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium hover:bg-gray-100"
-      aria-label="Increase quantity"
+      aria-label="Tăng số lượng"
     >
       +
     </Button>
@@ -89,8 +89,8 @@ const VariantButton = ({
     )}
     onClick={onSelect}
     disabled={stock <= 0}
-    title={stock > 0 ? `Size ${size} - Stock: ${stock}` : "Out of Stock"}
-    aria-label={`Select size ${size}${stock > 0 ? ` (${stock} available)` : " (out of stock)"}`}
+    title={stock > 0 ? `Size ${size} - Tồn kho: ${stock}` : "Hết hàng"}
+    aria-label={`Chọn size ${size}${stock > 0 ? ` (${stock} sản phẩm có sẵn)` : " (hết hàng)"}`}
   >
     {size}
   </Button>
@@ -182,7 +182,7 @@ export default function ProductInfoInteractive({
     return (
       <div className="mb-4 sm:mb-6">
         <span className="inline-block text-xs sm:text-lg font-bold text-white uppercase bg-red-500 px-4 py-2 rounded-md">
-          Out of Stock
+          Hết hàng
         </span>
       </div>
     );
@@ -221,7 +221,7 @@ export default function ProductInfoInteractive({
       <div className="mb-4 sm:mb-6 border-b border-gray-200 pb-4 sm:pb-6">
         {selectedData && (
           <p className="text-xs sm:text-sm font-medium mb-3 sm:mb-2 text-red-700">
-            {stock} {stock === 1 ? 'item' : 'items'} left in stock
+            Còn lại {stock} {stock === 1 ? 'sản phẩm' : 'sản phẩm'} 
           </p>
         )}
 
@@ -241,7 +241,7 @@ export default function ProductInfoInteractive({
             disabled={!canPurchase}
             className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base text-white font-bold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 hover:bg-red-800"
           >
-            Add to Cart
+            Thêm vào giỏ hàng
           </Button>
 
           <Button
@@ -251,7 +251,7 @@ export default function ProductInfoInteractive({
             onClick={handleBuy}
             className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base font-bold transition-all duration-200 border-2 border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Buy Now
+            Mua ngay
           </Button>
         </div>
       </div>

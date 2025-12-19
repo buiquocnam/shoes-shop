@@ -3,41 +3,29 @@ import { BrandType } from "@/features/product/types";
 import { adminBrandsApi } from "@/features/admin/brands/services/brands.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import { toast } from "sonner";
-
 // Re-export shared useBrands for convenience
 export { useBrands } from "@/features/shared/hooks/useBrands";
 
-export const useCreateBrand = () => {
+export const useUpsertBrand = () => {
   const queryClient = useQueryClient();
   return useMutation<BrandType, Error, FormData>({
-    mutationFn: (data: FormData) => adminBrandsApi.create(data),
-    onSuccess: () => {
+    mutationFn: (data: FormData) => adminBrandsApi.upsert(data),
+    onSuccess: (_, formData) => {
+      // Invalidate all brand queries (including those with filters)
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.brand.list(),
       });
-      toast.success("Brand created successfully");
+      toast.success("Thành công");
     },
     onError: () => {
-      toast.error("Failed to create brand");
+      toast.error("Thao tác thất bại");
     },
   });
 };
 
-export const useUpdateBrand = () => {
-  const queryClient = useQueryClient();
-  return useMutation<BrandType, Error, { id: string; data: FormData }>({
-    mutationFn: ({ id, data }) => adminBrandsApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.brand.list(),
-      });
-      toast.success("Brand updated successfully");
-    },
-    onError: () => {
-      toast.error("Failed to update brand");
-    },
-  });
-};
+// Backward compatibility: Keep old names but use new hook internally
+export const useCreateBrand = useUpsertBrand;
+export const useUpdateBrand = useUpsertBrand;
 
 export const useDeleteBrand = () => {
   const queryClient = useQueryClient();
@@ -53,10 +41,10 @@ export const useDeleteBrand = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.brand.list(),
       });
-      toast.success("Brand deleted successfully");
+      toast.success("Xóa thương hiệu thành công");
     },
     onError: () => {
-      toast.error("Failed to delete brand");
+      toast.error("Xóa thương hiệu thất bại");
     },
   });
 };

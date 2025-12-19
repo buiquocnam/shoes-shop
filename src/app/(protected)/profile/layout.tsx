@@ -17,8 +17,8 @@ export default function ProfileLayout() {
     const handleLogout = () => logout();
 
     const tabs = [
-        { label: 'Address', value: 'address' },
-        { label: 'Orders', value: 'orders' },
+        { label: 'Địa chỉ', value: 'address' },
+        { label: 'Đơn hàng', value: 'orders' },
     ];
 
     // Sync hash with tab
@@ -43,14 +43,14 @@ export default function ProfileLayout() {
             <div className="max-w-[1200px] mx-auto px-4">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-10">
-                    <h1 className="text-4xl font-bold text-gray-900">My Account</h1>
+                    <h1 className="text-4xl font-bold text-gray-900">Tài khoản của tôi</h1>
                     <Button
                         variant="default"
                         className="gap-2 font-medium"
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4" />
-                        Log out
+                        Đăng xuất
                     </Button>
                 </div>
 

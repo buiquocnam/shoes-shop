@@ -18,10 +18,10 @@ export const useCreateCategory = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.category.list(),
       });
-      toast.success("Category created successfully");
+      toast.success("Tạo danh mục thành công");
     },
     onError: () => {
-      toast.error("Failed to create category");
+      toast.error("Tạo danh mục thất bại");
     },
   });
 };
@@ -38,10 +38,10 @@ export const useUpdateCategory = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.category.list(),
       });
-      toast.success("Category updated successfully");
+      toast.success("Cập nhật danh mục thành công");
     },
     onError: () => {
-      toast.error("Failed to update category");
+      toast.error("Cập nhật danh mục thất bại");
     },
   });
 };
@@ -60,10 +60,10 @@ export const useDeleteCategory = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.category.list(),
       });
-      toast.success("Category deleted successfully");
+      toast.success("Xóa danh mục thành công");
     },
     onError: () => {
-      toast.error("Failed to delete category");
+      toast.error("Xóa danh mục thất bại");
     },
   });
 };

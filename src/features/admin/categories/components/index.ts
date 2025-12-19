@@ -1,3 +1,2 @@
-export { default as CategoryForm } from './CategoryForm';
-export { columns as categoryColumns } from './columns';
-
+export { default as CategoryForm } from "./CategoryForm";
+export { categoryColumns } from "./columns";

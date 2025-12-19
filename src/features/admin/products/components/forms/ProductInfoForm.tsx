@@ -92,10 +92,10 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
                     disabled={updateProductInfo.isPending}
                     onClick={onCancel}
                 >
-                    Cancel
+                    Hủy
                 </Button>
                 <Button type="submit" disabled={updateProductInfo.isPending}>
-                    {updateProductInfo.isPending ? <Spinner /> : "Save"}
+                    {updateProductInfo.isPending ? <Spinner /> : "Lưu"}
                 </Button>
             </div>
         </form>

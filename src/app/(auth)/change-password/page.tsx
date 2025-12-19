@@ -6,8 +6,8 @@ import { getOtpData } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-    title: 'Change Password - ShoeShop',
-    description: 'Change your account password',
+    title: 'Đổi mật khẩu - ShoeShop',
+    description: 'Đổi mật khẩu tài khoản của bạn',
 };
 
 export default async function ChangePasswordPage() {

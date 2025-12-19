@@ -104,7 +104,7 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
 
       <div className="flex justify-end gap-3 pt-6 mt-6 border-t">
         <Button type="submit" disabled={createProduct.isPending}>
-          {createProduct.isPending ? <Spinner /> : "Create Product"}
+          {createProduct.isPending ? <Spinner /> : "Tạo sản phẩm"}
         </Button>
       </div>
     </form>

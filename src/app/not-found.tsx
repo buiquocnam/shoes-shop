@@ -10,12 +10,12 @@ export default function NotFound() {
 
                 {/* Title */}
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                    Page Not Found
+                    Không tìm thấy trang
                 </h2>
 
                 {/* Description */}
                 <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-                    Sorry, we couldn't find the page you're looking for. The page might have been moved or deleted.
+                    Xin lỗi, chúng tôi không thể tìm thấy trang bạn đang tìm kiếm. Trang có thể đã được di chuyển hoặc xóa.
                 </p>
 
                 {/* Actions */}
@@ -25,7 +25,7 @@ export default function NotFound() {
                         className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
                     >
                         <Home className="w-5 h-5" />
-                        Go Home
+                        Về trang chủ
                     </Link>
 
                     <Link
@@ -33,7 +33,7 @@ export default function NotFound() {
                         className="inline-flex items-center gap-2 px-6 py-3 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
                     >
                         <Search className="w-5 h-5" />
-                        Browse Products
+                        Duyệt sản phẩm
                     </Link>
                 </div>
             </div>

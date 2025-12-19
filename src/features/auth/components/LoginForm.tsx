@@ -44,10 +44,10 @@ export default function LoginForm() {
     <div className="w-full max-w-md mx-auto">
       <div className="flex flex-col gap-2 mb-8">
         <p className="text-4xl">
-          Welcome Back
+          Chào mừng trở lại
         </p>
         <p className="text-subtext-light dark:text-subtext-dark text-base font-normal leading-normal">
-          Log in to access your account and start shopping.
+          Đăng nhập để truy cập tài khoản và bắt đầu mua sắm.
         </p>
       </div>
 
@@ -62,7 +62,7 @@ export default function LoginForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Email Address
+                  Địa chỉ email
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -84,12 +84,12 @@ export default function LoginForm() {
               <FormItem>
                 <div className="flex flex-col w-full">
                   <div className="flex justify-between items-center pb-2">
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Mật khẩu</FormLabel>
                     <Link
                       className="text-primary text-sm font-medium leading-normal hover:underline"
                       href="/forget-password"
                     >
-                      Forgot Password?
+                      Quên mật khẩu?
                     </Link>
                   </div>
                   <div className="relative w-full flex items-center">
@@ -97,7 +97,7 @@ export default function LoginForm() {
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Nhập mật khẩu của bạn"
                         className="w-full h-12"
                         {...field}
                       />
@@ -131,7 +131,7 @@ export default function LoginForm() {
             disabled={isPending}
             type="submit"
           >
-            {isPending ? "Signing in..." : "Log In"}
+            {isPending ? "Đang đăng nhập..." : "Đăng nhập"}
           </Button>
         </form>
       </Form>
@@ -142,7 +142,7 @@ export default function LoginForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            Hoặc tiếp tục với
           </span>
         </div>
       </div>
@@ -172,13 +172,13 @@ export default function LoginForm() {
             fill="#EA4335"
           />
         </svg>
-        Continue with Google
+        Tiếp tục với Google
       </Button>
 
       <p className="text-center text-subtext-light dark:text-subtext-dark text-base mt-8">
-        Don't have an account?{" "}
+        Chưa có tài khoản?{" "}
         <Link className="font-semibold text-primary hover:underline" href="/register">
-          Sign Up
+          Đăng ký
         </Link>
       </p>
     </div>

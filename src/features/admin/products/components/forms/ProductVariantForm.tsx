@@ -60,7 +60,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
       id: variant.id, // Có id → UPDATE variant này
       color: variant.color,
       sizes: variant.sizes.map((size) => ({
-        id: size.id, 
+        id: size.id,
         size: size.size.toString(),
       })),
     }));
@@ -83,7 +83,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
         // Tìm variant size trong response theo color và size
         const responseItem = result.find(
           (item) =>
-            item.color === formVariant.color 
+            item.color === formVariant.color
         );
 
         if (responseItem) {
@@ -142,7 +142,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
           disabled={upsertVariants.isPending || importStock.isPending}
           onClick={onCancel}
         >
-          Cancel
+          Hủy
         </Button>
         <Button
           type="submit"
@@ -151,7 +151,7 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
           {upsertVariants.isPending || importStock.isPending ? (
             <Spinner />
           ) : (
-            "Save"
+            "Lưu"
           )}
         </Button>
       </div>

@@ -17,10 +17,10 @@ export const useDeleteVariant = () => {
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.detail(variables.productId),
       });
-      toast.success("Variant deleted successfully");
+      toast.success("Xóa biến thể thành công");
     },
     onError: () => {
-      toast.error("Failed to delete variant");
+      toast.error("Xóa biến thể thất bại");
     },
   });
 };

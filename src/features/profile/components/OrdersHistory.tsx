@@ -77,7 +77,7 @@ const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) =
         <Button variant="outline" size="sm" className="gap-1  text-xs "
           onClick={handleViewDetails}
         >
-          View details
+          Xem chi tiết
         </Button>
       </TableCell>
     </TableRow>
@@ -132,8 +132,8 @@ export function ProductListBought() {
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">No orders yet</h3>
-            <p className="text-sm text-gray-600">You haven't made any purchases yet.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Chưa có đơn hàng</h3>
+            <p className="text-sm text-gray-600">Bạn chưa thực hiện bất kỳ giao dịch mua nào.</p>
           </div>
         </div>
       </div>
@@ -147,11 +147,11 @@ export function ProductListBought() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold">Product</TableHead>
-                <TableHead className="font-semibold">Color</TableHead>
+                <TableHead className="font-semibold">Sản phẩm</TableHead>
+                <TableHead className="font-semibold">Màu</TableHead>
                 <TableHead className="font-semibold">Size</TableHead>
-                <TableHead className="font-semibold text-center">Quantity</TableHead>
-                <TableHead className="font-semibold text-right">Total Price</TableHead>
+                <TableHead className="font-semibold text-center">Số lượng</TableHead>
+                <TableHead className="font-semibold text-right">Tổng tiền</TableHead>
                 <TableHead className="font-semibold text-right"></TableHead>
               </TableRow>
             </TableHeader>
@@ -170,10 +170,10 @@ export function ProductListBought() {
       {pagination.totalPages > 1 && (
         <div className="flex items-center justify-between py-4">
           <div className="text-sm text-muted-foreground">
-            Showing <span className="font-medium text-foreground">{purchasedItems.length}</span> of{" "}
-            <span className="font-medium text-foreground">{pagination.totalElements}</span> results
+            Hiển thị <span className="font-medium text-foreground">{purchasedItems.length}</span> trong{" "}
+            <span className="font-medium text-foreground">{pagination.totalElements}</span> kết quả
             <span className="ml-2">
-              (Page <span className="font-medium text-foreground">{pagination.currentPage}</span> /{" "}
+              (Trang <span className="font-medium text-foreground">{pagination.currentPage}</span> /{" "}
               <span className="font-medium text-foreground">{pagination.totalPages}</span>)
             </span>
           </div>

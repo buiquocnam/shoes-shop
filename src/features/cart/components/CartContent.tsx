@@ -15,7 +15,7 @@ export function CartContent() {
             <div className="flex items-center justify-center py-16">
                 <div className="flex flex-col items-center gap-4">
                     <Spinner className="h-8 w-8 text-primary" />
-                    <p className="text-muted-foreground">Loading cart...</p>
+                    <p className="text-muted-foreground">Đang tải giỏ hàng...</p>
                 </div>
             </div>
         );
@@ -28,8 +28,8 @@ export function CartContent() {
     return (
         <div className="space-y-8">
             <div className="text-center space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">Shopping Cart</h1>
-                <p className="text-muted-foreground">Review your items and proceed to checkout</p>
+                <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng</h1>
+                <p className="text-muted-foreground">Xem lại các sản phẩm và tiến hành thanh toán</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

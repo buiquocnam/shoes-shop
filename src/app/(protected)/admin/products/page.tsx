@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, History } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
@@ -67,19 +67,27 @@ const AdminProductsPage = () => {
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">Manage Products</h1>
+        <h1 className="text-3xl font-semibold">Quản lý sản phẩm</h1>
 
-        <Link href="/admin/products/new">
-          <Button className="bg-red-700 hover:bg-red-800">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Button>
-        </Link>
+        <div className="flex gap-3">
+          <Link href="/admin/products/history">
+            <Button variant="outline">
+              <History className="mr-2 h-4 w-4" />
+              Lịch sử nhập kho
+            </Button>
+          </Link>
+          <Link href="/admin/products/new">
+            <Button className="bg-red-700 hover:bg-red-800">
+              <Plus className="mr-2 h-4 w-4" />
+              Thêm sản phẩm
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-4">
         <Input
-          placeholder="Search product name..."
+          placeholder="Tìm kiếm tên sản phẩm..."
           defaultValue={name}
           className="w-64"
           onChange={(e) => {
@@ -103,7 +111,6 @@ const AdminProductsPage = () => {
         <PurchasedItemsDialog
           data={purchasedItemsData}
           isLoading={isLoadingPurchasedItems}
-          showUserId={true}
           open={isDialogOpen}
           onOpenChange={(open) => {
             if (!open) {
