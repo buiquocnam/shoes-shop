@@ -14,7 +14,7 @@ function getToken(): string | null {
 
 /**
  * Get or create socket instance with authentication
- * Uses auth object instead of query param for better security
+ * Passes token as query parameter (backend reads from handshake URL params)
  */
 export const getSocket = (): Socket | null => {
   const token = getToken();
@@ -24,20 +24,32 @@ export const getSocket = (): Socket | null => {
     return null;
   }
 
-  // Reuse existing socket if connected
-  if (socket && socket.connected) {
+  // Check if we need to recreate socket (token changed or not connected)
+  const currentToken = socket?.io?.opts?.query?.token as string | undefined;
+  const tokenChanged = currentToken !== token;
+  
+  // Reuse existing socket if connected and token hasn't changed
+  if (socket && socket.connected && !tokenChanged) {
     return socket;
   }
 
+  // Disconnect old socket if token changed or not connected
+  if (socket && (tokenChanged || !socket.connected)) {
+    socket.removeAllListeners();
+    socket.disconnect();
+    socket = null;
+  }
+
   // Create new socket connection
+  // Backend reads token from query parameter: getHandshakeData().getSingleUrlParam("token")
   socket = io(SOCKET_URL, {
     autoConnect: true,
     transports: ["websocket"],
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
-    // Use auth object for authentication (more secure than query param)
-    auth: {
+    // Pass token as query parameter (backend requirement)
+    query: {
       token: token,
     },
   });
@@ -60,11 +72,19 @@ export const getSocket = (): Socket | null => {
     console.error("Socket connection error:", error.message);
 
     // Retry with updated token if unauthorized
+    // Need to recreate socket with new token (query params can't be changed on existing socket)
     if (error.message === "Unauthorized" && socket) {
       const newToken = getToken();
       if (newToken) {
-        socket.auth = { token: newToken };
-        socket.connect();
+        // Disconnect and recreate socket with new token
+        socket.removeAllListeners();
+        socket.disconnect();
+        socket = null;
+        reconnectAttempts = 0;
+        // Recreate socket with new token
+        setTimeout(() => {
+          getSocket();
+        }, 500);
       }
     }
 

@@ -19,8 +19,6 @@ export interface Message {
 }
 
 export interface CreateConversationRequest {
-  senderId: string;
-  senderName: string;
   participantId: string;
   participantName: string;
 }
