@@ -1,5 +1,5 @@
-// Profile page content is handled in layout.tsx with hash routing
-export default function ProfilePage() {
-  return null;
-}
+import { redirect } from 'next/navigation';
 
+export default function ProfilePage() {
+  redirect('/profile/info');
+}

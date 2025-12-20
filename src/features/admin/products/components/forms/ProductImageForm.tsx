@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,10 @@ interface ProductImageFormProps {
 /**
  * Form riêng cho product images
  * Tự quản lý useForm, defaultValues, submit logic
+ * 
+ * API yêu cầu:
+ * - request: { productId, names: [array of image names to delete], primaryName }
+ * - files: new files to upload
  */
 export const ProductImageForm: React.FC<ProductImageFormProps> = ({
   productId,
@@ -27,6 +31,7 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
   onCancel,
 }) => {
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [deletedImageNames, setDeletedImageNames] = useState<string[]>([]);
   const { data, isLoading: loadingProduct } = useProduct(productId);
   const updateImages = useUpdateProductImages();
 
@@ -40,33 +45,65 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
     },
   });
 
+  // Reset form when product data loads
+  useEffect(() => {
+    if (existingImages.length > 0) {
+      form.reset({
+        imageNames: existingImages.map((img: ImageType) => img.fileName),
+        primaryName: existingImages.find((img: ImageType) => img.isPrimary)?.fileName || "",
+      });
+    }
+  }, [existingImages, form]);
+
   const handleAddImages = (files: FileList | null) => {
     if (!files) return;
     const newFiles = Array.from(files);
     setNewImages((prev) => [...prev, ...newFiles]);
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveNewImage = (index: number) => {
     setNewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingImage = (fileName: string) => {
+    setDeletedImageNames((prev) => {
+      if (prev.includes(fileName)) {
+        return prev.filter((name) => name !== fileName);
+      }
+      return [...prev, fileName];
+    });
   };
 
   const onSubmit = async (data: ImagesFormValues) => {
     const formData = new FormData();
-    // Step 1: Upload new images (nếu có)
+
+    // Add new files to upload
     if (newImages.length > 0) {
       newImages.forEach((file) => {
         formData.append("files", file);
       });
     }
+
+    // Prepare request payload
+    // names: array of image names to DELETE
+    // primaryName: the new primary image name (can be from existing or new)
+    // Chỉ gửi phần sau dấu _ của primaryName
+    const getPrimaryNameAfterUnderscore = (name: string): string => {
+      const underscoreIndex = name.indexOf('_');
+      return underscoreIndex !== -1 ? name.substring(underscoreIndex + 1) : name;
+    };
+
     const updateData = {
       productId,
-      imageNames: newImages.map((img) => img.name),
-      primaryName: data.primaryName,
+      names: deletedImageNames, // Array of image names to delete
+      primaryName: getPrimaryNameAfterUnderscore(data.primaryName),
     };
+
     const jsonBlob = new Blob([JSON.stringify(updateData)], {
       type: "application/json",
     });
     formData.append("request", jsonBlob);
+
     await updateImages.mutateAsync({ productId, data: formData });
     onSuccess();
   };
@@ -85,9 +122,11 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
         control={form.control}
         images={newImages}
         existingImages={existingImages}
+        deletedImageNames={deletedImageNames}
         mode="images"
         onAddImages={handleAddImages}
-        onRemoveImage={handleRemoveImage}
+        onRemoveNewImage={handleRemoveNewImage}
+        onRemoveExistingImage={handleRemoveExistingImage}
       />
 
       <div className="flex justify-end gap-3 pt-6 mt-6 border-t">

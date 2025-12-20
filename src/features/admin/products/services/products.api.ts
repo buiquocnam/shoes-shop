@@ -75,6 +75,7 @@ export interface VariantHistoryItem {
   color: string;
   size: string;
   count: number;
+  variantId?: string;
   variant: {
     id: string;
     productId: string;
@@ -89,6 +90,8 @@ export interface VariantHistoryItem {
 export interface VariantHistoryFilters {
   page?: number;
   size?: number;
+  productId?: string;
+  variantId?: string;
 }
 
 export interface VariantHistoryPaginationResponse

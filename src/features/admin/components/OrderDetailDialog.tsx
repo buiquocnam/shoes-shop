@@ -10,7 +10,7 @@ import {
 import { formatCurrency } from "@/utils/format";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { useOrderDetail } from "@/features/shared/hooks";
+import { useAdminOrderDetail } from "@/features/admin/hooks/useAdminOrderDetail";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Package, MapPin, Calendar, Tag, User } from "lucide-react";
 
@@ -25,7 +25,7 @@ export function OrderDetailDialog({
     open,
     onOpenChange,
 }: OrderDetailDialogProps) {
-    const { data: orderDetail, isLoading, error } = useOrderDetail(
+    const { data: orderDetail, isLoading, error } = useAdminOrderDetail(
         open ? orderId : null
     );
 
@@ -97,7 +97,7 @@ export function OrderDetailDialog({
                             <span className="text-sm text-muted-foreground">Mã giảm giá - Phần trăm giảm giá:</span>
                             <span className="font-semibold">{orderDetail.discountPercent ? `${orderDetail.discountPercent}%` : 'Không có'}</span>
                         </div>
-                            
+
                         <div className="flex items-center justify-between">
                             <span className="font-medium">Thành tiền:</span>
                             <span className="text-xl font-bold text-primary">

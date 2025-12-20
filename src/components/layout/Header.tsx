@@ -106,7 +106,7 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full shadow-xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full shadow-xl bg-background  ">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-3 items-center h-16 gap-4">
                     {/* Logo Section */}
