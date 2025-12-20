@@ -20,9 +20,13 @@ export const SelectField = <T extends FieldValues>({
     options,
     placeholder = "Chọn một tùy chọn",
     className,
+    disabled,
+    onValueChange,
 }: BaseFieldProps<T> & {
     options: SelectOption[];
     placeholder?: string;
+    disabled?: boolean;
+    onValueChange?: (value: string) => void;
 }) => {
     return (
         <Controller
@@ -31,11 +35,21 @@ export const SelectField = <T extends FieldValues>({
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className={className}>
                     {label && <FieldLabel>{label}</FieldLabel>}
-                    <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
+                    <Select
+                        onValueChange={(value) => {
+                            if (onValueChange) {
+                                onValueChange(value);
+                            } else {
+                                field.onChange(value);
+                            }
+                        }}
+                        value={field.value && field.value !== 0 ? field.value.toString() : undefined}
+                        disabled={disabled}
+                    >
+                        <SelectTrigger className="cursor-pointer">
                             <SelectValue placeholder={placeholder} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-[300px] overflow-y-auto">
                             {options.map((option) => (
                                 <SelectItem key={option.id} value={option.id}>
                                     {option.name}

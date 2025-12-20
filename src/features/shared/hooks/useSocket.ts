@@ -12,6 +12,16 @@ export function useSocket() {
   useEffect(() => {
     if (isAuthenticated && accessToken) {
       socketRef.current = getSocket();
+
+      // Log khi socket được tạo/cập nhật
+      if (socketRef.current) {
+        console.log("🔍 [SOCKET] Socket state check:", {
+          exists: !!socketRef.current,
+          connected: socketRef.current?.connected,
+          disconnected: socketRef.current?.disconnected,
+          id: socketRef.current?.id,
+        });
+      }
     } else {
       if (socketRef.current) {
         disconnectSocket();

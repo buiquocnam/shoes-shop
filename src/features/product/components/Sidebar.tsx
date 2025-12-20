@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCategories } from "@/features/shared/hooks/useCategories";
+import { useBrands } from "@/features/shared/hooks/useBrands";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -17,10 +18,15 @@ const MAX_PRICE = 500;
 export default function Sidebar() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const { data: brandsData, isLoading: isLoadingBrands } = useBrands();
+  const brands = brandsData?.data || [];
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     searchParams.get('category_id') || ""
+  );
+  const [selectedBrandId, setSelectedBrandId] = useState(
+    searchParams.get('brand_id') || ""
   );
   const [priceRange, setPriceRange] = useState<number[]>([
     Number(searchParams.get('min_price')) || MIN_PRICE,
@@ -29,6 +35,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     setSelectedCategoryId(searchParams.get('category_id') || "");
+    setSelectedBrandId(searchParams.get('brand_id') || "");
     setPriceRange([
       Number(searchParams.get('min_price')) || MIN_PRICE,
       Number(searchParams.get('max_price')) || MAX_PRICE,
@@ -42,6 +49,12 @@ export default function Sidebar() {
       params.set("category_id", selectedCategoryId);
     } else {
       params.delete("category_id");
+    }
+
+    if (selectedBrandId) {
+      params.set("brand_id", selectedBrandId);
+    } else {
+      params.delete("brand_id");
     }
 
     if (priceRange[0] !== MIN_PRICE || priceRange[1] !== MAX_PRICE) {
@@ -65,10 +78,12 @@ export default function Sidebar() {
 
   const handleReset = () => {
     setSelectedCategoryId("");
+    setSelectedBrandId("");
     setPriceRange([MIN_PRICE, MAX_PRICE]);
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("category_id");
+    params.delete("brand_id");
     params.delete("min_price");
     params.delete("max_price");
     params.delete("page");
@@ -82,7 +97,7 @@ export default function Sidebar() {
         {/* Category Filter */}
         <div className="space-y-3">
           <h3 className="font-semibold text-sm">Danh mục</h3>
-          {isLoading ? (
+          {isLoadingCategories ? (
             <div className="space-y-2">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Skeleton key={i} className="h-5 w-full" />
@@ -95,9 +110,9 @@ export default function Sidebar() {
               className="space-y-2"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="" id="all" />
+                <RadioGroupItem value="" id="all-category" />
                 <Label
-                  htmlFor="all"
+                  htmlFor="all-category"
                   className="text-sm font-normal cursor-pointer"
                 >
                   Tất cả danh mục
@@ -106,12 +121,54 @@ export default function Sidebar() {
 
               {categories?.map((category) => (
                 <div key={category.id} className="flex items-center space-x-2">
-                  <RadioGroupItem value={category.id} id={category.id} />
+                  <RadioGroupItem value={category.id} id={`category-${category.id}`} />
                   <Label
-                    htmlFor={category.id}
+                    htmlFor={`category-${category.id}`}
                     className="text-sm font-normal cursor-pointer"
                   >
                     {category.name}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          )}
+        </div>
+
+        <Separator />
+
+        {/* Brand Filter */}
+        <div className="space-y-3">
+          <h3 className="font-semibold text-sm">Thương hiệu</h3>
+          {isLoadingBrands ? (
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-5 w-full" />
+              ))}
+            </div>
+          ) : (
+            <RadioGroup
+              value={selectedBrandId}
+              onValueChange={setSelectedBrandId}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="" id="all-brand" />
+                <Label
+                  htmlFor="all-brand"
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  Tất cả thương hiệu
+                </Label>
+              </div>
+
+              {brands.map((brand) => (
+                <div key={brand.id} className="flex items-center space-x-2">
+                  <RadioGroupItem value={brand.id} id={`brand-${brand.id}`} />
+                  <Label
+                    htmlFor={`brand-${brand.id}`}
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    {brand.name}
                   </Label>
                 </div>
               ))}

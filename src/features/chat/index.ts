@@ -7,14 +7,6 @@ export type {
   ConversationWithMessages,
 } from "./types";
 
-// Schema
-export {
-  createConversationSchema,
-  createMessageSchema,
-  type CreateConversationFormData,
-  type CreateMessageFormData,
-} from "./schema";
-
 // Services
 export { chatApi } from "./services";
 

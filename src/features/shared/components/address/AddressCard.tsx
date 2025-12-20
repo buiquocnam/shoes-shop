@@ -37,7 +37,9 @@ export function AddressCard({
     return (
         <label
             htmlFor={address.id}
-            className={`flex items-start gap-3 rounded-lg p-4 border transition-colors cursor-pointer hover:border-primary/50 ${address.isDefault ? "border-primary" : "border-border"
+            className={`group relative flex items-start gap-4 rounded-xl p-5 border-2 transition-all cursor-pointer bg-white hover:border-primary/50 hover:shadow-md ${address.isDefault
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-gray-200"
                 } ${className}`}
         >
             <RadioGroupItem
@@ -50,22 +52,26 @@ export function AddressCard({
                 }}
             />
 
-            <div className="flex-1 flex flex-col gap-4">
-                <div className="flex justify-between items-start gap-2">
-                    <div className="flex flex-col gap-1 flex-1">
-                        <p className="text-base font-bold">{address.addressLine}</p>
-                        <p className="text-sm font-normal leading-normal text-muted-foreground">
+            <div className="flex-1 flex flex-col gap-4 min-w-0">
+                <div className="flex justify-between items-start gap-3">
+                    <div className="flex flex-col gap-2 flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                            <p className="text-base font-semibold text-gray-900 truncate">
+                                {address.addressLine}
+                            </p>
+                            {address.isDefault && (
+                                <span className="rounded-full bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap shrink-0">
+                                    Mặc định
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                             {fullAddress}
                         </p>
                     </div>
-                    {address.isDefault && (
-                        <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold whitespace-nowrap">
-                            Mặc định
-                        </span>
-                    )}
                 </div>
 
-                <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center justify-end pt-2 border-t border-gray-100">
                     <Button
                         type="button"
                         variant="ghost"
@@ -75,10 +81,10 @@ export function AddressCard({
                             handleDelete();
                         }}
                         disabled={deleteAddressMutation.isPending}
-                        className="flex items-center gap-1 text-sm font-medium hover:text-destructive transition-colors"
+                        className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors"
                     >
                         <Trash2 className="w-4 h-4" />
-                        Xóa
+                        Xóa địa chỉ
                     </Button>
                 </div>
             </div>

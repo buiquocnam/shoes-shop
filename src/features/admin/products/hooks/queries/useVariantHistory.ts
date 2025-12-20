@@ -22,4 +22,3 @@ export const useVariantHistory = (filters?: VariantHistoryFilters) => {
     refetchOnWindowFocus: false,
   });
 };
-

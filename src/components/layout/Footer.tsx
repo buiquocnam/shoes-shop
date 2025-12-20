@@ -4,8 +4,14 @@ import { Facebook, Twitter, Instagram, FacebookIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-
+import { useAuthStore } from "@/store";
+import { Role } from "@/types/global";
 export function Footer() {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === Role.ADMIN;
+  if (isAdmin) {
+    return null;
+  }
   const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Implement newsletter subscription

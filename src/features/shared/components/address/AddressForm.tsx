@@ -4,10 +4,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { InputField, CustomField, SelectField } from "@/components/form";
 import {
     useProvinces,
     useDistricts,
@@ -114,144 +113,124 @@ export function AddressForm({ userId, onSuccess, onCancel }: AddressFormProps) {
         onSuccess?.();
     };
 
+    // Convert data to SelectField format
+    const provinceOptions = provinces?.map((p) => ({
+        id: p.code.toString(),
+        name: p.name,
+    })) || [];
+
+    const districtOptions = districts?.map((d) => ({
+        id: d.code.toString(),
+        name: d.name,
+    })) || [];
+
+    const wardOptions = wards?.map((w) => ({
+        id: w.code.toString(),
+        name: w.name,
+    })) || [];
+
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <SelectField
                     control={form.control}
                     name="provinceCode"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Tỉnh/Thành phố</FormLabel>
-                            <FormControl>
-                                <select
-                                    {...field}
-                                    value={field.value || ""}
-                                    onChange={(e) => {
-                                        field.onChange(Number(e.target.value) || 0);
-                                        handleProvinceChange(e.target.value);
-                                    }}
-                                    className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white"
-                                >
-                                    <option value="">Chọn tỉnh/thành phố</option>
-                                    {provinces?.map((province) => (
-                                        <option key={province.code} value={province.code}>
-                                            {province.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    label="Tỉnh/Thành phố"
+                    options={provinceOptions}
+                    placeholder="Chọn tỉnh/thành phố"
+                    onValueChange={(value) => {
+                        const code = Number(value) || 0;
+                        form.setValue("provinceCode", code);
+                        handleProvinceChange(value);
+                    }}
                 />
 
-                <FormField
+                <SelectField
                     control={form.control}
                     name="districtCode"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Quận/Huyện</FormLabel>
-                            <FormControl>
-                                <select
-                                    {...field}
-                                    value={field.value || ""}
-                                    onChange={(e) => {
-                                        field.onChange(Number(e.target.value) || 0);
-                                        handleDistrictChange(e.target.value);
-                                    }}
-                                    disabled={!provinceCode}
-                                    className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                >
-                                    <option value="">Chọn quận/huyện</option>
-                                    {districts?.map((district) => (
-                                        <option key={district.code} value={district.code}>
-                                            {district.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    label="Quận/Huyện"
+                    options={districtOptions}
+                    placeholder="Chọn quận/huyện"
+                    disabled={!provinceCode}
+                    onValueChange={(value) => {
+                        const code = Number(value) || 0;
+                        form.setValue("districtCode", code);
+                        handleDistrictChange(value);
+                    }}
                 />
 
-                <FormField
+                <SelectField
                     control={form.control}
                     name="wardCode"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Phường/Xã</FormLabel>
-                            <FormControl>
-                                <select
-                                    {...field}
-                                    value={field.value || ""}
-                                    onChange={(e) => {
-                                        field.onChange(Number(e.target.value) || 0);
-                                        handleWardChange(e.target.value);
-                                    }}
-                                    disabled={!districtCode}
-                                    className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                >
-                                    <option value="">Chọn phường/xã</option>
-                                    {wards?.map((ward) => (
-                                        <option key={ward.code} value={ward.code}>
-                                            {ward.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    label="Phường/Xã"
+                    options={wardOptions}
+                    placeholder="Chọn phường/xã"
+                    disabled={!districtCode}
+                    onValueChange={(value) => {
+                        const code = Number(value) || 0;
+                        form.setValue("wardCode", code);
+                        handleWardChange(value);
+                    }}
                 />
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="addressLine"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Địa chỉ chi tiết</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Số nhà, tên đường..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
+            <InputField
+                control={form.control}
+                name="addressLine"
+                label="Địa chỉ chi tiết"
+                placeholder="Số nhà, tên đường, số phòng..."
+            />
+
+            <CustomField
+                control={form.control}
+                name="isDefault"
+                className="rounded-md border border-gray-200 p-4 bg-gray-50/50"
+                render={(field, fieldState) => (
+                    <div className="flex flex-row items-center space-x-3 space-y-0">
+                        <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                        />
+                        <div className="space-y-1 leading-none">
+                            <label className="font-normal cursor-pointer text-sm">
+                                Đặt làm địa chỉ mặc định
+                            </label>
+                            <p className="text-xs text-muted-foreground">
+                                Địa chỉ này sẽ được sử dụng mặc định khi thanh toán
+                            </p>
+                        </div>
+                    </div>
+                )}
+            />
+
+            <div className="flex gap-3 pt-2">
+                <Button
+                    type="submit"
+                    disabled={createAddressMutation.isPending}
+                    className="flex-1 gap-2"
+                >
+                    {createAddressMutation.isPending ? (
+                        <>
+                            <span className="animate-spin">⏳</span>
+                            Đang thêm...
+                        </>
+                    ) : (
+                        "Thêm địa chỉ"
                     )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="isDefault"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                            <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                                <FormLabel>Đặt làm địa chỉ mặc định</FormLabel>
-                            </div>
-                        </FormItem>
-                    )}
-                />
-
-                <div className="flex gap-2">
-                    <Button type="submit" disabled={createAddressMutation.isPending} className="flex-1">
-                        {createAddressMutation.isPending ? "Đang thêm..." : "Thêm địa chỉ"}
+                </Button>
+                {onCancel && (
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={onCancel}
+                        disabled={createAddressMutation.isPending}
+                        className="px-6"
+                    >
+                        Hủy
                     </Button>
-                    {onCancel && (
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onCancel}
-                            disabled={createAddressMutation.isPending}
-                        >
-                            Hủy
-                        </Button>
-                    )}
-                </div>
-            </form>
-        </Form>
+                )}
+            </div>
+        </form>
     );
 }
 
