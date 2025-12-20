@@ -34,12 +34,9 @@ export function ChatProvider() {
     };
 
     const handleConnectError = async (err: Error) => {
-      if (err.message === "Unauthorized" && accessToken && socket) {
-        socket.auth = {
-          token: accessToken,
-        };
-        socket.connect();
-      }
+      // Error handling is done in socket.ts getSocket() function
+      // It will automatically recreate socket with new token if needed
+      console.error("Chat socket connection error:", err.message);
     };
 
     socket.on("connect", handleConnect);

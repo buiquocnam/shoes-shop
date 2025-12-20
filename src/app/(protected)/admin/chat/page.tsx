@@ -14,6 +14,8 @@ export default function ChatPage() {
   const { isAuthenticated, accessToken } = useAuthStore();
 
   // Connect socket for admin chat
+  // Note: Socket listeners are handled by useSocketConversations() in ChatList
+  // and useSocketMessages() in ChatWindow via useMessages()
   useEffect(() => {
     if (!isAuthenticated || !accessToken) {
       disconnectSocket();
@@ -21,31 +23,36 @@ export default function ChatPage() {
     }
 
     const socket = getSocket();
-    if (socket && !socket.connected) {
+    if (!socket) {
+      console.warn("⚠️ [ADMIN] Cannot get socket instance");
+      return;
+    }
+
+    if (!socket.connected) {
       socket.connect();
     }
 
-    socket?.on("connect", () => {
-      console.log("✅ Admin chat socket connected", socket.id);
-    });
+    const handleConnect = () => {
+      console.log("✅ [ADMIN] Chat socket connected", socket.id);
+    };
 
-    socket?.on("disconnect", () => {
-      console.log("❌ Admin chat socket disconnected");
-    });
+    const handleDisconnect = () => {
+      console.log("❌ [ADMIN] Chat socket disconnected");
+    };
 
-    socket?.on("connect_error", async (err) => {
-      if (err.message === "Unauthorized") {
-        socket.auth = {
-          token: accessToken,
-        };
-        socket.connect();
-      }
-    });
+    const handleConnectError = (err: Error) => {
+      console.error("❌ [ADMIN] Socket connection error:", err.message);
+      // Error handling is done in socket.ts getSocket() function
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("connect_error", handleConnectError);
 
     return () => {
-      socket?.off("connect");
-      socket?.off("disconnect");
-      socket?.off("connect_error");
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("connect_error", handleConnectError);
     };
   }, [isAuthenticated, accessToken]);
 

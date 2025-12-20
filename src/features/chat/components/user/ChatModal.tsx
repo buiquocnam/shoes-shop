@@ -27,8 +27,6 @@ export function ChatModal({ open, onOpenChange }: ChatModalProps) {
     if (!open || selectedConversationId || !user) return;
     createConversation(
       {
-        senderId: user.id,
-        senderName: user.name,
         participantId: user.id,
         participantName: user.name,
       },

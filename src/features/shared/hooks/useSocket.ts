@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSocket, disconnectSocket } from "@/lib/socket";
 import { useAuthStore } from "@/store";
 import type { Socket } from "socket.io-client";
@@ -8,27 +8,70 @@ import type { Socket } from "socket.io-client";
 export function useSocket() {
   const { isAuthenticated, accessToken } = useAuthStore();
   const socketRef = useRef<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     if (isAuthenticated && accessToken) {
-      socketRef.current = getSocket();
+      const newSocket = getSocket();
+      socketRef.current = newSocket;
 
-      // Log khi socket được tạo/cập nhật
-      if (socketRef.current) {
+      if (newSocket) {
         console.log("🔍 [SOCKET] Socket state check:", {
-          exists: !!socketRef.current,
-          connected: socketRef.current?.connected,
-          disconnected: socketRef.current?.disconnected,
-          id: socketRef.current?.id,
+          exists: !!newSocket,
+          connected: newSocket.connected,
+          disconnected: newSocket.disconnected,
+          id: newSocket.id,
         });
+
+        // Update state when socket connects
+        const handleConnect = () => {
+          console.log("✅ [useSocket] Socket connected, updating state");
+          setSocket(newSocket);
+        };
+
+        // Update state immediately if already connected
+        if (newSocket.connected) {
+          setSocket(newSocket);
+        } else {
+          // Wait for connection
+          newSocket.once("connect", handleConnect);
+        }
+
+        // Cleanup
+        return () => {
+          newSocket.off("connect", handleConnect);
+        };
       }
     } else {
       if (socketRef.current) {
         disconnectSocket();
         socketRef.current = null;
+        setSocket(null);
       }
     }
   }, [isAuthenticated, accessToken]);
 
-  return socketRef.current;
+  // Also listen to socket connection changes
+  useEffect(() => {
+    const currentSocket = socketRef.current;
+    if (currentSocket) {
+      const handleConnect = () => {
+        setSocket(currentSocket);
+      };
+
+      const handleDisconnect = () => {
+        setSocket(null);
+      };
+
+      currentSocket.on("connect", handleConnect);
+      currentSocket.on("disconnect", handleDisconnect);
+
+      return () => {
+        currentSocket.off("connect", handleConnect);
+        currentSocket.off("disconnect", handleDisconnect);
+      };
+    }
+  }, [isAuthenticated, accessToken]);
+
+  return socket || socketRef.current;
 }
