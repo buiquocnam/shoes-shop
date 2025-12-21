@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChatList, ChatWindow } from "@/features/chat";
-import { getSocket, disconnectSocket } from "@/lib/socket";
-import { useAuthStore } from "@/store";
+import { useChatSocket } from "@/features/chat/hooks/shared/useChatSocket";
 import { MessageSquare } from "lucide-react";
 
 export default function ChatPage() {
@@ -11,50 +10,9 @@ export default function ChatPage() {
     useState<string | null>(null);
   const [selectedConversationName, setSelectedConversationName] =
     useState<string>("");
-  const { isAuthenticated, accessToken } = useAuthStore();
 
-  // Connect socket for admin chat
-  // Note: Socket listeners are handled by useSocketConversations() in ChatList
-  // and useSocketMessages() in ChatWindow via useMessages()
-  useEffect(() => {
-    if (!isAuthenticated || !accessToken) {
-      disconnectSocket();
-      return;
-    }
-
-    const socket = getSocket();
-    if (!socket) {
-      console.warn("⚠️ [ADMIN] Cannot get socket instance");
-      return;
-    }
-
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    const handleConnect = () => {
-      console.log("✅ [ADMIN] Chat socket connected", socket.id);
-    };
-
-    const handleDisconnect = () => {
-      console.log("❌ [ADMIN] Chat socket disconnected");
-    };
-
-    const handleConnectError = (err: Error) => {
-      console.error("❌ [ADMIN] Socket connection error:", err.message);
-      // Error handling is done in socket.ts getSocket() function
-    };
-
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("connect_error", handleConnectError);
-
-    return () => {
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("connect_error", handleConnectError);
-    };
-  }, [isAuthenticated, accessToken]);
+  // Setup socket connection (shared hook for both admin and user)
+  useChatSocket();
 
   const handleSelectConversation = (
     conversationId: string,

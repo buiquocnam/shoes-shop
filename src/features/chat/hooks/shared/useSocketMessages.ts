@@ -67,29 +67,43 @@ export function useSocketMessages(conversationId: string | null) {
 
     // Setup listener when socket is connected
     const setupListener = () => {
-      if (socket.connected) {
-        socket.on("message", handleNewMessage);
+      if (socket && socket.connected) {
+        // Remove any existing listener first to avoid duplicates
+        socket.off("message", handleNewMessage);
         
+        socket.on("message", handleNewMessage);
         console.log("👂 [SOCKET] Listening for 'message' event (conversation)", {
           socketId: socket.id,
           conversationId,
           connected: socket.connected,
         });
+      } else {
+        console.warn("⚠️ [SOCKET] Socket not connected when trying to setup listener", {
+          hasSocket: !!socket,
+          connected: socket?.connected,
+        });
       }
     };
 
     // Setup immediately if already connected
-    if (socket.connected) {
+    if (socket && socket.connected) {
       setupListener();
-    } else {
-      // Wait for connection
-      socket.once("connect", setupListener);
-      console.log("⏳ [SOCKET] Waiting for socket connection before listening...");
+    } else if (socket) {
+      // Wait for connection - use 'on' to handle reconnects
+      socket.on("connect", setupListener);
+      socket.on("reconnect", setupListener);
+      console.log("⏳ [SOCKET] Waiting for socket connection before listening...", {
+        socketId: socket.id,
+        connected: socket.connected,
+      });
     }
 
     return () => {
-      socket.off("message", handleNewMessage);
-      socket.off("connect", setupListener);
+      if (socket) {
+        socket.off("message", handleNewMessage);
+        socket.off("connect", setupListener);
+        socket.off("reconnect", setupListener);
+      }
     };
   }, [socket, conversationId, queryClient]);
 }
@@ -173,8 +187,9 @@ export function useSocketConversations() {
     if (socket && socket.connected) {
       setupListener();
     } else if (socket) {
-      // Wait for connection - use 'on' instead of 'once' to handle reconnects
+      // Wait for connection - use 'on' to handle reconnects
       socket.on("connect", setupListener);
+      socket.on("reconnect", setupListener);
       console.log("⏳ [SOCKET] Waiting for socket connection before listening...", {
         socketId: socket.id,
         connected: socket.connected,
@@ -187,6 +202,7 @@ export function useSocketConversations() {
       if (socket) {
         socket.off("message", handleNewMessage);
         socket.off("connect", setupListener);
+        socket.off("reconnect", setupListener);
         console.log("🧹 [SOCKET] Cleaned up conversations listener");
       }
     };
