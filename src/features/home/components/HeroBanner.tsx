@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const HeroBanner = () => {
   return (
-    <section className="relative overflow-hidden bg-gray-100 pt-12 pb-24 lg:pt-24 lg:pb-40">
+    <section className="relative overflow-hidden bg-gray-100  pb-24 lg:pt-24 lg:pb-40">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <svg
           className="absolute bottom-0 w-full h-auto text-primary opacity-10"
@@ -69,9 +69,9 @@ const HeroBanner = () => {
 
           <div className="lg:w-1/2 relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full blur-3xl -z-10" />
-            <div className="relative z-10 aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl rotate-6 hover:rotate-0 transition-transform duration-500">
+            <div className="relative z-10 aspect-[4/3] rounded-2xl overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500">
               <Image
-                src="/images/hero-banner.jpg"
+                src="/images/hero-banner.png"
                 alt="Banner giày cao cấp"
                 fill
                 className="object-cover"

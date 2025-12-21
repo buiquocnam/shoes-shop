@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChatList, ChatWindow } from "@/features/chat";
 import { getSocket, disconnectSocket } from "@/lib/socket";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useIsAuthenticated } from "@/store";
 import { MessageSquare } from "lucide-react";
 
 export default function ChatPage() {
@@ -11,7 +11,8 @@ export default function ChatPage() {
     useState<string | null>(null);
   const [selectedConversationName, setSelectedConversationName] =
     useState<string>("");
-  const { isAuthenticated, accessToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
 
   // Connect socket for admin chat
   // Note: Socket listeners are handled by useSocketConversations() in ChatList

@@ -5,7 +5,7 @@ import type { AuthResponse } from "../types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { getUserRoleFromToken } from "@/lib/middleware/auth";
+import { getUserRoleFromToken } from "@/lib/jwt";
 import { Role } from "@/types/global";
 import { toast } from "sonner";
 
@@ -16,7 +16,8 @@ export function useGoogleLogin() {
   return useMutation<AuthResponse, Error, string>({
     mutationFn: (code) => authApi.loginWithGoogle(code),
     onSuccess: (response) => {
-      setAuth(response.user, response.access_token, response.refresh_token);
+      // Chỉ lưu access token, refresh token nằm trong httpOnly cookie
+      setAuth(response.user, response.access_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
       if (userRole === Role.ADMIN) {

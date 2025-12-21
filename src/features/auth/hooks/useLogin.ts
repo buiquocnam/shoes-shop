@@ -6,8 +6,7 @@ import type { AuthResponse } from "../types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { setAccessTokenCookie } from "@/lib/middleware/cookies";
-import { getUserRoleFromToken } from "@/lib/middleware/auth";
+import { getUserRoleFromToken } from "@/lib/jwt";
 import { Role } from "@/types/global";
 import { toast } from "sonner";
 
@@ -19,7 +18,8 @@ export function useLogin() {
   return useMutation<AuthResponse, Error, LoginFormData>({
     mutationFn: (credentials) => authApi.login(credentials),
     onSuccess: (response) => {
-      setAuth(response.user, response.access_token, response.refresh_token);
+      // Chỉ lưu access token, refresh token nằm trong httpOnly cookie
+      setAuth(response.user, response.access_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
       if (userRole === Role.ADMIN) {

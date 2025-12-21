@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { ChatBubble } from "./ChatBubble";
 import { ChatModal } from "./ChatModal";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useIsAuthenticated } from "@/store";
 import { Role } from "@/types/global";
 import { disconnectSocket, getSocket } from "@/lib/socket";
 
 export function ChatProvider() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isAuthenticated, accessToken } = useAuthStore();
+  const { user, accessToken } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
     // ❌ chưa login / admin → không connect

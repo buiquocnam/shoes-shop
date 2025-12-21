@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { User, ShoppingCart, LogOut, Search, Menu } from "lucide-react";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore, useIsAuthenticated } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLogout } from "@/features/auth/hooks/useLogout";
@@ -45,7 +45,8 @@ const NAV_LINKS = [
 const HIDDEN_PATHS = ['/login', '/register', '/verify-email', '/forget-password'] as const;
 
 export default function Header() {
-    const { user, isAuthenticated } = useAuthStore();
+    const { user } = useAuthStore();
+    const isAuthenticated = useIsAuthenticated();
     const { cart } = useCartStore();
     const pathname = usePathname();
     const router = useRouter();

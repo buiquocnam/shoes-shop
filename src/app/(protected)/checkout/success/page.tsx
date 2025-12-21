@@ -89,12 +89,7 @@ export default function CheckoutSuccessPage() {
     <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Spinner className="h-8 w-8 text-primary" />
-        <p className="text-lg font-semibold">
-          {isPending ? 'Đang tạo đơn hàng...' : 'Đang chuyển hướng...'}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Vui lòng đợi trong giây lát
-        </p>
+        <p className="text-lg font-semibold">Đang chuyển hướng...</p>
       </div>
     </main>
   );

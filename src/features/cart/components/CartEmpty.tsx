@@ -10,7 +10,7 @@ export function CartEmpty() {
 
     return (
         <div className="flex items-center justify-center py-16 px-4">
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-md border-none">
                 <CardContent className="flex flex-col items-center justify-center py-12 px-6 text-center">
                     <ShoppingCart className="h-24 w-24 text-muted-foreground mb-6" />
                     <h2 className="text-2xl font-bold mb-2">Giỏ hàng của bạn đang trống</h2>

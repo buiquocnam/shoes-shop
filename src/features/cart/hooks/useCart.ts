@@ -8,7 +8,7 @@ import {
   updateCartItem,
 } from "@/features/cart/services";
 import { CartResponse, AddToCartRequest } from "@/features/cart/types";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useIsAuthenticated } from "@/store/useAuthStore";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ import { toast } from "sonner";
  */
 export const useCart = () => {
   const { cart: storeCart } = useCartStore();
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
 
   const {
     data: cart,
