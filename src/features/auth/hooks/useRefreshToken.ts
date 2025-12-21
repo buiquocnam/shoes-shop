@@ -14,10 +14,9 @@ export function useRefreshToken() {
       return authApi.refreshToken();
     },
     onSuccess: (response) => {
-      // Cập nhật store với access_token và refresh_token mới từ response
-      // setAuth sẽ tự động set cookie
+      // Chỉ lưu access token, refresh token nằm trong httpOnly cookie
       if (user) {
-        setAuth(user, response.access_token, response.refresh_token);
+        setAuth(user, response.access_token);
       }
     },
     onError: (error) => {

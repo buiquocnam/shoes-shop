@@ -10,10 +10,13 @@ export interface OrderItem {
 }
 
 export interface CreateOrderResponse {
-  id: string;
-  variantId: string;
-  countBuy: number;
-  totalMoney: number;
+  items: {
+    id: string;
+    variantId: string;
+    quantity: number;
+    totalPrice: number;
+  }[];
+  orderId: string;
 }
 
 export interface CheckoutItem {

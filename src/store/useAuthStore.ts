@@ -1,70 +1,87 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { User } from "@/types/global";
-import {
-  setAccessTokenCookie,
-  removeAccessTokenCookie,
-} from "@/lib/middleware/cookies";
+import { getRoleFromToken } from "@/lib/jwt";
+import { Role } from "@/types/global";
 
 interface AuthState {
   user: User | null;
   accessToken: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  _hasHydrated: boolean;
+  setAuth: (user: User, accessToken: string) => void;
   updateUser: (user: User) => void;
   logout: () => void;
 }
 
+// Lưu set function để dùng trong onRehydrateStorage
+let setHydrated: ((state: Partial<AuthState>) => void) | null = null;
+
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
+    (set) => {
+      // Lưu set function để dùng trong onRehydrateStorage
+      setHydrated = set;
 
-      setAuth: (user, accessToken, refreshToken) => {
-        set({ user, accessToken, refreshToken, isAuthenticated: true });
-        // Sync cookie khi setAuth được gọi
-        if (typeof window !== "undefined") {
-          setAccessTokenCookie(accessToken);
-        }
-      },
+      return {
+        user: null,
+        accessToken: null,
+        _hasHydrated: false,
 
-      updateUser: (updatedUser) => {
-        set((state) => ({
-          user: updatedUser,
-        }));
-      },
+        setAuth: (user, accessToken) => {
+          set({ user, accessToken });
+        },
 
-      logout: () => {
-        set({
-          user: null,
-          refreshToken: null,
-          accessToken: null,
-          isAuthenticated: false,
-        });
-        // Remove cookie khi logout
-        if (typeof window !== "undefined") {
-          removeAccessTokenCookie();
-        }
-      },
-    }),
+        updateUser: (updatedUser) => {
+          set({ user: updatedUser });
+        },
+
+        logout: () => {
+          set({ user: null, accessToken: null });
+        },
+      };
+    },
     {
       name: "auth-storage",
+
+      // Chỉ persist dữ liệu cần thiết (không persist _hasHydrated)
+      partialize: (state) => ({
+        user: state.user,
+        accessToken: state.accessToken,
+      }),
+
+      // Đánh dấu hydrate hoàn tất
       onRehydrateStorage: () => {
         return (state, error) => {
           if (error) {
             console.error("Failed to rehydrate auth store:", error);
           }
-
-          // Sau khi rehydrate, sync cookie nếu có accessToken
-          if (state && state.accessToken && typeof window !== "undefined") {
-            setAccessTokenCookie(state.accessToken);
+          // Set _hasHydrated = true sau khi rehydrate xong
+          // Sử dụng set function từ closure
+          if (setHydrated) {
+            setHydrated({ _hasHydrated: true });
           }
         };
       },
     }
   )
 );
+
+/**
+ * Helper hook để check authentication status
+ * Không lưu isAuthenticated trong store, tính toán từ accessToken
+ */
+export function useIsAuthenticated() {
+  return useAuthStore((state) => Boolean(state.accessToken));
+}
+
+/**
+ * Helper hook để check admin role
+ * Tính toán từ accessToken, không lưu trong store
+ */
+export function useIsAdmin() {
+  return useAuthStore((state) => {
+    if (!state.accessToken) return false;
+    const role = getRoleFromToken(state.accessToken);
+    return role === Role.ADMIN;
+  });
+}

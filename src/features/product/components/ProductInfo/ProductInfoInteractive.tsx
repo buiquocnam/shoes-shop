@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCreateCart } from "@/features/cart/hooks/useCart";
 import { AlertLogin } from "@/features/product/components";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useIsAuthenticated } from "@/store/useAuthStore";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
 import { AddToCartRequest } from "@/features/cart/types";
@@ -103,7 +103,7 @@ export default function ProductInfoInteractive({
   product,
 }: ProductInfoInteractiveProps) {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
   const { mutate: createCart } = useCreateCart();
   const { variants, listImg, product: productInfo } = product;
 
@@ -221,7 +221,7 @@ export default function ProductInfoInteractive({
       <div className="mb-4 sm:mb-6 border-b border-gray-200 pb-4 sm:pb-6">
         {selectedData && (
           <p className="text-xs sm:text-sm font-medium mb-3 sm:mb-2 text-red-700">
-            Còn lại {stock} {stock === 1 ? 'sản phẩm' : 'sản phẩm'} 
+            Còn lại {stock} {stock === 1 ? 'sản phẩm' : 'sản phẩm'}
           </p>
         )}
 

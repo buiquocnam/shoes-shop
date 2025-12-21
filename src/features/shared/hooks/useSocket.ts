@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getSocket, disconnectSocket } from "@/lib/socket";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useIsAuthenticated } from "@/store";
 import type { Socket } from "socket.io-client";
 
 export function useSocket() {
-  const { isAuthenticated, accessToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
 

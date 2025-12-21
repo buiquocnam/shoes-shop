@@ -8,7 +8,7 @@ import { formatDate } from "@/utils/date";
 import { StarIcon, MessageCircle } from "lucide-react";
 import { ProductReviewType } from "../types";
 import { AlertLogin } from "@/features/product/components";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useIsAuthenticated } from "@/store/useAuthStore";
 
 const STAR_COLOR = "rgb(234, 179, 8)";
 
@@ -135,7 +135,7 @@ const ReviewItem = ({ review }: { review: ProductReviewType }) => {
 
 export default function ProductReview({ productId }: { productId: string }) {
   const { data: productReviews, isLoading, error } = useReviews(productId);
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 

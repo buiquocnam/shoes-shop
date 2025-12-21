@@ -92,8 +92,8 @@ export default function Sidebar() {
   };
 
   return (
-    <Card className="w-full min-w-[280px] border-none shadow-xl pt-4">
-      <CardContent className="space-y-6">
+    <Card className="w-full border-none shadow-xl pt-4">
+      <CardContent className="space-y-6 pb-6">
         {/* Category Filter */}
         <div className="space-y-3">
           <h3 className="font-semibold text-sm">Danh mục</h3>

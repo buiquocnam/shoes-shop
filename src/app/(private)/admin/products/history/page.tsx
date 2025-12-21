@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
 import { useVariantHistory } from "@/features/admin/products/hooks/queries";
-import { variantHistoryColumns } from "@/features/admin/products/components/variantHistoryColumns";
+import { createVariantHistoryColumns } from "@/features/admin/products/components/variantHistoryColumns";
 import { VariantHistoryFilters } from "@/features/admin/products/services/products.api";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { History } from "lucide-react";
@@ -19,13 +19,17 @@ const VariantHistoryPage = () => {
   /** ---------------- derive filters from URL ---------------- */
   const page = Number(searchParams.get("page") || 1);
   const size = Number(searchParams.get("size") || 10);
+  const productId = searchParams.get("productId") || undefined;
+  const variantId = searchParams.get("variantId") || undefined;
 
   const filters: VariantHistoryFilters = useMemo(
     () => ({
       page,
       size,
+      productId,
+      variantId,
     }),
-    [page, size]
+    [page, size, productId, variantId]
   );
 
   /** ---------------- fetch ---------------- */
@@ -40,6 +44,12 @@ const VariantHistoryPage = () => {
     pageSize: data?.pageSize || size,
   };
 
+  // Create columns with filter props
+  const columns = createVariantHistoryColumns({
+    productId: productId || undefined,
+    variantId: variantId || undefined
+  });
+
   if (isLoading) return <Loading />;
 
   return (
@@ -47,16 +57,46 @@ const VariantHistoryPage = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <History className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-semibold">Lịch sử nhập kho biến thể</h1>
+          <div>
+            <h1 className="text-3xl font-semibold">Lịch sử nhập kho biến thể</h1>
+            {productId && (
+              <p className="text-sm text-muted-foreground mt-1">
+                Đang lọc theo sản phẩm
+              </p>
+            )}
+            {variantId && (
+              <p className="text-sm text-muted-foreground mt-1">
+                Đang lọc theo biến thể
+              </p>
+            )}
+          </div>
         </div>
-        <Link href="/admin/products">
-          <Button variant="outline">Quay lại danh sách sản phẩm</Button>
-        </Link>
+        <div className="flex gap-2">
+          {variantId && productId && (
+            <Link href={`/admin/products/history?productId=${productId}`}>
+              <Button variant="outline" size="sm">
+                ← Quay lại sản phẩm
+              </Button>
+            </Link>
+          )}
+          {productId && !variantId && (
+            <Link href="/admin/products">
+              <Button variant="outline" size="sm">
+                ← Quay lại danh sách
+              </Button>
+            </Link>
+          )}
+          {!productId && (
+            <Link href="/admin/products">
+              <Button variant="outline">Quay lại danh sách sản phẩm</Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="rounded-lg  ">
         <DataTable
-          columns={variantHistoryColumns}
+          columns={columns}
           data={historyItems}
           pagination={pagination}
           onPageChange={(newPage) => updateParams({ page: newPage })}

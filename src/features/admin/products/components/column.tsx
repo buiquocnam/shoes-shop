@@ -24,7 +24,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Package, ImageIcon, Trash2, MoreHorizontal } from "lucide-react";
+import { Pencil, Package, ImageIcon, Trash2, MoreHorizontal, History } from "lucide-react";
 import { formatCurrency } from "@/utils/format";
 import { cn } from "@/lib/utils";
 import { useDeleteProduct } from "../hooks/mutations/useDeleteProduct";
@@ -180,6 +180,15 @@ function ProductActions({ product }: { product: ProductType }) {
                         >
                             <ImageIcon className="h-4 w-4" />
                             <span>Quản lý hình ảnh</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={`/admin/products/history?productId=${product.id}`}
+                            className="flex items-center gap-2"
+                        >
+                            <History className="h-4 w-4" />
+                            <span>Lịch sử nhập kho</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

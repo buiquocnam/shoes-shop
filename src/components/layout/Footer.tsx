@@ -4,11 +4,10 @@ import { Facebook, Twitter, Instagram, FacebookIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useAuthStore } from "@/store";
+import { useIsAdmin } from "@/store";
 import { Role } from "@/types/global";
 export function Footer() {
-  const { user } = useAuthStore();
-  const isAdmin = user?.role === Role.ADMIN;
+  const isAdmin = useIsAdmin();
   if (isAdmin) {
     return null;
   }

@@ -4,7 +4,6 @@ import { authApi } from "../services/auth.api";
 import { useAuthStore, useCartStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { removeAccessTokenCookie } from "@/lib/middleware/cookies";
 import { toast } from "sonner";
 
 export function useLogout() {
@@ -15,7 +14,6 @@ export function useLogout() {
   return useMutation<void, Error, void>({
     mutationFn: async () => {
       await Promise.all([logout(), clearCart()]);
-      removeAccessTokenCookie();
     },
     onSuccess: () => {
       toast.success("Đăng xuất thành công");

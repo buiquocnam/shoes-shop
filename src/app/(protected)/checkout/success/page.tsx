@@ -1,21 +1,16 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2 } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 
-import { CheckoutItem, CreateOrderRequest } from '@/features/checkout/types/checkout';
-import { AddressType } from '@/features/shared/types/address';
-import { formatCurrency } from '@/utils/format';
-import { formatFullAddress } from '@/features/shared/utils/addressHelpers';
+import { CreateOrderRequest } from '@/features/checkout/types/checkout';
 import { useCreateOrder } from '@/features/checkout/hooks/useCheckout';
 
 interface CheckoutData {
-  orderSummary: CheckoutItem[];
-  selectedAddress: AddressType;
+  orderSummary: any[];
+  selectedAddress: any;
   totalAmount: number;
   couponCode: string | null;
   totalMoney?: number;
@@ -23,32 +18,25 @@ interface CheckoutData {
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
-  const { mutate: createOrder, isPending } = useCreateOrder();
-
-  const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // 🔒 đảm bảo createOrder chỉ chạy 1 lần duy nhất
+  const { mutate: createOrder, isPending, error } = useCreateOrder();
   const hasCreatedOrderRef = useRef(false);
 
   useEffect(() => {
+    // Chỉ chạy ở client-side
+    if (typeof window === 'undefined') return;
     if (hasCreatedOrderRef.current) return;
 
     const storedData = sessionStorage.getItem('checkoutData');
 
     if (!storedData) {
-      // Không có data → quay lại checkout
       router.replace('/checkout');
       return;
     }
 
     const data: CheckoutData = JSON.parse(storedData);
 
-
-    setCheckoutData(data);
-
     const orderRequest: CreateOrderRequest = {
-      items: data.orderSummary.map((item: CheckoutItem) => ({
+      items: data.orderSummary.map((item: any) => ({
         variantSizeId: item.size.id,
         quantity: item.quantity,
       })),
@@ -65,37 +53,30 @@ export default function CheckoutSuccessPage() {
         selectedAddress: data.selectedAddress,
       },
       {
-        onError: (err: any) => {
-          setError(err?.message || 'Không thể tạo đơn hàng');
+        onError: () => {
+          // Error sẽ được hiển thị bên dưới
         },
-        onSuccess: () => {
-          sessionStorage.removeItem('checkoutData');
+        onSuccess: (response) => {
+          const id = response?.orderId;
+          if (id) {
+            sessionStorage.removeItem('checkoutData');
+            router.replace(`/checkout/success/${id}`);
+          } else {
+            sessionStorage.removeItem('checkoutData');
+          }
         },
       }
     );
   }, [createOrder, router]);
 
-  // ===== Loading =====
-  if (isPending || !checkoutData) {
-    return (
-      <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-lg font-semibold">Đang tạo đơn hàng...</p>
-          <p className="text-sm text-muted-foreground">
-            Vui lòng đợi trong giây lát
-          </p>
-        </div>
-      </main>
-    );
-  }
 
-  // ===== Error =====
   if (error) {
+    const errorMessage = (error as any)?.response?.data?.message || (error as any)?.message || 'Không thể tạo đơn hàng';
+
     return (
       <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
-          <p className="text-lg font-semibold text-destructive">{error}</p>
+          <p className="text-lg font-semibold text-destructive">{errorMessage}</p>
           <Button onClick={() => router.replace('/checkout')}>
             Quay lại checkout
           </Button>
@@ -104,82 +85,11 @@ export default function CheckoutSuccessPage() {
     );
   }
 
-  const totalAmount =
-    checkoutData.totalMoney ?? checkoutData.totalAmount;
-
-  // ===== Success UI =====
   return (
     <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
-      <div className="container mx-auto px-4 py-12 lg:px-8">
-        <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-          <div className="flex items-center gap-2 text-primary">
-            <CheckCircle2 className="h-12 w-12" />
-            <h1 className="text-3xl lg:text-4xl">
-              Cảm ơn bạn đã mua hàng!
-            </h1>
-          </div>
-
-          <p className="mb-10 text-lg">
-            Đơn hàng của bạn đã được đặt thành công.
-          </p>
-
-          <div className="w-full overflow-hidden rounded-xl border">
-            {/* Address */}
-            <div className="border-b p-6 text-left">
-              <p className="mb-2 text-xs font-bold uppercase">
-                Địa chỉ giao hàng
-              </p>
-              <p className="font-semibold">
-                {formatFullAddress(checkoutData.selectedAddress)}
-              </p>
-            </div>
-
-            {/* Items */}
-            <div className="flex flex-col gap-4 p-6 text-left">
-              {checkoutData.orderSummary.map((item) => (
-                <div
-                  key={`${item.product.id}-${item.variant.id}-${item.size.id}`}
-                  className="flex items-center gap-4"
-                >
-                  <div
-                    className="aspect-square w-16 rounded-md border bg-cover bg-center"
-                    style={{
-                      backgroundImage: item.product.imageUrl
-                        ? `url('${item.product.imageUrl}')`
-                        : undefined,
-                    }}
-                  />
-                  <div className="flex-grow">
-                    <p className="font-semibold">{item.product.name}</p>
-                    <p className="text-sm">
-                      Size: {item.size.size} / Số lượng: {item.quantity}
-                    </p>
-                  </div>
-                  <p className="font-semibold">
-                    {formatCurrency(item.totalPrice)}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Total */}
-            <div className="border-t p-6">
-              <div className="flex justify-between text-lg font-bold">
-                <span>Tổng cộng</span>
-                <span>{formatCurrency(totalAmount)}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button variant="outline" size="lg" asChild>
-              <Link href="/profile/orders">Xem đơn hàng</Link>
-            </Button>
-            <Button size="lg" asChild>
-              <Link href="/products">Tiếp tục mua sắm</Link>
-            </Button>
-          </div>
-        </div>
+      <div className="flex flex-col items-center gap-4">
+        <Spinner className="h-8 w-8 text-primary" />
+        <p className="text-lg font-semibold">Đang chuyển hướng...</p>
       </div>
     </main>
   );
