@@ -2,14 +2,14 @@
 
 import { useEffect } from "react";
 import { getSocket, disconnectSocket } from "@/lib/socket";
-import { useAuthStore } from "@/store";
-
+import { useAuthStore, useIsAuthenticated } from "@/store";
+const isAuthenticated = useIsAuthenticated();
 /**
  * Hook to setup socket connection for chat
  * Used by both admin and user chat components
  */
 export function useChatSocket() {
-  const { isAuthenticated, accessToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) {
@@ -51,4 +51,3 @@ export function useChatSocket() {
     };
   }, [isAuthenticated, accessToken]);
 }
-
