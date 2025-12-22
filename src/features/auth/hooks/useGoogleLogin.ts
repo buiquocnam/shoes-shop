@@ -16,8 +16,8 @@ export function useGoogleLogin() {
   return useMutation<AuthResponse, Error, string>({
     mutationFn: (code) => authApi.loginWithGoogle(code),
     onSuccess: (response) => {
-      // Chỉ lưu access token, refresh token nằm trong httpOnly cookie
-      setAuth(response.user, response.access_token);
+      // Lưu cả access token và refresh token
+      setAuth(response.user, response.access_token, response.refresh_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
       if (userRole === Role.ADMIN) {

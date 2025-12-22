@@ -127,7 +127,7 @@ export const adminProductsApi = {
    */
   create: async (data: FormData): Promise<ProductType> => {
     const response = await apiClient.post<ProductType>(
-      `/shoes/products/create`,
+      `/shoes/products/create-product`,
       data
     );
     return response.result;

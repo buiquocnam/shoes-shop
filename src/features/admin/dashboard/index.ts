@@ -1,10 +1,7 @@
 // Components
 export {
-  StatsCard,
-  RevenueChart,
+  DashboardContent,
   DateRangePicker,
-  RecentOrdersTable,
-  TopProductsList,
 } from './components';
 
 // Hooks

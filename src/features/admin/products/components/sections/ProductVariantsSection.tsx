@@ -1,7 +1,7 @@
 "use client";
 
 import { Control, useFieldArray } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Palette } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NumberField, CustomField } from "@/components/form";
@@ -123,15 +123,22 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-lg border border-gray-200  p-4 space-y-3">
-            {variantFields.map((variant, variantIndex) => (
-                <div key={variant.id} className="border border-gray-200  rounded-lg p-4 space-y-3 bg-gray-50 ">
+        <div className="bg-card rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:shadow-none p-6 sm:p-10 transition-shadow">
+            <div className="mb-6 border-b border-border pb-4">
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                    <Palette className="h-5 w-5 text-primary" />
+                    Biến thể và tồn kho
+                </h2>
+            </div>
+            <div className="space-y-4">
+                {variantFields.map((variant, variantIndex) => (
+                    <div key={variant.id} className="rounded-lg p-5 space-y-4 bg-muted/50">
                     <CustomField
                         control={control}
                         name={`variants.${variantIndex}.color`}
                         render={(field, fieldState) => (
                             <div className="flex items-center gap-2">
-                                <div className="w-5 h-5 rounded-full bg-gray-300 border-gray-400 "></div>
+                                <div className="w-5 h-5 rounded-full bg-muted-foreground/20 ring-2 ring-background"></div>
                                 <Input
                                     placeholder="Ví dụ: Đỏ đậm"
                                     {...field}
@@ -165,18 +172,19 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps> = ({
                             Xóa biến thể
                         </Button>
                     )}
-                </div>
-            ))}
+                    </div>
+                ))}
 
-            <Button
-                type="button"
-                variant="outline"
-                className="w-full border-dashed"
-                onClick={() => appendVariant({ color: "", sizes: [{ size: 0, stock: 0, currentStock: 0 }] })}
-            >
-                <Plus className="h-4 w-4 mr-2" />
-                Thêm biến thể màu mới
-            </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => appendVariant({ color: "", sizes: [{ size: 0, stock: 0, currentStock: 0 }] })}
+                >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Thêm biến thể màu mới
+                </Button>
+            </div>
         </div>
     );
 };

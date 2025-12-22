@@ -14,13 +14,14 @@ export function getHeaders(endpoint: string, body?: unknown): HeadersInit {
   }
 
   try {
-    const { accessToken } = useAuthStore.getState();
+    const { accessToken, refreshToken } = useAuthStore.getState();
     const isAuthRefreshEndpoint = endpoint.includes(AUTH_REFRESH_ENDPOINT);
 
-    // Refresh endpoint: Backend tự đọc refresh token từ httpOnly cookie
-    // Không cần gửi refresh token trong header
+    // Refresh endpoint: Thêm refresh token vào header
     if (isAuthRefreshEndpoint) {
-      // Không set Authorization header, backend sẽ đọc từ cookie
+      if (refreshToken) {
+        headers.set("Authorization", `Bearer ${refreshToken}`);
+      }
     } else if (accessToken) {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }

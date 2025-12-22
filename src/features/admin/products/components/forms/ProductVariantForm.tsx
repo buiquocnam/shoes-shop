@@ -111,7 +111,6 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
 
 
-    console.log("allVariantSizes", allVariantSizes);
     // Import stock nếu có thay đổi
     if (allVariantSizes.length > 0) {
       await importStock.mutateAsync({
@@ -135,18 +134,20 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <ProductVariantsSection control={form.control} productId={productId} />
 
-      <div className="flex justify-end gap-3 pt-6 mt-6 border-t">
+      <div className="flex items-center justify-end gap-x-6 pt-6 mt-8">
         <Button
-          variant="outline"
+          variant="ghost"
           type="button"
           disabled={upsertVariants.isPending || importStock.isPending}
           onClick={onCancel}
+          className="px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
         >
-          Hủy
+          Hủy bỏ
         </Button>
         <Button
           type="submit"
           disabled={upsertVariants.isPending || importStock.isPending}
+          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
         >
           {upsertVariants.isPending || importStock.isPending ? (
             <Spinner />

@@ -17,14 +17,7 @@ interface ProductImageFormProps {
   onCancel: () => void;
 }
 
-/**
- * Form riêng cho product images
- * Tự quản lý useForm, defaultValues, submit logic
- * 
- * API yêu cầu:
- * - request: { productId, names: [array of image names to delete], primaryName }
- * - files: new files to upload
- */
+
 export const ProductImageForm: React.FC<ProductImageFormProps> = ({
   productId,
   onSuccess,
@@ -47,13 +40,14 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
 
   // Reset form when product data loads
   useEffect(() => {
-    if (existingImages.length > 0) {
+    if (data && !loadingProduct) {
+      const images = data.listImg || [];
       form.reset({
-        imageNames: existingImages.map((img: ImageType) => img.fileName),
-        primaryName: existingImages.find((img: ImageType) => img.isPrimary)?.fileName || "",
+        imageNames: images.map((img: ImageType) => img.fileName),
+        primaryName: images.find((img: ImageType) => img.isPrimary)?.fileName || "",
       });
     }
-  }, [existingImages, form]);
+  }, [data, loadingProduct, productId, form]);
 
   const handleAddImages = (files: FileList | null) => {
     if (!files) return;
@@ -103,9 +97,10 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
       type: "application/json",
     });
     formData.append("request", jsonBlob);
-
     await updateImages.mutateAsync({ productId, data: formData });
     onSuccess();
+    setNewImages([]);
+    setDeletedImageNames([]);
   };
 
   if (loadingProduct) {
@@ -123,24 +118,25 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
         images={newImages}
         existingImages={existingImages}
         deletedImageNames={deletedImageNames}
-        mode="images"
         onAddImages={handleAddImages}
         onRemoveNewImage={handleRemoveNewImage}
         onRemoveExistingImage={handleRemoveExistingImage}
       />
 
-      <div className="flex justify-end gap-3 pt-6 mt-6 border-t">
+      <div className="flex items-center justify-end gap-x-6 pt-6 mt-8">
         <Button
-          variant="outline"
+          variant="ghost"
           type="button"
           disabled={updateImages.isPending}
           onClick={onCancel}
+          className="px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
         >
-          Hủy
+          Hủy bỏ
         </Button>
         <Button
           type="submit"
           disabled={updateImages.isPending}
+          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
         >
           {updateImages.isPending ? (
             <Spinner />

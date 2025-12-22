@@ -5,30 +5,40 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore, useIsAdmin } from "@/store/useAuthStore";
 import { Spinner } from "@/components/ui/spinner";
 
-/**
- * Private routes layout (admin routes)
- * - Check role ADMIN và redirect nếu không phải admin
- * - Không render children cho đến khi đã check role
- */
+
 const Layout = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
     const isAdmin = useIsAdmin();
+    const hasHydrated = useAuthStore((state) => state._hasHydrated);
     const isAdminRoute = pathname.startsWith("/admin");
     const isUnauthorizedPage = pathname === "/unauthorized";
 
     useEffect(() => {
         if (typeof window === "undefined") return;
         if (isUnauthorizedPage) return;
-        // Check role ADMIN
+        if (!hasHydrated) return; 
+        
         if (!isAdmin) {
             router.replace("/unauthorized");
         }
-    }, [isAdmin, isUnauthorizedPage, router]);
+    }, [isAdmin, isUnauthorizedPage, router, hasHydrated]);
 
-    // Đang ở admin route -> check role trước khi render
     if (isAdminRoute && !isUnauthorizedPage) {
-        // Chưa có token hoặc không phải admin -> không render (đang redirect)
+        if (!hasHydrated) {
+            return (
+                <div className="flex min-h-screen items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <Spinner className="h-8 w-8 text-primary" />
+                        <p className="text-sm text-muted-foreground">
+                            Đang tải...
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Đã hydrate nhưng không phải admin -> đang redirect (hiển thị loading trong lúc redirect)
         if (!isAdmin) {
             return (
                 <div className="flex min-h-screen items-center justify-center">
@@ -43,7 +53,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    // Đã check và được phép -> render children
     return <>{children}</>;
 };
 

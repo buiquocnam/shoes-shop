@@ -7,8 +7,9 @@ import { Role } from "@/types/global";
 interface AuthState {
   user: User | null;
   accessToken: string | null;
+  refreshToken: string | null;
   _hasHydrated: boolean;
-  setAuth: (user: User, accessToken: string) => void;
+  setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   updateUser: (user: User) => void;
   logout: () => void;
 }
@@ -25,10 +26,11 @@ export const useAuthStore = create<AuthState>()(
       return {
         user: null,
         accessToken: null,
+        refreshToken: null,
         _hasHydrated: false,
 
-        setAuth: (user, accessToken) => {
-          set({ user, accessToken });
+        setAuth: (user, accessToken, refreshToken) => {
+          set({ user, accessToken, refreshToken });
         },
 
         updateUser: (updatedUser) => {
@@ -36,7 +38,7 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: () => {
-          set({ user: null, accessToken: null });
+          set({ user: null, accessToken: null, refreshToken: null });
         },
       };
     },
@@ -47,6 +49,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
       }),
 
       // Đánh dấu hydrate hoàn tất
@@ -66,18 +69,12 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-/**
- * Helper hook để check authentication status
- * Không lưu isAuthenticated trong store, tính toán từ accessToken
- */
+
 export function useIsAuthenticated() {
   return useAuthStore((state) => Boolean(state.accessToken));
 }
 
-/**
- * Helper hook để check admin role
- * Tính toán từ accessToken, không lưu trong store
- */
+
 export function useIsAdmin() {
   return useAuthStore((state) => {
     if (!state.accessToken) return false;

@@ -17,6 +17,9 @@ export const useUpdateProductImages = () => {
   return useMutation<boolean, Error, UpdateProductImagesInput>({
     mutationFn: ({ data }) => adminProductsApi.updateImages(data),
     onSuccess: (_, variables) => {
+      // Chỉ invalidate list để cập nhật khi quay lại trang products
+      // Không invalidate detail vì đang ở trang detail và sẽ chuyển trang ngay
+      // Điều này tránh refetch làm component re-render trước khi chuyển trang
       queryClient.invalidateQueries({
         queryKey: sharedQueryKeys.product.lists(),
       });

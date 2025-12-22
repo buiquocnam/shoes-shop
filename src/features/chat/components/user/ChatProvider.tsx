@@ -10,7 +10,8 @@ import { useChatSocket } from "../../hooks/shared/useChatSocket";
 export function ChatProvider() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { user, isAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
 
 
   // Setup socket connection (shared hook for both admin and user)

@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    LayoutDashboard,
-    Users,
+    BarChart3,
     Bookmark,
     Package,
     ListOrdered,
     MessageSquare,
     CreditCard,
+    LogOut,
 } from "lucide-react";
 import {
     Sidebar,
@@ -26,6 +26,10 @@ import {
     SidebarMenuSubItem,
     SidebarProvider,
 } from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useLogout } from "@/features/auth/hooks/useLogout";
+import { Button } from "@/components/ui/button";
 
 function getInitialActive(pathname: string): string {
     if (pathname === "/admin/") {
@@ -36,6 +40,8 @@ function getInitialActive(pathname: string): string {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const { user } = useAuthStore();
+    const { mutate: logout } = useLogout();
     const [activePath, setActivePath] = useState<string>(getInitialActive(pathname));
 
     // Sync activePath với pathname khi pathname thay đổi
@@ -45,16 +51,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const menuItems = [
         {
-            label: "Bảng điều khiển",
-            icon: LayoutDashboard,
+            label: "Thống kê",
+            icon: BarChart3,
             href: "/admin",
         },
         {
             label: "Sản phẩm",
             icon: Package,
             subMenu: [
-                { label: "Danh sách sản phẩm", href: "/admin/products" },
-                { label: "Lịch sử biến thể", href: "/admin/products/history" },
+                { label: "Danh sách", href: "/admin/products" },
+                { label: "Lịch sử nhập xuất", href: "/admin/products/history" },
             ],
         },
         {
@@ -63,40 +69,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             href: "/admin/categories",
         },
         {
-            label: "Người dùng",
-            icon: Users,
-            href: "/admin/users",
-        },
-        {
             label: "Thương hiệu",
             icon: Bookmark,
             href: "/admin/brands",
-        },
-        {
-            label: "Trò chuyện",
-            icon: MessageSquare,
-            href: "/admin/chat",
         },
         {
             label: "Thanh toán",
             icon: CreditCard,
             href: "/admin/payments",
         },
+        {
+            label: "Chat",
+            icon: MessageSquare,
+            href: "/admin/chat",
+        },
     ];
 
     return (
         <SidebarProvider>
-            <div className="flex min-h-screen w-full mx-auto">
-                <Sidebar collapsible="none" className="w-64 border-r">
+                <Sidebar collapsible="none" className="w-64 shadow-xl shadow-black/50 h-auto">
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-2 py-2">
                             <Package className="h-6 w-6 text-primary" />
                             <h1 className="text-lg font-semibold">
-                                Shoe<span className="text-primary">Admin</span>
+                                Shoe<span className="text-primary">Shop</span>
                             </h1>
                         </div>
                     </SidebarHeader>
-                    <SidebarContent>
+                    <SidebarContent >
                         <SidebarGroup>
                             <SidebarGroupContent>
                                 <SidebarMenu>
@@ -162,12 +162,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 </SidebarMenu>
                             </SidebarGroupContent>
                         </SidebarGroup>
+                        <SidebarGroup className="mt-auto">
+                            <SidebarGroupContent>
+                                <div className="flex items-center gap-3 px-2 py-3">
+                                    <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
+                                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                                            {user?.name?.[0]?.toUpperCase() ?? 'AD'}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <span className="text-sm font-medium text-sidebar-foreground truncate">
+                                            {user?.name ?? 'Admin'}
+                                        </span>
+                                        <span className="text-xs text-sidebar-foreground/70 truncate">
+                                            {user?.email ?? 'admin@shoeshop.com'}
+                                        </span>
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-sidebar-foreground hover:text-destructive hover:bg-destructive/10"
+                                        onClick={() => logout()}
+                                        title="Đăng xuất"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </SidebarGroupContent>
+                        </SidebarGroup>
                     </SidebarContent>
                 </Sidebar>
                 <main className="flex-1 overflow-auto">
                     {children}
                 </main>
-            </div>
         </SidebarProvider>
     );
 }

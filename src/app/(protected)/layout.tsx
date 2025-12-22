@@ -5,26 +5,34 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Spinner } from "@/components/ui/spinner";
 
-/**
- * Protected routes layout
- * - Check token và redirect nếu không có token
- * - Chặn render children cho đến khi có token
- */
 const Layout = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
     const accessToken = useAuthStore((state) => state.accessToken);
+    const hasHydrated = useAuthStore((state) => state._hasHydrated);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
+        if (!hasHydrated) return; 
 
-        // Nếu không có token -> redirect login
         if (!accessToken) {
             router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
         }
-    }, [accessToken, pathname, router]);
+    }, [accessToken, pathname, router, hasHydrated]);
 
-    // Chưa có token → hiển thị loading (đang redirect)
+    if (!hasHydrated) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Spinner className="h-8 w-8 text-primary" />
+                    <p className="text-sm text-muted-foreground">
+                        Đang tải...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     if (!accessToken) {
         return (
             <div className="flex min-h-screen items-center justify-center">
@@ -35,7 +43,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         );
     }
 
-    // Có token → render children
     return <>{children}</>;
 };
 

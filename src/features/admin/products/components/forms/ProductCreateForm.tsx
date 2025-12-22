@@ -45,14 +45,29 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
   const handleAddImages = (files: FileList | null) => {
     if (!files) return;
     const newFiles = Array.from(files);
-    setImages((prev) => [...prev, ...newFiles]);
-    form.setValue("images", [...images, ...newFiles]);
+    const updatedImages = [...images, ...newFiles];
+    setImages(updatedImages);
+    form.setValue("images", updatedImages);
+    
+    // Ảnh đầu tiên được tải lên tự động là ảnh chính
+    if (images.length === 0 && newFiles.length > 0) {
+      form.setValue("primaryName", newFiles[0].name);
+    }
   };
 
   const handleRemoveImage = (index: number) => {
+    const removedImage = images[index];
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
     form.setValue("images", newImages);
+    
+    // Nếu xóa ảnh chính, đặt ảnh đầu tiên còn lại làm ảnh chính
+    const currentPrimary = form.getValues("primaryName");
+    if (removedImage.name === currentPrimary && newImages.length > 0) {
+      form.setValue("primaryName", newImages[0].name);
+    } else if (newImages.length === 0) {
+      form.setValue("primaryName", "");
+    }
   };
 
   const onSubmit = async (data: CreateProductFormValues) => {
@@ -87,7 +102,7 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="space-y-6">
         <ProductBasicInfoSection
           control={form.control}
           categories={categories}
@@ -96,14 +111,17 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
         <ProductMediaSection
           control={form.control}
           images={images}
-          mode="create"
           onAddImages={handleAddImages}
-          onRemoveImage={handleRemoveImage}
+          onRemoveNewImage={handleRemoveImage}
         />
       </div>
 
-      <div className="flex justify-end gap-3 pt-6 mt-6 border-t">
-        <Button type="submit" disabled={createProduct.isPending}>
+      <div className="flex items-center justify-end gap-x-6 pt-6 mt-8">
+        <Button
+          type="submit"
+          disabled={createProduct.isPending}
+          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
+        >
           {createProduct.isPending ? <Spinner /> : "Tạo sản phẩm"}
         </Button>
       </div>

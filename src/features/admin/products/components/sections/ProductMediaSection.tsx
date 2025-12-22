@@ -1,18 +1,18 @@
 "use client";
 
 import { Control, useWatch, Controller } from "react-hook-form";
-import { Upload, X, Star } from "lucide-react";
+import { CloudUpload, X, Image as ImageIcon, Images, Check } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError } from "@/components/ui/field";
 import { ImageType } from "@/features/product/types";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductMediaSectionProps {
     control: Control<any>;
     images: File[];
     existingImages?: ImageType[];
     deletedImageNames?: string[];
-    mode?: "create" | "images";
     onAddImages?: (files: FileList | null) => void;
     onRemoveNewImage?: (index: number) => void;
     onRemoveExistingImage?: (fileName: string) => void;
@@ -23,12 +23,10 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
     images,
     existingImages = [],
     deletedImageNames = [],
-    mode = "images",
     onAddImages,
     onRemoveNewImage,
     onRemoveExistingImage,
 }) => {
-    const isCreateMode = mode === "create";
     const primaryName = useWatch({ control, name: "primaryName" });
 
     // Filter out deleted existing images
@@ -36,57 +34,62 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
         (img) => !deletedImageNames.includes(img.fileName)
     );
 
-    // Separate images by type
-    const existingImagesList = visibleExistingImages.map((img, idx) => ({
-        type: 'existing' as const,
-        img,
-        idx,
-        fileName: img.fileName,
-    }));
+    // Combine all images into one list
+    const allImages = [
+        ...visibleExistingImages.map((img, idx) => ({
+            type: 'existing' as const,
+            img,
+            idx,
+            fileName: img.fileName,
+            url: img.url,
+        })),
+        ...images.map((img, idx) => ({
+            type: 'new' as const,
+            img,
+            idx,
+            fileName: img.name,
+            url: URL.createObjectURL(img),
+        })),
+    ];
 
-    const newImagesList = images.map((img, idx) => ({
-        type: 'new' as const,
-        img,
-        idx,
-        fileName: img.name,
-    }));
-
-    // Find primary image (only one)
-    const primaryImage = [...existingImagesList, ...newImagesList].find(
-        (item) => item.fileName === primaryName
-    );
+    const totalImages = allImages.length;
 
     return (
-        <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
-                <div className="flex flex-col gap-6">
-                    {/* ===== KHU VỰC 1: IMPORT ẢNH ===== */}
-                    <div>
+        <div>
+            <div className="bg-card rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:shadow-none p-6 sm:p-10 transition-shadow">
+                <div className="mb-6 border-b border-border pb-4">
+                    <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                        <ImageIcon className="h-5 w-5 text-primary" />
+                        Hình ảnh sản phẩm
+                    </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Upload Area */}
+                    <div className="md:col-span-3">
                         <Controller
                             control={control}
                             name="image"
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel className="text-gray-900 dark:text-gray-100 text-base font-medium leading-normal pb-2 block">
-                                        Tải lên hình ảnh
-                                    </FieldLabel>
                                     <label
                                         htmlFor="file-upload"
-                                        className="relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:border-red-500 dark:hover:border-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                                        className="relative group cursor-pointer flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 hover:bg-red-50/30 dark:hover:bg-slate-700 hover:border-primary dark:hover:border-primary transition-all duration-300 ease-in-out"
                                     >
-                                        <Upload className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" />
-                                        <p className="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">
-                                            <span className="font-semibold text-red-600 dark:text-red-500">Nhấp để tải lên</span> hoặc kéo thả
-                                        </p>
-                                        <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">
-                                            PNG, JPG, GIF
-                                        </p>
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                            <div className="p-3 rounded-full bg-white dark:bg-slate-700 shadow-sm group-hover:scale-110 group-hover:shadow-md transition-all duration-300 mb-3 text-slate-400 group-hover:text-primary">
+                                                <CloudUpload className="h-8 w-8" />
+                                            </div>
+                                            <p className="mb-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+                                                <span className="text-primary hover:underline">Tải lên</span> hoặc kéo thả ảnh mới
+                                            </p>
+                                            <p className="text-xs text-slate-400 dark:text-slate-500">PNG, JPG tối đa 5MB</p>
+                                        </div>
                                         <Input
                                             id="file-upload"
                                             type="file"
                                             multiple
                                             accept="image/*"
-                                            className="opacity-0 w-full h-full absolute top-0 left-0 cursor-pointer"
+                                            className="hidden"
                                             onChange={(e) => {
                                                 if (onAddImages) {
                                                     onAddImages(e.target.files);
@@ -101,190 +104,126 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                         />
                     </div>
 
-                    {/* ===== KHU VỰC 2: ẢNH PRIMARY ===== */}
-                    {primaryImage && (
-                        <div>
-                            <FieldLabel className="text-gray-900 dark:text-gray-100 text-base font-medium leading-normal pb-3 block">
-                                Ảnh chính
-                            </FieldLabel>
+                    {/* Images Grid */}
+                    {totalImages > 0 && (
+                        <div className="md:col-span-3 mt-2">
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 font-medium flex items-center gap-2">
+                                <Images className="h-4 w-4" />
+                                Ảnh đã chọn ({totalImages})
+                            </p>
                             <Controller
                                 control={control}
                                 name="primaryName"
                                 render={({ field }) => (
-                                    <div className="relative group aspect-square w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border-2 border-yellow-500 dark:border-yellow-400 shadow-lg shadow-yellow-500/20">
-                                        <Image
-                                            src={primaryImage.type === 'existing'
-                                                ? primaryImage.img.url
-                                                : URL.createObjectURL(primaryImage.img)}
-                                            alt={primaryImage.type === 'existing'
-                                                ? primaryImage.img.fileName
-                                                : `preview-${primaryImage.idx}`}
-                                            fill
-                                            className="object-cover"
-                                            unoptimized
-                                            priority
-                                        />
-                                        <div className="absolute top-1 right-1 bg-yellow-500 text-white rounded-full p-1 shadow-lg z-10">
-                                            <Star className="h-3 w-3 fill-white" />
-                                        </div>
-                                        {primaryImage.type === 'new' && (
-                                            <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded font-medium shadow-sm z-10">
-                                                Mới
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            />
-                        </div>
-                    )}
-
-                    {/* ===== KHU VỰC 3: ẢNH CŨ (EXISTING) ===== */}
-                    {existingImagesList.length > 0 && (
-                        <div>
-                            <FieldLabel className="text-gray-900 dark:text-gray-100 text-base font-medium leading-normal pb-3 block">
-                                Ảnh hiện có ({existingImagesList.length})
-                            </FieldLabel>
-                            <Controller
-                                control={control}
-                                name="primaryName"
-                                render={({ field }) => (
-                                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3">
-                                        {existingImagesList.map((item) => {
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                        {allImages.map((item) => {
                                             const isPrimary = field.value === item.fileName;
 
                                             return (
                                                 <div
-                                                    key={`existing-${item.idx}`}
-                                                    className={`relative group aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border-2 transition-all duration-200 cursor-pointer ${isPrimary
-                                                        ? 'border-yellow-500 dark:border-yellow-400 shadow-lg shadow-yellow-500/20'
-                                                        : 'border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-600'
-                                                        }`}
-                                                    onClick={() => {
-                                                        field.onChange(item.fileName);
-                                                    }}
+                                                    key={`${item.type}-${item.idx}`}
+                                                    onClick={() => field.onChange(item.fileName)}
+                                                    className={`group relative aspect-square rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-sm transition-all hover:shadow-md cursor-pointer ${
+                                                        isPrimary
+                                                            ? 'border-2 border-primary ring-2 ring-primary/20'
+                                                            : 'border border-slate-200 dark:border-slate-700 hover:border-primary/50'
+                                                    }`}
                                                 >
                                                     <Image
-                                                        src={item.img.url}
-                                                        alt={item.img.fileName || `existing-${item.idx}`}
+                                                        src={item.url}
+                                                        alt={item.type === 'existing' ? item.img.fileName : `preview-${item.idx}`}
                                                         fill
-                                                        className="object-cover"
+                                                        className={`object-cover ${!isPrimary ? 'opacity-90 group-hover:opacity-100 transition-opacity' : ''}`}
                                                         unoptimized
-                                                        priority
                                                     />
-                                                    {isPrimary && (
-                                                        <div className="absolute top-2 right-2 bg-yellow-500 text-white rounded-full p-1.5 shadow-lg z-10">
-                                                            <Star className="h-3.5 w-3.5 fill-white" />
+                                                    
+                                                    {/* Primary Badge */}
+                                                   
+
+                                                    {/* New Badge */}
+                                                    {item.type === 'new' && !isPrimary && (
+                                                        <div className="absolute top-2 left-2 z-10">
+                                                            <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                                                                Mới
+                                                            </Badge>
                                                         </div>
                                                     )}
-                                                    {!isPrimary && (
-                                                        <div className="absolute bottom-2 left-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded text-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                                            Nhấp để đặt làm ảnh chính
-                                                        </div>
-                                                    )}
-                                                    {onRemoveExistingImage && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                onRemoveExistingImage(item.fileName);
-                                                                // If deleting primary image, set first available as primary
-                                                                if (isPrimary) {
-                                                                    const remaining = [
-                                                                        ...existingImagesList.filter(img => img.fileName !== item.fileName),
-                                                                        ...newImagesList
-                                                                    ].map(img => img.fileName);
-                                                                    if (remaining.length > 0) {
-                                                                        field.onChange(remaining[0]);
+
+                                                    {/* Hover Overlay */}
+                                                    <div className={`absolute inset-0 bg-black/0 ${
+                                                        !isPrimary ? 'group-hover:bg-black/10' : ''
+                                                    } transition-colors`}>
+                                                        {/* Delete Button */}
+                                                        {(onRemoveExistingImage || onRemoveNewImage) && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    if (item.type === 'existing' && onRemoveExistingImage) {
+                                                                        onRemoveExistingImage(item.fileName);
+                                                                        if (isPrimary) {
+                                                                            const remaining = allImages
+                                                                                .filter(img => img.fileName !== item.fileName)
+                                                                                .map(img => img.fileName);
+                                                                            if (remaining.length > 0) {
+                                                                                field.onChange(remaining[0]);
+                                                                            }
+                                                                        }
+                                                                    } else if (item.type === 'new' && onRemoveNewImage) {
+                                                                        onRemoveNewImage(item.idx);
+                                                                        if (isPrimary) {
+                                                                            const remaining = allImages
+                                                                                .filter(img => !(img.type === 'new' && img.idx === item.idx))
+                                                                                .map(img => img.fileName);
+                                                                            if (remaining.length > 0) {
+                                                                                field.onChange(remaining[0]);
+                                                                            }
+                                                                        }
                                                                     }
-                                                                }
-                                                            }}
-                                                            className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg backdrop-blur-sm z-10"
-                                                            title="Xóa hình ảnh"
-                                                        >
-                                                            <X className="h-3.5 w-3.5" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            />
-                        </div>
-                    )}
+                                                                }}
+                                                                className={`absolute top-2 right-2 p-1.5 bg-white/90 text-slate-400 rounded-full hover:bg-white hover:text-red-600 ${
+                                                                    !isPrimary ? 'opacity-0 group-hover:opacity-100' : ''
+                                                                } transition-all transform scale-90 group-hover:scale-100`}
+                                                                title="Xóa ảnh"
+                                                            >
+                                                                <X className="h-3.5 w-3.5" />
+                                                            </button>
+                                                        )}
 
-                    {/* ===== KHU VỰC 4: ẢNH MỚI (NEW) ===== */}
-                    {newImagesList.length > 0 && (
-                        <div>
-                            <FieldLabel className="text-gray-900 dark:text-gray-100 text-base font-medium leading-normal pb-3 block">
-                                Ảnh mới ({newImagesList.length})
-                            </FieldLabel>
-                            <Controller
-                                control={control}
-                                name="primaryName"
-                                render={({ field }) => (
-                                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3">
-                                        {newImagesList.map((item) => {
-                                            const isPrimary = field.value === item.fileName;
-
-                                            return (
-                                                <div
-                                                    key={`new-${item.idx}`}
-                                                    className={`relative group aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border-2 transition-all duration-200 cursor-pointer ${isPrimary
-                                                        ? 'border-yellow-500 dark:border-yellow-400 shadow-lg shadow-yellow-500/20'
-                                                        : 'border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-600'
-                                                        }`}
-                                                    onClick={() => {
-                                                        field.onChange(item.fileName);
-                                                    }}
-                                                >
-                                                    <Image
-                                                        src={URL.createObjectURL(item.img)}
-                                                        alt={`preview-${item.idx}`}
-                                                        fill
-                                                        className="object-cover"
-                                                        unoptimized
-                                                        priority
-                                                    />
-                                                    <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded font-medium shadow-sm z-10">
-                                                        Mới
+                                                        {/* Set Primary Hint */}
+                                                        {!isPrimary && (
+                                                            <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                                                <span className="text-[10px] text-white font-medium drop-shadow-md">
+                                                                    Đặt làm chính
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    {isPrimary && (
-                                                        <div className="absolute top-2 right-2 bg-yellow-500 text-white rounded-full p-1.5 shadow-lg z-10">
-                                                            <Star className="h-3.5 w-3.5 fill-white" />
+
+                                                    {/* Radio Button for Primary Selection */}
+                                                    <label 
+                                                        className="absolute bottom-2 right-2 cursor-pointer z-10"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name="primary-image"
+                                                            checked={isPrimary}
+                                                            onChange={() => field.onChange(item.fileName)}
+                                                            className="sr-only peer"
+                                                        />
+                                                        <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
+                                                            isPrimary
+                                                                ? 'bg-primary border-primary'
+                                                                : 'bg-black/30 backdrop-blur-sm border-white/80 hover:bg-black/50'
+                                                        }`}>
+                                                            <Check className={`h-3 w-3 text-white ${isPrimary ? 'opacity-100' : 'opacity-0'} transition-opacity`} />
                                                         </div>
-                                                    )}
-                                                    {!isPrimary && (
-                                                        <div className="absolute bottom-2 left-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded text-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                                            Nhấp để đặt làm ảnh chính
-                                                        </div>
-                                                    )}
-                                                    {onRemoveNewImage && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                onRemoveNewImage(item.idx);
-                                                                // If deleting primary image, set first available as primary
-                                                                if (isPrimary) {
-                                                                    const remaining = [
-                                                                        ...existingImagesList,
-                                                                        ...newImagesList.filter((_, i) => i !== item.idx)
-                                                                    ].map(img => img.fileName);
-                                                                    if (remaining.length > 0) {
-                                                                        field.onChange(remaining[0]);
-                                                                    }
-                                                                }
-                                                            }}
-                                                            className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg backdrop-blur-sm z-10"
-                                                            title="Xóa hình ảnh"
-                                                        >
-                                                            <X className="h-3.5 w-3.5" />
-                                                        </button>
-                                                    )}
+                                                    </label>
                                                 </div>
                                             );
                                         })}
+
                                     </div>
                                 )}
                             />
