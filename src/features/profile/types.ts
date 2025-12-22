@@ -14,7 +14,7 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
 }
 
-export interface PurchasedItemVariant {
+export interface PurchasedVariant {
   id: string;
   productId: string;
   stock: number;
@@ -24,17 +24,25 @@ export interface PurchasedItemVariant {
   size: string;
 }
 
-export interface PurchasedItem {
+export interface PurchasedProduct {
   id: string;
   product: ProductType;
-  variant: PurchasedItemVariant;
+  variant: PurchasedVariant;
   countBuy: number;
   totalMoney: number;
-  userId: string;
-  user: User | null;
 }
 
-export interface PurchasedItemPaginationResponse
-  extends PaginatedResponse<PurchasedItem> {}
+export interface PurchasedList {
+  listPurchase: PurchasedProduct[];
+  userId: string;
+  user: User;
+  orderId: string;
+  totalPrice: number;
+  finishPrice: number;
+  discountPercent: number | null;
+  addressId: string;
+}
+export interface PurchasedListPaginationResponse
+  extends PaginatedResponse<PurchasedList> {}
 
 export interface PurchasedItemFilters extends PaginationParams {}

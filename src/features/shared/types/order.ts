@@ -1,5 +1,5 @@
 import { AddressType } from "./address";
-import { PurchasedItem } from "@/features/profile/types";
+import { PurchasedProduct } from "@/features/profile/types";
 
 /**
  * Order Detail Type
@@ -17,5 +17,5 @@ export interface OrderDetail {
   modifiedDate: string;
   address: AddressType;
   payment: unknown | null;
-  items: PurchasedItem[];
+  items: PurchasedProduct[];
 }

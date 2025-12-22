@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { VariantHistoryItem } from "../services/products.api";
+import { VariantHistoryItem } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/utils/format";
 import { cn } from "@/lib/utils";
@@ -17,28 +17,55 @@ export const createVariantHistoryColumns = ({
   variantId,
 }: VariantHistoryColumnsProps = {}): ColumnDef<VariantHistoryItem>[] => [
     {
+      accessorKey: "date",
+      header: "Timestamp",
+      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
+        const date = new Date(row.original.date);
+        const formattedDate = date.toLocaleString("vi-VN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        return (
+          <span className="text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            {formattedDate}
+          </span>
+        );
+      },
+    },
+    {
       accessorKey: "product.name",
-      header: "Sản phẩm",
+      header: "Product Variant",
       cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
         const product = row.original.product;
+        const color = row.original.color;
+        const size = row.original.size;
+        const variant = row.original.variant;
 
         // Nếu chưa filter theo productId, cho phép click để filter
         const canNavigate = !productId;
 
         const content = (
-          <div className="max-w-[300px] hover:text-primary">
-            <p className="font-bold text-foreground hover:text-primary">{product.name}</p>
-            <p className="text-sm text-muted-foreground">
-              {product.brand?.name} - {product.category?.name}
-            </p>
+          <div className="max-w-[300px]">
+            <p className="font-bold text-[#181112] dark:text-white text-base">{product.name}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge variant="secondary" className="text-xs font-medium">
+                Color: {color}
+              </Badge>
+              <Badge variant="secondary" className="text-xs font-medium">
+                Size: {size}
+              </Badge>
+            </div>
           </div>
         );
 
-        if (canNavigate) {
+        if (canNavigate && variant?.id) {
           return (
             <Link
               href={`/admin/products/history?productId=${product.id}`}
-              className="hover:underline "
+              className="hover:text-primary"
             >
               {content}
             </Link>
@@ -49,100 +76,46 @@ export const createVariantHistoryColumns = ({
       },
     },
     {
-      accessorKey: "color",
-      header: "Màu sắc",
+      accessorKey: "oldStock",
+      header: "Old Stock",
       cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
-        const color = row.original.color;
-        const variant = row.original.variant;
-        const product = row.original.product;
-
-        // Cho phép click nếu:
-        // 1. Chưa có productId và variantId -> filter theo cả productId và variantId
-        // 2. Đã có productId nhưng chưa có variantId -> chỉ thêm variantId
-        const canNavigate = variant?.id && (!productId || !variantId);
-
-        const badge = (
-          <Badge variant="secondary" className={`font-normal uppercase font-bold ${canNavigate ? 'cursor-pointer hover:bg-primary hover:text-primary-foreground' : ''}`}>
-            {color}
-          </Badge>
-        );
-
-        if (canNavigate) {
-          // Nếu chưa có productId, lấy từ product
-          const targetProductId = productId || product.id;
-          return (
-            <Link
-              href={`/admin/products/history?productId=${targetProductId}&variantId=${variant.id}`}
-              className="hover:text-primary"
-            >
-              {badge}
-            </Link>
-          );
-        }
-
-        return badge;
-      },
-    },
-    {
-      accessorKey: "size",
-      header: "Kích thước",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
-        const size = row.original.size;
+        const oldStock = row.original.oldStock;
         return (
-          <span className="font-medium text-foreground">
-            {size}
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: "count",
-      header: "Số lượng thay đổi",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
-        const count = row.original.count;
-        const isPositive = count > 0;
-        return (
-          <span
-            className={cn(
-              "font-semibold",
-              isPositive ? "text-green-600" : "text-red-600"
-            )}
-          >
-            {isPositive ? "+" : ""}
-            {count}
+          <span className="font-medium text-gray-500 dark:text-gray-400">
+            {oldStock}
           </span>
         );
       },
     },
     {
       accessorKey: "variant.stock",
-      header: "Tồn kho hiện tại",
+      header: "New Stock",
       cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
         const stock = row.original.variant?.stock ?? 0;
         return (
-          <span
-            className={cn(
-              "font-medium",
-              stock === 0
-                ? "text-destructive"
-                : stock < 10
-                  ? "text-orange-600"
-                  : "text-foreground"
-            )}
-          >
+          <span className="font-bold text-gray-900 dark:text-white ">
             {stock}
           </span>
         );
       },
     },
     {
-      accessorKey: "product.price",
-      header: "Giá",
+      accessorKey: "count",
+      header: "Change",
       cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
-        const price = row.original.product.price;
+        const count = row.original.count;
+        const isPositive = count > 0;
         return (
-          <span className="font-semibold text-foreground">
-            {formatCurrency(price)}
+          <span
+            className={cn(
+              " gap-1 rounded-full px-2 py-1 font-bold",
+              isPositive
+                ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+                : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"
+            )}
+          >
+            {isPositive ? "+" : ""}
+            {count}
           </span>
         );
       },

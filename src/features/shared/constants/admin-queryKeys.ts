@@ -36,4 +36,8 @@ export const adminQueryKeys = {
     detail: (id: string) =>
       [...adminQueryKeys.payments.key, "detail", id] as const,
   },
+  coupons: {
+    key: ["admin", "coupons"],
+    list: () => [...adminQueryKeys.coupons.key, "list"] as const,
+  },
 } as const;

@@ -11,6 +11,8 @@ import {
     MessageSquare,
     CreditCard,
     LogOut,
+    User,
+    Tag
 } from "lucide-react";
 import {
     Sidebar,
@@ -64,6 +66,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ],
         },
         {
+            label: "Người dùng",
+            icon: User,
+            href: "/admin/users",
+        },
+        {
             label: "Danh mục",
             icon: ListOrdered,
             href: "/admin/categories",
@@ -72,6 +79,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             label: "Thương hiệu",
             icon: Bookmark,
             href: "/admin/brands",
+        },
+        {
+            label: "Coupons",
+            icon: Tag,
+            href: "/admin/coupons",
         },
         {
             label: "Thanh toán",

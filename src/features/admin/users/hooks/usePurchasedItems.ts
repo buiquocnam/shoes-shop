@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { adminUsersApi } from "../services/users.api";
 import { adminQueryKeys } from "@/features/shared";
 import {
-  PurchasedItemPaginationResponse,
+  PurchasedListPaginationResponse,
   PurchasedItemFilters,
 } from "@/features/profile/types";
 
@@ -12,7 +12,7 @@ export const usePurchasedItems = (
   userId: string | null,
   filters?: PurchasedItemFilters
 ) => {
-  return useQuery<PurchasedItemPaginationResponse>({
+  return useQuery<PurchasedListPaginationResponse>({
     queryKey: adminQueryKeys.users.purchasedItems(
       userId || "",
       filters?.page || 1,

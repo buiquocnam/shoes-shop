@@ -17,7 +17,6 @@ export function getHeaders(endpoint: string, body?: unknown): HeadersInit {
     const { accessToken, refreshToken } = useAuthStore.getState();
     const isAuthRefreshEndpoint = endpoint.includes(AUTH_REFRESH_ENDPOINT);
 
-    // Refresh endpoint: Thêm refresh token vào header
     if (isAuthRefreshEndpoint) {
       if (refreshToken) {
         headers.set("Authorization", `Bearer ${refreshToken}`);
@@ -26,7 +25,6 @@ export function getHeaders(endpoint: string, body?: unknown): HeadersInit {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
   } catch {
-    // Silent fail - không có token thì không set header
   }
 
   return headers;

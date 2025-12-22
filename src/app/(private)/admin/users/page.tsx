@@ -9,7 +9,7 @@ import Loading from "@/features/admin/components/Loading";
 import { UserForm } from "@/features/admin/users/components/UserForm";
 import { useUpdateUser, useDeleteUser } from "@/features/admin/users/hooks";
 import { ConfirmAlert } from "@/features/admin/components";
-import { PurchasedItemsDialog } from "@/features/admin/components";
+import { PurchasedOrdersDialog } from "@/features/admin/users/components/PurchasedOrdersDialog";
 import { usePurchasedItems } from "@/features/admin/users/hooks";
 import { PurchasedItemFilters } from "@/features/profile/types";
 
@@ -104,9 +104,9 @@ const AdminUsersPage = () => {
         />
       )}
 
-      {/* Purchased Items Dialog */}
+      {/* Purchased Orders Dialog */}
       {purchasedItemsUser && (
-        <PurchasedItemsDialog
+        <PurchasedOrdersDialog
           data={purchasedItemsData}
           isLoading={purchasedItemsLoading}
           open={!!purchasedItemsUser}

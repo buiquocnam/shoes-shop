@@ -45,21 +45,18 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
 
-      // Chỉ persist dữ liệu cần thiết (không persist _hasHydrated)
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
       }),
 
-      // Đánh dấu hydrate hoàn tất
       onRehydrateStorage: () => {
         return (state, error) => {
           if (error) {
             console.error("Failed to rehydrate auth store:", error);
           }
-          // Set _hasHydrated = true sau khi rehydrate xong
-          // Sử dụng set function từ closure
+          
           if (setHydrated) {
             setHydrated({ _hasHydrated: true });
           }

@@ -2,7 +2,7 @@ import { apiClient } from "@/lib/api";
 import {
   UpdateProfileRequest,
   ChangePasswordRequest,
-  PurchasedItemPaginationResponse,
+  PurchasedListPaginationResponse,
   PurchasedItemFilters,
 } from "../types";
 import { User } from "@/types";
@@ -20,8 +20,8 @@ export const profileApi = {
 
   productsPurchased: async (
     filters?: PurchasedItemFilters
-  ): Promise<PurchasedItemPaginationResponse> => {
-    const response = await apiClient.get<PurchasedItemPaginationResponse>(
+  ): Promise<PurchasedListPaginationResponse> => {
+    const response = await apiClient.get<PurchasedListPaginationResponse>(
       `/shoes/products/purchased${toQueryString(filters)}`
     );
     return response.result;

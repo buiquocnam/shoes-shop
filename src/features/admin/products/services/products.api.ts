@@ -7,95 +7,21 @@ import {
   ProductPaginationResponse,
   ProductDetailType,
 } from "@/features/product/types";
-import {
-  PurchasedItem,
-  PurchasedItemPaginationResponse,
-  PurchasedItemFilters,
-} from "@/features/profile/types";
-import { PaginatedResponse } from "@/types/global";
 import { toQueryString } from "@/utils/queryString";
-
-export interface CreateProductInput {
-  name: string;
-  description: string;
-  categoryId: string;
-  brandId: string;
-  status: "ACTIVE" | "INACTIVE";
-}
-
-export interface UpdateProductInfoInput {
-  productId: string;
-  name?: string;
-  description?: string;
-  categoryId?: string;
-  brandId?: string;
-  status?: "ACTIVE" | "INACTIVE";
-}
-
-export interface VariantInput {
-  variantId?: string;
-  color: string;
-  sizes: {
-    sizeId?: string;
-    size: string;
-    stock?: number;
-  }[];
-}
-
-export interface UpsertVariantsInput {
-  productId: string;
-  variants: VariantInput[];
-}
-
-export interface ImportStockInput {
-  productId: string;
-  items: {
-    variantSizeId: string;
-    count: number;
-  }[];
-}
-
-export interface VariantResponse {
-  id: string;
-  productId: string;
-  color: string;
-  status: "ACTIVE" | "INACTIVE";
-  sizes: {
-    id: string;
-    variantId: string;
-    size: string;
-    stock: number;
-  }[];
-}
-
-// ===== VARIANT HISTORY =====
-export interface VariantHistoryItem {
-  id: string;
-  product: ProductType;
-  color: string;
-  size: string;
-  count: number;
-  variantId?: string;
-  variant: {
-    id: string;
-    productId: string;
-    stock: number;
-    color: string;
-    status: "ACTIVE" | "INACTIVE";
-    countSell: number;
-    size: string;
-  };
-}
-
-export interface VariantHistoryFilters {
-  page?: number;
-  size?: number;
-  productId?: string;
-  variantId?: string;
-}
-
-export interface VariantHistoryPaginationResponse
-  extends PaginatedResponse<VariantHistoryItem> {}
+import type {
+  CreateProductInput,
+  UpdateProductInfoInput,
+  VariantInput,
+  UpsertVariantsInput,
+  ImportStockInput,
+  VariantResponse,
+  VariantHistoryItem,
+  VariantHistoryFilters,
+  VariantHistoryPaginationResponse,
+  PurchasedProductByProductPaginationResponse,
+  PurchasedItemFilters,
+} from "../types";
+import { OrderDetail } from "@/features/shared/types/order";
 
 export const adminProductsApi = {
   /**
@@ -217,19 +143,31 @@ export const adminProductsApi = {
 
   /**
    * Get Purchased Items by Product
+   * Endpoint: /shoes/products/purchased/by-product/{productId}
    */
   getPurchasedItems: async (
     productId: string,
     filters?: PurchasedItemFilters
-  ): Promise<PurchasedItemPaginationResponse> => {
+  ): Promise<PurchasedProductByProductPaginationResponse> => {
     const queryParams = filters
       ? toQueryString({
           page: filters.page,
-          limit: filters.limit,
+          size: filters.limit,
         })
       : "";
-    const response = await apiClient.get<PurchasedItemPaginationResponse>(
+    const response = await apiClient.get<PurchasedProductByProductPaginationResponse>(
       `/shoes/products/purchased/by-product/${productId}${queryParams}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Get Order Detail by ID (for admin)
+   * Endpoint: /shoes/products/order/{id}
+   */
+  getOrderDetail: async (orderId: string): Promise<OrderDetail> => {
+    const response = await apiClient.get<OrderDetail>(
+      `/shoes/products/order/${orderId}`
     );
     return response.result;
   },

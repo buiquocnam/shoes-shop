@@ -6,7 +6,7 @@ import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
 import { useVariantHistory } from "@/features/admin/products/hooks/queries";
 import { createVariantHistoryColumns } from "@/features/admin/products/components/variantHistoryColumns";
-import { VariantHistoryFilters } from "@/features/admin/products/services/products.api";
+import { VariantHistoryFilters } from "@/features/admin/products/types";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { History } from "lucide-react";
 import Link from "next/link";
@@ -58,7 +58,7 @@ const VariantHistoryPage = () => {
         <div className="flex items-center gap-3">
           <History className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-3xl font-semibold">Lịch sử nhập kho biến thể</h1>
+            <h1 className="text-4xl font-black tracking-tight">Product Variant Quantity History</h1>
             {productId && (
               <p className="text-sm text-muted-foreground mt-1">
                 Đang lọc theo sản phẩm

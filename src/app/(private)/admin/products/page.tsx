@@ -13,7 +13,7 @@ import { columns } from "@/features/admin/products/components/column";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import { ProductFilters, ProductType } from "@/features/product/types";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
-import { PurchasedItemsDialog } from "@/features/admin/components";
+import { PurchasedProductsDialog } from "@/features/admin/products/components/PurchasedProductsDialog";
 import { usePurchasedItemsByProduct } from "@/features/admin/products/hooks/queries/usePurchasedItemsByProduct";
 import { PurchasedItemFilters } from "@/features/profile/types";
 
@@ -108,7 +108,7 @@ const AdminProductsPage = () => {
         onRowClick={(row: ProductType) => setSelectedProduct(row)}
       />
       {selectedProduct && (
-        <PurchasedItemsDialog
+        <PurchasedProductsDialog
           data={purchasedItemsData}
           isLoading={isLoadingPurchasedItems}
           open={isDialogOpen}

@@ -4,15 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import {
-  PurchasedItemPaginationResponse,
+  PurchasedProductByProductPaginationResponse,
   PurchasedItemFilters,
-} from "@/features/profile/types";
+} from "../../types";
 
 export const usePurchasedItemsByProduct = (
   productId: string | null,
   filters?: PurchasedItemFilters
 ) => {
-  return useQuery<PurchasedItemPaginationResponse>({
+  return useQuery<PurchasedProductByProductPaginationResponse>({
     queryKey: [
       ...sharedQueryKeys.product.key,
       "purchased-items",

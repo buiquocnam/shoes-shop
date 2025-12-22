@@ -1,8 +1,6 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import {
-  adminProductsApi,
-  UpdateProductInfoInput,
-} from "../../services/products.api";
+import { adminProductsApi } from "../../services/products.api";
+import { UpdateProductInfoInput } from "../../types";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import { ProductType } from "@/features/product/types";
 import { toast } from "sonner";

@@ -13,9 +13,7 @@ export interface BrandType {
   id: string;
   name: string;
   logo?: string;
-  createdDate?: string;
-  modifiedDate?: string;
-  productCount?: number;
+  countProduct?: number;
 }
 
 // ===== IMAGE =====

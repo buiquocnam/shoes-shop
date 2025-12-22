@@ -5,7 +5,7 @@ import { profileApi } from "../services/profile.api";
 import {
   UpdateProfileRequest,
   PurchasedItemFilters,
-  PurchasedItemPaginationResponse,
+  PurchasedListPaginationResponse,
 } from "../types";
 import { toast } from "sonner";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
@@ -31,7 +31,7 @@ export const useUpdateProfile = () => {
 };
 
 export const useProductsPurchased = (filters?: PurchasedItemFilters) => {
-  return useQuery<PurchasedItemPaginationResponse>({
+  return useQuery<PurchasedListPaginationResponse>({
     queryKey: userQueryKeys.profile.purchasedProducts(filters),
     queryFn: () => profileApi.productsPurchased(filters),
     staleTime: 60 * 1000,

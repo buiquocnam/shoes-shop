@@ -5,10 +5,10 @@ import { toQueryString } from "@/utils/queryString";
 import { Filters } from "@/features/shared/types";
 import { UserUpdate } from "../types";
 import {
-  PurchasedItem,
-  PurchasedItemPaginationResponse,
+  PurchasedListPaginationResponse,
   PurchasedItemFilters,
 } from "@/features/profile/types";
+import { OrderDetail } from "@/features/shared/types/order";
 
 export const adminUsersApi = {
   getUsers: async (filters?: Filters): Promise<User[]> => {
@@ -36,18 +36,33 @@ export const adminUsersApi = {
     return response.result;
   },
 
+  /**
+   * Get Purchased Items by User
+   * Endpoint: /shoes/products/purchased/by-user/{userId}
+   */
   getPurchasedItems: async (
     userId: string,
     filters?: PurchasedItemFilters
-  ): Promise<PurchasedItemPaginationResponse> => {
+  ): Promise<PurchasedListPaginationResponse> => {
     const queryParams = filters
       ? toQueryString({
           page: filters.page,
-          limit: filters.limit,
+          size: filters.limit,
         })
       : "";
-    const response = await apiClient.get<PurchasedItemPaginationResponse>(
+    const response = await apiClient.get<PurchasedListPaginationResponse>(
       `/shoes/products/purchased/by-user/${userId}${queryParams}`
+    );
+    return response.result;
+  },
+
+  /**
+   * Get Order Detail by ID (for admin)
+   * Endpoint: /shoes/products/order-detail/{id}
+   */
+  getOrderDetail: async (orderId: string): Promise<OrderDetail> => {
+    const response = await apiClient.get<OrderDetail>(
+      `/shoes/products/order-detail/${orderId}`
     );
     return response.result;
   },

@@ -1,10 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  adminProductsApi,
-  VariantHistoryFilters,
-} from "../../services/products.api";
+import { adminProductsApi } from "../../services/products.api";
+import { VariantHistoryFilters } from "../../types";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 
 export const useVariantHistory = (filters?: VariantHistoryFilters) => {

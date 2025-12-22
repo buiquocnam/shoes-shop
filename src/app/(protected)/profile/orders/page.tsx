@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { PurchasedItem } from '@/features/profile/types';
+import { PurchasedList, PurchasedProduct } from '@/features/profile/types';
 import { useProductsPurchased } from '@/features/profile/hooks/useProfile';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
 import { formatCurrency } from '@/utils/format';
 import { getPageNumbers } from '@/utils/pagination';
@@ -20,67 +19,109 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const OrderHistoryItem = ({ purchasedItem }: { purchasedItem: PurchasedItem }) => {
+const OrderItem = ({ purchasedItem }: { purchasedItem: PurchasedProduct }) => {
   const router = useRouter();
 
   const handleProductClick = () => {
     router.push(`/products/${purchasedItem.product.id}`);
   };
 
-  const handleViewDetails = () => {
-    router.push(`/checkout/success/${purchasedItem.id}`);
-  };
-
   const imageUrl = purchasedItem.product.imageUrl?.url || purchasedItem.product.imageUrl?.fileName || '/images/no-image.png';
 
   return (
-    <TableRow className="hover:bg-gray-50 transition-colors">
-      <TableCell className="py-4">
-        <div className="flex items-center gap-4">
-          <div
-            className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 cursor-pointer hover:border-primary transition-colors border"
-            onClick={handleProductClick}
-          >
-            <Image
-              src={imageUrl}
-              alt={purchasedItem.product.name}
-              fill
-              unoptimized
-              className="object-cover"
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3
-              className="font-semibold text-gray-900 mb-1 cursor-pointer hover:text-primary transition-colors line-clamp-2"
-              onClick={handleProductClick}
-            >
-              {purchasedItem.product.name}
-            </h3>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell className="py-4">
-        <span className="text-sm text-gray-700 font-medium">{purchasedItem.variant.color}</span>
-      </TableCell>
-      <TableCell className="py-4">
-        <span className="text-sm text-gray-700 font-medium">{purchasedItem.variant.size}</span>
-      </TableCell>
-      <TableCell className="py-4 text-center">
-        <span className="text-sm font-semibold text-gray-900">{purchasedItem.countBuy}</span>
-      </TableCell>
-      <TableCell className="py-4 text-right">
-        <span className="font-bold text-lg text-gray-900">
+    <div className="p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center border-b border-gray-200 dark:border-gray-700 last:border-0">
+      <div
+        className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 cursor-pointer hover:border-primary transition-colors border flex-shrink-0"
+        onClick={handleProductClick}
+      >
+        <Image
+          src={imageUrl}
+          alt={purchasedItem.product.name}
+          fill
+          unoptimized
+          className="object-cover"
+        />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4
+          className="text-base font-bold text-gray-900 dark:text-gray-100 truncate cursor-pointer hover:text-primary transition-colors"
+          onClick={handleProductClick}
+        >
+          {purchasedItem.product.name}
+        </h4>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          Size: {purchasedItem.variant.size} | Color: {purchasedItem.variant.color}
+        </p>
+      </div>
+      <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 sm:gap-0">
+        <span className="text-sm text-gray-600 dark:text-gray-400">
+          Qty: <span className="font-medium text-gray-900 dark:text-gray-100">{purchasedItem.countBuy}</span>
+        </span>
+        <span className="text-base font-bold text-primary">
           {formatCurrency(purchasedItem.totalMoney)}
         </span>
-      </TableCell>
-      <TableCell className="py-4 text-right">
-        <Button variant="outline" size="sm" className="gap-1 text-xs"
+      </div>
+    </div>
+  );
+};
+
+const OrderCard = ({ order }: { order: PurchasedList }) => {
+  const router = useRouter();
+
+  const handleViewDetails = () => {
+    router.push(`/checkout/success/${order.orderId}`);
+  };
+
+  return (
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden transition-shadow hover:shadow-md">
+      <div className="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-wrap gap-y-2 gap-x-8">
+          <div>
+            <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Order ID</span>
+            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">#{order.orderId.slice(-6)}</span>
+          </div>
+          <div>
+            <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Amount</span>
+            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">
+              {formatCurrency(order.finishPrice)}
+            </span>
+          </div>
+          {order.discountPercent && (
+            <div>
+              <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Discount</span>
+              <span className="block text-sm font-medium text-green-600 dark:text-green-400">
+                {order.discountPercent}%
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden sm:inline-flex"
+            onClick={handleViewDetails}
+          >
+            Xem chi tiết
+          </Button>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        {order.listPurchase.map((purchasedItem, index) => (
+          <OrderItem key={`${purchasedItem.id}-${index}`} purchasedItem={purchasedItem} />
+        ))}
+      </div>
+      <div className="sm:hidden px-6 pb-6 pt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
           onClick={handleViewDetails}
         >
           Xem chi tiết
         </Button>
-      </TableCell>
-    </TableRow>
+      </div>
+    </div>
   );
 };
 
@@ -93,7 +134,7 @@ export default function ProfileOrdersPage() {
     limit: pageSize,
   });
 
-  const purchasedItems = data?.data || [];
+  const orders = data?.data || [];
   const pagination = {
     currentPage: data?.currentPage ?? 1,
     totalPages: data?.totalPages ?? 1,
@@ -106,22 +147,22 @@ export default function ProfileOrdersPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
           <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-gray-600">Đang tải lịch sử đơn hàng...</p>
+          <p className="text-gray-600 dark:text-gray-400">Đang tải lịch sử đơn hàng...</p>
         </div>
       </div>
     );
   }
 
-  if (purchasedItems.length === 0) {
+  if (orders.length === 0) {
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Đơn hàng của tôi</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Đơn hàng của tôi</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Xem lịch sử đơn hàng của bạn
           </p>
         </div>
-        <div className="shadow-sm p-12">
+        <div className="shadow-sm p-12 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 flex items-center justify-center">
               <svg
@@ -139,8 +180,8 @@ export default function ProfileOrdersPage() {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">Chưa có đơn hàng</h3>
-              <p className="text-sm text-gray-600">Bạn chưa thực hiện bất kỳ giao dịch mua nào.</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Chưa có đơn hàng</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Bạn chưa thực hiện bất kỳ giao dịch mua nào.</p>
             </div>
           </div>
         </div>
@@ -150,40 +191,25 @@ export default function ProfileOrdersPage() {
 
   return (
     <div>
-      <div className="space-y-4">
-        <div className="shadow-xl p-4 rounded-lg">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold">Sản phẩm</TableHead>
-                  <TableHead className="font-semibold">Màu</TableHead>
-                  <TableHead className="font-semibold">Size</TableHead>
-                  <TableHead className="font-semibold text-center">Số lượng</TableHead>
-                  <TableHead className="font-semibold text-right">Tổng tiền</TableHead>
-                  <TableHead className="font-semibold text-right"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {purchasedItems.map((purchasedItem: PurchasedItem, index: number) => (
-                  <OrderHistoryItem
-                    key={`${purchasedItem.product.id}-${purchasedItem.variant.id}-${index}`}
-                    purchasedItem={purchasedItem}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Đơn hàng của tôi</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          Xem lịch sử đơn hàng của bạn
+        </p>
+      </div>
+      <div className="space-y-6">
+        {orders.map((order) => (
+          <OrderCard key={order.orderId} order={order} />
+        ))}
 
         {pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between py-4">
-            <div className="text-sm text-muted-foreground">
-              Hiển thị <span className="font-medium text-foreground">{purchasedItems.length}</span> trong{" "}
-              <span className="font-medium text-foreground">{pagination.totalElements}</span> kết quả
+          <div className="flex items-center justify-between py-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Hiển thị <span className="font-medium text-gray-900 dark:text-gray-100">{orders.length}</span> trong{" "}
+              <span className="font-medium text-gray-900 dark:text-gray-100">{pagination.totalElements}</span> đơn hàng
               <span className="ml-2">
-                (Trang <span className="font-medium text-foreground">{pagination.currentPage}</span> /{" "}
-                <span className="font-medium text-foreground">{pagination.totalPages}</span>)
+                (Trang <span className="font-medium text-gray-900 dark:text-gray-100">{pagination.currentPage}</span> /{" "}
+                <span className="font-medium text-gray-900 dark:text-gray-100">{pagination.totalPages}</span>)
               </span>
             </div>
 

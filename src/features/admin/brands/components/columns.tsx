@@ -46,20 +46,20 @@ export const brandColumns = (
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
         >
-          Brand
+          Thương hiệu
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
     },
     {
-      accessorKey: "productCount",
+      accessorKey: "countProduct",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
         >
-          Products
+          Số sản phẩm
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),

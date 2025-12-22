@@ -1,9 +1,6 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import {
-  adminProductsApi,
-  UpsertVariantsInput,
-  VariantResponse,
-} from "../../services/products.api";
+import { adminProductsApi } from "../../services/products.api";
+import { UpsertVariantsInput, VariantResponse } from "../../types";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import { toast } from "sonner";
 
