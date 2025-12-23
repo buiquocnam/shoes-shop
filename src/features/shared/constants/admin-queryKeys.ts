@@ -20,7 +20,8 @@ export const adminQueryKeys = {
 
   users: {
     key: ["users"],
-    list: () => [...adminQueryKeys.users.key, "list"] as const,
+    list: (filters?: unknown) =>
+      [...adminQueryKeys.users.key, "list", filters] as const,
     purchasedItems: (userId: string, page?: number, limit?: number) =>
       [
         ...adminQueryKeys.users.key,

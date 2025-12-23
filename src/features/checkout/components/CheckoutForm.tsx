@@ -51,22 +51,17 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
                 return;
             }
 
-            // Save checkout data to sessionStorage before redirecting to payment gateway
-            // This data will be used to create order after payment success
-            if (typeof window !== "undefined") {
-                sessionStorage.setItem(
-                    "checkoutData",
-                    JSON.stringify({
-                        orderSummary,
-                        selectedAddress,
-                        totalAmount,
-                        totalMoney: totalAmount,
-                        couponCode: coupon?.code || null,
-                    })
-                );
-            }
+            sessionStorage.setItem(
+                "checkoutData",
+                JSON.stringify({
+                    orderSummary,
+                    selectedAddress,
+                    totalAmount,
+                    totalMoney: totalAmount,
+                    couponCode: coupon?.code || null,
+                })
+            );
 
-            // Get first item's variantSizeId
             const variantSizeId = orderSummary[0].size.id;
 
             setIsNavigating(true);

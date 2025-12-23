@@ -1,9 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
+import { SearchInput } from "@/features/admin/components";
 import { useVariantHistory } from "@/features/admin/products/hooks/queries";
 import { createVariantHistoryColumns } from "@/features/admin/products/components/variantHistoryColumns";
 import { VariantHistoryFilters } from "@/features/admin/products/types";
@@ -21,6 +22,11 @@ const VariantHistoryPage = () => {
   const size = Number(searchParams.get("size") || 10);
   const productId = searchParams.get("productId") || undefined;
   const variantId = searchParams.get("variantId") || undefined;
+  const nameFromUrl = searchParams.get("name") || "";
+
+  const handleSearch = useCallback((name: string) => {
+    updateParams({ name: name || undefined, page: 1 });
+  }, [updateParams]);
 
   const filters: VariantHistoryFilters = useMemo(
     () => ({
@@ -28,8 +34,9 @@ const VariantHistoryPage = () => {
       size,
       productId,
       variantId,
+      name: nameFromUrl || undefined,
     }),
-    [page, size, productId, variantId]
+    [page, size, productId, variantId, nameFromUrl]
   );
 
   /** ---------------- fetch ---------------- */
@@ -92,6 +99,14 @@ const VariantHistoryPage = () => {
             </Link>
           )}
         </div>
+      </div>
+
+      <div className="flex gap-4">
+        <SearchInput
+          onSearch={handleSearch}
+          defaultValue={nameFromUrl}
+          placeholder="Tìm kiếm tên sản phẩm..."
+        />
       </div>
 
       <div className="rounded-lg  ">

@@ -14,6 +14,7 @@ export const useVariantHistory = (filters?: VariantHistoryFilters) => {
       filters?.size || 10,
       filters?.productId || "",
       filters?.variantId || "",
+      filters?.name || "",
     ],
     queryFn: () => adminProductsApi.getVariantHistory(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes

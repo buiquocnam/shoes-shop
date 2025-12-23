@@ -89,6 +89,7 @@ export interface VariantHistoryFilters {
   size?: number;
   productId?: string;
   variantId?: string;
+  name?: string;
 }
 
 export interface VariantHistoryPaginationResponse

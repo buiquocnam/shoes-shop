@@ -32,6 +32,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 function getInitialActive(pathname: string): string {
     if (pathname === "/admin/") {
@@ -105,12 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className="fixed left-0 top-0 z-50 w-64 h-screen shadow-xl shadow-black/50 overflow-hidden"
             >
                 <SidebarHeader>
-                    <div className="flex items-center gap-2 px-2 py-2">
-                        <Package className="h-6 w-6 text-primary" />
-                        <h1 className="text-lg font-semibold">
-                            Shoe<span className="text-primary">Shop</span>
-                        </h1>
-                    </div>
+                  <Image src="/images/logo.png" alt="logo" width={100} height={100}  className="m-auto h-full"/>
                 </SidebarHeader>
                 <SidebarContent className="overflow-y-auto">
                     <SidebarGroup>

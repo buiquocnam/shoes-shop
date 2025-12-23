@@ -12,7 +12,10 @@ import { OrderDetail } from "@/features/shared/types/order";
 
 export const adminUsersApi = {
   getUsers: async (filters?: Filters): Promise<User[]> => {
-    const response = await apiClient.get<User[]>(`/auth/users/get-all`);
+    const queryParams = filters ? toQueryString(filters) : "";
+    const response = await apiClient.get<User[]>(
+      `/auth/users/get-all${queryParams}`
+    );
     return response.result;
   },
 

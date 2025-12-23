@@ -4,11 +4,12 @@ import { adminQueryKeys } from "@/features/shared";
 import { User } from "@/types/global";
 import { UserUpdate } from "../types";
 import { toast } from "sonner";
+import { Filters } from "@/features/shared/types";
 
-export const useGetUsers = () => {
+export const useGetUsers = (filters?: Filters) => {
   return useQuery<User[]>({
-    queryKey: adminQueryKeys.users.list(),
-    queryFn: () => adminUsersApi.getUsers(),
+    queryKey: adminQueryKeys.users.list(filters),
+    queryFn: () => adminUsersApi.getUsers(filters),
   });
 };
 

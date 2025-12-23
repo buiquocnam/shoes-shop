@@ -5,9 +5,9 @@ import { Plus, History } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useReducer, useMemo, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
+import { SearchInput } from "@/features/admin/components";
 
 import { columns } from "@/features/admin/products/components/column";
 import { useProducts } from "@/features/product/hooks/useProducts";
@@ -16,7 +16,6 @@ import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { PurchasedProductsDialog } from "@/features/admin/products/components/PurchasedProductsDialog";
 import { usePurchasedItemsByProduct } from "@/features/admin/products/hooks/queries/usePurchasedItemsByProduct";
 import { PurchasedItemFilters } from "@/features/profile/types";
-import { useSearch } from "@/features/shared/hooks/useSearch";
 
 type DialogState = {
   selectedProduct: ProductType | null;
@@ -65,11 +64,9 @@ const AdminProductsPage = () => {
   const size = Number(searchParams.get("size") || 10);
   const nameFromUrl = searchParams.get("name") || "";
 
-  const handleSearch = useCallback((name?: string) => {
-    updateParams({ name, page: 1 });
+  const handleSearch = useCallback((name: string) => {
+    updateParams({ name: name || undefined, page: 1 });
   }, [updateParams]);
-
-  const searchInput = useSearch(nameFromUrl, handleSearch);
 
   const filters: ProductFilters = useMemo(
     () => ({
@@ -118,15 +115,7 @@ const AdminProductsPage = () => {
 
   const handleRowClick = useCallback((row: ProductType) => {
     dispatchDialog({ type: "OPEN", product: row });
-  }, []); 
-
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Khi nhấn Enter, tìm ngay lập tức
-    if (e.key === "Enter") {
-      e.preventDefault();
-      updateParams({ name: searchInput.value || undefined, page: 1 });
-    }
-  };
+  }, []);
 
   const handleDialogClose = (open: boolean) => {
     if (!open) {
@@ -162,12 +151,10 @@ const AdminProductsPage = () => {
       </div>
 
       <div className="flex gap-4">
-        <Input
+        <SearchInput
+          onSearch={handleSearch}
+          defaultValue={nameFromUrl}
           placeholder="Tìm kiếm tên sản phẩm..."
-          value={searchInput.value}
-          className="w-64"
-          onChange={searchInput.onChange}
-          onKeyDown={handleSearchKeyDown}
         />
       </div>
 
