@@ -5,16 +5,12 @@ import { checkoutApi, VnPayPaymentRequest } from "../services/checkout.api";
 import {
   CreateOrderResponse,
   CreateOrderRequest,
-  CheckoutItem,
 } from "../types/checkout";
 import { useMutation } from "@tanstack/react-query";
 import { AddressType } from "@/features/shared/types/address";
 import { toast } from "sonner";
 import { useCartStore } from "@/store/useCartStore";
-import {
-  getCheckoutSource,
-  clearCheckoutItems,
-} from "../utils/checkoutStorage";
+import { clearCheckoutItems } from "../utils/checkoutStorage";
 import { useQueryClient } from "@tanstack/react-query";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 import { clearCart as clearCartApi } from "@/features/cart/services";
@@ -28,36 +24,40 @@ export const useCreateOrder = () => {
     any,
     {
       request: CreateOrderRequest;
-      orderSummary: CheckoutItem[];
       selectedAddress: AddressType;
+      source?: "cart" | "buy-now";
     }
   >({
-    mutationFn: ({ request, selectedAddress }) => {
-      if (!selectedAddress) {
-        throw new Error("Vui lòng chọn địa chỉ giao hàng");
-      }
-
+    mutationFn: ({ request }) => {
       return checkoutApi.createOrder(request);
     },
-    onSuccess: async (response, variables) => {
-      if (typeof window !== "undefined") {
-        const checkoutSource = getCheckoutSource();
-        if (checkoutSource === "cart") {
-          await clearCartApi();
-          clearCartStore();
-          setCart(null);
-          queryClient.removeQueries({
-            queryKey: userQueryKeys.cart.current(),
-          });
-          clearCheckoutItems();
+
+    onSuccess: async (response, { source }) => {
+      try {
+        clearCheckoutItems();
+
+        if (source === "cart") {
+          try {
+            await clearCartApi();
+            clearCartStore();
+            setCart(null);
+            queryClient.removeQueries({
+              queryKey: userQueryKeys.cart.current(),
+            });
+          } catch (err) {
+            // Silently handle cart cleanup errors
+          }
         }
+      } catch (err) {
+        // Don't throw - we don't want to fail the mutation if cleanup fails
       }
     },
+
     onError: (error: any) => {
-      const message =
+      toast.error(
         error?.response?.data?.message ||
-        "Đặt hàng thất bại. Vui lòng thử lại.";
-      toast.error(message);
+          "Đặt hàng thất bại. Vui lòng thử lại."
+      );
     },
   });
 };

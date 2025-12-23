@@ -47,7 +47,7 @@ export function OrderSummary({
     };
 
     return (
-        <Card className="sticky top-8">
+        <Card className="sticky top-8 border-none shadow-md">
             <CardHeader>
                 <CardTitle>Tóm tắt đơn hàng</CardTitle>
             </CardHeader>

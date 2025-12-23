@@ -11,8 +11,15 @@ import { useIsAuthenticated } from "@/store/useAuthStore";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
 import { AddToCartRequest } from "@/features/cart/types";
-
+import { Minus, Plus, Check, Ruler, ShoppingCart, Zap, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { formatCurrency } from "@/utils/format";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface ProductInfoInteractiveProps {
   product: ProductDetailType;
@@ -28,43 +35,51 @@ const QuantitySelector = ({
   setQuantity: (q: number) => void;
   maxStock: number;
 }) => (
-  <div className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full max-w-[140px] bg-white">
+  <div className="flex items-center border border-input rounded-lg overflow-hidden bg-background w-fit shadow-sm">
     <Button
+      type="button"
       variant="ghost"
       size="icon"
       onClick={() => setQuantity(Math.max(1, quantity - 1))}
       disabled={maxStock <= 0}
-      className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium hover:bg-gray-100"
+      className="h-8 w-8 rounded-none"
       aria-label="Giảm số lượng"
     >
-      −
+      <Minus className="w-4 h-4" />
     </Button>
 
     <Input
-      type="number"
+      type="text"
       value={quantity}
-      onChange={(e) => setQuantity(Number(e.target.value))}
-      className="w-10 h-full text-center border-none shadow-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+      onChange={(e) => {
+        const val = Number(e.target.value);
+        if (!isNaN(val) && val >= 1 && val <= maxStock) {
+          setQuantity(val);
+        }
+      }}
+      className="w-10 text-center border-none font-inter text-foreground bg-transparent font-bold text-sm"
       min={1}
       max={maxStock}
     />
+    
     <Button
+      type="button"
       variant="ghost"
       size="icon"
       onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
       disabled={quantity >= maxStock || maxStock <= 0}
-      className="px-2 sm:px-3 py-1 text-base sm:text-lg font-medium hover:bg-gray-100"
+      className="h-8 w-8 rounded-none"
       aria-label="Tăng số lượng"
     >
-      +
+      <Plus className="w-4 h-4" />
     </Button>
   </div>
 );
 
 /**
- * Component button để chọn size variant
+ * Component button để chọn size - hiển thị cả size hết hàng
  */
-const VariantButton = ({
+const SizeButton = ({
   size,
   stock,
   isSelected,
@@ -74,27 +89,36 @@ const VariantButton = ({
   stock: number;
   isSelected: boolean;
   onSelect: () => void;
-}) => (
-  <Button
-    variant="outline"
-    size="sm"
-    className={cn(
-      "px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border transition-all duration-200 text-xs sm:text-sm font-semibold",
-      isSelected && "bg-red-700 text-white border-red-700 shadow-md hover:bg-red-800",
-      !isSelected &&
-      stock > 0 &&
-      "bg-white text-gray-800 border-gray-300 hover:bg-gray-50 hover:border-red-400 hover:shadow-sm",
-      stock <= 0 &&
-      "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60"
-    )}
-    onClick={onSelect}
-    disabled={stock <= 0}
-    title={stock > 0 ? `Size ${size} - Tồn kho: ${stock}` : "Hết hàng"}
-    aria-label={`Chọn size ${size}${stock > 0 ? ` (${stock} sản phẩm có sẵn)` : " (hết hàng)"}`}
-  >
-    {size}
-  </Button>
-);
+}) => {
+  const isOutOfStock = stock <= 0;
+  
+  if (isOutOfStock) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        disabled
+        className="px-3 py-1.5 text-xs font-medium rounded-lg border-dashed opacity-50 cursor-not-allowed"
+      >
+        {size}
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      variant={isSelected ? "default" : "outline"}
+      size="sm"
+      onClick={onSelect}
+      className={cn(
+        "px-3 py-1.5 text-xs font-medium rounded-lg",
+        isSelected && "font-bold shadow-md shadow-primary/30"
+      )}
+    >
+      {size}
+    </Button>
+  );
+};
 
 /**
  * Component chính để tương tác với sản phẩm: chọn variant, số lượng, thêm vào giỏ, mua ngay
@@ -107,29 +131,61 @@ export default function ProductInfoInteractive({
   const { mutate: createCart } = useCreateCart();
   const { variants, listImg, product: productInfo } = product;
 
-  const firstInStockSizeId = useMemo(() => {
+  // Tìm variant đầu tiên có size còn hàng
+  const firstAvailableVariant = useMemo(() => {
     for (const variant of variants) {
       const inStockSize = variant.sizes.find((size) => size.stock > 0);
-      if (inStockSize) return inStockSize.id;
+      if (inStockSize) return { variant, size: inStockSize };
     }
-    return variants[0]?.sizes[0]?.id || "";
+    return null;
   }, [variants]);
 
-  const [selectedSizeId, setSelectedSizeId] = useState<string>(firstInStockSizeId);
+  const [selectedVariantId, setSelectedVariantId] = useState<string>(
+    firstAvailableVariant?.variant.id || variants[0]?.id || ""
+  );
+  const [selectedSizeId, setSelectedSizeId] = useState<string>(
+    firstAvailableVariant?.size.id || ""
+  );
   const [quantity, setQuantity] = useState(1);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
-  // Tìm variant và size đã chọn từ selectedSizeId
+  // Tìm variant và size đã chọn
   const selectedData = useMemo(() => {
-    for (const variant of variants) {
-      const size = variant.sizes.find((s) => s.id === selectedSizeId);
-      if (size) return { variant, size };
+    const variant = variants.find((v) => v.id === selectedVariantId);
+    if (!variant) return null;
+    
+    const size = variant.sizes.find((s) => s.id === selectedSizeId && s.stock > 0);
+    if (size) return { variant, size };
+    
+    // Nếu size đã chọn hết hàng, tìm size đầu tiên còn hàng
+    const firstInStock = variant.sizes.find((s) => s.stock > 0);
+    if (firstInStock) {
+      setSelectedSizeId(firstInStock.id);
+      return { variant, size: firstInStock };
     }
+    
     return null;
-  }, [variants, selectedSizeId]);
+  }, [variants, selectedVariantId, selectedSizeId]);
 
   const stock = selectedData?.size.stock || 0;
   const canPurchase = !!selectedData && stock > 0 && quantity > 0;
+
+  // Tính giá sau giảm
+  const discountPercent = productInfo.discount || 0;
+  const discountedPrice = discountPercent > 0 
+    ? productInfo.price - (productInfo.price * discountPercent) / 100 
+    : productInfo.price;
+  const totalPrice = discountedPrice * quantity;
+
+  // Khi đổi variant, tự động chọn size đầu tiên còn hàng
+  const handleVariantChange = (variantId: string) => {
+    setSelectedVariantId(variantId);
+    const variant = variants.find((v) => v.id === variantId);
+    const firstInStock = variant?.sizes.find((s) => s.stock > 0);
+    if (firstInStock) {
+      setSelectedSizeId(firstInStock.id);
+    }
+  };
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -178,10 +234,10 @@ export default function ProductInfoInteractive({
     router.push('/checkout');
   };
 
-  if (variants.length === 0) {
+  if (variants.length === 0 || !firstAvailableVariant) {
     return (
-      <div className="mb-4 sm:mb-6">
-        <span className="inline-block text-xs sm:text-lg font-bold text-white uppercase bg-red-500 px-4 py-2 rounded-md">
+      <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+        <span className="inline-block text-sm font-bold text-primary-foreground uppercase bg-destructive px-3 py-1.5 rounded-md">
           Hết hàng
         </span>
       </div>
@@ -190,71 +246,128 @@ export default function ProductInfoInteractive({
 
   return (
     <>
-      <div className="mb-4 sm:mb-6 space-y-3">
-        {variants.map((variant) => (
-          <div key={variant.id} className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span
-                className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-sm"
-                style={{ backgroundColor: variant.color }}
-                aria-label={`Color: ${variant.color}`}
-              />
-              <span className="text-xs sm:text-sm font-semibold text-gray-700">
-                {variant.color}
-              </span>
-            </div>
-            <div className="flex gap-2 flex-wrap ml-8">
-              {variant.sizes.map((size) => (
-                <VariantButton
-                  key={size.id}
-                  size={size.size}
-                  stock={size.stock}
-                  isSelected={selectedSizeId === size.id}
-                  onSelect={() => setSelectedSizeId(size.id)}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Variants and Sizes Selection */}
+      <div className="bg-card rounded-2xl p-4 shadow-sm border border-border space-y-4">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
+            Tuỳ chọn
+          </h3>
 
-      <div className="mb-4 sm:mb-6 border-b border-gray-200 pb-4 sm:pb-6">
-        {selectedData && (
-          <p className="text-xs sm:text-sm font-medium mb-3 sm:mb-2 text-red-700">
-            Còn lại {stock} {stock === 1 ? 'sản phẩm' : 'sản phẩm'}
-          </p>
-        )}
+        <div className="space-y-4">
+          {variants.map((variant) => {
+            const isSelected = selectedVariantId === variant.id;
+            const hasAvailableSizes = variant.sizes.some((s) => s.stock > 0);
+            const selectedSize = variant.sizes.find((s) => s.id === selectedSizeId);
+            
+            return (
+              <div
+                key={variant.id}
+                className={cn(
+                  "flex items-start gap-4 p-3 rounded-2xl transition-colors border",
+                  isSelected
+                    ? "hover:bg-accent border-border"
+                    : "hover:bg-accent/50 border-transparent opacity-80 hover:opacity-100"
+                )}
+              >
+                <div className="flex-shrink-0 mt-1">
+                  <div
+                    className={cn(
+                      "w-8 h-8 rounded-full border shadow-sm flex items-center justify-center",
+                      isSelected
+                        ? "bg-primary border-border ring-2 ring-offset-2 ring-primary"
+                        : "bg-background border-border"
+                    )}
+                    style={isSelected ? {} : { backgroundColor: variant.color }}
+                  >
+                    {isSelected && (
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    )}
+                  </div>
+                  <div className={cn(
+                    "text-xs text-center mt-1 font-semibold",
+                    isSelected ? "text-primary" : "text-muted-foreground"
+                  )}>
+                    {variant.color}
+                  </div>
+                </div>
+                
+                <div className="flex-grow">
+                  <div className="flex flex-wrap gap-2">
+                    {variant.sizes.map((size) => (
+                      <SizeButton
+                        key={size.id}
+                        size={size.size}
+                        stock={size.stock}
+                        isSelected={isSelected && selectedSizeId === size.id}
+                        onSelect={() => {
+                          if (size.stock > 0) {
+                            setSelectedVariantId(variant.id);
+                            setSelectedSizeId(size.id);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                  {isSelected && selectedSize && selectedSize.stock > 0 && (
+                    <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                      Size {selectedSize.size} còn hàng
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <div className="w-full sm:w-auto">
+        {/* Quantity and Add to Cart */}
+        <div className="pt-4 mt-2 border-t border-border">
+          <div className="flex items-center gap-4 mb-4">
             <QuantitySelector
               quantity={quantity}
               setQuantity={setQuantity}
               maxStock={stock}
             />
+            <div className="flex-1">
+              <Button
+                onClick={handleAddToCart}
+                disabled={!canPurchase}
+                className="w-full py-2.5 px-4 text-sm font-bold rounded-xl shadow-lg shadow-primary/30"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Thêm vào giỏ - {formatCurrency(totalPrice)}
+              </Button>
+            </div>
           </div>
-
           <Button
-            variant="default"
-            size="lg"
-            onClick={handleAddToCart}
-            disabled={!canPurchase}
-            className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base text-white font-bold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 hover:bg-red-800"
-          >
-            Thêm vào giỏ hàng
-          </Button>
-
-          <Button
-            variant="outline"
-            size="lg"
-            disabled={!canPurchase}
             onClick={handleBuy}
-            className="w-full sm:flex-1 px-4 py-2.5 sm:py-2.5 rounded-md text-sm sm:text-base font-bold transition-all duration-200 border-2 border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canPurchase}
+            variant="outline"
+            className="w-full py-2.5 px-4 text-sm font-bold rounded-xl border-2 border-primary"
           >
+            <Zap className="w-4 h-4 mr-2" />
             Mua ngay
           </Button>
         </div>
       </div>
+
+      {/* Product Description Accordion */}
+        <Accordion type="single" collapsible defaultValue="description" className="w-full bg-white  border border-gray-100 shadow-lg rounded-2xl">
+          <AccordionItem value="description" className="border-none ">
+            <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-accent">
+              <span className="uppercase tracking-wider flex items-center gap-2 text-xs font-bold">
+                <FileText className="w-4 h-4 text-primary" />
+                Mô tả sản phẩm
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="text-muted-foreground text-sm leading-relaxed">
+                <p className="mb-4 whitespace-pre-line">
+                  {productInfo.description || "Không có mô tả cho sản phẩm này."}
+                </p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
       <AlertLogin open={showLoginDialog} onOpenChange={setShowLoginDialog} />
     </>

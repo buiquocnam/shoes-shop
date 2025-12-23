@@ -30,7 +30,7 @@ export function OrderRow({ item }: OrderRowProps) {
                         {item.product.name}
                     </h3>
                     {item.product.discount > 0 && (
-                        <Badge variant="destructive" className="shrink-0 text-xs">
+                        <Badge variant="default" className="shrink-0 text-xs">
                             -{item.product.discount}%
                         </Badge>
                     )}

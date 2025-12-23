@@ -5,9 +5,15 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { CreateOrderRequest } from '@/features/checkout/types/checkout';
-import { useCreateOrder } from '@/features/checkout/hooks/useCheckout';
+import { checkoutApi } from '@/features/checkout/services/checkout.api';
+import { getCheckoutSource, clearCheckoutItems } from '@/features/checkout/utils/checkoutStorage';
+import { clearCart as clearCartApi } from '@/features/cart/services';
+import { useCartStore } from '@/store/useCartStore';
+import { userQueryKeys } from '@/features/shared/constants/user-queryKeys';
 
 interface CheckoutData {
   orderSummary: any[];
@@ -19,9 +25,12 @@ interface CheckoutData {
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
-  const { mutate: createOrder, isPending, error } = useCreateOrder();
+  const queryClient = useQueryClient();
+  const { clearCart: clearCartStore, setCart } = useCartStore();
   const hasCreatedOrderRef = useRef(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Chỉ chạy ở client-side
@@ -35,45 +44,67 @@ export default function CheckoutSuccessPage() {
       return;
     }
 
-    const data: CheckoutData = JSON.parse(storedData);
+    const checkoutData: CheckoutData = JSON.parse(storedData);
 
     const orderRequest: CreateOrderRequest = {
-      items: data.orderSummary.map((item: any) => ({
+      items: checkoutData.orderSummary.map((item: any) => ({
         variantSizeId: item.size.id,
         quantity: item.quantity,
       })),
-      couponCode: data.couponCode,
-      addressId: data.selectedAddress.id,
+      couponCode: checkoutData.couponCode,
+      addressId: checkoutData.selectedAddress.id,
     };
 
     hasCreatedOrderRef.current = true;
 
-    createOrder(
-      {
-        request: orderRequest,
-        orderSummary: data.orderSummary,
-        selectedAddress: data.selectedAddress,
-      },
-      {
-        onSuccess: (response) => {
-          const id = response?.orderId;
-          if (id) {
-            setOrderId(id);
-          } 
+    const checkoutSource = getCheckoutSource();
+    const source = checkoutSource === "cart" ? "cart" : "buy-now";
+
+    checkoutApi
+      .createOrder(orderRequest)
+      .then(async (response) => {
+        const id = response?.orderId;
+        if (id) {
+          setOrderId(id);
+        }
+
+        // Cleanup logic
+        try {
+          clearCheckoutItems();
           sessionStorage.removeItem('checkoutData');
 
-        },
-      }
-    );
-  }, [createOrder, router]);
+          if (source === "cart") {
+            try {
+              await clearCartApi();
+              clearCartStore();
+              setCart(null);
+              queryClient.removeQueries({
+                queryKey: userQueryKeys.cart.current(),
+              });
+            } catch (err) {
+              // Silently handle cart cleanup errors
+            }
+          }
+          
+          setIsLoading(false);
+        } catch (err) {
+          setIsLoading(false);
+        }
+      })
+      .catch((error) => {
+        const errorMessage =
+          error?.response?.data?.message || error?.message || 'Không thể tạo đơn hàng';
+        setError(errorMessage);
+        setIsLoading(false);
+        toast.error(errorMessage);
+      });
+  }, [router, queryClient, clearCartStore, setCart]);
 
   if (error) {
-    const errorMessage = (error as any)?.response?.data?.message || (error as any)?.message || 'Không thể tạo đơn hàng';
-
     return (
       <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
-          <p className="text-lg font-semibold text-destructive">{errorMessage}</p>
+          <p className="text-lg font-semibold text-destructive">{error}</p>
           <Button onClick={() => router.replace('/checkout')}>
             Quay lại checkout
           </Button>
@@ -82,7 +113,8 @@ export default function CheckoutSuccessPage() {
     );
   }
 
-  if (isPending) {
+  // Show loading if still loading
+  if (isLoading) {
     return (
       <main className="flex min-h-[calc(100vh-200px)] items-center justify-center bg-background-light dark:bg-background-dark">
         <div className="flex flex-col items-center gap-4">
@@ -94,7 +126,7 @@ export default function CheckoutSuccessPage() {
   }
 
   return (
-    <main className="flex min-h-[calc(100vh-200px)] items-center justify-center bg-background-light dark:bg-background-dark">
+    <main className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark">
       <div className="flex flex-col items-center gap-6 text-center max-w-md px-4">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
           <CheckCircle2 className="h-8 w-8 text-primary" />

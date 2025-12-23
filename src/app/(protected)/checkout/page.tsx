@@ -23,8 +23,9 @@ export default function CheckoutPage() {
           <div className="text-center py-12">
             <p className="text-gray-600 text-lg mb-4">Không có sản phẩm nào để thanh toán</p>
             <Button
+             variant="default"
               onClick={() => router.push('/products')}
-              className="text-primary hover:underline"
+              className=" hover:underline"
             >
               Tiếp tục mua sắm
             </Button>

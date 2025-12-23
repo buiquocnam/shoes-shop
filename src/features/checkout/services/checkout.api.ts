@@ -25,6 +25,16 @@ export const checkoutApi = {
       "/shoes/variants/buy",
       request
     );
+    
+    if (!response.result) {
+      throw new Error("API response result is undefined");
+    }
+    
+    // Validate that orderId exists in response
+    if (!response.result.orderId) {
+      throw new Error("Order ID is missing from API response");
+    }
+    
     return response.result;
   },
 

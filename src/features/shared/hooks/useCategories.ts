@@ -9,7 +9,7 @@ export function useCategories(
   options?: Omit<UseQueryOptions<CategoryType[]>, "queryKey" | "queryFn">
 ) {
   return useQuery<CategoryType[]>({
-    queryKey: sharedQueryKeys.category.list(),
+    queryKey: sharedQueryKeys.category.list(filters),
     queryFn: () => categoriesApi.getAll(filters),
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 10,

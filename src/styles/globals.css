@@ -38,6 +38,7 @@
   --font-sans: "Inter", sans-serif;
   --font-serif: "Playfair Display", serif;
   --font-mono: "Fira Code", monospace;
+  --font-inter: "Inter", sans-serif;
   --radius: 0.5rem;
   --shadow-x: 0rem;
   --shadow-y: 0.25rem;
@@ -182,3 +183,4 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+

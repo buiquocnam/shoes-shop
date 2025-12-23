@@ -35,6 +35,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const NAV_LINKS = [
     { name: 'Trang chủ', href: '/' },
@@ -107,7 +108,7 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full shadow-xl bg-background  ">
+        <header className="sticky top-0 z-50 w-full shadow-sm bg-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-3 items-center h-16 gap-4">
                     {/* Logo Section */}
@@ -116,16 +117,14 @@ export default function Header() {
                             href="/"
                             className="flex items-center gap-2 transition-opacity hover:opacity-80"
                         >
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                                <span className="text-lg font-bold text-primary-foreground">S</span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-lg font-bold leading-none">
-                                    <span className="text-primary">Sole</span>
-                                    <span className="text-foreground">Mate</span>
-                                </span>
-                                <span className="text-[10px] leading-none text-muted-foreground">Premium Shoes</span>
-                            </div>
+                            <Image
+                                src="/images/logo.png"
+                                alt="Logo"
+                                width={120}
+                                height={40}
+                                unoptimized
+                                className="h-10 w-auto object-contain"
+                            />
                         </Link>
                     </div>
 
@@ -184,9 +183,9 @@ export default function Header() {
                         </Button>
 
                         {/* Cart */}
-                        <Button variant="ghost" size="icon" asChild className="relative">
+                        <Button variant="ghost" size="sm" asChild className="relative">
                             <Link href="/cart">
-                                <ShoppingCart className="h-4 w-4" />
+                                <ShoppingCart className="h-8 w-8" />
                                 {cartCount > 0 && (
                                     <Badge
                                         variant="default"

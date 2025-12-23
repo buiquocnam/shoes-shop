@@ -1,4 +1,4 @@
-import { StarIcon } from "lucide-react";
+import { Star, ShoppingBag, Truck } from "lucide-react";
 import { ProductDetailType } from "../../types";
 import { formatCurrency } from "@/utils/format";
 import ProductInfoInteractive from "./ProductInfoInteractive";
@@ -8,49 +8,69 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
-
     const { product: productInfo } = product;
-    return (
-        <div className="mx-auto px-4 sm:px-6 lg:px-0">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 mb-2 sm:mb-1">
-                {productInfo.name}
-            </h1>
+    
+    const originalPrice = productInfo.price;
+    const discountPercent = productInfo.discount || 0;
+    const discountedPrice = discountPercent > 0 
+        ? originalPrice - (originalPrice * discountPercent) / 100 
+        : originalPrice;
 
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                <div className="flex items-center gap-0.5">
-                    {[...Array(5)].map((_, index) => (
-                        <StarIcon
-                            key={index}
-                            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${index < Math.floor(Number(productInfo.averageRating || 0))
-                                ? "text-red-500 fill-red-500"
-                                : "text-gray-300 fill-gray-300"
-                                }`}
-                        />
-                    ))}
+    return (
+        <div className="flex flex-col gap-4">
+            {/* Product Header Card */}
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                    <ShoppingBag className="w-24 h-24 text-primary transform rotate-12" />
+                </div>
+                
+                <div className="relative z-10">
+                    <div className="flex justify-between items-start mb-2">
+                        <h1 className="text-2xl font-serif lg:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+                            {productInfo.name}
+                        </h1>
+                    </div>
+
+                    <div className="flex items-center space-x-2 mb-4">
+                        <div className="flex text-yellow-400">
+                            {[...Array(5)].map((_, index) => (
+                                <Star
+                                    key={index}
+                                    className={`w-4 h-4 ${
+                                        index < Math.floor(Number(productInfo.averageRating || 0))
+                                            ? "fill-current"
+                                            : "text-gray-300 dark:text-gray-600 fill-gray-300 dark:fill-gray-600"
+                                    }`}
+                                />
+                            ))}
+                        </div>
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                            ({productInfo.countSell || 0} đánh giá)
+                        </span>
+                    </div>
+
+                    <div className="flex items-end gap-3 pb-3  dark:border-gray-700">
+                        <span className="text-3xl font-black text-primary">
+                            {formatCurrency(discountedPrice)}
+                        </span>
+                        {discountPercent > 0 && (
+                            <>
+                                <span className="text-base text-gray-600 dark:text-gray-400 line-through mb-1 font-medium">
+                                    {formatCurrency(originalPrice)}
+                                </span>
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-primary text-white mb-1 shadow-sm shadow-primary/30">
+                                    -{discountPercent}%
+                                </span>
+                            </>
+                        )}
+                    </div>
+
+                   
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <span className="text-xl sm:text-2xl lg:text-3xl text-red-700 font-extrabold">
-                    {formatCurrency(productInfo.price)}
-                </span>
-                {productInfo.discount > 0 && (
-                    <span className="text-base sm:text-lg lg:text-xl text-gray-400 line-through">
-                        {formatCurrency(productInfo.price)}
-                    </span>
-                )}
-            </div>
-
+            {/* Interactive Section */}
             <ProductInfoInteractive product={product} />
-
-            <div className="mt-4 sm:mt-6">
-                <h2 className="text-base sm:text-lg font-bold uppercase text-gray-900 mb-2 sm:mb-3">
-                    Mô tả
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                    {productInfo.description}
-                </p>
-            </div>
         </div>
     );
 }
