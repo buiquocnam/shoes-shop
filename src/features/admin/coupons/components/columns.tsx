@@ -160,7 +160,7 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
     cell: ({ row }: { row: Row<Coupon> }) => {
       const coupon = row.original;
       return (
-        <div className="flex justify-end gap-2">
+        <div className="flex gap-2">
           <Button
             variant="ghost"
             size="sm"

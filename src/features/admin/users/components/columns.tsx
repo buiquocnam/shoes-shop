@@ -5,10 +5,11 @@ import { Pencil, Trash2, ArrowUpDown, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/global";
 import { cn } from "@/lib/utils";
+import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
+import { useDeleteUser } from "../hooks/useUsers";
 
 export const userColumns = (
   onEdit?: (user: User) => void,
-  onDelete?: (user: User) => void,
   onViewPurchasedItems?: (user: User) => void
 ): ColumnDef<User>[] => [
     {
@@ -91,20 +92,42 @@ export const userColumns = (
                 <Pencil className="h-4 w-4" />
               </Button>
             )}
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                onClick={() => onDelete(row.original)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <DeleteUserButton user={row.original} />
           </div>
         );
       },
-      enableSorting: false,
-      enableHiding: false,
-    },
-  ];
+    enableSorting: false,
+    enableHiding: false,
+  },
+];
+
+// Delete User Button Component
+function DeleteUserButton({ user }: { user: User }) {
+  const deleteUser = useDeleteUser();
+
+  const handleDelete = async () => {
+    try {
+      await deleteUser.mutateAsync([user.id]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <ConfirmAlert
+      onConfirm={handleDelete}
+      itemName={`người dùng "${user.name}"`}
+      title="Xác nhận xóa người dùng"
+      description={`Bạn có chắc chắn muốn xóa người dùng "${user.name}"? Hành động này sẽ xóa tất cả dữ liệu liên quan và không thể hoàn tác.`}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        title="Xóa"
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </ConfirmAlert>
+  );
+}

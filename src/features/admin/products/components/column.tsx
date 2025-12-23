@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useCallback } from "react";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { ProductType } from "@/features/product/types";
 import Link from "next/link";
@@ -13,21 +14,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Pencil, Package, ImageIcon, Trash2, MoreHorizontal, History } from "lucide-react";
 import { formatCurrency } from "@/utils/format";
 import { cn } from "@/lib/utils";
 import { useDeleteProduct } from "../hooks/mutations/useDeleteProduct";
+import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
 
 export const columns: ColumnDef<ProductType>[] = [
     {
@@ -130,20 +121,22 @@ export const columns: ColumnDef<ProductType>[] = [
     },
 ];
 
-function ProductActions({ product }: { product: ProductType }) {
-    const { mutateAsync: deleteProduct, isPending } = useDeleteProduct();
-
-    const handleDelete = async () => {
-        await deleteProduct(product.id);
-    };
-
-    const handleStopPropagation = (e: React.MouseEvent) => {
+// Memoize ProductActions để tránh re-render không cần thiết
+const ProductActions = React.memo(({ product }: { product: ProductType }) => {
+    const [dropdownOpen, setDropdownOpen] = React.useState(false);
+    
+    // Memoize callback để tránh re-create
+    const handleStopPropagation = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
-    };
+    }, []);
+
+    const handleDropdownClose = useCallback(() => {
+        setDropdownOpen(false);
+    }, []);
 
     return (
         <div onClick={handleStopPropagation}>
-            <DropdownMenu>
+            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     <Button
                         variant="ghost"
@@ -192,37 +185,65 @@ function ProductActions({ product }: { product: ProductType }) {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <DropdownMenuItem
-                                className="text-destructive focus:text-destructive focus:bg-destructive/10"
-                            >
-                                <Trash2 className="h-4 w-4" />
-                                <span>Xóa sản phẩm</span>
-                            </DropdownMenuItem>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Bạn có chắc chắn?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    Hành động này không thể hoàn tác. Điều này sẽ xóa vĩnh viễn sản phẩm{" "}
-                                    <span className="font-semibold">{product.name}</span> và tất cả dữ liệu của nó.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Hủy</AlertDialogCancel>
-                                <AlertDialogAction
-                                    onClick={handleDelete}
-                                    disabled={isPending}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                    {isPending ? "Đang xóa..." : "Xóa"}
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+                    <DeleteProductButton 
+                        product={product} 
+                        onDeleteSuccess={handleDropdownClose} 
+                    />
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
+    );
+});
+
+ProductActions.displayName = "ProductActions";
+
+// Delete Product Button Component
+function DeleteProductButton({ 
+    product, 
+    onDeleteSuccess 
+}: { 
+    product: ProductType;
+    onDeleteSuccess?: () => void;
+}) {
+    const deleteProduct = useDeleteProduct();
+    const [open, setOpen] = React.useState(false);
+
+    const handleDelete = useCallback(async () => {
+        try {
+            await deleteProduct.mutateAsync(product.id);
+            setOpen(false);
+            onDeleteSuccess?.();
+        } catch (error) {
+            console.error(error);
+        }
+    }, [product.id, deleteProduct, onDeleteSuccess]);
+
+    const handleOpenChange = useCallback((newOpen: boolean) => {
+        setOpen(newOpen);
+    }, []);
+
+    const handleSelect = useCallback((e: Event) => {
+        e.preventDefault();
+        setOpen(true);
+    }, []);
+
+    return (
+        <>
+            <DropdownMenuItem
+                className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                onSelect={handleSelect}
+            >
+                <Trash2 className="h-4 w-4" />
+                <span>Xóa sản phẩm</span>
+            </DropdownMenuItem>
+            <ConfirmAlert
+                open={open}
+                onOpenChange={handleOpenChange}
+                onConfirm={handleDelete}
+                itemName={`sản phẩm "${product.name}"`}
+                title="Xác nhận xóa sản phẩm"
+                description={`Bạn có chắc chắn muốn xóa sản phẩm "${product.name}"? Hành động này sẽ xóa tất cả dữ liệu liên quan và không thể hoàn tác.`}
+            />
+        </>
     );
 }

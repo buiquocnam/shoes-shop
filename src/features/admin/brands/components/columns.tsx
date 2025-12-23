@@ -5,10 +5,11 @@ import { Pencil, Trash2, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { BrandType } from "@/features/product/types";
+import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
+import { useDeleteBrand } from "../hooks/useBrands";
 
 export const brandColumns = (
-  onEdit?: (brand: BrandType) => void,
-  onDelete?: (brand: BrandType) => void
+  onEdit?: (brand: BrandType) => void
 ): ColumnDef<BrandType>[] => [
     {
       accessorKey: "logo",
@@ -80,20 +81,42 @@ export const brandColumns = (
                 <Pencil className="h-4 w-4" />
               </Button>
             )}
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                onClick={() => onDelete(row.original)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <DeleteBrandButton brand={row.original} />
           </div>
         );
       },
-      enableSorting: false,
-      enableHiding: false,
-    },
-  ];
+    enableSorting: false,
+    enableHiding: false,
+  },
+];
+
+// Delete Brand Button Component
+function DeleteBrandButton({ brand }: { brand: BrandType }) {
+  const deleteBrand = useDeleteBrand();
+
+  const handleDelete = async () => {
+    try {
+      await deleteBrand.mutateAsync(brand.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <ConfirmAlert
+      onConfirm={handleDelete}
+      itemName={`thương hiệu "${brand.name}"`}
+      title="Xác nhận xóa thương hiệu"
+      description={`Bạn có chắc chắn muốn xóa thương hiệu "${brand.name}"? Hành động này sẽ xóa tất cả dữ liệu liên quan và không thể hoàn tác.`}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        title="Xóa"
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </ConfirmAlert>
+  );
+}

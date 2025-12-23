@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { BrandType } from "@/features/product/types";
@@ -9,13 +9,12 @@ import {
   brandColumns,
   useBrands,
   useUpsertBrand,
-  useDeleteBrand,
 } from "@/features/admin/brands";
 import Loading from "@/features/admin/components/Loading";
 import { useSearchParams } from "next/navigation";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { Input } from "@/components/ui/input";
-import { ConfirmAlert } from "@/features/admin/components";
+import { useSearch } from "@/features/shared/hooks/useSearch";
 
 
 type Filters = {
@@ -28,22 +27,27 @@ const AdminBrandsPage: React.FC = () => {
   const searchParams = useSearchParams();
   const updateParams = useUpdateParams();
   const [selectedBrand, setSelectedBrand] = useState<BrandType | null>(null);
-  const [brandToDelete, setBrandToDelete] = useState<BrandType | null>(null);
   const [createFormOpen, setCreateFormOpen] = useState(false);
 
   /** ---------------- derive filters from URL ---------------- */
   const page = Number(searchParams.get("page") || 1);
   const size = Number(searchParams.get("size") || 10);
-  const search = searchParams.get("search") || "";
-  const filters: Filters = {
+  const searchFromUrl = searchParams.get("search") || "";
+
+  const handleSearch = useCallback((search?: string) => {
+    updateParams({ search, page: 1 });
+  }, []);
+
+  const searchInput = useSearch(searchFromUrl, handleSearch);
+
+  const filters: Filters = useMemo(() => ({
     page,
     size,
-    search,
-  };
+    search: searchFromUrl,
+  }), [page, size, searchFromUrl]);
 
   const { data, isLoading } = useBrands(filters);
   const upsertBrandMutation = useUpsertBrand();
-  const deleteBrandMutation = useDeleteBrand();
   const brands: BrandType[] = data?.data || [];
 
   const handleUpsertBrand = async (formData: FormData) => {
@@ -52,20 +56,11 @@ const AdminBrandsPage: React.FC = () => {
     setCreateFormOpen(false);
   };
 
-  const handleEdit = (brand: BrandType) => {
+  const handleEdit = useCallback((brand: BrandType) => {
     setSelectedBrand(brand);
-  };
+  }, []);
 
-  const handleDelete = async () => {
-    if (brandToDelete) {
-      await deleteBrandMutation.mutateAsync(brandToDelete.id);
-      setBrandToDelete(null);
-    }
-  };
-
-  const columns = brandColumns(handleEdit, (brand) => {
-    setBrandToDelete(brand);
-  });
+  const columns = useMemo(() => brandColumns(handleEdit), [handleEdit]);
 
   if (isLoading) {
     return (
@@ -82,7 +77,9 @@ const AdminBrandsPage: React.FC = () => {
           <Input
             placeholder="Tìm kiếm tên thương hiệu..."
             className="w-64"
-            onChange={(e) => updateParams({ search: e.target.value, page: 1 })}
+            value={searchInput.value}
+            onChange={searchInput.onChange}
+            onKeyDown={(e) => searchInput.onKeyDown(e, (value: string) => handleSearch(value))}
           />
         </div>
         <BrandForm
@@ -120,18 +117,6 @@ const AdminBrandsPage: React.FC = () => {
           open={!!selectedBrand}
           onOpenChange={(open) => {
             if (!open) setSelectedBrand(null);
-          }}
-        />
-      )}
-
-      {/* Delete Alert */}
-      {brandToDelete && (
-        <ConfirmAlert
-          onConfirm={handleDelete}
-          itemName={brandToDelete.name}
-          open={!!brandToDelete}
-          onOpenChange={(open) => {
-            if (!open) setBrandToDelete(null);
           }}
         />
       )}

@@ -98,115 +98,122 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ];
 
     return (
+      <>
         <SidebarProvider>
-                <Sidebar collapsible="none" className="w-64 shadow-xl shadow-black/50 h-auto">
-                    <SidebarHeader>
-                        <div className="flex items-center gap-2 px-2 py-2">
-                            <Package className="h-6 w-6 text-primary" />
-                            <h1 className="text-lg font-semibold">
-                                Shoe<span className="text-primary">Shop</span>
-                            </h1>
-                        </div>
-                    </SidebarHeader>
-                    <SidebarContent >
-                        <SidebarGroup>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    {menuItems.map((item) => {
-                                        const Icon = item.icon;
-                                        const hasSubMenu = item.subMenu && item.subMenu.length > 0;
-                                        const isActive = hasSubMenu
-                                            ? item.subMenu.some(sub => activePath === sub.href)
-                                            : activePath === item.href;
+            <Sidebar 
+                collapsible="none" 
+                className="fixed left-0 top-0 z-50 w-64 h-screen shadow-xl shadow-black/50 overflow-hidden"
+            >
+                <SidebarHeader>
+                    <div className="flex items-center gap-2 px-2 py-2">
+                        <Package className="h-6 w-6 text-primary" />
+                        <h1 className="text-lg font-semibold">
+                            Shoe<span className="text-primary">Shop</span>
+                        </h1>
+                    </div>
+                </SidebarHeader>
+                <SidebarContent className="overflow-y-auto">
+                    <SidebarGroup>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {menuItems.map((item) => {
+                                    const Icon = item.icon;
+                                    const hasSubMenu = item.subMenu && item.subMenu.length > 0;
+                                    const isActive = hasSubMenu
+                                        ? item.subMenu.some(sub => activePath === sub.href)
+                                        : activePath === item.href;
 
-                                        return (
-                                            <SidebarMenuItem key={item.label}>
-                                                <SidebarMenuButton
-                                                    asChild={!hasSubMenu}
-                                                    isActive={isActive}
-                                                >
-                                                    {hasSubMenu ? (
-                                                        <div className="flex items-center gap-2 w-full">
+                                    return (
+                                        <SidebarMenuItem key={item.label}>
+                                            <SidebarMenuButton
+                                                asChild={!hasSubMenu}
+                                                isActive={isActive}
+                                            >
+                                                {hasSubMenu ? (
+                                                    <div className="flex items-center gap-2 w-full">
+                                                        <Icon />
+                                                        <span>{item.label}</span>
+                                                    </div>
+                                                ) : (
+                                                    item.href && (
+                                                        <Link
+                                                            href={item.href}
+                                                            onClick={() => {
+                                                                setActivePath(item.href!);
+                                                            }}
+                                                        >
                                                             <Icon />
                                                             <span>{item.label}</span>
-                                                        </div>
-                                                    ) : (
-                                                        item.href && (
-                                                            <Link
-                                                                href={item.href}
-                                                                onClick={() => {
-                                                                    setActivePath(item.href!);
-                                                                }}
-                                                            >
-                                                                <Icon />
-                                                                <span>{item.label}</span>
-                                                            </Link>
-                                                        )
-                                                    )}
-                                                </SidebarMenuButton>
-                                                {hasSubMenu && (
-                                                    <SidebarMenuSub>
-                                                        {item.subMenu.map((sub) => {
-                                                            const subIsActive = activePath === sub.href;
-                                                            return (
-                                                                <SidebarMenuSubItem key={sub.label}>
-                                                                    <SidebarMenuSubButton
-                                                                        asChild
-                                                                        isActive={subIsActive}
-                                                                    >
-                                                                        <Link
-                                                                            href={sub.href}
-                                                                            onClick={() => {
-                                                                                setActivePath(sub.href);
-                                                                            }}
-                                                                        >
-                                                                            <span>{sub.label}</span>
-                                                                        </Link>
-                                                                    </SidebarMenuSubButton>
-                                                                </SidebarMenuSubItem>
-                                                            );
-                                                        })}
-                                                    </SidebarMenuSub>
+                                                        </Link>
+                                                    )
                                                 )}
-                                            </SidebarMenuItem>
-                                        );
-                                    })}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                        <SidebarGroup className="mt-auto">
-                            <SidebarGroupContent>
-                                <div className="flex items-center gap-3 px-2 py-3">
-                                    <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
-                                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                                            {user?.name?.[0]?.toUpperCase() ?? 'AD'}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex flex-col min-w-0 flex-1">
-                                        <span className="text-sm font-medium text-sidebar-foreground truncate">
-                                            {user?.name ?? 'Admin'}
-                                        </span>
-                                        <span className="text-xs text-sidebar-foreground/70 truncate">
-                                            {user?.email ?? 'admin@shoeshop.com'}
-                                        </span>
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-sidebar-foreground hover:text-destructive hover:bg-destructive/10"
-                                        onClick={() => logout()}
-                                        title="Đăng xuất"
-                                    >
-                                        <LogOut className="h-4 w-4" />
-                                    </Button>
+                                            </SidebarMenuButton>
+                                            {hasSubMenu && (
+                                                <SidebarMenuSub>
+                                                    {item.subMenu.map((sub) => {
+                                                        const subIsActive = activePath === sub.href;
+                                                        return (
+                                                            <SidebarMenuSubItem key={sub.label}>
+                                                                <SidebarMenuSubButton
+                                                                    asChild
+                                                                    isActive={subIsActive}
+                                                                >
+                                                                    <Link
+                                                                        href={sub.href}
+                                                                        onClick={() => {
+                                                                            setActivePath(sub.href);
+                                                                        }}
+                                                                    >
+                                                                        <span>{sub.label}</span>
+                                                                    </Link>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                        );
+                                                    })}
+                                                </SidebarMenuSub>
+                                            )}
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                    <SidebarGroup className="mt-auto">
+                        <SidebarGroupContent>
+                            <div className="flex items-center gap-3 px-2 py-3">
+                                <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
+                                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                                        {user?.name?.[0]?.toUpperCase() ?? 'AD'}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                    <span className="text-sm font-medium text-sidebar-foreground truncate">
+                                        {user?.name ?? 'Admin'}
+                                    </span>
+                                    <span className="text-xs text-sidebar-foreground/70 truncate">
+                                        {user?.email ?? 'admin@shoeshop.com'}
+                                    </span>
                                 </div>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </SidebarContent>
-                </Sidebar>
-                <main className="flex-1 overflow-auto">
-                    {children}
-                </main>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-sidebar-foreground hover:text-destructive hover:bg-destructive/10"
+                                    onClick={() => logout()}
+                                    title="Đăng xuất"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+            </Sidebar>
+            <main className="ml-64 w-full min-h-screen overflow-auto">
+                {children}
+            </main>
         </SidebarProvider>
-    );
+      </>
+    )
+
+    
 }

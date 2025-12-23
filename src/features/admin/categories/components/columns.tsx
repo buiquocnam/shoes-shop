@@ -4,10 +4,11 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { Pencil, Trash2, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CategoryType } from "@/features/product/types";
+import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
+import { useDeleteCategory } from "../hooks/useCategories";
 
 export const categoryColumns = (
-  onEdit?: (category: CategoryType) => void,
-  onDelete?: (category: CategoryType) => void
+  onEdit?: (category: CategoryType) => void
 ): ColumnDef<CategoryType>[] => [
     {
       accessorKey: "name",
@@ -63,21 +64,43 @@ export const categoryColumns = (
                 <Pencil className="h-4 w-4" />
               </Button>
             )}
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                onClick={() => onDelete(row.original)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <DeleteCategoryButton category={row.original} />
           </div>
         );
       },
-      enableSorting: false,
-      enableHiding: false,
-    },
-  ];
+    enableSorting: false,
+    enableHiding: false,
+  },
+];
+
+// Delete Category Button Component
+function DeleteCategoryButton({ category }: { category: CategoryType }) {
+  const deleteCategory = useDeleteCategory();
+
+  const handleDelete = async () => {
+    try {
+      await deleteCategory.mutateAsync(category.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <ConfirmAlert
+      onConfirm={handleDelete}
+      itemName={`danh mục "${category.name}"`}
+      title="Xác nhận xóa danh mục"
+      description={`Bạn có chắc chắn muốn xóa danh mục "${category.name}"? Hành động này sẽ xóa tất cả dữ liệu liên quan và không thể hoàn tác.`}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        title="Xóa"
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </ConfirmAlert>
+  );
+}
 

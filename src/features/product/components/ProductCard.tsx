@@ -33,13 +33,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:scale-105 cursor-pointer
                  transition-all duration-300 border flex flex-col border-none"
         >
-            <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
                 {product.discount > 0 && (
                     <Badge
                         variant="default"
                         className={cn(
-                            "absolute top-3 left-3 z-20 bg-primary",
-                            "text-white text-xs font-bold px-2 py-1 rounded"
+                            "absolute top-2 left-2 z-20 bg-primary",
+                            "text-white text-xs font-bold px-2 py-0.5 rounded"
                         )}
                     >
                         -{product.discount}%
@@ -60,28 +60,28 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             </div>
 
-            <CardContent className="p-5 flex flex-col flex-1">
+            <CardContent className="p-4 flex flex-col flex-1">
                 {product.category?.name && (
-                    <span className="text-primary font-bold text-xs uppercase tracking-widest mb-1">
+                    <span className="text-primary font-bold text-xs uppercase tracking-widest mb-0.5">
                         {product.category.name}
                     </span>
                 )}
 
                 <h3
                     className={cn(
-                        "font-bold text-lg mb-2 leading-snug group-hover:text-primary transition-colors"
+                        "font-bold text-base mb-1.5 leading-tight line-clamp-2 group-hover:text-primary transition-colors"
                     )}
                 >
                     {product.name}
                 </h3>
 
-                <div className="flex items-center gap-1 text-yellow-400 text-sm mb-4">
+                <div className="flex items-center gap-1 text-yellow-400 text-sm mb-2">
                     {[...Array(5)].map((_, i) => {
                         if (i < fullStars) {
                             return (
                                 <Star
                                     key={i}
-                                    size={16}
+                                    size={14}
                                     className="fill-current text-yellow-400"
                                 />
                             );
@@ -90,7 +90,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             return (
                                 <Star
                                     key={i}
-                                    size={16}
+                                    size={14}
                                     className="fill-current text-yellow-400"
                                 />
                             );
@@ -98,7 +98,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         return (
                             <Star
                                 key={i}
-                                size={16}
+                                size={14}
                                 className="text-gray-300"
                             />
                         );
@@ -108,19 +108,19 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </span>
                 </div>
 
-                <div className="mt-auto pt-2 flex items-center justify-between border-t border-gray-100">
-                    <div className="flex flex-col pt-2">
+                <div className="mt-auto pt-1.5 flex items-center justify-between border-t border-gray-100">
+                    <div className="flex flex-col">
                         {product.discount > 0 ? (
                             <>
                                 <span className="text-gray-400 line-through text-xs">
                                     {formatCurrency(product.price)}
                                 </span>
-                                <span className="text-xl font-bold text-primary">
+                                <span className="text-lg font-bold text-primary">
                                     {formatCurrency(discountedPrice)}
                                 </span>
                             </>
                         ) : (
-                            <span className="text-xl font-bold text-primary">
+                            <span className="text-lg font-bold text-primary">
                                 {formatCurrency(discountedPrice)}
                             </span>
                         )}

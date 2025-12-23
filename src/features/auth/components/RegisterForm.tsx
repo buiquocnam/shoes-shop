@@ -18,7 +18,7 @@ import { registerSchema, type RegisterFormData } from '@/features/auth/schema';
 import { useRegister } from '@/features/auth/hooks';
 import { Spinner } from '@/components/ui/spinner';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { setOtpData } from '@/lib/auth';
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);

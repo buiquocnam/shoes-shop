@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { CategoryType } from "@/features/product/types";
@@ -10,13 +10,12 @@ import {
   useCategories,
   useCreateCategory,
   useUpdateCategory,
-  useDeleteCategory,
 } from "@/features/admin/categories";
 import Loading from "@/features/admin/components/Loading";
 import { Input } from "@/components/ui/input";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { useSearchParams } from "next/navigation";
-import { ConfirmAlert } from "@/features/admin/components";
+import { useSearch } from "@/features/shared/hooks/useSearch";
 
 interface CategoryFilters {
   page?: number;
@@ -28,25 +27,30 @@ const AdminCategoriesPage: React.FC = () => {
   const searchParams = useSearchParams();
   const updateParams = useUpdateParams();
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
-  const [categoryToDelete, setCategoryToDelete] = useState<CategoryType | null>(null);
   const [createFormOpen, setCreateFormOpen] = useState(false);
 
   const page = Number(searchParams.get("page") || 1);
   const size = Number(searchParams.get("size") || 10);
-  const name = searchParams.get("name") || "";
+  const nameFromUrl = searchParams.get("name") || "";
+
+  const handleSearch = useCallback((name?: string) => {
+    updateParams({ name, page: 1 });
+  }, [updateParams]);
+
+  const searchInput = useSearch(nameFromUrl, handleSearch);
+
   const filters: CategoryFilters = React.useMemo(
     () => ({
       page,
       size,
-      name,
+      name: nameFromUrl,
     }),
-    [page, size, name]
+    [page, size, nameFromUrl]
   );
 
   const { data: categories, isLoading } = useCategories(filters);
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
-  const deleteCategoryMutation = useDeleteCategory();
 
   const categoriesData: CategoryType[] = categories || [];
 
@@ -65,20 +69,11 @@ const AdminCategoriesPage: React.FC = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (categoryToDelete) {
-      await deleteCategoryMutation.mutateAsync(categoryToDelete.id);
-      setCategoryToDelete(null);
-    }
-  };
-
   const handleEdit = (category: CategoryType) => {
     setSelectedCategory(category);
   };
 
-  const columns = categoryColumns(handleEdit, (category) => {
-    setCategoryToDelete(category);
-  });
+  const columns = categoryColumns(handleEdit);
 
   if (isLoading) {
     return (
@@ -94,9 +89,9 @@ const AdminCategoriesPage: React.FC = () => {
           <Input
             placeholder="Tìm kiếm tên danh mục..."
             className="w-64"
-            onChange={(e) =>
-              updateParams({ name: e.target.value, page: 1 })
-            }
+            value={searchInput.value}
+            onChange={searchInput.onChange}
+            onKeyDown={(e) => searchInput.onKeyDown(e, (value) => handleSearch(value))}
           />
         </div>
         <CategoryForm
@@ -134,18 +129,6 @@ const AdminCategoriesPage: React.FC = () => {
           open={!!selectedCategory}
           onOpenChange={(open) => {
             if (!open) setSelectedCategory(null);
-          }}
-        />
-      )}
-
-      {/* Delete Alert */}
-      {categoryToDelete && (
-        <ConfirmAlert
-          onConfirm={handleDelete}
-          itemName={categoryToDelete.name}
-          open={!!categoryToDelete}
-          onOpenChange={(open) => {
-            if (!open) setCategoryToDelete(null);
           }}
         />
       )}

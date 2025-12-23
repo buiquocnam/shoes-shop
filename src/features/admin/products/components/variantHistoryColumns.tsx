@@ -3,7 +3,6 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { VariantHistoryItem } from "../types";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/utils/format";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -44,7 +43,6 @@ export const createVariantHistoryColumns = ({
         const size = row.original.size;
         const variant = row.original.variant;
 
-        // Nếu chưa filter theo productId, cho phép click để filter
         const canNavigate = !productId;
 
         const content = (

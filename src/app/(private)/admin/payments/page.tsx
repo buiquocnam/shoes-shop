@@ -28,18 +28,38 @@ const AdminPaymentsPage = () => {
   /** ---------------- fetch ---------------- */
   const { data, isLoading } = usePayments(filters);
 
-  const payments: Payment[] = data?.data || [];
+  const payments: Payment[] = useMemo(
+    () => data?.data || [],
+    [data?.data]
+  );
 
-  const pagination = {
-    currentPage: data?.currentPage || 1,
-    totalPages: data?.totalPages || 1,
-    totalElements: data?.totalElements || 0,
-    pageSize: data?.pageSize || size,
+  const pagination = useMemo(
+    () => ({
+      currentPage: data?.currentPage || 1,
+      totalPages: data?.totalPages || 1,
+      totalElements: data?.totalElements || 0,
+      pageSize: data?.pageSize || size,
+    }),
+    [data?.currentPage, data?.totalPages, data?.totalElements, data?.pageSize, size]
+  );
+
+  // Handlers - không cần useCallback vì components không được memoized
+  const handleViewDetail = (payment: Payment) => {
+    setSelectedPayment(payment);
   };
 
-  const columns = paymentColumns((payment: Payment) => {
-    setSelectedPayment(payment);
-  });
+  const handlePageChange = (newPage: number) => {
+    updateParams({ page: newPage });
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      setSelectedPayment(null);
+    }
+  };
+
+  // columns không cần useMemo vì handleViewDetail logic không thay đổi
+  const columns = paymentColumns(handleViewDetail);
 
   if (isLoading) return <Loading />;
 
@@ -54,7 +74,7 @@ const AdminPaymentsPage = () => {
           columns={columns}
           data={payments}
           pagination={pagination}
-          onPageChange={(newPage) => updateParams({ page: newPage })}
+          onPageChange={handlePageChange}
         />
       </div>
 
@@ -62,9 +82,7 @@ const AdminPaymentsPage = () => {
         <PaymentDetailDialog
           paymentId={selectedPayment.id}
           open={!!selectedPayment}
-          onOpenChange={(open) => {
-            if (!open) setSelectedPayment(null);
-          }}
+          onOpenChange={handleDialogClose}
         />
       )}
     </div>
