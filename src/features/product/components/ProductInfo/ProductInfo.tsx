@@ -1,4 +1,4 @@
-import { Star, ShoppingBag, Truck } from "lucide-react";
+import { Star } from "lucide-react";
 import { ProductDetailType } from "../../types";
 import { formatCurrency } from "@/utils/format";
 import ProductInfoInteractive from "./ProductInfoInteractive";
@@ -17,56 +17,44 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         : originalPrice;
 
     return (
-        <div className="flex flex-col gap-4">
-            {/* Product Header Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                    <ShoppingBag className="w-24 h-24 text-primary transform rotate-12" />
+        <div className="flex flex-col gap-6">
+            <div>
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-gray-900">
+                    {productInfo.name}
+                </h1>
+                <div className="flex items-center gap-3 mb-2">
+                    <span className="text-sm font-bold text-primary uppercase tracking-wider">
+                        {productInfo.brand?.name || "Thương hiệu"}
+                    </span>
+                    {productInfo.category?.name && (
+                        <>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-sm ">
+                                {productInfo.category.name}
+                            </span>
+                        </>
+                    )}
                 </div>
-                
-                <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-2">
-                        <h1 className="text-2xl font-serif lg:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-                            {productInfo.name}
-                        </h1>
-                    </div>
-
-                    <div className="flex items-center space-x-2 mb-4">
-                        <div className="flex text-yellow-400">
-                            {[...Array(5)].map((_, index) => (
-                                <Star
-                                    key={index}
-                                    className={`w-4 h-4 ${
-                                        index < Math.floor(Number(productInfo.averageRating || 0))
-                                            ? "fill-current"
-                                            : "text-gray-300 dark:text-gray-600 fill-gray-300 dark:fill-gray-600"
-                                    }`}
-                                />
-                            ))}
-                        </div>
-                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                            ({productInfo.countSell || 0} đánh giá)
-                        </span>
-                    </div>
-
-                    <div className="flex items-end gap-3 pb-3  dark:border-gray-700">
-                        <span className="text-3xl font-black text-primary">
-                            {formatCurrency(discountedPrice)}
-                        </span>
-                        {discountPercent > 0 && (
-                            <>
-                                <span className="text-base text-gray-600 dark:text-gray-400 line-through mb-1 font-medium">
-                                    {formatCurrency(originalPrice)}
-                                </span>
-                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-primary text-white mb-1 shadow-sm shadow-primary/30">
-                                    -{discountPercent}%
-                                </span>
-                            </>
-                        )}
-                    </div>
-
-                   
+                <div className="flex items-center text-amber-400 text-sm font-medium mb-4">
+                    <Star className="w-[18px] h-[18px] fill-current" />
+                    <span className="text-gray-900 ml-1">
+                        {productInfo.averageRating?.toFixed(1) || "0.0"} ({productInfo.countSell || 0} đánh giá)
+                    </span>
                 </div>
+                <p className="text-gray-600 ">
+                    {productInfo.description || "Không có mô tả"}
+                </p>
+            </div>
+
+            <div className="flex items-end gap-3 pb-6 border-b border-border">
+                <span className="text-4xl font-extrabold text-primary">
+                    {formatCurrency(discountedPrice)}
+                </span>
+                {discountPercent > 0 && (
+                    <span className="text-lg text-gray-600 line-through mb-1.5 font-medium">
+                        {formatCurrency(originalPrice)}
+                    </span>
+                )}
             </div>
 
             {/* Interactive Section */}

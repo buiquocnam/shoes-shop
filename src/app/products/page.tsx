@@ -37,7 +37,7 @@ export default function ProductPage() {
                 {/* Desktop Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 md:gap-8">
                     {/* Desktop Sidebar - Hidden on mobile */}
-                    <aside className="hidden md:block md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-5rem)] md:overflow-y-auto md:overflow-x-hidden">
+                    <aside className="hidden md:block">
                         <Sidebar />
                     </aside>
 

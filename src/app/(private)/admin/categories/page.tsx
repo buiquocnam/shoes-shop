@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { CategoryType } from "@/features/product/types";
@@ -12,10 +12,9 @@ import {
   useUpdateCategory,
 } from "@/features/admin/categories";
 import Loading from "@/features/admin/components/Loading";
-import { Input } from "@/components/ui/input";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { useSearchParams } from "next/navigation";
-import { useSearch } from "@/features/shared/hooks/useSearch";
+import { SearchInput } from "@/features/admin/components/SearchInput";
 
 interface CategoryFilters {
   page?: number;
@@ -37,9 +36,7 @@ const AdminCategoriesPage: React.FC = () => {
     updateParams({ name, page: 1 });
   }, [updateParams]);
 
-  const searchInput = useSearch(nameFromUrl, handleSearch);
-
-  const filters: CategoryFilters = React.useMemo(
+  const filters: CategoryFilters = useMemo(
     () => ({
       page,
       size,
@@ -82,32 +79,34 @@ const AdminCategoriesPage: React.FC = () => {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-semibold text-gray-800">Quản lý danh mục</h1>
-        <div className="flex justify-end gap-2">
-          <Input
-            placeholder="Tìm kiếm tên danh mục..."
-            className="w-64"
-            value={searchInput.value}
-            onChange={searchInput.onChange}
-            onKeyDown={(e) => searchInput.onKeyDown(e, (value) => handleSearch(value))}
-          />
-        </div>
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          Quản lý danh mục
+        </h1>
         <CategoryForm
           onSubmit={handleCreateCategory}
           isLoading={createCategoryMutation.isPending}
           open={createFormOpen}
           onOpenChange={setCreateFormOpen}
           trigger={
-            <Button className="bg-red-700 hover:bg-red-800 font-semibold px-4 py-2 rounded-lg shadow-md">
+            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover">
               + Thêm danh mục
             </Button>
           }
         />
       </div>
 
-      <div className="rounded-xl overflow-hidden">
+      <SearchInput
+        onSearch={handleSearch}
+        defaultValue={nameFromUrl}
+        placeholder="Tìm kiếm tên danh mục..."
+        withContainer
+      />
+
+      {isLoading ? (
+        <Loading />
+      ) : (
         <DataTable
           columns={columns}
           data={categoriesData}
@@ -118,9 +117,8 @@ const AdminCategoriesPage: React.FC = () => {
             pageSize: 10,
           }}
         />
-      </div>
+      )}
 
-      {/* Edit Form */}
       {selectedCategory && (
         <CategoryForm
           category={selectedCategory}

@@ -29,3 +29,31 @@ export const throttle = <T extends (...args: unknown[]) => void>(
   };
 };
 
+/**
+ * Lấy chữ cái đầu của tên người dùng
+ * @param name - Tên người dùng
+ * @returns Chữ cái đầu (2 chữ nếu có họ và tên)
+ */
+export const getInitials = (name: string): string => {
+  const parts = name.split(' ');
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return name[0]?.toUpperCase() || "U";
+};
+
+/**
+ * Lấy màu avatar dựa trên tên người dùng
+ * @param name - Tên người dùng
+ * @returns Object chứa background và text color classes
+ */
+export const getAvatarColor = (name: string): { bg: string; text: string } => {
+  const colors = [
+    { bg: "bg-primary/20", text: "text-primary" },
+    { bg: "bg-blue-500/20", text: "text-blue-600" },
+    { bg: "bg-green-500/20", text: "text-green-600" },
+  ];
+  const index = name.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+

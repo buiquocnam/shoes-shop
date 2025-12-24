@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { Plus, History } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useReducer, useMemo, useRef, useCallback } from "react";
+import { useMemo, useRef, useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
-import { SearchInput } from "@/features/admin/components";
+import { SearchInput } from "@/features/admin/components/SearchInput";
 
 import { columns } from "@/features/admin/products/components/column";
 import { useProducts } from "@/features/product/hooks/useProducts";
@@ -17,43 +17,9 @@ import { PurchasedProductsDialog } from "@/features/admin/products/components/Pu
 import { usePurchasedItemsByProduct } from "@/features/admin/products/hooks/queries/usePurchasedItemsByProduct";
 import { PurchasedItemFilters } from "@/features/profile/types";
 
-type DialogState = {
-  selectedProduct: ProductType | null;
-  currentPage: number;
-};
-
-type DialogAction =
-  | { type: "OPEN"; product: ProductType }
-  | { type: "CLOSE" }
-  | { type: "SET_PAGE"; page: number };
-
-const dialogReducer = (state: DialogState, action: DialogAction): DialogState => {
-  switch (action.type) {
-    case "OPEN":
-      return {
-        selectedProduct: action.product,
-        currentPage: 1, 
-      };
-    case "CLOSE":
-      return {
-        selectedProduct: null,
-        currentPage: 1,
-      };
-    case "SET_PAGE":
-      return {
-        ...state,
-        currentPage: action.page,
-      };
-    default:
-      return state;
-  }
-};
-
 const AdminProductsPage = () => {
-  const [dialogState, dispatchDialog] = useReducer(dialogReducer, {
-    selectedProduct: null,
-    currentPage: 1,
-  });
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
+  const [dialogCurrentPage, setDialogCurrentPage] = useState(1);
 
   const pageSizeRef = useRef(10);
   const pageSize = pageSizeRef.current;
@@ -64,8 +30,8 @@ const AdminProductsPage = () => {
   const size = Number(searchParams.get("size") || 10);
   const nameFromUrl = searchParams.get("name") || "";
 
-  const handleSearch = useCallback((name: string) => {
-    updateParams({ name: name || undefined, page: 1 });
+  const handleSearch = useCallback((name?: string) => {
+    updateParams({ name, page: 1 });
   }, [updateParams]);
 
   const filters: ProductFilters = useMemo(
@@ -94,18 +60,18 @@ const AdminProductsPage = () => {
     [data?.currentPage, data?.totalPages, data?.totalElements, data?.pageSize, size]
   );
 
-  const isDialogOpen = !!dialogState.selectedProduct;
+  const isDialogOpen = !!selectedProduct;
 
   const purchasedItemsFilters: PurchasedItemFilters = useMemo(
     () => ({
-      page: dialogState.currentPage,
+      page: dialogCurrentPage,
       limit: pageSize,
     }),
-    [dialogState.currentPage, pageSize]
+    [dialogCurrentPage, pageSize]
   );
 
   const { data: purchasedItemsData, isLoading: isLoadingPurchasedItems } = usePurchasedItemsByProduct(
-    isDialogOpen ? dialogState.selectedProduct!.id : null,
+    isDialogOpen ? selectedProduct!.id : null,
     isDialogOpen ? purchasedItemsFilters : undefined
   );
 
@@ -114,26 +80,29 @@ const AdminProductsPage = () => {
   }, [updateParams]);
 
   const handleRowClick = useCallback((row: ProductType) => {
-    dispatchDialog({ type: "OPEN", product: row });
+    setSelectedProduct(row);
+    setDialogCurrentPage(1);
   }, []);
 
   const handleDialogClose = (open: boolean) => {
     if (!open) {
-      dispatchDialog({ type: "CLOSE" });
+      setSelectedProduct(null);
+      setDialogCurrentPage(1);
     }
   };
 
   const handleDialogPageChange = (page: number) => {
-    dispatchDialog({ type: "SET_PAGE", page });
+    setDialogCurrentPage(page);
   };
 
   if (isLoading) return <Loading />;
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">Quản lý sản phẩm</h1>
-
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          Quản lý sản phẩm
+        </h1>
         <div className="flex gap-3">
           <Link href="/admin/products/history">
             <Button variant="outline">
@@ -142,7 +111,7 @@ const AdminProductsPage = () => {
             </Button>
           </Link>
           <Link href="/admin/products/new">
-            <Button className="bg-red-700 hover:bg-red-800">
+            <Button className="bg-primary hover:bg-primary-hover">
               <Plus className="mr-2 h-4 w-4" />
               Thêm sản phẩm
             </Button>
@@ -150,28 +119,31 @@ const AdminProductsPage = () => {
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <SearchInput
-          onSearch={handleSearch}
-          defaultValue={nameFromUrl}
-          placeholder="Tìm kiếm tên sản phẩm..."
-        />
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={products}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        onRowClick={handleRowClick}
+      <SearchInput
+        onSearch={handleSearch}
+        defaultValue={nameFromUrl}
+        placeholder="Tìm kiếm tên sản phẩm..."
+        withContainer
       />
-      {dialogState.selectedProduct && (
+
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <DataTable
+          columns={columns}
+          data={products}
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          onRowClick={handleRowClick}
+        />
+      )}
+      {selectedProduct && (
         <PurchasedProductsDialog
           data={purchasedItemsData}
           isLoading={isLoadingPurchasedItems}
           open={isDialogOpen}
           onOpenChange={handleDialogClose}
-          currentPage={dialogState.currentPage}
+          currentPage={dialogCurrentPage}
           onPageChange={handleDialogPageChange}
         />
       )}

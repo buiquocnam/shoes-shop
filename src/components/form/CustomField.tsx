@@ -13,8 +13,10 @@ export const CustomField = <T extends FieldValues>({
     name,
     label,
     className,
+    labelClassName,
     render,
 }: BaseFieldProps<T> & {
+    labelClassName?: string;
     render: (field: { value: any; onChange: (value: any) => void }, fieldState: { invalid: boolean; error?: any }) => ReactNode;
 }) => {
     return (
@@ -23,7 +25,7 @@ export const CustomField = <T extends FieldValues>({
             name={name}
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className={className}>
-                    {label && <FieldLabel>{label}</FieldLabel>}
+                    {label && <FieldLabel className={labelClassName}>{label}</FieldLabel>}
                     {render(field, fieldState)}
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>

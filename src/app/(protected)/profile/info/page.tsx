@@ -5,12 +5,14 @@ import { useAuthStore } from '@/store';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
+import { FieldLabel } from '@/components/ui/field';
+import { CustomField } from '@/components/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useUpdateProfile } from '@/features/profile/hooks/useProfile';
-import { Mail, User, Phone } from 'lucide-react';
+import { Mail, User, Phone, Save, Lock } from 'lucide-react';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Tên phải có ít nhất 2 ký tự'),
@@ -62,102 +64,89 @@ export default function ProfileInfoPage() {
   }
 
   return (
-    <div className="max-w-2xl">
-      <div className="mb-8 p-6 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl border border-primary/20">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center ring-4 ring-primary/10">
-            <User className="w-10 h-10 text-primary" />
-          </div>
-
-          <div className="text-center space-y-2">
-            <h3 className="text-xl font-bold text-gray-900">
-              {user?.name || 'Chưa có'}
-            </h3>
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-2 text-gray-600">
-                <Mail className="w-4 h-4 text-gray-400 shrink-0" />
-                <span className="text-sm">{user?.email || 'Chưa có'}</span>
-              </div>
-              {user?.phone && (
-                <div className="flex items-center justify-center gap-2 text-gray-600">
-                  <Phone className="w-4 h-4 text-gray-400 shrink-0" />
-                  <span className="text-sm">{user.phone}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Edit Form */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Chỉnh sửa thông tin</h3>
+    <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden p-6">
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-6">Chỉnh sửa hồ sơ</h1>
+      {/* Form */}
+      <div className=" space-y-10">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Email - Read only */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  value={user?.email || ''}
-                  disabled
-                  className="bg-gray-50 cursor-not-allowed pl-10"
-                />
-              </div>
-              <p className="text-xs text-gray-500">Email không thể thay đổi</p>
-            </div>
-
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
             {/* Name */}
-            <FormField
+            <CustomField
               control={form.control}
               name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tên</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Nhập tên của bạn"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              label="Tên người dùng"
+              className="md:col-span-1"
+              render={(field) => (
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+                  <Input
+                    placeholder="Nhập tên của bạn"
+                    className="h-12 pl-11 pr-4 rounded-full"
+                    {...field}
+                  />
+                </div>
               )}
             />
 
             {/* Phone */}
-            <FormField
+            <CustomField
               control={form.control}
               name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Số điện thoại</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Nhập số điện thoại"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              label="Số điện thoại"
+              className="md:col-span-1"
+              render={(field) => (
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+                  <Input
+                    placeholder="Nhập số điện thoại"
+                    type="tel"
+                    className="h-12 pl-11 pr-4 rounded-full"
+                    {...field}
+                  />
+                </div>
               )}
             />
 
-            {/* Submit Button */}
-            <div className="flex gap-3 pt-4">
+            {/* Email - Read only */}
+            <div className="space-y-2 md:col-span-2">
+              <FieldLabel >Email</FieldLabel>
+              <div className="relative opacity-70">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+                <Input
+                  value={user?.email || ''}
+                  disabled
+                  type="email"
+                  className="h-12 pl-11 pr-11 rounded-full cursor-not-allowed"
+                />
+                <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="md:col-span-2 flex flex-col-reverse sm:flex-row gap-4 sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => form.reset()}
+                className="px-8 py-3 rounded-full m:w-auto w-full font-bold text-sm transition-colors"
+              >
+                Hủy
+              </Button>
               <Button
                 type="submit"
                 disabled={isPending}
-                className="flex-1"
+                className="px-8 py-3 rounded-full m:w-auto w-full font-bold text-sm transition-all flex items-center justify-center gap-2"
               >
                 {isPending ? (
                   <>
-                    <Spinner className="h-4 w-4 mr-2" />
-                    Đang cập nhật...
+                    <Spinner className="h-4 w-4" />
+                    Đang lưu...
                   </>
                 ) : (
-                  'Cập nhật thông tin'
+                  <>
+                    <Save className="w-[18px] h-[18px]" />
+                    Lưu thay đổi
+                  </>
                 )}
               </Button>
             </div>

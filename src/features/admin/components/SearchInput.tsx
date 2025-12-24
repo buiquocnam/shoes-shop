@@ -1,50 +1,61 @@
 "use client";
 
 import { useState, useEffect, memo } from "react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/features/shared/hooks/useDebounce";
 
 interface SearchInputProps {
-  onSearch: (value: string) => void;
+  onSearch: (value?: string) => void;
   defaultValue?: string;
   placeholder?: string;
   className?: string;
+  withContainer?: boolean;
 }
 
 export const SearchInput = memo(function SearchInput({
   onSearch,
   defaultValue = "",
   placeholder = "Tìm kiếm...",
-  className = "w-64",
+  className,
+  withContainer = false,
 }: SearchInputProps) {
   const [value, setValue] = useState(defaultValue);
-  const debounced = useDebounce(value, 500);
 
   useEffect(() => {
     setValue(defaultValue);
   }, [defaultValue]);
 
-  useEffect(() => {
-    if (debounced !== defaultValue) {
-      onSearch(debounced);
-    }
-  }, [debounced, defaultValue, onSearch]);
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      onSearch(value);
+      onSearch(value || undefined);
     }
+    
   };
 
-  return (
-    <Input
-      placeholder={placeholder}
-      className={className}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onKeyDown={handleKeyDown}
-    />
+  const input = (
+    <div className={`relative ${className || "w-full max-w-md"}`}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+      <Input
+        placeholder={placeholder}
+        className="h-10 w-full rounded-lg bg-white pl-10 pr-4 text-sm placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+    </div>
   );
+
+  if (withContainer) {
+    return (
+      <div className="grid gap-4 rounded-xl bg-white p-4 shadow-sm md:flex md:items-center md:justify-between">
+        <div className="flex flex-1 items-center gap-3">
+          {input}
+        </div>
+      </div>
+    );
+  }
+
+  return input;
 });
 

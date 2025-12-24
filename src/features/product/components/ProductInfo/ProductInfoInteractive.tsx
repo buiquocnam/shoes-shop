@@ -11,70 +11,13 @@ import { useIsAuthenticated } from "@/store/useAuthStore";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { setCheckoutItems } from "@/features/checkout/utils/checkoutStorage";
 import { AddToCartRequest } from "@/features/cart/types";
-import { Minus, Plus, Check, Ruler, ShoppingCart, Zap, FileText } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/utils/format";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { ShoppingCart, Zap, Minus, Plus } from "lucide-react";
 
 interface ProductInfoInteractiveProps {
   product: ProductDetailType;
 }
 
 
-const QuantitySelector = ({
-  quantity,
-  setQuantity,
-  maxStock,
-}: {
-  quantity: number;
-  setQuantity: (q: number) => void;
-  maxStock: number;
-}) => (
-  <div className="flex items-center border border-input rounded-lg overflow-hidden bg-background w-fit shadow-sm">
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-      disabled={maxStock <= 0}
-      className="h-8 w-8 rounded-none"
-      aria-label="Giảm số lượng"
-    >
-      <Minus className="w-4 h-4" />
-    </Button>
-
-    <Input
-      type="text"
-      value={quantity}
-      onChange={(e) => {
-        const val = Number(e.target.value);
-        if (!isNaN(val) && val >= 1 && val <= maxStock) {
-          setQuantity(val);
-        }
-      }}
-      className="w-10 text-center border-none font-inter text-foreground bg-transparent font-bold text-sm"
-      min={1}
-      max={maxStock}
-    />
-    
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
-      disabled={quantity >= maxStock || maxStock <= 0}
-      className="h-8 w-8 rounded-none"
-      aria-label="Tăng số lượng"
-    >
-      <Plus className="w-4 h-4" />
-    </Button>
-  </div>
-);
 
 /**
  * Component button để chọn size - hiển thị cả size hết hàng
@@ -95,10 +38,21 @@ const SizeButton = ({
   if (isOutOfStock) {
     return (
       <Button
-        variant="outline"
-        size="sm"
         disabled
-        className="px-3 py-1.5 text-xs font-medium rounded-lg border-dashed opacity-50 cursor-not-allowed"
+        variant="outline"
+        className="h-10 min-w-[3.5rem] px-2 rounded-xl border border-border bg-border text-gray-600 opacity-50 cursor-not-allowed line-through text-sm"
+      >
+        {size}
+      </Button>
+    );
+  }
+
+  if (isSelected) {
+    return (
+      <Button
+        onClick={onSelect}
+        variant="outline"
+        className="h-10 min-w-[3.5rem] px-2 rounded-xl border-2 border-primary bg-primary/10 text-primary font-bold text-sm hover:shadow-md"
       >
         {size}
       </Button>
@@ -107,13 +61,9 @@ const SizeButton = ({
 
   return (
     <Button
-      variant={isSelected ? "default" : "outline"}
-      size="sm"
       onClick={onSelect}
-      className={cn(
-        "px-3 py-1.5 text-xs font-medium rounded-lg",
-        isSelected && "font-bold shadow-md shadow-primary/30"
-      )}
+      variant="outline"
+      className="h-10 min-w-[3.5rem] px-2 rounded-xl border-2 border-border text-gray-900 font-medium text-sm bg-white"
     >
       {size}
     </Button>
@@ -169,23 +119,13 @@ export default function ProductInfoInteractive({
 
   const stock = selectedData?.size.stock || 0;
   const canPurchase = !!selectedData && stock > 0 && quantity > 0;
+  const maxQuantity = Math.min(stock, 10); // Giới hạn tối đa 10 sản phẩm
 
   // Tính giá sau giảm
   const discountPercent = productInfo.discount || 0;
   const discountedPrice = discountPercent > 0 
     ? productInfo.price - (productInfo.price * discountPercent) / 100 
     : productInfo.price;
-  const totalPrice = discountedPrice * quantity;
-
-  // Khi đổi variant, tự động chọn size đầu tiên còn hàng
-  const handleVariantChange = (variantId: string) => {
-    setSelectedVariantId(variantId);
-    const variant = variants.find((v) => v.id === variantId);
-    const firstInStock = variant?.sizes.find((s) => s.stock > 0);
-    if (firstInStock) {
-      setSelectedSizeId(firstInStock.id);
-    }
-  };
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -193,7 +133,6 @@ export default function ProductInfoInteractive({
       return;
     }
     if (!canPurchase || !selectedData) return;
-    console.log(selectedData);
     createCart({ varianSizeId: selectedSizeId, quantity } as AddToCartRequest);
   };
 
@@ -204,8 +143,6 @@ export default function ProductInfoInteractive({
     }
     if (!canPurchase || !selectedData) return;
 
-    const discountPercent = productInfo.discount || 0;
-    const discountedPrice = productInfo.price - (productInfo.price * discountPercent) / 100;
     const totalPrice = discountedPrice * quantity;
 
     const productImage = listImg?.find((img) => img.isPrimary)?.url || productInfo.imageUrl?.url || "";
@@ -236,8 +173,8 @@ export default function ProductInfoInteractive({
 
   if (variants.length === 0 || !firstAvailableVariant) {
     return (
-      <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-        <span className="inline-block text-sm font-bold text-primary-foreground uppercase bg-destructive px-3 py-1.5 rounded-md">
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+        <span className="inline-block text-sm font-bold text-white uppercase bg-red-600 px-3 py-1.5 rounded-md">
           Hết hàng
         </span>
       </div>
@@ -247,127 +184,97 @@ export default function ProductInfoInteractive({
   return (
     <>
       {/* Variants and Sizes Selection */}
-      <div className="bg-card rounded-2xl p-4 shadow-sm border border-border space-y-4">
-          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
-            Tuỳ chọn
-          </h3>
-
-        <div className="space-y-4">
-          {variants.map((variant) => {
-            const isSelected = selectedVariantId === variant.id;
-            const hasAvailableSizes = variant.sizes.some((s) => s.stock > 0);
-            const selectedSize = variant.sizes.find((s) => s.id === selectedSizeId);
-            
-            return (
-              <div
-                key={variant.id}
-                className={cn(
-                  "flex items-start gap-4 p-3 rounded-2xl transition-colors border",
-                  isSelected
-                    ? "hover:bg-accent border-border"
-                    : "hover:bg-accent/50 border-transparent opacity-80 hover:opacity-100"
-                )}
-              >
-                <div className="flex-shrink-0 mt-1">
-                  <div
-                    className={cn(
-                      "w-8 h-8 rounded-full border shadow-sm flex items-center justify-center",
-                      isSelected
-                        ? "bg-primary border-border ring-2 ring-offset-2 ring-primary"
-                        : "bg-background border-border"
-                    )}
-                    style={isSelected ? {} : { backgroundColor: variant.color }}
-                  >
-                    {isSelected && (
-                      <Check className="w-3 h-3 text-primary-foreground" />
-                    )}
-                  </div>
-                  <div className={cn(
-                    "text-xs text-center mt-1 font-semibold",
-                    isSelected ? "text-primary" : "text-muted-foreground"
-                  )}>
-                    {variant.color}
-                  </div>
-                </div>
-                
-                <div className="flex-grow">
-                  <div className="flex flex-wrap gap-2">
-                    {variant.sizes.map((size) => (
-                      <SizeButton
-                        key={size.id}
-                        size={size.size}
-                        stock={size.stock}
-                        isSelected={isSelected && selectedSizeId === size.id}
-                        onSelect={() => {
-                          if (size.stock > 0) {
-                            setSelectedVariantId(variant.id);
-                            setSelectedSizeId(size.id);
-                          }
-                        }}
-                      />
-                    ))}
-                  </div>
-                  {isSelected && selectedSize && selectedSize.stock > 0 && (
-                    <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                      Size {selectedSize.size} còn hàng
-                    </div>
-                  )}
-                </div>
+      <div className="flex flex-col gap-6">
+        {variants.map((variant) => {
+          const isSelected = selectedVariantId === variant.id;
+          
+          return (
+            <div key={variant.id} className="flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <span className={cn(
+                  "font-bold text-sm uppercase",
+                  isSelected ? "text-gray-900" : "text-gray-400"
+                )}>
+                  {variant.color.toUpperCase()}
+                </span>
               </div>
-            );
-          })}
-        </div>
+              <div className="flex flex-wrap gap-2">
+                {variant.sizes.map((size) => (
+                  <SizeButton
+                    key={size.id}
+                    size={size.size}
+                    stock={size.stock}
+                    isSelected={isSelected && selectedSizeId === size.id}
+                    onSelect={() => {
+                      if (size.stock > 0) {
+                        setSelectedVariantId(variant.id);
+                        setSelectedSizeId(size.id);
+                        setQuantity(1); // Reset quantity khi đổi size
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Quantity and Add to Cart */}
-        <div className="pt-4 mt-2 border-t border-border">
-          <div className="flex items-center gap-4 mb-4">
-            <QuantitySelector
-              quantity={quantity}
-              setQuantity={setQuantity}
-              maxStock={stock}
-            />
-            <div className="flex-1">
+      {/* Stock Info and Quantity Selector */}
+      {selectedData && (
+        <div className="flex flex-col gap-3">
+          <div className="text-sm text-gray-600">
+            <span className="font-medium">Số lượng còn lại: </span>
+            <span className="font-bold">
+              {stock} sản phẩm
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="font-bold text-sm uppercase text-gray-600">Số lượng:</span>
+            <div className="flex items-center gap-2 border-2 border-[#f4ebe7] rounded-xl">
               <Button
-                onClick={handleAddToCart}
-                disabled={!canPurchase}
-                className="w-full py-2.5 px-4 text-sm font-bold rounded-xl shadow-lg shadow-primary/30"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={quantity <= 1}
+                variant="ghost"
+                size="icon"
               >
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Thêm vào giỏ - {formatCurrency(totalPrice)}
+                <Minus className="w-4 h-4" />
+              </Button>
+              <span className="w-12 text-center font-bold text-gray-900">{quantity}</span>
+              <Button
+                onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
+                disabled={quantity >= maxQuantity}
+                variant="ghost"
+                size="icon"
+              >
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="mt-4 flex flex-col gap-4">
+        <div className="flex gap-4">
+          <Button
+            onClick={handleAddToCart}
+            disabled={!canPurchase}
+            className="flex-1 border-2 border-primary bg-transparent text-primary hover:bg-primary/5 font-bold text-lg h-14 rounded-2xl transition-all flex items-center justify-center gap-2"
+          >
+            <ShoppingCart className="w-5 h-5" />
+            Thêm vào giỏ hàng
+          </Button>
           <Button
             onClick={handleBuy}
             disabled={!canPurchase}
-            variant="outline"
-            className="w-full py-2.5 px-4 text-sm font-bold rounded-xl border-2 border-primary"
+            className="flex-1 bg-primary hover:bg-primary-hover text-white font-bold text-lg h-14 rounded-2xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
           >
-            <Zap className="w-4 h-4 mr-2" />
-            Mua ngay
+            <Zap className="w-5 h-5" />
+            Mua Ngay
           </Button>
         </div>
       </div>
-
-      {/* Product Description Accordion */}
-        <Accordion type="single" collapsible defaultValue="description" className="w-full bg-white  border border-gray-100 shadow-lg rounded-2xl">
-          <AccordionItem value="description" className="border-none ">
-            <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-accent">
-              <span className="uppercase tracking-wider flex items-center gap-2 text-xs font-bold">
-                <FileText className="w-4 h-4 text-primary" />
-                Mô tả sản phẩm
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="text-muted-foreground text-sm leading-relaxed">
-                <p className="mb-4 whitespace-pre-line">
-                  {productInfo.description || "Không có mô tả cho sản phẩm này."}
-                </p>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
 
       <AlertLogin open={showLoginDialog} onOpenChange={setShowLoginDialog} />
     </>

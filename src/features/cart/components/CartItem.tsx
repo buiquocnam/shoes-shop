@@ -3,148 +3,92 @@
 import { CartType } from '@/features/cart/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
-import { TableRow, TableCell } from '@/components/ui/table';
-import { useUpdateCartItem, useRemoveCartItem } from '../hooks/useCart';
-import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
 
 interface CartItemProps {
     item: CartType;
+    updateQuantity: (id: string, size: number, delta: number) => void;
+    remove: (id: string) => void;
 }
 
-export function CartItem({ item }: CartItemProps) {
-    const { mutate: updateItem, isPending: isUpdating } = useUpdateCartItem();
-    const { mutate: removeItem, isPending: isRemoving } = useRemoveCartItem();
+export function CartItem({ item, updateQuantity, remove }: CartItemProps) {
     const router = useRouter();
 
     const discountedPrice =
         item.product.price - (item.product.price * (item.product.discount || 0)) / 100;
     const itemTotal = discountedPrice * item.quantity;
 
-    const handleQuantityChange = async (newQuantity: number) => {
-        if (newQuantity < 1 || newQuantity > item.variant.stock) return;
-        if (newQuantity === item.quantity) return;
-
-        updateItem({ itemId: item.id, quantity: newQuantity });
-    };
-
-    const handleRemove = async () => {
-        removeItem(item.id);
-    };
-
     const handleProductClick = () => {
         router.push(`/products/${item.product.id}`);
     };
 
     return (
-        <TableRow className="hover:bg-muted/50 transition-colors">
-            <TableCell className="py-6">
-                <div className="flex items-center gap-4">
-                    <div
-                        className="relative h-24 w-24 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-border bg-muted transition-colors hover:border-primary"
+        <div className="flex flex-col md:grid md:grid-cols-12 gap-6 items-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="col-span-6 flex items-center gap-6 w-full">
+                <div
+                    className="relative size-28 shrink-0 cursor-pointer overflow-hidden rounded-xl bg-slate-100 transition-colors hover:border-primary border border-transparent"
+                    onClick={handleProductClick}
+                >
+                    <Image
+                        src={item.product.imageUrl?.url || '/images/no-image.png'}
+                        alt={item.product.name}
+                        fill
+                        unoptimized
+                        className="object-contain p-2"
+                        sizes="112px"
+                    />
+                </div>
+                <div>
+                    <h3 
+                        className="text-lg font-bold cursor-pointer hover:text-primary transition-colors"
                         onClick={handleProductClick}
                     >
-                        <Image
-                            src={item.product.imageUrl?.url || '/images/no-image.png'}
-                            alt={item.product.name}
-                            fill
-                            unoptimized
-                            className="object-cover"
-                            sizes="96px"
-                        />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                        <h3
-                            className="mb-2 line-clamp-2 cursor-pointer font-semibold transition-colors hover:text-primary"
-                            onClick={handleProductClick}
-                        >
-                            {item.product.name}
-                        </h3>
-                        <div className="space-y-1 text-sm text-muted-foreground">
-                            <p>
-                                Màu: <span className="font-medium text-foreground">{item.variant.color}</span>
-                            </p>
-                            <p>
-                                Size: <span className="font-medium text-foreground">{item.variant.sizeLabel}</span>
-                            </p>
-                        </div>
-                    </div>
+                        {item.product.name}
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                        {item.variant.color} • Size {item.variant.sizeLabel}
+                    </p>
                 </div>
-            </TableCell>
-
-            <TableCell className="text-center py-6">
-                <div className="flex flex-col items-center gap-1">
-                    <span className="font-semibold">{formatCurrency(discountedPrice)}</span>
-                    {item.product.discount > 0 && (
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground line-through">
-                                {formatCurrency(item.product.price)}
-                            </span>
-                            <Badge variant="default" className="text-xs">
-                                -{item.product.discount}%
-                            </Badge>
-                        </div>
-                    )}
+            </div>
+            <div className="col-span-3 flex justify-center">
+                <div className="flex items-center border border-slate-200 rounded-lg">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => updateQuantity(item.id, Number(item.variant.sizeLabel), -1)}
+                        disabled={item.quantity <= 1}
+                        className="w-8 h-8 rounded-none border-r border-slate-200"
+                    >
+                        <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-10 text-center font-bold">{item.quantity}</span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => updateQuantity(item.id, Number(item.variant.sizeLabel), 1)}
+                        disabled={item.quantity >= item.variant.stock}
+                        className="w-8 h-8 rounded-none border-l border-slate-200"
+                    >
+                        <Plus className="h-4 w-4" />
+                    </Button>
                 </div>
-            </TableCell>
-
-            <TableCell className="text-center py-6">
-                <div className="flex flex-col items-center gap-2">
-                    <div className="flex items-center gap-1 rounded-lg border border-border bg-background">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleQuantityChange(item.quantity - 1)}
-                            disabled={isUpdating || item.quantity <= 1}
-                            className="h-9 w-9 rounded-r-none"
-                        >
-                            <Minus className="h-4 w-4" />
-                        </Button>
-                        <Input
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => handleQuantityChange(Number(e.target.value))}
-                            className="w-10 h-full text-center border-none shadow-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
-                            min={1}
-                            max={item.variant.stock}
-                        />
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleQuantityChange(item.quantity + 1)}
-                            disabled={isUpdating || item.quantity >= item.variant.stock}
-                            className="h-9 w-9 rounded-l-none"
-                        >
-                            <Plus className="h-4 w-4" />
-                        </Button>
-                    </div>
-                    {item.quantity >= item.variant.stock && (
-                        <p className="text-xs font-medium text-destructive">Tối đa</p>
-                    )}
-                </div>
-            </TableCell>
-
-            <TableCell className="text-right py-6">
-                <span className="text-lg font-bold">{formatCurrency(itemTotal)}</span>
-            </TableCell>
-
-            <TableCell className="text-right py-6">
+            </div>
+            <div className="col-span-2 text-right font-extrabold text-lg">
+                {formatCurrency(itemTotal)}
+            </div>
+            <div className="col-span-1 flex justify-end">
                 <Button
                     variant="ghost"
                     size="icon"
-                    onClick={handleRemove}
-                    disabled={isRemoving}
-                    className="h-9 w-9 hover:text-primary hover:bg-primary/10"
-                    title="Xóa sản phẩm"
+                    onClick={() => remove(item.id)}
+                    className="text-slate-400 hover:text-red-500 h-9 w-9"
                 >
                     <Trash2 className="h-4 w-4" />
                 </Button>
-            </TableCell>
-        </TableRow>
+            </div>
+        </div>
     );
 }
 

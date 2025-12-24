@@ -64,19 +64,21 @@ const AdminPaymentsPage = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">Quản lý thanh toán</h1>
-      </div>
+    <div className="p-4 md:p-8 space-y-6">
+      <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        Quản lý thanh toán
+      </h1>
 
-      <div className="rounded-lg ">
+      {isLoading ? (
+        <Loading />
+      ) : (
         <DataTable
           columns={columns}
           data={payments}
           pagination={pagination}
           onPageChange={handlePageChange}
         />
-      </div>
+      )}
 
       {selectedPayment && (
         <PaymentDetailDialog

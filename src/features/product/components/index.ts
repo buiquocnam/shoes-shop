@@ -7,3 +7,4 @@ export { default as Sidebar } from "./Sidebar";
 export { default as AlertLogin } from "./AlertLogin";
 export { default as ProductList } from "./ProductList";
 export { default as ProductListLoading } from "./ProductList/ProductListLoading";
+export { default as SortSelect } from "./SortSelect";

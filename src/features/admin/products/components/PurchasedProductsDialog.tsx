@@ -14,7 +14,7 @@ import { formatCurrency } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { OrderDetailDialog } from "@/features/admin/components/OrderDetailDialog";
+import { OrderDetailDialog } from "@/features/shared";
 import {
   Pagination,
   PaginationContent,
@@ -190,6 +190,7 @@ export function PurchasedProductsDialog({
         onOpenChange={(open) => {
           if (!open) setSelectedOrderId(null);
         }}
+        apiType="admin"
       />
     </>
   );

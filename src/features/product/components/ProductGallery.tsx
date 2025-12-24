@@ -17,10 +17,9 @@ import { Button } from "@/components/ui/button";
 
 interface ProductGalleryProps {
   images: ImageType[];
-  isNew?: boolean;
 }
 
-export default function ProductGallery({ images, isNew = false }: ProductGalleryProps) {
+export default function ProductGallery({ images }: ProductGalleryProps) {
   const [current, setCurrent] = React.useState(0);
   const apiRef = React.useRef<CarouselApi | null>(null);
 
@@ -31,7 +30,7 @@ export default function ProductGallery({ images, isNew = false }: ProductGallery
   if (!images || images.length === 0 || imageUrls.length === 0) {
     return (
       <div className="w-full flex flex-col items-center">
-        <div className="relative w-full max-w-md aspect-[4/3] border rounded-2xl overflow-hidden bg-muted flex items-center justify-center">
+        <div className="relative w-full max-w-md aspect-square border rounded-2xl overflow-hidden bg-muted flex items-center justify-center">
           <p className="text-muted-foreground">Không có hình ảnh</p>
         </div>
       </div>
@@ -42,9 +41,9 @@ export default function ProductGallery({ images, isNew = false }: ProductGallery
   const hasMoreImages = imageUrls.length > 4;
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-2 w-full">
       {/* Main Image */}
-      <div className="relative group bg-card rounded-3xl p-2 shadow-lg overflow-hidden border border-border">
+      <div className="relative group bg-card rounded-xl p-1 shadow-sm overflow-hidden border border-border">
         <Carousel
           opts={{ loop: true }}
           setApi={(api) => {
@@ -59,7 +58,7 @@ export default function ProductGallery({ images, isNew = false }: ProductGallery
           <CarouselContent>
             {imageUrls.map((img, i) => (
               <CarouselItem key={i}>
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-muted">
+                <div className="relative aspect-square rounded-lg overflow-hidden bg-muted max-w-md mx-auto">
                   <Image
                     src={img}
                     alt={`product-image-${i}`}
@@ -74,25 +73,17 @@ export default function ProductGallery({ images, isNew = false }: ProductGallery
 
           {imageUrls.length > 1 && (
             <>
-              <CarouselPrevious className="left-4 bg-background/80 backdrop-blur-md hover:bg-background border border-border/20 shadow-lg" />
-              <CarouselNext className="right-4 bg-background/80 backdrop-blur-md hover:bg-background border border-border/20 shadow-lg" />
+              <CarouselPrevious className="left-2 bg-background/80 backdrop-blur-md hover:bg-background border border-border/20 shadow-md" />
+              <CarouselNext className="right-2 bg-background/80 backdrop-blur-md hover:bg-background border border-border/20 shadow-md" />
             </>
           )}
         </Carousel>
 
-        {/* Badge "Mới nhất" */}
-        {isNew && (
-          <div className="absolute top-4 left-4">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-md backdrop-blur-sm bg-opacity-90">
-              Mới nhất
-            </span>
-          </div>
-        )}
 
       </div>
 
       {/* Thumbnails Grid */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-wrap justify-center gap-2">
         {displayedThumbnails.map((img, i) => (
           <button
             key={i}
@@ -101,9 +92,9 @@ export default function ProductGallery({ images, isNew = false }: ProductGallery
               apiRef.current?.scrollTo(i);
             }}
             className={cn(
-              "relative rounded-2xl overflow-hidden border-2 aspect-square shadow-md transition-transform hover:scale-105",
+              "relative rounded-lg overflow-hidden border-2 aspect-square shadow-xs transition-transform hover:scale-105 w-26 h-26",
               current === i
-                ? "border-primary ring-2 ring-primary/20"
+                ? "border-primary ring-1 ring-primary/20"
                 : "border-transparent hover:border-border"
             )}
           >
@@ -119,7 +110,7 @@ export default function ProductGallery({ images, isNew = false }: ProductGallery
         
         {/* More Images Button */}
         {hasMoreImages && (
-          <button className="relative rounded-2xl overflow-hidden border-2 border-transparent hover:border-border aspect-square transition-all bg-muted flex items-center justify-center text-muted-foreground hover:bg-accent">
+          <button className="relative rounded-lg overflow-hidden border-2 border-transparent hover:border-border aspect-square transition-all bg-muted flex items-center justify-center text-muted-foreground hover:bg-accent w-20 h-20">
             <MoreHorizontal className="w-6 h-6" />
           </button>
         )}

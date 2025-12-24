@@ -1,8 +1,9 @@
 'use client';
 
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import Link from "next/link";
-import { usePathname} from "next/navigation";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+
 export function Footer() {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
@@ -11,52 +12,20 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-gray-200/50 ">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Contact Us */}
-          <div>
-            <h3 className="font-bold text-lg mb-2">Liên hệ với chúng tôi</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Số 123, Đường ABC, Quận XYZ, TP. HCM
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Email: support@shoeshop.com
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Điện thoại: (123) 456-7890
-            </p>
+    <footer className="bg-gray-900 text-gray-300 py-12 border-t border-gray-800 mt-auto">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              width={100}
+              height={33}
+              className="h-8 w-auto object-contain"
+              unoptimized
+            />
           </div>
-
-          {/* Follow Us */}
-          <div className="justify-self-center text-center">
-            <h3 className="font-bold text-lg mb-2">Theo dõi chúng tôi</h3>
-            <div className="flex space-x-4">
-              <Link
-                className="text-gray-500 hover:text-primary "
-                href="#"
-              >
-                <Facebook className="w-6 h-6" />
-              </Link>
-              <Link
-                className="text-gray-500 hover:text-primary "
-                href="#"
-              >
-                <Twitter className="w-6 h-6" />
-              </Link>
-              <Link
-                className="text-gray-500 hover:text-primary "
-                href="#"
-              >
-                <Instagram className="w-6 h-6" />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Copyright */}
-        <div className="mt-8 border-t border-gray-200/50 dark:border-gray-700/50 pt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>© 2025 Shoe Shop. All rights reserved.</p>
+          <p className="text-sm text-gray-500">© 2024 Cửa hàng giày KICKS. Đã đăng ký bản quyền.</p>
         </div>
       </div>
     </footer>

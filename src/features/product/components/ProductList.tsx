@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import ProductCard from "./ProductCard";
+import SortSelect from "./SortSelect";
 import type { ProductFilters } from "../types";
 import {
     Pagination,
@@ -13,9 +14,8 @@ import {
     PaginationPrevious,
     PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { Spinner } from "@/components/ui/spinner";
-import { HomeLoading } from "@/features/home/components";
 import { getPageNumbers, createPaginationUrl } from "@/utils/pagination";
+import ProductListLoading from "./ProductList/ProductListLoading";
 
 export default function ProductList() {
     const searchParams = useSearchParams();
@@ -28,7 +28,7 @@ export default function ProductList() {
         search: searchParams.get('search') || undefined,
         min_price: searchParams.get('min_price') ? Number(searchParams.get('min_price')) : undefined,
         max_price: searchParams.get('max_price') ? Number(searchParams.get('max_price')) : undefined,
-        sort_by: searchParams.get('sort_by') || undefined,
+        sort_by: searchParams.get('sort_by') || 'countSell', // Default to "countSell"
         sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || undefined,
     };
 
@@ -38,15 +38,15 @@ export default function ProductList() {
     const totalPages = products?.totalPages || 1;
 
     if (isLoading) {
-        return <HomeLoading />;
+        return <ProductListLoading />;
     }
 
     if (productList.length === 0) {
         return (
             <div className="w-full flex items-center justify-center py-16">
                 <div className="text-center">
-                    <p className="text-lg font-medium mb-2">No products found</p>
-                    <p className="text-sm text-muted-foreground">Try adjusting your filters</p>
+                    <p className="text-lg font-medium mb-2 text-gray-900">Không tìm thấy sản phẩm</p>
+                    <p className="text-sm text-gray-600">Thử điều chỉnh bộ lọc của bạn</p>
                 </div>
             </div>
         );
@@ -54,7 +54,15 @@ export default function ProductList() {
 
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight mb-1">Sản phẩm</h1>
+                </div>
+                <div className="flex items-center gap-3">
+                    <SortSelect />
+                </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 {productList.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}

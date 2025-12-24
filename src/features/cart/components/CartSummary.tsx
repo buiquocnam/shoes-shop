@@ -2,8 +2,6 @@
 
 import { CartResponse } from '@/features/cart/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import { CheckoutItem } from '@/features/checkout/types/checkout';
@@ -15,6 +13,10 @@ interface CartSummaryProps {
 
 export function CartSummary({ cart }: CartSummaryProps) {
     const router = useRouter();
+
+    const subtotal = cart.totalPrice;
+    const tax = subtotal * 0.08;
+    const total = subtotal + tax;
 
     const handleCheckout = () => {
         const checkoutItems: CheckoutItem[] = cart.items.map((item) => {
@@ -48,44 +50,33 @@ export function CartSummary({ cart }: CartSummaryProps) {
     };
 
     return (
-        <div className="sticky top-4">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tóm tắt đơn hàng</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-3">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Sản phẩm ({cart.count})</span>
-                            <span className="font-semibold">{formatCurrency(cart.totalPrice)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Vận chuyển</span>
-                            <span className="font-semibold text-green-600 dark:text-green-400">Miễn phí</span>
-                        </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold">Tổng cộng</span>
-                        <span className="text-2xl font-bold">{formatCurrency(cart.totalPrice)}</span>
-                    </div>
-
-                    <Button
-                        onClick={handleCheckout}
-                        className="w-full h-12"
-                        size="lg"
-                        disabled={cart.count === 0}
-                    >
-                        Tiến hành thanh toán
-                    </Button>
-
-                    <p className="text-xs text-center text-muted-foreground">
-                        Bạn sẽ không bị tính phí cho đến bước tiếp theo
-                    </p>
-                </CardContent>
-            </Card>
+        <div className="sticky top-24 bg-white rounded-3xl border border-slate-200 p-8 shadow-xl shadow-slate-200/50">
+            <h2 className="text-xl font-bold mb-6 border-b pb-4">Order Summary</h2>
+            <div className="space-y-4 mb-8">
+                <div className="flex justify-between text-slate-600">
+                    <span className="text-sm">Subtotal</span>
+                    <span className="font-bold">{formatCurrency(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                    <span className="text-sm">Shipping</span>
+                    <span className="font-bold text-primary">Free</span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                    <span className="text-sm">Estimated Tax</span>
+                    <span className="font-bold">{formatCurrency(tax)}</span>
+                </div>
+            </div>
+            <div className="border-t pt-6 mb-8 flex justify-between items-end">
+                <span className="text-lg font-bold">Total</span>
+                <span className="text-3xl font-extrabold text-primary">{formatCurrency(total)}</span>
+            </div>
+            <Button
+                onClick={handleCheckout}
+                className="w-full bg-primary text-center text-white font-extrabold text-lg py-4 rounded-xl shadow-lg hover:shadow-primary/50 transition-all"
+                disabled={cart.count === 0}
+            >
+                Checkout Now
+            </Button>
         </div>
     );
 }

@@ -1,7 +1,9 @@
 export {
   HeroBanner,
   HomeSection,
-  HomeLoading,
+  HomeSectionSkeleton,
   BrandList,
   BrandListSkeleton,
+  CategorySection,
+  CategorySectionSkeleton,
 } from "./components";

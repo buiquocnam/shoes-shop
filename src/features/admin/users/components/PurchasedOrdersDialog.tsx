@@ -12,7 +12,7 @@ import { ShoppingBag } from "lucide-react";
 import { PurchasedListPaginationResponse } from "@/features/profile/types";
 import { formatCurrency } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
-import { OrderDetailDialog } from "@/features/admin/components/OrderDetailDialog";
+import { OrderDetailDialog } from "@/features/shared";
 import {
   Pagination,
   PaginationContent,
@@ -172,7 +172,7 @@ export function PurchasedOrdersDialog({
         onOpenChange={(open) => {
           if (!open) setSelectedOrderId(null);
         }}
-        useUserApi={true}
+        apiType="admin-user"
       />
     </>
   );

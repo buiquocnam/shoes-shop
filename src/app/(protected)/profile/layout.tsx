@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { User, MapPin, Package, LogOut } from 'lucide-react';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useAuthStore } from '@/store/useAuthStore';
+import { Button } from '@/components/ui/button';
+import { getInitials } from '@/utils/helpers';
 
 const navigationItems = [
     {
@@ -27,62 +30,78 @@ const navigationItems = [
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const { mutate: logout } = useLogout();
+    const { user } = useAuthStore();
 
     const handleLogout = () => {
         logout();
     };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-8 md:py-12">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6">
-                    {/* Left column: Sidebar */}
-                    <aside className="md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-5rem)]">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
-                            <nav className="p-2">
-                                <ul className="space-y-1">
-                                    {navigationItems.map((item) => {
-                                        const Icon = item.icon;
-                                        const isActive = pathname === item.href;
+    const activeClass = "flex items-center gap-3 px-4 py-3 rounded-full bg-primary/10 text-primary font-medium transition-colors";
+    const inactiveClass = "flex items-center gap-3 px-4 py-3 rounded-full text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors font-medium";
 
-                                        return (
-                                            <li key={item.href}>
-                                                <Link
-                                                    href={item.href}
-                                                    className={cn(
-                                                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                                                        isActive
-                                                            ? "bg-primary text-primary-foreground font-semibold"
-                                                            : "text-gray-700 hover:bg-gray-100 hover:text-primary"
-                                                    )}
-                                                >
-                                                    <Icon className="w-5 h-5 shrink-0" />
-                                                    <span>{item.label}</span>
-                                                </Link>
-                                            </li>
-                                        );
-                                    })}
-                                    <li>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-red-600 hover:bg-red-50 hover:text-red-700"
+    return (
+        <div className="min-h-screen bg-background py-4 sm:py-6 lg:py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 sm:gap-6">
+                    {/* Left column: Sidebar */}
+                    <aside className="w-full md:w-72 flex-shrink-0">
+                        <div className="sticky top-24 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-slate-100">
+                            {/* User Info Section */}
+                            {user && (
+                                <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-slate-100">
+                                    <div className="size-10 sm:size-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                        <span className="text-sm sm:text-base font-bold text-primary">
+                                            {getInitials(user.name || user.email)}
+                                        </span>
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="text-sm sm:text-base text-slate-900 font-semibold leading-tight truncate">
+                                            {user.name || user.email}
+                                        </h3>
+                                        <p className="text-xs text-slate-500 truncate">
+                                            {user.email}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Navigation */}
+                            <nav className="flex flex-col gap-2">
+                                {navigationItems.map((item) => {
+                                    const Icon = item.icon;
+                                    const isActive = pathname === item.href;
+
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            className={isActive ? activeClass : inactiveClass}
                                         >
-                                            <LogOut className="w-5 h-5 shrink-0" />
-                                            <span>Đăng xuất</span>
-                                        </button>
-                                    </li>
-                                </ul>
+                                            <Icon className="w-5 h-5 shrink-0" />
+                                            <span>{item.label}</span>
+                                        </Link>
+                                    );
+                                })}
+
+                                {/* Separator */}
+                                <div className="h-px bg-slate-100 my-2"></div>
+
+                                {/* Logout Button */}
+                                <Button
+                                    variant="ghost"
+                                    onClick={handleLogout}
+                                    className="w-full justify-start rounded-full text-slate-600 hover:bg-slate-50 hover:text-primary font-medium"
+                                >
+                                    <LogOut className="w-5 h-5 shrink-0" />
+                                    <span>Đăng xuất</span>
+                                </Button>
                             </nav>
                         </div>
                     </aside>
 
                     {/* Right column: Content */}
                     <main className="min-w-0">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden h-full">
-                            <div className="p-6 md:p-8">
-                                {children}
-                            </div>
-                        </div>
+                        {children}
                     </main>
                 </div>
             </div>

@@ -13,8 +13,7 @@ import {
 import Loading from "@/features/admin/components/Loading";
 import { useSearchParams } from "next/navigation";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
-import { Input } from "@/components/ui/input";
-import { useSearch } from "@/features/shared/hooks/useSearch";
+import { SearchInput } from "@/features/admin/components/SearchInput";
 
 
 type Filters = {
@@ -36,9 +35,7 @@ const AdminBrandsPage: React.FC = () => {
 
   const handleSearch = useCallback((search?: string) => {
     updateParams({ search, page: 1 });
-  }, []);
-
-  const searchInput = useSearch(searchFromUrl, handleSearch);
+  }, [updateParams]);
 
   const filters: Filters = useMemo(() => ({
     page,
@@ -69,33 +66,34 @@ const AdminBrandsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-semibold text-gray-800">Quản lý thương hiệu</h1>
-
-        <div className="flex justify-end gap-2">
-          <Input
-            placeholder="Tìm kiếm tên thương hiệu..."
-            className="w-64"
-            value={searchInput.value}
-            onChange={searchInput.onChange}
-            onKeyDown={(e) => searchInput.onKeyDown(e, (value: string) => handleSearch(value))}
-          />
-        </div>
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          Quản lý thương hiệu
+        </h1>
         <BrandForm
           onSubmit={handleUpsertBrand}
           isLoading={upsertBrandMutation.isPending}
           open={createFormOpen}
           onOpenChange={setCreateFormOpen}
           trigger={
-            <Button className="bg-red-700 hover:bg-red-800 font-semibold px-4 py-2 rounded-lg shadow-md">
+            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover">
               + Thêm thương hiệu
             </Button>
           }
         />
       </div>
 
-      <div className="rounded-xl overflow-hidden">
+      <SearchInput
+        onSearch={handleSearch}
+        defaultValue={searchFromUrl}
+        placeholder="Tìm kiếm tên thương hiệu..."
+        withContainer
+      />
+
+      {isLoading ? (
+        <Loading />
+      ) : (
         <DataTable
           columns={columns}
           data={brands}
@@ -106,9 +104,8 @@ const AdminBrandsPage: React.FC = () => {
             pageSize: 10,
           }}
         />
-      </div>
+      )}
 
-      {/* Edit Form */}
       {selectedBrand && (
         <BrandForm
           brand={selectedBrand}

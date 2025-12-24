@@ -6,7 +6,6 @@ import { CheckoutItem } from '../types/checkout';
 import { useVnPayPayment } from '../hooks/useCheckout';
 import { AddressManagement } from '@/features/shared/components/address';
 import { useAuthStore } from '@/store/useAuthStore';
-import { AddressType } from '@/features/shared/types/address';
 import { useUsersAddress } from '@/features/shared/hooks/useAdress';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
@@ -21,17 +20,14 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
     const { user } = useAuthStore();
     const userId = user?.id ?? '';
     const { data: usersAddress, isLoading: isLoadingAddress } = useUsersAddress(userId);
-    const [selectedAddress, setSelectedAddress] = useState<AddressType | null>(null);
     const [isNavigating, setIsNavigating] = useState(false);
 
-    useEffect(() => {
-        if (usersAddress && usersAddress.length > 0) {
-            const defaultAddr = usersAddress.find((addr) => addr.isDefault) || usersAddress[0];
-            setSelectedAddress(defaultAddr);
-        } else {
-            setSelectedAddress(null);
-        }
+    // Get default address
+    const selectedAddress = useMemo(() => {
+        if (!usersAddress || usersAddress.length === 0) return null;
+        return usersAddress.find((addr) => addr.isDefault) || null;
     }, [usersAddress]);
+
 
     useEffect(() => {
         if (isError && isNavigating) {
@@ -89,12 +85,7 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
             )}
 
             <div className="w-full lg:w-3/5">
-                <AddressManagement
-                    userId={userId}
-                    usersAddress={usersAddress ?? []}
-                    isLoading={isLoadingAddress}
-                    selectedAddress={selectedAddress}
-                />
+                <AddressManagement userId={userId} />
             </div>
 
             <div className="w-full lg:w-2/5 lg:sticky lg:top-8 lg:self-start">

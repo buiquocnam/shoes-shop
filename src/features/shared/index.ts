@@ -16,10 +16,12 @@ export { BASE_URL, DEFAULT_LIMIT, DEFAULT_PAGE, PAGINATION } from "./constants";
 
 // Address components
 export {
-  AddressCard,
   AddressManagement,
 } from "./components/address";
 export type { AddressType } from "./types/address";
+
+// Order components
+export { OrderDetailDialog } from "./components/order";
 export {
   formatFullAddress,
   convertAddressToDisplay,

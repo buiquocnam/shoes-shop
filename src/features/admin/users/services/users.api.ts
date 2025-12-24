@@ -1,9 +1,7 @@
 import { apiClient } from "@/lib";
-import { BrandType } from "@/features/product/types";
 import { User } from "@/types/global";
 import { toQueryString } from "@/utils/queryString";
-import { Filters } from "@/features/shared/types";
-import { UserUpdate } from "../types";
+import { UserUpdate, UserPaginationResponse, UserFilters } from "../types";
 import {
   PurchasedListPaginationResponse,
   PurchasedItemFilters,
@@ -11,10 +9,10 @@ import {
 import { OrderDetail } from "@/features/shared/types/order";
 
 export const adminUsersApi = {
-  getUsers: async (filters?: Filters): Promise<User[]> => {
+  getUsers: async (filters?: UserFilters): Promise<UserPaginationResponse> => {
     const queryParams = filters ? toQueryString(filters) : "";
-    const response = await apiClient.get<User[]>(
-      `/auth/users/get-all${queryParams}`
+    const response = await apiClient.get<UserPaginationResponse>(
+      `/auth/users/search${queryParams}`
     );
     return response.result;
   },
