@@ -1,32 +1,75 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { useBanners } from "@/features/shared";
+import { Spinner } from "@/components/ui/spinner";
 
 const HeroBanner = () => {
+  const { data, isLoading } = useBanners();
+  const banners = data?.data || [];
+  const bannerImages = banners.map(b => b.imageUrl).filter(Boolean);
+  
+  // Fallback image nếu không có banner
+  const defaultImage = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2000&auto=format&fit=crop";
+  const images = bannerImages.length > 0 ? bannerImages : [defaultImage];
+  
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Auto slide nếu có nhiều ảnh
+  useEffect(() => {
+    if (images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 5000); 
+
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  if (isLoading) {
+    return (
+      <section className="relative w-full h-[500px] lg:h-[650px] overflow-hidden bg-background-dark flex items-center justify-center">
+        <Spinner className="h-8 w-8 text-primary" />
+      </section>
+    );
+  }
+
   return (
     <section className="relative w-full h-[500px] lg:h-[650px] overflow-hidden bg-background-dark group">
+      {/* Image Carousel */}
       <div className="absolute inset-0">
-        <Image
-          src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2000&auto=format&fit=crop"
-          alt="Hero Banner"
-          fill
-          priority
-          className="object-cover transition-transform duration-1000 group-hover:scale-105"
-          sizes="100vw"
-          quality={85}
-          placeholder="blur"
-          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8A"
-        />
+        {images.map((imageUrl, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={imageUrl}
+              alt={`Hero Banner ${index + 1}`}
+              fill
+              priority={index === 0}
+              className="object-cover transition-transform duration-1000 group-hover:scale-105"
+              sizes="100vw"
+              quality={85}
+              unoptimized
+            />
+          </div>
+        ))}
       </div>
       
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
       
-      {/* Content */}
+      {/* Content - Text cố định */}
       <div className="relative z-10 h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-start">
         <div className="max-w-2xl animate-fade-in-up">
           <span className="inline-block py-1 px-3 mb-4 rounded bg-primary/20 border border-primary text-primary text-sm font-bold tracking-wider uppercase backdrop-blur-sm">
-          HÀNG MỚI VỀ
+            HÀNG MỚI VỀ
           </span>
           
           <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight mb-6">
@@ -49,13 +92,23 @@ const HeroBanner = () => {
           </Link>
         </div>
       </div>
-      
-      {/* Carousel Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
-        <button className="w-12 h-1.5 rounded-full bg-primary"></button>
-        <button className="w-12 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-colors"></button>
-        <button className="w-12 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-colors"></button>
-      </div>
+
+      {/* {images.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`h-1.5 rounded-full transition-all ${
+                index === currentIndex
+                  ? "w-12 bg-primary"
+                  : "w-12 bg-white/20 hover:bg-white/40"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )} */}
     </section>
   );
 };

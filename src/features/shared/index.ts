@@ -1,7 +1,8 @@
-export { categoriesApi, brandsApi } from "./services";
+export { categoriesApi, brandsApi, bannersApi } from "./services";
 export {
   useCategories,
   useBrands,
+  useBanners,
   useDebounce,
 } from "./hooks";
 export type { BrandPaginationResponse, FetchBrandsParams } from "./types";

@@ -23,6 +23,10 @@ export const sharedQueryKeys = {
     key: ["brand"] as const,
     list: () => [...sharedQueryKeys.brand.key, "list"] as const,
   },
+  banner: {
+    key: ["banner"] as const,
+    list: () => [...sharedQueryKeys.banner.key, "list"] as const,
+  },
 } as const;
 
 export const addressQueryKeys = {

@@ -12,7 +12,8 @@ import {
     CreditCard,
     LogOut,
     User,
-    Tag
+    Tag,
+    Image as ImageIcon
 } from "lucide-react";
 import {
     Sidebar,
@@ -80,6 +81,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             label: "Thương hiệu",
             icon: Bookmark,
             href: "/admin/brands",
+        },
+        {
+            label: "Banner",
+            icon: ImageIcon,
+            href: "/admin/banners",
         },
         {
             label: "Coupons",
