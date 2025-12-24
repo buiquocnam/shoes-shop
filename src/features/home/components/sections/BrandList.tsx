@@ -17,6 +17,7 @@ export default async function BrandList() {
             {/* Mobile/Tablet: Grid with circles */}
             <section className="py-12 md:py-16 bg-surface-light lg:hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-2xl font-bold  mb-6 text-center">Thương hiệu</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 justify-items-center">
                         {displayBrands.map((brand) => (
                             <BrandItemCircle

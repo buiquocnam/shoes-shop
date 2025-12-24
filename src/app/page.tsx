@@ -1,4 +1,4 @@
-import { HomeSection, BrandList, BrandListSkeleton, HomeSectionSkeleton, HeroBanner, CategorySection, CategorySectionSkeleton } from '@/features/home/components';
+import { HomeSection, BrandList, BrandListSkeleton, HomeSectionSkeleton, HeroBanner, CategorySection, CategorySectionSkeleton, HeroBannerSkeleton } from '@/features/home/components';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
@@ -10,7 +10,9 @@ export const metadata: Metadata = {
 export default function HomePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   return (
     <main className="overflow-hidden">
-      <HeroBanner />
+      <Suspense fallback={<HeroBannerSkeleton />}>
+        <HeroBanner />
+      </Suspense>
 
       <Suspense fallback={<BrandListSkeleton />}>
         <BrandList />

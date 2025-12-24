@@ -6,7 +6,6 @@ import {
   BannerType,
   FetchBannersParams,
   BannerPaginationResponse,
-  BannerSlot,
 } from "../types";
 
 const BANNER_QUERY_KEYS = {
@@ -14,8 +13,6 @@ const BANNER_QUERY_KEYS = {
   lists: () => [...BANNER_QUERY_KEYS.all, "list"] as const,
   list: (filters?: FetchBannersParams) =>
     [...BANNER_QUERY_KEYS.lists(), filters] as const,
-  bySlot: (slot: BannerSlot) =>
-    [...BANNER_QUERY_KEYS.all, "slot", slot] as const,
 } as const;
 
 export function useBanners(
@@ -34,18 +31,6 @@ export function useBanners(
   });
 }
 
-export function useBannerBySlot(
-  slot: BannerSlot,
-  options?: Omit<UseQueryOptions<BannerType[]>, "queryKey" | "queryFn">
-) {
-  return useQuery<BannerType[]>({
-    queryKey: BANNER_QUERY_KEYS.bySlot(slot),
-    queryFn: () => adminBannersApi.getBySlot(slot),
-    placeholderData: (previousData) => previousData,
-    staleTime: 1000 * 60 * 5,
-    ...options,
-  });
-}
 
 export const useUpsertBanner = () => {
   const queryClient = useQueryClient();

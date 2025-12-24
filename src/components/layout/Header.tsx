@@ -154,7 +154,7 @@ export default function Header() {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onKeyDown={handleSearchKeyDown}
-                                    className="w-full bg-white border-none rounded-full py-2.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus-visible:ring-2 focus-visible:ring-primary shadow-sm"
+                                    className="w-full bg-white border-border rounded-full py-2.5 pl-11 pr-4 shadow-sm"
                                     placeholder="Tìm kiếm sản phẩm..."
                                 />
                             </div>

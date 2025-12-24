@@ -43,7 +43,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
   return (
     <div className="space-y-2 w-full">
       {/* Main Image */}
-      <div className="relative group bg-card rounded-xl p-1 shadow-sm overflow-hidden border border-border">
+      <div className="relative group bg-card rounded-xl shadow-sm overflow-hidden border border-border">
         <Carousel
           opts={{ loop: true }}
           setApi={(api) => {
@@ -55,10 +55,10 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
           }}
           className="w-full"
         >
-          <CarouselContent>
+          <CarouselContent className="-ml-0">
             {imageUrls.map((img, i) => (
-              <CarouselItem key={i}>
-                <div className="relative aspect-square rounded-lg overflow-hidden bg-muted max-w-md mx-auto">
+              <CarouselItem key={i} className="pl-0 basis-full">
+                <div className="relative w-full aspect-square overflow-hidden ">
                   <Image
                     src={img}
                     alt={`product-image-${i}`}

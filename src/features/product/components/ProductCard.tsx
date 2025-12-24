@@ -4,10 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import { ProductType } from "../types";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/utils/format";
-import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
     product: ProductType;
@@ -19,8 +16,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         product.price - (product.price * (product.discount || 0)) / 100;
     const imageUrl = product.imageUrl?.url || "/placeholder.png";
     const averageRating = product.averageRating || 0;
-    const fullStars = Math.floor(averageRating);
-    const hasHalfStar = averageRating % 1 >= 0.5;
 
     const handleCardClick = () => {
         router.push(`/products/${product.id}`);
@@ -28,108 +23,64 @@ export default function ProductCard({ product }: ProductCardProps) {
 
 
     return (
-        <Card
-            onClick={handleCardClick}
-            className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:scale-105 cursor-pointer
-                 transition-all duration-300 border flex flex-col border-none"
+        <a
+            onClick={(e) => {
+                e.preventDefault();
+                handleCardClick();
+            }}
+            className="group flex flex-col rounded-3xl bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-[#f4ebe7] cursor-pointer overflow-hidden"
         >
-            <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
+            <div className="relative aspect-square w-full overflow-hidden bg-primary/10">
                 {product.discount > 0 && (
-                    <Badge
-                        variant="default"
-                        className={cn(
-                            "absolute top-2 left-2 z-20 bg-primary",
-                            "text-white text-xs font-bold px-2 py-0.5 rounded"
-                        )}
-                    >
+                    <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
                         -{product.discount}%
-                    </Badge>
+                    </span>
                 )}
-
                 <Image
                     src={imageUrl}
                     alt={product.name}
                     fill
-                    className={cn(
-                        "object-cover object-center transition-transform duration-500",
-                        "hover:scale-105"
-                    )}
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
                     loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     unoptimized
                 />
-
-
             </div>
-
-            <CardContent className="p-4 flex flex-col flex-1">
-                {product.category?.name && (
-                    <span className="text-primary font-bold text-xs uppercase tracking-widest mb-0.5">
-                        {product.category.name}
+            <div className="flex flex-col gap-1 p-4">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-xs font-bold text-primary uppercase tracking-wider truncate">
+                        {product.brand?.name || ""}
                     </span>
-                )}
-
-                <h3
-                    className={cn(
-                        "font-bold text-base mb-1.5 leading-tight line-clamp-2 group-hover:text-primary transition-colors"
+                    {product.category?.name && (
+                        <>
+                            <span className="text-xs text-gray-600 flex-shrink-0">•</span>
+                            <span className="text-xs text-gray-600 truncate">
+                                {product.category.name}
+                            </span>
+                        </>
                     )}
-                >
+                </div>
+                <h3 className="font-bold text-gray-900 text-base sm:text-lg line-clamp-2 group-hover:text-primary transition-colors">
                     {product.name}
                 </h3>
-
-                <div className="flex items-center gap-1 text-yellow-400 text-sm mb-2">
-                    {[...Array(5)].map((_, i) => {
-                        if (i < fullStars) {
-                            return (
-                                <Star
-                                    key={i}
-                                    size={14}
-                                    className="fill-current text-yellow-400"
-                                />
-                            );
-                        }
-                        if (i === fullStars && hasHalfStar) {
-                            return (
-                                <Star
-                                    key={i}
-                                    size={14}
-                                    className="fill-current text-yellow-400"
-                                />
-                            );
-                        }
-                        return (
-                            <Star
-                                key={i}
-                                size={14}
-                                className="text-gray-300"
-                            />
-                        );
-                    })}
-                    <span className="text-gray-500 text-xs ml-1">
-                        ({averageRating.toFixed(1)})
+                <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="font-bold text-lg sm:text-xl text-primary">
+                        {formatCurrency(discountedPrice)}
+                    </span>
+                    {product.discount > 0 && (
+                        <span className="text-xs sm:text-sm text-gray-600 line-through font-medium">
+                            {formatCurrency(product.price)}
+                        </span>
+                    )}
+                </div>
+                <div className="flex items-center gap-1 text-amber-400">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span className="font-bold text-gray-900 text-sm">
+                        {averageRating.toFixed(1)}
                     </span>
                 </div>
-
-                <div className="mt-auto pt-1.5 flex items-center justify-between border-t border-gray-100">
-                    <div className="flex flex-col">
-                        {product.discount > 0 ? (
-                            <>
-                                <span className="text-gray-400 line-through text-xs">
-                                    {formatCurrency(product.price)}
-                                </span>
-                                <span className="text-lg font-bold text-primary">
-                                    {formatCurrency(discountedPrice)}
-                                </span>
-                            </>
-                        ) : (
-                            <span className="text-lg font-bold text-primary">
-                                {formatCurrency(discountedPrice)}
-                            </span>
-                        )}
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+            </div>
+        </a>
     );
 }
 

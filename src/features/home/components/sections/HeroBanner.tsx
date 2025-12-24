@@ -5,10 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { useBanners } from "@/features/shared";
-import { Spinner } from "@/components/ui/spinner";
 
 const HeroBanner = () => {
-  const { data, isLoading } = useBanners();
+  const { data } = useBanners();
   const banners = data?.data || [];
   const bannerImages = banners.map(b => b.imageUrl).filter(Boolean);
   
@@ -28,14 +27,6 @@ const HeroBanner = () => {
 
     return () => clearInterval(interval);
   }, [images.length]);
-
-  if (isLoading) {
-    return (
-      <section className="relative w-full h-[500px] lg:h-[650px] overflow-hidden bg-background-dark flex items-center justify-center">
-        <Spinner className="h-8 w-8 text-primary" />
-      </section>
-    );
-  }
 
   return (
     <section className="relative w-full h-[500px] lg:h-[650px] overflow-hidden bg-background-dark group">

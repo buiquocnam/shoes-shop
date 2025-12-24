@@ -31,10 +31,13 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { bannerSchema, BannerFormValues } from "../schema";
-import { BannerType, BannerSlot } from "../types";
+import { BannerType } from "../types";
 import Image from "next/image";
 
-const BANNER_SLOTS: BannerSlot[] = ["HOME_1", "HOME_2", "HOME_3"];
+const BANNER_SLOTS = {
+  HOME_HERO: "HOME_HERO",
+  HOME_MID: "HOME_MID",
+};
 
 interface BannerFormProps {
   onSubmit: (data: FormData) => void;
@@ -62,7 +65,7 @@ export default function BannerForm({
     defaultValues: {
       title: banner?.title || "",
       link: banner?.link || "",
-      slot: banner?.slot || "HOME_1",
+      slot: banner?.slot || "HOME_HERO",
       image: undefined,
     },
   });
@@ -221,7 +224,7 @@ export default function BannerForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {BANNER_SLOTS.map((slot) => (
+                      {Object.values(BANNER_SLOTS).map((slot) => (
                         <SelectItem key={slot} value={slot}>
                           {slot}
                         </SelectItem>

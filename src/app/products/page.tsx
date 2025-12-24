@@ -13,7 +13,7 @@ export default function ProductPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <div className="max-w-7xl mx-auto px-4 py-4 md:py-8">
+            <div className="w-full mx-auto px-8 py-4 md:py-8">
                 {/* Mobile Filter Button */}
                 <div className="md:hidden mb-4">
                     <Sheet open={isOpen} onOpenChange={setIsOpen}>

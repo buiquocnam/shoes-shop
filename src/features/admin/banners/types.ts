@@ -15,11 +15,7 @@ export interface FetchBannersParams {
   size?: number;
   title?: string;
   active?: boolean;
-  slot?: string;
 }
 
 export interface BannerPaginationResponse
   extends PaginatedResponse<BannerType> {}
-
-export type BannerSlot = "HOME_1" | "HOME_2" | "HOME_3" |  string;
-
