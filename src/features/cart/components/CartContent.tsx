@@ -41,20 +41,28 @@ export function CartContent() {
     };
 
     return (
-        <div className="max-w-[1200px] mx-auto px-6 py-12">
-            <h1 className="text-4xl font-extrabold uppercase italic mb-8">
-                Your <span className="text-primary">Cart</span>
-            </h1>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                <div className="lg:col-span-8 space-y-6">
-                    <CartList 
-                        items={cart.items} 
-                        updateQuantity={handleUpdateQuantity}
-                        remove={handleRemove}
-                    />
+        <div className="flex-1 w-full px-4 md:px-10 py-8 md:py-12">
+            <div className="max-w-[1200px] mx-auto">
+                <div className="flex items-center gap-2 mb-8">
+                    <span className="h-8 w-1.5 bg-primary rounded-full"></span>
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white uppercase tracking-tight italic">
+                        Giỏ Hàng <span className="text-primary">Của Bạn</span>
+                    </h1>
+                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-sm font-bold px-3 py-1 rounded-full ml-2">
+                        {cart.count} Sản phẩm
+                    </span>
                 </div>
-                <div className="lg:col-span-4">
-                    <CartSummary cart={cart} />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+                    <div className="lg:col-span-8">
+                        <CartList 
+                            items={cart.items} 
+                            updateQuantity={handleUpdateQuantity}
+                            remove={handleRemove}
+                        />
+                    </div>
+                    <div className="lg:col-span-4">
+                        <CartSummary cart={cart} />
+                    </div>
                 </div>
             </div>
         </div>

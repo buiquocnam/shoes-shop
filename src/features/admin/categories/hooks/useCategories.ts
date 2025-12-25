@@ -15,8 +15,9 @@ export const useCreateCategory = () => {
   >({
     mutationFn: (data) => adminCategoriesApi.create(data),
     onSuccess: () => {
+      // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.list(),
+        queryKey: sharedQueryKeys.category.lists(),
       });
       toast.success("Tạo danh mục thành công");
     },
@@ -35,8 +36,9 @@ export const useUpdateCategory = () => {
   >({
     mutationFn: ({ id, data }) => adminCategoriesApi.update(id, data),
     onSuccess: () => {
+      // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.list(),
+        queryKey: sharedQueryKeys.category.lists(),
       });
       toast.success("Cập nhật danh mục thành công");
     },
@@ -57,8 +59,9 @@ export const useDeleteCategory = () => {
       return result;
     },
     onSuccess: () => {
+      // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.list(),
+        queryKey: sharedQueryKeys.category.lists(),
       });
       toast.success("Xóa danh mục thành công");
     },

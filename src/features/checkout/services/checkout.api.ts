@@ -43,7 +43,7 @@ export const checkoutApi = {
   ): Promise<VnPayPaymentResponse> => {
     const { amount, variantSizeId, bankCode = "NCB" } = request;
     const params = new URLSearchParams({
-      amount: (amount*26000).toString(),
+      amount: amount.toString(),
       bankCode,
       variantSizeId,
     });

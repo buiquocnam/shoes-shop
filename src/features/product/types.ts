@@ -86,6 +86,12 @@ export interface CreateProductReviewType {
   comment: string;
 }
 
+export interface ReviewFilters {
+  page?: number;
+  size?: number;
+  productId?: string;
+}
+
 export interface ProductReviewResponse
   extends PaginatedResponse<ProductReviewType> {}
 

@@ -156,7 +156,7 @@ export function MessageList({ conversationId, className }: MessageListProps) {
               <div
                 key={message.id || `${message.senderId}-${message.createdDate}`}
                 className={cn(
-                  "flex gap-2 group",
+                  "flex gap-2 group mb-2",
                   isOwnMessage ? "justify-end" : "justify-start"
                 )}
               >
@@ -210,11 +210,6 @@ export function MessageList({ conversationId, className }: MessageListProps) {
                     )}
                   </div>
                 </div>
-
-                {/* Spacer for sent messages to align with received messages */}
-                {isOwnMessage && (
-                  <div className="flex-shrink-0 w-8 h-8" />
-                )}
               </div>
             );
           })}

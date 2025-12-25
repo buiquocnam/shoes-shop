@@ -15,8 +15,17 @@ export function CartList({ items, updateQuantity, remove }: CartListProps) {
     }
 
     return (
-        <>
-            {items.map((item, idx) => (
+        <div className="space-y-6">
+            {/* Header row - hidden on mobile */}
+            <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                <div className="col-span-6 pl-2">Chi tiết sản phẩm</div>
+                <div className="col-span-3 text-center">Số lượng</div>
+                <div className="col-span-2 text-right">Giá</div>
+                <div className="col-span-1 text-center"></div>
+            </div>
+            
+            {/* Cart items */}
+            {items.map((item) => (
                 <CartItem 
                     key={item.id} 
                     item={item}
@@ -24,7 +33,7 @@ export function CartList({ items, updateQuantity, remove }: CartListProps) {
                     remove={remove}
                 />
             ))}
-        </>
+        </div>
     );
 }
 

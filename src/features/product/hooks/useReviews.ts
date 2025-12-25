@@ -7,14 +7,15 @@ import {
   CreateProductReviewType,
   ProductReviewResponse,
   ProductReviewType,
+  ReviewFilters,
 } from "../types";
 import { toast } from "sonner";
 
-export function useReviews(productId: string) {
+export function useReviews(filters: ReviewFilters) {
   return useQuery<ProductReviewResponse>({
-    queryKey: userQueryKeys.review.lists(productId),
-    queryFn: () => getReviews(productId),
-    enabled: !!productId,
+    queryKey: userQueryKeys.review.lists(filters.productId || "", filters.page || 1, filters.size || 10),
+    queryFn: () => getReviews(filters),
+    enabled: !!filters.productId,
     placeholderData: (previousData) => previousData,
   });
 }

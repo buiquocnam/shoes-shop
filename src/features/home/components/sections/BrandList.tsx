@@ -38,7 +38,7 @@ export default async function BrandList() {
                                 <Link
                                     key={`${set}-${brand.id}`}
                                     href={`/products?brand_id=${brand.id}`}
-                                    className="cursor-pointer flex flex-col items-center gap-1"
+                                    className="group cursor-pointer flex flex-col items-center gap-1 transition-all duration-500"
                                 >
                                     <div className="h-12 flex items-end">
                                         <Image
@@ -46,11 +46,11 @@ export default async function BrandList() {
                                             alt={brand.name}
                                             width={32}
                                             height={32}
-                                            className="h-8 opacity-10 hover:opacity-100 hover:brightness-100 transition-all duration-500 transform hover:scale-110 hover:-translate-y-1 object-contain"
+                                            className="h-8 opacity-10 group-hover:opacity-100 group-hover:brightness-100 transition-all duration-500 transform group-hover:scale-110 group-hover:-translate-y-1 object-contain"
                                             unoptimized
                                         />
                                     </div>
-                                    <span className="text-5xl font-black tracking-tighter italic uppercase transition-all duration-500 text-muted-foreground/80 hover:text-primary hover:drop-shadow-md leading-none select-none">
+                                    <span className="text-5xl font-black tracking-tighter italic uppercase transition-all duration-500 text-muted-foreground/80 group-hover:text-primary group-hover:drop-shadow-md leading-none select-none">
                                         {brand.name}
                                     </span>
                                 </Link>

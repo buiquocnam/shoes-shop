@@ -44,7 +44,7 @@ export function MessageInput({
   };
 
   return (
-    <div className={cn("border-t bg-card", className)}>
+    <div className={cn(" bg-card", className)}>
       <form
         onSubmit={handleSubmit}
         className="flex gap-2 items-end p-4"

@@ -37,7 +37,6 @@ const NAV_LINKS = [
     { name: 'Liên hệ', href: '/contact' },
 ] as const;
 
-const HIDDEN_PATHS = ['/login', '/register', '/verify-email', '/forget-password'] as const;
 
 export default function Header() {
     const { user } = useAuthStore();
@@ -57,7 +56,7 @@ export default function Header() {
     }, [searchFromUrl]);
 
     const shouldHide = useMemo(
-        () => pathname.startsWith('/admin') || HIDDEN_PATHS.includes(pathname as any),
+        () => pathname.startsWith('/admin') ,
         [pathname]
     );
 

@@ -30,8 +30,8 @@ export const userQueryKeys = {
   // Reviews
   review: {
     key: ["review"],
-    lists: (productId: string) =>
-      [...userQueryKeys.review.key, productId] as const,
+    lists: (productId: string, page?: number, size?: number) =>
+      [...userQueryKeys.review.key, productId, page, size] as const,
   },
 
   // Coupon

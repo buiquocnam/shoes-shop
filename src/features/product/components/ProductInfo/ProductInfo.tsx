@@ -17,7 +17,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         : originalPrice;
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 bg-white rounded-xl shadow-lg p-6">
             <div>
                 <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-gray-900">
                     {productInfo.name}
