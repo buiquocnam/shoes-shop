@@ -12,7 +12,7 @@ export const usePurchasedItems = (
   userId: string | null,
   filters?: PurchasedItemFilters
 ) => {
-  return useQuery<PurchasedListPaginationResponse>({
+  return useQuery({
     queryKey: adminQueryKeys.users.purchasedItems(
       userId || "",
       filters?.page || 1,

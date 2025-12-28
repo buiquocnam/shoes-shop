@@ -31,7 +31,7 @@ export const useUpdateProfile = () => {
 };
 
 export const useProductsPurchased = (filters?: PurchasedItemFilters) => {
-  return useQuery<PurchasedListPaginationResponse>({
+  return useQuery({
     queryKey: userQueryKeys.profile.purchasedProducts(filters),
     queryFn: () => profileApi.productsPurchased(filters),
     staleTime: 60 * 1000,

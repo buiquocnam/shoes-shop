@@ -19,15 +19,7 @@ export const useCreateOrder = () => {
   const { clearCart: clearCartStore, setCart } = useCartStore();
   const queryClient = useQueryClient();
 
-  return useMutation<
-    CreateOrderResponse,
-    any,
-    {
-      request: CreateOrderRequest;
-      selectedAddress: AddressType;
-      source?: "cart" | "buy-now";
-    }
-  >({
+  return useMutation({
     mutationFn: ({ request }) => {
       return checkoutApi.createOrder(request);
     },

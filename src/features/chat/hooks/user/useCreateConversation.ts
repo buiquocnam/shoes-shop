@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export function useCreateConversation() {
   const queryClient = useQueryClient();
 
-  return useMutation<Conversation, Error, CreateConversationRequest>({
+  return useMutation({
     mutationFn: (data) => chatApi.createConversation(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["chat", "conversations"] });

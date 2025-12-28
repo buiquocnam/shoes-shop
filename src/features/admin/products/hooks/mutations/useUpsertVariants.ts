@@ -11,7 +11,7 @@ import { toast } from "sonner";
  */
 export const useUpsertVariants = () => {
   const queryClient = useQueryClient();
-  return useMutation<VariantResponse[], Error, UpsertVariantsInput>({
+  return useMutation({
     mutationFn: (data: UpsertVariantsInput) =>
       adminProductsApi.upsertVariants(data),
     onSuccess: (_, variables) => {

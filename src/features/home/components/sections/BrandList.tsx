@@ -30,35 +30,38 @@ export default async function BrandList() {
             </section>
 
             {/* Desktop: Marquee animation */}
-            <section className="hidden lg:block w-full bg-muted py-16 overflow-hidden relative border-y border-border">
-                <div className="flex w-max animate-marquee whitespace-nowrap">
-                    {[0, 1].map((set) => (
-                        <div key={set} className="flex items-center gap-24 px-12 shrink-0">
-                            {displayBrands.map((brand) => (
-                                <Link
-                                    key={`${set}-${brand.id}`}
-                                    href={`/products?brand_id=${brand.id}`}
-                                    className="group cursor-pointer flex flex-col items-center gap-1 transition-all duration-500"
-                                >
-                                    <div className="h-12 flex items-end">
-                                        <Image
-                                            src={brand.logo || "/placeholder.png"}
-                                            alt={brand.name}
-                                            width={32}
-                                            height={32}
-                                            className="h-8 opacity-10 group-hover:opacity-100 group-hover:brightness-100 transition-all duration-500 transform group-hover:scale-110 group-hover:-translate-y-1 object-contain"
-                                            unoptimized
-                                        />
-                                    </div>
-                                    <span className="text-5xl font-black tracking-tighter italic uppercase transition-all duration-500 text-muted-foreground/80 group-hover:text-primary group-hover:drop-shadow-md leading-none select-none">
-                                        {brand.name}
-                                    </span>
-                                </Link>
-                            ))}
-                        </div>
-                    ))}
+            <section className="hidden lg:block w-full bg-muted py-16 overflow-hidden border-y border-border">
+                <div className="relative w-full overflow-hidden">
+                    <div className="flex animate-marquee">
+                        {[0, 1, 2].map((set) => (
+                            <div key={set} className="flex items-center shrink-0">
+                                {displayBrands.map((brand, index) => (
+                                    <Link
+                                        key={`${set}-${brand.id}`}
+                                        href={`/products?brand_id=${brand.id}`}
+                                        className="group flex flex-col items-center gap-1 px-12 shrink-0 cursor-pointer transition-all duration-500"
+                                    >
+                                        <div className="h-12 flex items-end">
+                                            <Image
+                                                src={brand.logo || "/placeholder.png"}
+                                                alt={brand.name}
+                                                width={32}
+                                                height={32}
+                                                className="h-8 opacity-20 group-hover:opacity-100 group-hover:brightness-100 transition-all duration-500 transform group-hover:scale-110 group-hover:-translate-y-1 object-contain"
+                                                unoptimized
+                                            />
+                                        </div>
+                                        <span className="text-5xl font-black tracking-tighter italic uppercase transition-all duration-500 text-muted-foreground/80 group-hover:text-primary group-hover:drop-shadow-md leading-none select-none whitespace-nowrap">
+                                            {brand.name}
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
+
         </>
     );
 }

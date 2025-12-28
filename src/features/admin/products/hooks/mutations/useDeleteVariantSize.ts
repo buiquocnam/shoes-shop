@@ -10,7 +10,7 @@ export interface DeleteVariantSizeInput {
 
 export const useDeleteVariantSize = () => {
   const queryClient = useQueryClient();
-  return useMutation<boolean, Error, DeleteVariantSizeInput>({
+  return useMutation({
     mutationFn: (data: DeleteVariantSizeInput) =>
       adminProductsApi.deleteVariantSize(data.sizeId),
     onSuccess: (_, variables) => {

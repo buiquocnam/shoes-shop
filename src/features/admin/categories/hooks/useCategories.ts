@@ -8,11 +8,7 @@ export { useCategories } from "@/features/shared/hooks/useCategories";
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
-  return useMutation<
-    CategoryType,
-    Error,
-    { name: string; description: string }
-  >({
+  return useMutation({
     mutationFn: (data) => adminCategoriesApi.create(data),
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
@@ -29,11 +25,7 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
-  return useMutation<
-    CategoryType,
-    Error,
-    { id: string; data: { name: string; description: string } }
-  >({
+  return useMutation({
     mutationFn: ({ id, data }) => adminCategoriesApi.update(id, data),
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
@@ -50,7 +42,7 @@ export const useUpdateCategory = () => {
 
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
-  return useMutation<boolean, Error, string>({
+  return useMutation({
     mutationFn: async (id: string) => {
       const result = await adminCategoriesApi.delete(id);
       if (!result) {

@@ -3,12 +3,13 @@ import { categoriesApi } from "../services/categories.api";
 import { CategoryType } from "@/features/product/types";
 import { sharedQueryKeys } from "../constants/shared-queryKeys";
 import { Filters } from "../types";
+import { PaginatedResponse } from "@/types/global";
 
 export function useCategories(
   filters?: Filters,
-  options?: Omit<UseQueryOptions<CategoryType[]>, "queryKey" | "queryFn">
+  options?: Omit<UseQueryOptions<PaginatedResponse<CategoryType>>, "queryKey" | "queryFn">
 ) {
-  return useQuery<CategoryType[]>({
+  return useQuery({
     queryKey: sharedQueryKeys.category.list(filters),
     queryFn: () => categoriesApi.getAll(filters),
     placeholderData: (previousData) => previousData,

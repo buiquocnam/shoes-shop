@@ -14,7 +14,7 @@ export const useGetUsers = (filters?: UserFilters) => {
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  return useMutation<User, Error, UserUpdate>({
+  return useMutation({
     mutationFn: (user) => adminUsersApi.updateUser(user),
     onSuccess: (_, variables) => {
       // Invalidate users list
@@ -38,7 +38,7 @@ export const useUpdateUser = () => {
 
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
-  return useMutation<boolean, Error, string[]>({
+  return useMutation({
     mutationFn: (userIds) => adminUsersApi.deleteUser(userIds),
     onSuccess: () => {
       // Invalidate users list after deletion

@@ -9,7 +9,7 @@ import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
  * Get payment detail by ID
  */
 export const usePaymentDetail = (paymentId: string | null) => {
-  return useQuery<Payment>({
+  return useQuery({
     queryKey: [...adminQueryKeys.payments.key, "detail", paymentId || ""],
     queryFn: () => adminPaymentsApi.getDetail(paymentId!),
     enabled: !!paymentId,

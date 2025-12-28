@@ -7,7 +7,7 @@ import { ChevronRight } from "lucide-react";
 export default async function CategorySection() {
   const categories = await categoriesApi.getAll({ size: 4 });
 
-  if (!categories || categories.length === 0) {
+  if (!categories || categories.data.length === 0) {
     return null;
   }
 
@@ -19,7 +19,7 @@ export default async function CategorySection() {
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Danh mục sản phẩm</h2>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {categories.map((category) => (
+          {categories.data.map((category) => (
             <Link key={category.id} href={`/products?category_id=${category.id}`} prefetch={true}>
               <Card className="h-48 p-8 flex flex-col justify-between hover:border-primary transition-colors border-border hover:border-2">
                 <h4 className="text-2xl font-black italic uppercase tracking-tighter leading-none">

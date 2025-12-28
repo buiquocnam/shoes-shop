@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import {
   UpdateProfileRequest,
   ChangePasswordRequest,
@@ -10,20 +10,20 @@ import { toQueryString } from "@/utils/queryString";
 
 export const profileApi = {
   // Cập nhật thông tin profile
-  updateProfile: async (data: UpdateProfileRequest): Promise<User> => {
-    const response = await apiClient.post<User>(
+  updateProfile: async (data: UpdateProfileRequest) => {
+    const response = await axiosInstance.post<User>(
       "/auth/users/update-user",
       data
     );
-    return response.result;
+    return response.data;
   },
 
   productsPurchased: async (
     filters?: PurchasedItemFilters
-  ): Promise<PurchasedListPaginationResponse> => {
-    const response = await apiClient.get<PurchasedListPaginationResponse>(
+  ) => {
+    const response = await axiosInstance.get<PurchasedListPaginationResponse>(
       `/shoes/products/purchased${toQueryString(filters)}`
     );
-    return response.result;
+    return response.data;
   },
 };

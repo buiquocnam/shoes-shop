@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export function useSendResetPasswordEmail() {
   const router = useRouter();
 
-  return useMutation<{ message: string }, Error, ForgotPasswordFormData>({
+  return useMutation({
     mutationFn: (data) => authApi.sendResetPasswordEmail(data),
     onSuccess: async (_, variables) => {
       await setOtpData(variables.email, "FORGET_PASS");

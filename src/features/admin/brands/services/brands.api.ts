@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib";
+import axiosInstance from "@/lib/axios";
 import { BrandType } from "@/features/product/types";
 
 export const adminBrandsApi = {
@@ -8,18 +8,18 @@ export const adminBrandsApi = {
    * - Nếu có id trong FormData: update
    * - Nếu không có id: create
    */
-  upsert: async (data: FormData): Promise<BrandType> => {
-    const response = await apiClient.post<BrandType>(
+  upsert: async (data: FormData) => {
+    const response = await axiosInstance.post<BrandType>(
       "/shoes/brands/create-or-update",
       data
     );
-    return response.result;
+    return response.data;
   },
 
-  delete: async (id: string): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(
+  delete: async (id: string) => {
+    const response = await axiosInstance.delete<boolean>(
       `/shoes/brands/delete/${id}`
     );
-    return response.result;
+    return response.data;
   },
 };

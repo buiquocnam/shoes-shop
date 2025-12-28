@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export function useVerifyOTP() {
   const router = useRouter();
 
-  return useMutation<boolean, Error, VerifyEmailType>({
+  return useMutation({
     mutationFn: (data) => authApi.verifyOTP(data),
     onSuccess: async (response) => {
       if (response) {

@@ -6,7 +6,7 @@ import { sharedQueryKeys } from "../constants/shared-queryKeys";
 export function useBanners(
   options?: Omit<UseQueryOptions<BannerPaginationResponse>, "queryKey" | "queryFn">
 ) {
-  return useQuery<BannerPaginationResponse>({
+  return useQuery({
     queryKey: sharedQueryKeys.banner.list(),
     queryFn: () => bannersApi.search(),
     placeholderData: (previousData) => previousData,

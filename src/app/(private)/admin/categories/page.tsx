@@ -49,7 +49,7 @@ const AdminCategoriesPage: React.FC = () => {
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
 
-  const categoriesData: CategoryType[] = categories || [];
+  const categoriesData: CategoryType[] = categories?.data || [];
 
   const handleCreateCategory = async (data: { name: string; description: string }) => {
     await createCategoryMutation.mutateAsync(data);
@@ -111,10 +111,10 @@ const AdminCategoriesPage: React.FC = () => {
           columns={columns}
           data={categoriesData}
           pagination={{
-            currentPage: 1,
-            totalPages: 1,
-            totalElements: categoriesData.length,
-            pageSize: 10,
+            currentPage: categories?.currentPage || 1,
+            totalPages: categories?.totalPages || 1,
+            totalElements: categories?.totalElements || 0,
+            pageSize: categories?.pageSize || 10,
           }}
         />
       )}

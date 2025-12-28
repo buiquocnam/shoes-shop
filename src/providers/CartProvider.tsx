@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { useIsAuthenticated } from "@/store/useAuthStore";
 import { useCart } from "@/features/cart/hooks/useCart";
+import { CartResponse } from "@/features/cart/types";
 
 export function CartProvider() {
     const { setCart } = useCartStore();
@@ -13,7 +14,9 @@ export function CartProvider() {
 
     useEffect(() => {
         if (isAuthenticated && cart) {
-            setCart(cart);
+            setCart(cart as CartResponse);
+        } else {
+            setCart(null);
         }
     }, [cart, setCart, isAuthenticated]);
 

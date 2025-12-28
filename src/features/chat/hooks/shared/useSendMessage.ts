@@ -14,7 +14,7 @@ export function useSendMessage() {
   const queryClient = useQueryClient();
   const socket = useSocket();
 
-  return useMutation<Message, Error, CreateMessageRequest>({
+  return useMutation({
     mutationFn: async (data) => {
       return chatApi.sendMessage(data);
     },

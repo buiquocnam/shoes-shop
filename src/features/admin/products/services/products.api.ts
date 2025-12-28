@@ -1,6 +1,6 @@
 "use client";
 
-import { apiClient } from "@/lib";
+import axiosInstance from "@/lib/axios";
 import {
   ProductType,
   ProductFilters,
@@ -29,45 +29,45 @@ export const adminProductsApi = {
    */
   getProducts: async (
     filters?: ProductFilters
-  ): Promise<ProductPaginationResponse> => {
+  ) => {
     const queryParams = filters ? toQueryString(filters) : "";
-    const response = await apiClient.get<ProductPaginationResponse>(
+    const response = await axiosInstance.get<ProductPaginationResponse>(
       `/shoes/products/get-all${queryParams}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Get Product by ID
    */
-  getProductById: async (productId: string): Promise<ProductDetailType> => {
-    const response = await apiClient.get<ProductDetailType>(
+  getProductById: async (productId: string) => {
+    const response = await axiosInstance.get<ProductDetailType>(
       `/shoes/products/get-by-id/${productId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Create Product
    * Payload: FormData với JSON body (request) + multipart files (files)
    */
-  create: async (data: FormData): Promise<ProductType> => {
-    const response = await apiClient.post<ProductType>(
+  create: async (data: FormData) => {
+    const response = await axiosInstance.post<ProductType>(
       `/shoes/products/create-product`,
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Update Product Info
    */
-  updateInfo: async (data: UpdateProductInfoInput): Promise<ProductType> => {
-    const response = await apiClient.patch<ProductType>(
+  updateInfo: async (data: UpdateProductInfoInput) => {
+    const response = await axiosInstance.patch<ProductType>(
       `/shoes/products/update/content`,
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
@@ -76,69 +76,69 @@ export const adminProductsApi = {
    */
   upsertVariants: async (
     data: UpsertVariantsInput
-  ): Promise<VariantResponse[]> => {
-    const response = await apiClient.post<VariantResponse[]>(
+  ) => {
+    const response = await axiosInstance.post<VariantResponse[]>(
       `/shoes/variants/upsert`,
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Import Stock
    * Gọi API import stock riêng, không gộp với create/update variant
    */
-  importStock: async (data: ImportStockInput): Promise<boolean> => {
-    const response = await apiClient.post<boolean>(
+  importStock: async (data: ImportStockInput) => {
+    const response = await axiosInstance.post<boolean>(
       `/shoes/variants/import-stock`,
       {
         productId: data.productId,
         items: data.items,
       }
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Update Images
    * Update danh sách name + primaryName qua JSON
    */
-  updateImages: async (data: FormData): Promise<boolean> => {
-    const response = await apiClient.post<boolean>(
+  updateImages: async (data: FormData) => {
+    const response = await axiosInstance.post<boolean>(
       `/shoes/products/update/image`,
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Delete Product
    */
-  delete: async (productId: string): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(
+  delete: async (productId: string) => {
+    const response = await axiosInstance.delete<boolean>(
       `/shoes/products/delete?productId=${productId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Delete Variant
    */
-  deleteVariant: async (variantId: string): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(
+  deleteVariant: async (variantId: string) => {
+    const response = await axiosInstance.delete<boolean>(
       `/shoes/variants/delete/${variantId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Delete Variant Size
    */
-  deleteVariantSize: async (sizeId: string): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(
+  deleteVariantSize: async (sizeId: string) => {
+    const response = await axiosInstance.delete<boolean>(
       `/shoes/variants/delete-size/${sizeId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
@@ -148,28 +148,28 @@ export const adminProductsApi = {
   getPurchasedItems: async (
     productId: string,
     filters?: PurchasedItemFilters
-  ): Promise<PurchasedProductByProductPaginationResponse> => {
+  ) => {
     const queryParams = filters
       ? toQueryString({
           page: filters.page,
           size: filters.limit,
         })
       : "";
-    const response = await apiClient.get<PurchasedProductByProductPaginationResponse>(
+    const response = await axiosInstance.get<PurchasedProductByProductPaginationResponse>(
       `/shoes/products/purchased/by-product/${productId}${queryParams}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Get Order Detail by ID (for admin)
    * Endpoint: /shoes/products/order/{id}
    */
-  getOrderDetail: async (orderId: string): Promise<OrderDetail> => {
-    const response = await apiClient.get<OrderDetail>(
+  getOrderDetail: async (orderId: string) => {
+    const response = await axiosInstance.get<OrderDetail>(
       `/shoes/products/order/${orderId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
@@ -177,11 +177,11 @@ export const adminProductsApi = {
    */
   getVariantHistory: async (
     filters?: VariantHistoryFilters
-  ): Promise<VariantHistoryPaginationResponse> => {
+  ) => {
     const queryParams = filters ? toQueryString(filters) : "";
-    const response = await apiClient.get<VariantHistoryPaginationResponse>(
+    const response = await axiosInstance.get<VariantHistoryPaginationResponse>(
       `/shoes/variants/history${queryParams}`
     );
-    return response.result;
+    return response.data;
   },
 };

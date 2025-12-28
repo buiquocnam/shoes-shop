@@ -8,7 +8,7 @@ export { useBrands } from "@/features/shared/hooks/useBrands";
 
 export const useUpsertBrand = () => {
   const queryClient = useQueryClient();
-  return useMutation<BrandType, Error, FormData>({
+  return useMutation({
     mutationFn: (data: FormData) => adminBrandsApi.upsert(data),
     onSuccess: (_, formData) => {
       // Invalidate all brand queries (including those with filters)
@@ -29,7 +29,7 @@ export const useUpdateBrand = useUpsertBrand;
 
 export const useDeleteBrand = () => {
   const queryClient = useQueryClient();
-  return useMutation<boolean, Error, string>({
+  return useMutation({
     mutationFn: async (id: string) => {
       const result = await adminBrandsApi.delete(id);
       if (!result) {

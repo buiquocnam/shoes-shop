@@ -14,7 +14,7 @@ export function useConversations() {
   // Listen for new messages via socket
   useSocketConversations();
 
-  return useQuery<Message[]>({
+  return useQuery({
     queryKey: ["chat", "conversations"],
     queryFn: () => chatApi.getMessagesByUserId(),
     staleTime: 60 * 1000, // 1 minute

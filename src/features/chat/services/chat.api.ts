@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import type {
   Conversation,
   Message,
@@ -12,23 +12,23 @@ export const chatApi = {
    */
   createConversation: async (
     data: CreateConversationRequest
-  ): Promise<Conversation> => {
-    const response = await apiClient.post<Conversation>(
+  ) => {
+    const response = await axiosInstance.post<Conversation>(
       "/chat/conversations/create",
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Send a message to a conversation
    */
-  sendMessage: async (data: CreateMessageRequest): Promise<Message> => {
-    const response = await apiClient.post<Message>(
+  sendMessage: async (data: CreateMessageRequest) => {
+    const response = await axiosInstance.post<Message>(
       "/chat/messages/create",
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
@@ -36,18 +36,18 @@ export const chatApi = {
    */
   getMessagesByConversationId: async (
     conversationId: string
-  ): Promise<Message[]> => {
-    const response = await apiClient.get<Message[]>(
+  ) => {
+    const response = await axiosInstance.get<Message[]>(
       `/chat/messages/chat/detail?conversationId=${conversationId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Get messages by current user ID (from JWT)
    */
-  getMessagesByUserId: async (): Promise<Message[]> => {
-    const response = await apiClient.get<Message[]>("/chat/messages/user");
-    return response.result;
+  getMessagesByUserId: async () => {
+    const response = await axiosInstance.get<Message[]>("/chat/messages/user");
+    return response.data;
   },
 };

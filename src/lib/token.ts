@@ -1,10 +1,23 @@
+import axios from "axios";
 import { useAuthStore, useCartStore } from "@/store";
-import { authApi } from "@/features/auth/services/auth.api";
+import { API_BASE_URL, isDev } from "./config";
 import { isTokenExpired } from "./jwt";
-import { isDev } from "./config";
+import type { AuthResponse } from "@/features/auth/types";
+import type { ApiResponse } from "@/types/api";
 
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
+
+/**
+ * Axios instance riêng để gọi refresh endpoint (không đi qua interceptor)
+ */
+const refreshAxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
 
 /**
  * Refresh access token and update auth store
@@ -24,8 +37,22 @@ export async function refreshAccessToken(): Promise<string> {
   }
 
   try {
-    const response = await authApi.refreshToken();
-    const { user, access_token, refresh_token } = response;
+    // Gọi refresh endpoint với refresh token trong header
+    const response = await refreshAxiosInstance.post<ApiResponse<AuthResponse>>(
+      "/auth/refresh",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    );
+
+    // Extract result từ ApiResponse (vì không đi qua interceptor)
+    const data = response.data
+    const authResponse: AuthResponse = data.result;
+
+    const { user, access_token, refresh_token } = authResponse;
 
     setAuth(user, access_token, refresh_token);
 

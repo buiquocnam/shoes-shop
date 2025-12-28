@@ -11,7 +11,7 @@ export function useLogout() {
   const { logout } = useAuthStore();
   const { clearCart } = useCartStore();
 
-  return useMutation<void, Error, void>({
+  return useMutation({
     mutationFn: async () => {
       await Promise.all([logout(), clearCart()]);
     },

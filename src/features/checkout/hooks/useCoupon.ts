@@ -4,14 +4,14 @@ import { couponApi } from "../services/coupon.api";
 import { Coupon, CouponListResponse } from "../types/coupon";
 
 export const useCoupons = () => {
-  return useQuery<CouponListResponse>({
+  return useQuery({
     queryKey: userQueryKeys.coupon.list(),
     queryFn: () => couponApi.getCouponList({ page: 1, size: 10, active: true }),
   });
 };
 
 export const useCouponByCode = (code: string) => {
-  return useQuery<Coupon>({
+  return useQuery({
     queryKey: userQueryKeys.coupon.get(code),
     queryFn: () => couponApi.getCouponByCode(code),
   });

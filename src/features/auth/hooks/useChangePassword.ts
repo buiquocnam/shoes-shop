@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export function useChangePassword() {
   const router = useRouter();
 
-  return useMutation<{ message: string }, Error, ChangePasswordType>({
+  return useMutation({
     mutationFn: (data) => authApi.changePassword(data),
     onSuccess: async (_, variables) => {
       await clearOtpData();

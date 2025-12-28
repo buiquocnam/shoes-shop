@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import { toQueryString } from "@/utils/queryString";
 import { BannerPaginationResponse, FetchBannersParams } from "@/features/admin/banners/types";
 
@@ -8,11 +8,11 @@ export const bannersApi = {
    */
   search: async (
     filters?: FetchBannersParams
-  ): Promise<BannerPaginationResponse> => {
-    const response = await apiClient.get<BannerPaginationResponse>(
+  ) => {
+    const banners = await axiosInstance.get<BannerPaginationResponse>(
       `/shoes/banners/search${toQueryString(filters)}`
     );
-    return response.result;
+    return banners.data;
   },
 };
 

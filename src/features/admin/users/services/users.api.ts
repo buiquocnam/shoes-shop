@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib";
+import axiosInstance from "@/lib/axios";
 import { User } from "@/types/global";
 import { toQueryString } from "@/utils/queryString";
 import { UserUpdate, UserPaginationResponse, UserFilters } from "../types";
@@ -9,32 +9,32 @@ import {
 import { OrderDetail } from "@/features/shared/types/order";
 
 export const adminUsersApi = {
-  getUsers: async (filters?: UserFilters): Promise<UserPaginationResponse> => {
+  getUsers: async (filters?: UserFilters) => {
     const queryParams = filters ? toQueryString(filters) : "";
-    const response = await apiClient.get<UserPaginationResponse>(
+    const response = await axiosInstance.get<UserPaginationResponse>(
       `/auth/users/search${queryParams}`
     );
-    return response.result;
+    return response.data;
   },
 
-  updateUser: async (data: UserUpdate): Promise<User> => {
-    const response = await apiClient.post<User>(
+  updateUser: async (data: UserUpdate) => {
+    const response = await axiosInstance.post<User>(
       `/auth/users/update-user`,
       data
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Delete Users
    * Body: array of user IDs ["id1", "id2", ...]
    */
-  deleteUser: async (userIds: string[]): Promise<boolean> => {
-    const response = await apiClient.delete<boolean>(
+  deleteUser: async (userIds: string[]) => {
+    const response = await axiosInstance.delete<boolean>(
       `/auth/users/delete-user`,
-      userIds
+      { data: userIds }
     );
-    return response.result;
+    return response.data;
   },
 
   /**
@@ -44,27 +44,27 @@ export const adminUsersApi = {
   getPurchasedItems: async (
     userId: string,
     filters?: PurchasedItemFilters
-  ): Promise<PurchasedListPaginationResponse> => {
+  ) => {
     const queryParams = filters
       ? toQueryString({
           page: filters.page,
           size: filters.limit,
         })
       : "";
-    const response = await apiClient.get<PurchasedListPaginationResponse>(
+    const response = await axiosInstance.get<PurchasedListPaginationResponse>(
       `/shoes/products/purchased/by-user/${userId}${queryParams}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Get Order Detail by ID (for admin)
    * Endpoint: /shoes/products/order-detail/{id}
    */
-  getOrderDetail: async (orderId: string): Promise<OrderDetail> => {
-    const response = await apiClient.get<OrderDetail>(
+  getOrderDetail: async (orderId: string) => {
+    const response = await axiosInstance.get<OrderDetail>(
       `/shoes/products/order-detail/${orderId}`
     );
-    return response.result;
+    return response.data;
   },
 };

@@ -15,7 +15,7 @@ export function useLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  return useMutation<AuthResponse, Error, LoginFormData>({
+  return useMutation({
     mutationFn: (credentials) => authApi.login(credentials),
     onSuccess: (response) => {
       // Lưu cả access token và refresh token

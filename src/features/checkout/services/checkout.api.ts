@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import { CreateOrderResponse, CreateOrderRequest } from "../types/checkout";
 
 export interface VnPayPaymentRequest {
@@ -20,27 +20,29 @@ export const checkoutApi = {
 
   createOrder: async (
     request: CreateOrderRequest
-  ): Promise<CreateOrderResponse> => {
-    const response = await apiClient.post<CreateOrderResponse>(
+  ) => {
+    const response = await axiosInstance.post<CreateOrderResponse>(
       "/shoes/variants/buy",
       request
     );
     
-    if (!response.result) {
+    const order = response.data;
+    
+    if (!order) {
       throw new Error("API response result is undefined");
     }
     
     // Validate that orderId exists in response
-    if (!response.result.orderId) {
+    if (!order.orderId) {
       throw new Error("Order ID is missing from API response");
     }
     
-    return response.result;
+    return order;
   },
 
   createVnPayPayment: async (
     request: VnPayPaymentRequest
-  ): Promise<VnPayPaymentResponse> => {
+  ) => {
     const { amount, variantSizeId, bankCode = "NCB" } = request;
     const params = new URLSearchParams({
       amount: amount.toString(),
@@ -48,9 +50,9 @@ export const checkoutApi = {
       variantSizeId,
     });
 
-    const response = await apiClient.get<VnPayPaymentResponse>(
+    const response = await axiosInstance.get<VnPayPaymentResponse>(
       `/shoes/payment/vn-pay?${params.toString()}`
     );
-    return response.result;
+    return response.data;
   },
 };

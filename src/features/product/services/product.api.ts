@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import {
   ProductDetailType,
   ProductFilters,
@@ -9,23 +9,23 @@ import { toQueryString } from "@/utils/queryString";
 
 export const productApi = {
   getProducts: async (filters?: ProductFilters) => {
-    const response = await apiClient.get<ProductPaginationResponse>(
+    const response = await axiosInstance.get<ProductPaginationResponse>(
       `/shoes/products/search${toQueryString(filters)}`
     );
-    return response.result;
+    return response.data;
   },
 
-  getProductById: async (id: string): Promise<ProductDetailType> => {
-    const response = await apiClient.get<ProductDetailType>(
+  getProductById: async (id: string) => {
+    const response = await axiosInstance.get<ProductDetailType>(
       `/shoes/products/get-by-id/${id}`
     );
-    return response.result;
+    return response.data;
   },
 
   getTopRatedProducts: async () => {
-    const response = await apiClient.get<ProductType[]>(
+    const response = await axiosInstance.get<ProductType[]>(
       `/shoes/products/top-rated`
     );
-    return response.result;
+    return response.data;
   },
 };

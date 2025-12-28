@@ -11,7 +11,7 @@ import { ProductType } from "@/features/product/types";
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
-  return useMutation<ProductType, Error, FormData>({
+  return useMutation({
     mutationFn: (data: FormData) => adminProductsApi.create(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({

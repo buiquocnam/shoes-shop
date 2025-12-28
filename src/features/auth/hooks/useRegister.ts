@@ -10,11 +10,7 @@ import { toast } from "sonner";
 export function useRegister() {
   const router = useRouter();
 
-  return useMutation<
-    AuthResponse,
-    Error,
-    Omit<RegisterFormData, "confirmPassword">
-  >({
+  return useMutation({
     mutationFn: (data) => authApi.register(data),
     onSuccess: () => {
       toast.success("Vui lòng kiểm tra email để xác thực");

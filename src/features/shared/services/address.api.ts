@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import {
   ProvincesType,
   DistrictsType,
@@ -19,58 +19,58 @@ export interface CreateAddressRequest {
 }
 
 export const addressApi = {
-  getUsersAddress: async (userId: string): Promise<AddressType[]> => {
-    const response = await apiClient.get<AddressType[]>(
+  getUsersAddress: async (userId: string) => {
+    const response = await axiosInstance.get<AddressType[]>(
       `/shoes/public/address/user/${userId}`
     );
-    return response.result;
+    return response.data;
   },
 
-  createAddress: async (data: CreateAddressRequest): Promise<AddressType> => {
-    const response = await apiClient.post<AddressType>(
+  createAddress: async (data: CreateAddressRequest) => {
+    const response = await axiosInstance.post<AddressType>(
       "/shoes/public/address/create",
       data
     );
-    return response.result;
+    return response.data;
   },
 
-  updateAddress: async (data: AddressType): Promise<AddressType> => {
-    const response = await apiClient.put<AddressType>(
+  updateAddress: async (data: AddressType) => {
+    const response = await axiosInstance.put<AddressType>(
       `/shoes/public/address/${data.id}`,
       data
     );
-    return response.result;
+    return response.data;
   },
 
-  deleteAddress: async (addressId: string): Promise<void> => {
-    await apiClient.delete(`/shoes/public/address/${addressId}`);
+  deleteAddress: async (addressId: string) => {
+    await axiosInstance.delete(`/shoes/public/address/${addressId}`);
   },
 
-  updateDefaultAddress: async (addressId: string): Promise<AddressType> => {
-    const response = await apiClient.put<AddressType>(
+  updateDefaultAddress: async (addressId: string) => {
+    const response = await axiosInstance.put<AddressType>(
       `/shoes/public/address/${addressId}/default`
     );
-    return response.result;
+    return response.data;
   },
 
-  getProvinces: async (): Promise<ProvincesType[]> => {
-    const response = await apiClient.get<ProvincesType[]>(
+  getProvinces: async () => {
+    const response = await axiosInstance.get<ProvincesType[]>(
       "/shoes/public/address/provinces"
     );
-    return response.result;
+    return response.data;
   },
 
-  getDistricts: async (provinceCode: number): Promise<DistrictsType[]> => {
-    const response = await apiClient.get<DistrictsType[]>(
+  getDistricts: async (provinceCode: number) => {
+    const response = await axiosInstance.get<DistrictsType[]>(
       `/shoes/public/address/provinces/${provinceCode}/districts`
     );
-    return response.result;
+    return response.data;
   },
 
-  getWards: async (districtCode: number): Promise<WardsType[]> => {
-    const response = await apiClient.get<WardsType[]>(
+  getWards: async (districtCode: number) => {
+    const response = await axiosInstance.get<WardsType[]>(
       `/shoes/public/address/districts/${districtCode}/wards`
     );
-    return response.result;
+    return response.data;
   },
 };

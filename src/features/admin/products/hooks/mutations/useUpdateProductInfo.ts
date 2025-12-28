@@ -11,7 +11,7 @@ import { toast } from "sonner";
  */
 export const useUpdateProductInfo = () => {
   const queryClient = useQueryClient();
-  return useMutation<ProductType, Error, UpdateProductInfoInput>({
+  return useMutation({
     mutationFn: (data: UpdateProductInfoInput) =>
       adminProductsApi.updateInfo(data),
     onSuccess: (_, variables) => {

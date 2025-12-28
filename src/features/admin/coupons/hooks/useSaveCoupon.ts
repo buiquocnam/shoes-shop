@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export const useSaveCoupon = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Coupon, Error, SaveCouponInput>({
+  return useMutation({
     mutationFn: (data) => adminCouponsApi.save(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "coupons", "list"] });

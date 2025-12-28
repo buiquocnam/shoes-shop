@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib";
+import axiosInstance from "@/lib/axios";
 import { toQueryString } from "@/utils/queryString";
 import { Payment, PaymentPaginationResponse, PaymentFilters } from "../types";
 
@@ -8,21 +8,21 @@ export const adminPaymentsApi = {
    */
   getAll: async (
     filters?: PaymentFilters
-  ): Promise<PaymentPaginationResponse> => {
+  ) => {
     const queryParams = filters ? toQueryString(filters) : "";
-    const response = await apiClient.get<PaymentPaginationResponse>(
+    const response = await axiosInstance.get<PaymentPaginationResponse>(
       `/shoes/payment/get-all${queryParams}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Get payment detail by ID
    */
-  getDetail: async (paymentId: string): Promise<Payment> => {
-    const response = await apiClient.get<Payment>(
+  getDetail: async (paymentId: string) => {
+    const response = await axiosInstance.get<Payment>(
       `/shoes/payment/detail/${paymentId}`
     );
-    return response.result;
+    return response.data;
   },
 };

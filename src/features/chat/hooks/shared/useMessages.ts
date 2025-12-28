@@ -12,7 +12,7 @@ import { useSocketMessages } from "./useSocketMessages";
 export function useMessages(conversationId: string | null) {
   useSocketMessages(conversationId);
 
-  return useQuery<Message[]>({
+  return useQuery({
     queryKey: ["chat", "messages", conversationId],
     queryFn: () => chatApi.getMessagesByConversationId(conversationId!),
     enabled: !!conversationId,

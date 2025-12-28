@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import type {
   LoginFormData,
   RegisterFormData,
@@ -12,29 +12,29 @@ import type {
 import { useAuthStore, useCartStore } from "@/store";
 
 export const authApi = {
-  login: async (credentials: LoginFormData): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>("/auth/login", {
+  login: async (credentials: LoginFormData) => {
+    const response = await axiosInstance.post<AuthResponse>("/auth/login", {
       email: credentials.email,
       password: credentials.password,
     });
-    return response.result;
+    return response.data;
   },
   register: async (
     data: Omit<RegisterFormData, "confirmPassword">
-  ): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>("/auth/register", data);
-    return response.result;
+  ) => {
+    const response = await axiosInstance.post<AuthResponse>("/auth/register", data);
+    return response.data;
   },
   sendResetPasswordEmail: async (
     data: ForgotPasswordFormData
-  ): Promise<{ message: string }> => {
-    const response = await apiClient.post<{ message: string }>(
+  ) => {
+    const response = await axiosInstance.post<{ message: string }>(
       `/auth/email/generate-otp?email=${data.email}`
     );
-    return response.result;
+    return response.data;
   },
-  verifyOTP: async (data: VerifyEmailType): Promise<boolean> => {
-    const response = await apiClient.post<boolean>(
+  verifyOTP: async (data: VerifyEmailType) => {
+    const response = await axiosInstance.post<boolean>(
       `/auth/email/verify-account`,
       {
         email: data.email,
@@ -42,12 +42,12 @@ export const authApi = {
         status: data.status,
       }
     );
-    return response.result;
+    return response.data;
   },
   changePassword: async (
     data: ChangePasswordType
-  ): Promise<{ message: string }> => {
-    const response = await apiClient.post<{ message: string }>(
+  ) => {
+    const response = await axiosInstance.post<{ message: string }>(
       `/auth/email/change-password`,
       {
         email: data.email,
@@ -56,26 +56,26 @@ export const authApi = {
         status: data.status,
       }
     );
-    return response.result;
+    return response.data;
   },
-  refreshToken: async (): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>("/auth/refresh");
-    return response.result;
+  refreshToken: async () => {
+    const response = await axiosInstance.post<AuthResponse>("/auth/refresh");
+    return response.data;
   },
-  logout: async (): Promise<void> => {
+  logout: async () => {
     await Promise.all([
       useAuthStore.getState().logout(),
       useCartStore.getState().clearCart(),
     ]);
   },
 
-  loginWithGoogle: async (code: string): Promise<AuthResponse> => {
+  loginWithGoogle: async (code: string) => {
     const formData = new FormData();
     formData.append("code", code);
-    const response = await apiClient.post<AuthResponse>(
+    const response = await axiosInstance.post<AuthResponse>(
       "/auth/login/oauth2",
       formData
     );
-    return response.result;
+    return response.data;
   },
 };

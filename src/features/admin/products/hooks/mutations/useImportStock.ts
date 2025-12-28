@@ -10,7 +10,7 @@ import { toast } from "sonner";
  */
 export const useImportStock = () => {
   const queryClient = useQueryClient();
-  return useMutation<boolean, Error, ImportStockInput>({
+  return useMutation({
     mutationFn: (data: ImportStockInput) => adminProductsApi.importStock(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

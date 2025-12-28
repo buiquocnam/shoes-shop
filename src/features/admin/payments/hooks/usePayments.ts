@@ -9,7 +9,7 @@ import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
  * Get all payments with filters
  */
 export const usePayments = (filters?: PaymentFilters) => {
-  return useQuery<PaymentPaginationResponse>({
+  return useQuery({
     queryKey: [...adminQueryKeys.payments.key, "list", filters],
     queryFn: () => adminPaymentsApi.getAll(filters),
   });

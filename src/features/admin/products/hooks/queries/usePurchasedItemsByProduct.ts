@@ -12,7 +12,7 @@ export const usePurchasedItemsByProduct = (
   productId: string | null,
   filters?: PurchasedItemFilters
 ) => {
-  return useQuery<PurchasedProductByProductPaginationResponse>({
+  return useQuery({
     queryKey: [
       ...sharedQueryKeys.product.key,
       "purchased-items",

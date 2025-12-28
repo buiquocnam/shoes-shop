@@ -22,7 +22,7 @@ export function useBanners(
     "queryKey" | "queryFn"
   >
 ) {
-  return useQuery<BannerPaginationResponse>({
+  return useQuery({
     queryKey: BANNER_QUERY_KEYS.list(filters),
     queryFn: () => adminBannersApi.search(filters),
     placeholderData: (previousData) => previousData,
@@ -34,7 +34,7 @@ export function useBanners(
 
 export const useUpsertBanner = () => {
   const queryClient = useQueryClient();
-  return useMutation<BannerType, Error, FormData>({
+  return useMutation({
     mutationFn: (data: FormData) => adminBannersApi.createOrUpdate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({

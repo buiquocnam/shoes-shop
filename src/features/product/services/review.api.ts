@@ -1,9 +1,9 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import { CreateProductReviewType, ProductReviewResponse, ProductReviewType, ReviewFilters } from "../types";
 import { toQueryString } from "@/utils/queryString";
 
 
-export async function getReviews(filters: ReviewFilters): Promise<ProductReviewResponse> {
+export async function getReviews(filters: ReviewFilters) {
   try {
     // Convert productId to product_id for API
     const apiFilters = {
@@ -11,25 +11,15 @@ export async function getReviews(filters: ReviewFilters): Promise<ProductReviewR
       size: filters.size,
       product_id: filters.productId,
     };
-    const response = await apiClient.get<ProductReviewResponse>(`/shoes/reviews/get-by-product${toQueryString(apiFilters)}`);
-    return response.result as ProductReviewResponse;
+    const response = await axiosInstance.get<ProductReviewResponse>(`/shoes/reviews/get-by-product${toQueryString(apiFilters)}`);
+    return response.data;
   } catch (error) {
-    if (error instanceof Error) {
-      const errorMessage = error.message.toLowerCase();
-      if (errorMessage.includes('not found') || errorMessage.includes('404')) {
-        return { data: [], currentPage: 1, pageSize: filters.size || 10, totalElements: 0, totalPages: 0 } as ProductReviewResponse;
-      }
-    }
-    throw error;
+    console.error("Error fetching reviews:", error);
   }
 }
 
 
-export async function createReview(review: CreateProductReviewType): Promise<ProductReviewType> {
-  try {
-    const response = await apiClient.post<ProductReviewType>('/shoes/reviews', review);
-    return response.result;
-  } catch (error) {
-    throw error;
-  }
+export async function createReview(review: CreateProductReviewType) {
+  const response = await axiosInstance.post<ProductReviewType>('/shoes/reviews', review);
+  return response.data;
 }

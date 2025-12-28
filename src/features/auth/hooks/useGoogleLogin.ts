@@ -13,7 +13,7 @@ export function useGoogleLogin() {
   const { setAuth } = useAuthStore();
   const router = useRouter();
 
-  return useMutation<AuthResponse, Error, string>({
+  return useMutation({
     mutationFn: (code) => authApi.loginWithGoogle(code),
     onSuccess: (response) => {
       // Lưu cả access token và refresh token

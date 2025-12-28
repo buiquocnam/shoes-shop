@@ -8,7 +8,7 @@ import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
 export const useDeleteCoupon = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<boolean, Error, string>({
+  return useMutation({
     mutationFn: (id: string) => adminCouponsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.coupons.key, "list"] });

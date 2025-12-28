@@ -5,12 +5,10 @@ import { productApi } from "@/features/product/services/product.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import type {
   ProductFilters,
-  ProductPaginationResponse,
-  ProductType,
 } from "../types";
 
 export function useProducts(filters?: ProductFilters) {
-  return useQuery<ProductPaginationResponse>({
+  return useQuery({
     queryKey: sharedQueryKeys.product.list(filters),
     queryFn: () => productApi.getProducts(filters),
     staleTime: 60 * 1000,
@@ -19,7 +17,7 @@ export function useProducts(filters?: ProductFilters) {
 }
 
 export function useTopRatedProducts() {
-  return useQuery<ProductType[]>({
+  return useQuery({
     queryKey: sharedQueryKeys.product.topRated(),
     queryFn: () => productApi.getTopRatedProducts(),
     staleTime: 60 * 1000,

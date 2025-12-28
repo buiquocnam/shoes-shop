@@ -11,7 +11,7 @@ export const useProductFormData = (enabled: boolean = true) => {
   const brands = brandsData?.data || [];
 
   return {
-    categories: categories || [],
+    categories: categories?.data || [],
     brands,
   };
 };

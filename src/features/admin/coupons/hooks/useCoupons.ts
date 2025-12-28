@@ -9,7 +9,7 @@ import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
  * Get coupons with filters
  */
 export const useCoupons = (filters?: CouponFilters) => {
-  return useQuery<CouponPaginationResponse>({
+  return useQuery({
     queryKey: ["admin", "coupons", "list", filters],
     queryFn: () => adminCouponsApi.search(filters),
   });

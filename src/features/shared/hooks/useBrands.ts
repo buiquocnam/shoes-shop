@@ -10,7 +10,7 @@ export function useBrands(
     "queryKey" | "queryFn"
   >
 ) {
-  return useQuery<BrandPaginationResponse>({
+  return useQuery({
     queryKey: sharedQueryKeys.brand.list(),
     queryFn: () => brandsApi.search(filters),
     placeholderData: (previousData) => previousData,

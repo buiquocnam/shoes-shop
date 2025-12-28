@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 import { OrderDetail } from "../types/order";
 
 export const orderApi = {
@@ -6,21 +6,21 @@ export const orderApi = {
    * Get Order Detail by ID (for user/checkout success)
    * Endpoint: /shoes/products/order-detail/{id}
    */
-  getOrderDetail: async (orderId: string): Promise<OrderDetail> => {
-    const response = await apiClient.get<OrderDetail>(
+  getOrderDetail: async (orderId: string) => {
+    const response = await axiosInstance.get<OrderDetail>(
       `/shoes/products/order-detail/${orderId}`
     );
-    return response.result;
+    return response.data;
   },
 
   /**
    * Get Admin Order Detail by ID (for admin)
    * Endpoint: /shoes/products/order/{id}
    */
-  getAdminOrderDetail: async (orderId: string): Promise<OrderDetail> => {
-    const response = await apiClient.get<OrderDetail>(
+  getAdminOrderDetail: async (orderId: string) => {
+    const response = await axiosInstance.get<OrderDetail>(
       `/shoes/products/order/${orderId}`
     );
-    return response.result;
+    return response.data;
   },
 };

@@ -289,7 +289,7 @@ export default function Sidebar() {
                   Tất cả danh mục
                 </span>
               </label>
-              {categories?.map((category) => (
+              {categories?.data?.map((category) => (
                 <label
                   key={category.id}
                   className="flex items-center gap-3 cursor-pointer group"

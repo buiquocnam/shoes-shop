@@ -8,7 +8,7 @@ import type { AuthResponse } from "../types";
 export function useRefreshToken() {
   const { user, setAuth } = useAuthStore();
 
-  return useMutation<AuthResponse, Error, void>({
+  return useMutation({
     mutationFn: async () => {
       // Backend tự đọc refresh token từ cookie/header
       return authApi.refreshToken();

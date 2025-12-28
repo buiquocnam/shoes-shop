@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  return useMutation<boolean, Error, string>({
+  return useMutation({
     mutationFn: (productId: string) => adminProductsApi.delete(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({
