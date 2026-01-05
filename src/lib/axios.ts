@@ -63,7 +63,12 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (isDev) {
-      console.error("❌ API Error:", error);
+      console.error("❌ API Error:", {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        url: error.config?.url,
+      });
     }
 
     // Xử lý lỗi từ API

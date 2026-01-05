@@ -63,7 +63,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
                     src={img}
                     alt={`product-image-${i}`}
                     fill
-                    className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out"
                     unoptimized
                   />
                 </div>

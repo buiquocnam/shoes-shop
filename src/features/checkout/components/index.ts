@@ -1,8 +1,3 @@
-// Main components
-export { OrderSummary } from "./CheckoutFormComponents/OrderSummary";
-
-// Sub-components
-export {
-  OrderRow,
-  DiscountSection,
-} from "./CheckoutFormComponents/OrderSummaryComponents";
+export * from "./CheckoutForm";
+export * from "./CheckoutHeader";
+export * from "./order-summary/OrderSummary";

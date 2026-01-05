@@ -16,14 +16,14 @@ export function useLogin() {
   const searchParams = useSearchParams();
 
   return useMutation({
-    mutationFn: (credentials) => authApi.login(credentials),
+    mutationFn: ({email, password}: LoginFormData) => authApi.login({email, password}),
     onSuccess: (response) => {
       // Lưu cả access token và refresh token
       setAuth(response.user, response.access_token, response.refresh_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
       if (userRole === Role.ADMIN) {
-        router.replace("/admin");
+        router.replace("/admin/dashboard");
         return;
       }
 

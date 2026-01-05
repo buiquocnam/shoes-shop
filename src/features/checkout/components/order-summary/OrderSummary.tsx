@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { formatCurrency } from '@/utils/format';
 import { Lock } from 'lucide-react';
-import { OrderRow, DiscountSection } from './OrderSummaryComponents';
+import { OrderRow, DiscountSection } from '.';
 import { Coupon } from '../../types/coupon';
 
 interface OrderSummaryProps {

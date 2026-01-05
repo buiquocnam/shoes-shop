@@ -20,7 +20,7 @@ export const useCreateOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ request }) => {
+    mutationFn: ({ request }: { request: CreateOrderRequest; source?: string }) => {
       return checkoutApi.createOrder(request);
     },
 

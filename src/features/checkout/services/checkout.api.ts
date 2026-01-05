@@ -4,7 +4,7 @@ import { CreateOrderResponse, CreateOrderRequest } from "../types/checkout";
 export interface VnPayPaymentRequest {
   amount: number;
   bankCode?: string;
-  variantSizeId: string;
+  orderId: string;
 }
 
 export interface VnPayPaymentResponse {
@@ -43,11 +43,11 @@ export const checkoutApi = {
   createVnPayPayment: async (
     request: VnPayPaymentRequest
   ) => {
-    const { amount, variantSizeId, bankCode = "NCB" } = request;
+    const { amount, orderId, bankCode = "NCB" } = request;
     const params = new URLSearchParams({
       amount: amount.toString(),
       bankCode,
-      variantSizeId,
+      orderId,
     });
 
     const response = await axiosInstance.get<VnPayPaymentResponse>(

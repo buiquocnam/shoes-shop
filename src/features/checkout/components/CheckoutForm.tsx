@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { OrderSummary } from './CheckoutFormComponents/OrderSummary';
+import { OrderSummary } from './order-summary/OrderSummary';
 import { CheckoutItem } from '../types/checkout';
-import { useVnPayPayment } from '../hooks/useCheckout';
+import { useVnPayPayment, useCreateOrder } from '../hooks/useCheckout';
 import { AddressManagement } from '@/features/shared/components/address';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useUsersAddress } from '@/features/shared/hooks/useAdress';
@@ -16,7 +16,9 @@ interface CheckoutFormProps {
 }
 
 export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
-    const { mutate: createVnPayPayment, isPending, isError } = useVnPayPayment();
+    const { mutate: createOrder, isPending: isCreatingOrder } = useCreateOrder();
+    const { mutate: createVnPayPayment, isPending: isPaymentPending, isError } = useVnPayPayment();
+    const isPending = isCreatingOrder || isPaymentPending;
     const { user } = useAuthStore();
     const userId = user?.id ?? '';
     const { data: usersAddress, isLoading: isLoadingAddress } = useUsersAddress(userId);
@@ -58,13 +60,30 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
                 })
             );
 
-            const variantSizeId = orderSummary[0].size.id;
+            const orderItems = orderSummary.map(item => ({
+                variantSizeId: item.size.id,
+                quantity: item.quantity
+            }));
 
             setIsNavigating(true);
-            createVnPayPayment({
-                amount: totalAmount,
-                bankCode: 'NCB',
-                variantSizeId,
+
+            createOrder({
+                request: {
+                    items: orderItems,
+                    couponCode: coupon?.code || null,
+                    addressId: selectedAddress.id
+                }
+            }, {
+                onSuccess: (data) => {
+                    createVnPayPayment({
+                        amount: totalAmount,
+                        bankCode: 'NCB',
+                        orderId: data.orderId,
+                    });
+                },
+                onError: () => {
+                    setIsNavigating(false);
+                }
             });
         },
         [orderSummary, createVnPayPayment, selectedAddress]

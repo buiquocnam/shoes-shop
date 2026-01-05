@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Star } from "lucide-react";
 import { ProductType } from "../types";
 import { formatCurrency } from "@/utils/format";
+import Link from "next/link";
 
 interface ProductCardProps {
     product: ProductType;
@@ -17,22 +18,16 @@ export default function ProductCard({ product }: ProductCardProps) {
     const imageUrl = product.imageUrl?.url || "/placeholder.png";
     const averageRating = product.averageRating || 0;
 
-    const handleCardClick = () => {
-        router.push(`/products/${product.id}`);
-    };
-
+             
 
     return (
-        <a
-            onClick={(e) => {
-                e.preventDefault();
-                handleCardClick();
-            }}
-            className="group flex flex-col rounded-3xl bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-[#f4ebe7] cursor-pointer overflow-hidden"
+        <Link
+            href={`/products/${product.id}`}
+            className="group flex flex-col rounded-3xl h-full bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-border cursor-pointer overflow-hidden"
         >
-            <div className="relative aspect-square w-full overflow-hidden bg-primary/10">
+            <div className="relative aspect-square w-full overflow-hidden">
                 {product.discount > 0 && (
-                    <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                    <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-bold px-2 py-1 rounded-full uppercase tracking-wider">
                         -{product.discount}%
                     </span>
                 )}
@@ -40,13 +35,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                     src={imageUrl}
                     alt={product.name}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="object-contain group-hover:scale-110 transition-transform duration-500"
                     loading="lazy"
-                    // sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     unoptimized
                 />
             </div>
-            <div className="flex flex-col gap-1 p-4">
+            <div className="flex flex-col flex1 p-4">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className="text-xs font-bold text-primary uppercase tracking-wider truncate">
                         {product.brand?.name || ""}
@@ -80,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </span>
                 </div>
             </div>
-        </a>
+        </Link>
     );
 }
 

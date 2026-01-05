@@ -4,7 +4,8 @@ import { ReactNode, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore, useIsAdmin } from "@/store/useAuthStore";
 import { Spinner } from "@/components/ui/spinner";
-
+import { SideBarAdmin } from "@/components/SideBarAdmin";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Layout = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
@@ -53,7 +54,16 @@ const Layout = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    return <>{children}</>;
+    return (
+        <SidebarProvider>
+            <SideBarAdmin/>
+            <main className="w-full">
+                {children}
+            </main>
+
+        </SidebarProvider>
+
+    );
 };
 
 export default Layout;
