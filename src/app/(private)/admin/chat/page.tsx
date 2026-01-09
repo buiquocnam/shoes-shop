@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { ChatList, ChatWindow } from "@/features/chat";
-import { useChatSocket } from "@/features/chat/hooks/shared/useChatSocket";
-
 import { MessageSquare } from "lucide-react";
 
 export default function ChatPage() {
@@ -12,8 +10,7 @@ export default function ChatPage() {
   const [selectedConversationName, setSelectedConversationName] =
     useState<string>("");
 
-  // Setup socket connection (shared hook for both admin and user)
-  useChatSocket();
+  // Socket is now centrally managed by AppInitializer
 
   const handleSelectConversation = (
     conversationId: string,

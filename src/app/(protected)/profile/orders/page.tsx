@@ -15,7 +15,7 @@ export default function ProfileOrdersPage() {
 
   const { data, isLoading } = useProductsPurchased({
     page: currentPage,
-    limit: pageSize,
+    size: pageSize,
   });
 
   const orders = data?.data || [];

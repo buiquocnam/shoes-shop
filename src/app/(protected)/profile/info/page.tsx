@@ -5,10 +5,8 @@ import { useAuthStore } from '@/store';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Input } from '@/components/ui/input';
-import { Form } from '@/components/ui/form';
-import { FieldLabel } from '@/components/ui/field';
-import { CustomField } from '@/components/form';
 import { useForm } from 'react-hook-form';
+import { Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useUpdateProfile } from '@/features/profile/hooks/useProfile';
@@ -65,93 +63,83 @@ export default function ProfileInfoPage() {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden p-6">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-6">Chỉnh sửa hồ sơ</h1>
+      <h1 className="text-2xl md:text-3xl font-extrabold mb-6">Chỉnh sửa hồ sơ</h1>
       {/* Form */}
       <div className=" space-y-10">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-            {/* Name */}
-            <CustomField
-              control={form.control}
-              name="name"
-              label="Tên người dùng"
-              className="md:col-span-1"
-              render={(field) => (
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
-                  <Input
-                    placeholder="Nhập tên của bạn"
-                    className="h-12 pl-11 pr-4 rounded-full"
-                    {...field}
-                  />
-                </div>
-              )}
-            />
-
-            {/* Phone */}
-            <CustomField
-              control={form.control}
-              name="phone"
-              label="Số điện thoại"
-              className="md:col-span-1"
-              render={(field) => (
-                <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
-                  <Input
-                    placeholder="Nhập số điện thoại"
-                    type="tel"
-                    className="h-12 pl-11 pr-4 rounded-full"
-                    {...field}
-                  />
-                </div>
-              )}
-            />
-
-            {/* Email - Read only */}
-            <div className="space-y-2 md:col-span-2">
-              <FieldLabel >Email</FieldLabel>
-              <div className="relative opacity-70">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
-                <Input
-                  value={user?.email || ''}
-                  disabled
-                  type="email"
-                  className="h-12 pl-11 pr-11 rounded-full cursor-not-allowed"
-                />
-                <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
-              </div>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+          {/* Name */}
+          <Field data-invalid={!!form.formState.errors.name} className="md:col-span-1">
+            <FieldLabel>Tên người dùng</FieldLabel>
+            <div className="relative">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+              <Input
+                placeholder="Nhập tên của bạn"
+                className="h-12 pl-11 pr-4 rounded-full"
+                {...form.register("name")}
+              />
             </div>
+            <FieldError errors={[form.formState.errors.name]} />
+          </Field>
 
-            {/* Buttons */}
-            <div className="md:col-span-2 flex flex-col-reverse sm:flex-row gap-4 sm:justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => form.reset()}
-                className="px-8 py-3 rounded-full m:w-auto w-full font-bold text-sm transition-colors"
-              >
-                Hủy
-              </Button>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="px-8 py-3 rounded-full m:w-auto w-full font-bold text-sm transition-all flex items-center justify-center gap-2"
-              >
-                {isPending ? (
-                  <>
-                    <Spinner className="h-4 w-4" />
-                    Đang lưu...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-[18px] h-[18px]" />
-                    Lưu thay đổi
-                  </>
-                )}
-              </Button>
+          {/* Phone */}
+          <Field data-invalid={!!form.formState.errors.phone} className="md:col-span-1">
+            <FieldLabel>Số điện thoại</FieldLabel>
+            <div className="relative">
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+              <Input
+                placeholder="Nhập số điện thoại"
+                type="tel"
+                className="h-12 pl-11 pr-4 rounded-full"
+                {...form.register("phone")}
+              />
             </div>
-          </form>
-        </Form>
+            <FieldError errors={[form.formState.errors.phone]} />
+          </Field>
+
+          {/* Email - Read only */}
+          <div className="space-y-2 md:col-span-2">
+            <FieldLabel >Email</FieldLabel>
+            <div className="relative opacity-70">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+              <Input
+                value={user?.email || ''}
+                disabled
+                type="email"
+                className="h-12 pl-11 pr-11 rounded-full cursor-not-allowed"
+              />
+              <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="md:col-span-2 flex flex-col-reverse sm:flex-row gap-4 sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => form.reset()}
+              className="px-8 py-3 rounded-full m:w-auto w-full font-bold text-sm transition-colors"
+            >
+              Hủy
+            </Button>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="px-8 py-3 rounded-full m:w-auto w-full font-bold text-sm transition-all flex items-center justify-center gap-2"
+            >
+              {isPending ? (
+                <>
+                  <Spinner className="h-4 w-4" />
+                  Đang lưu...
+                </>
+              ) : (
+                <>
+                  <Save className="w-[18px] h-[18px]" />
+                  Lưu thay đổi
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

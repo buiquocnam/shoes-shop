@@ -9,14 +9,14 @@ import Image from 'next/image';
 
 import { formatCurrency } from '@/utils/format';
 import { useOrderDetail } from '@/features/shared/hooks/useOrderDetail';
-import { OrderDetail } from '@/features/shared/types/order';
+import { OrderDetail } from '@/types/order';
 
 export default function CheckoutSuccessByIdPage() {
   const params = useParams();
   const orderId = params?.id as string;
 
   const { data: orderDetail, isLoading, error } = useOrderDetail(orderId);
-  
+
   // ===== Loading =====
   if (isLoading) {
     return (
@@ -151,8 +151,8 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                   <div className="flex-1">
                     <div className="flex flex-col gap-2">
                       <div className="text-gray-900 text-base leading-relaxed">
-                        {address.addressLine}<br/>
-                        {address.wardName}, {address.districtName}<br/>
+                        {address.addressLine}<br />
+                        {address.wardName}, {address.districtName}<br />
                         {address.provinceName}
                       </div>
                     </div>
@@ -216,7 +216,7 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                       </span>
                     </div>
                   )}
-                
+
                 </div>
                 <div className="h-px bg-gray-100 my-2"></div>
                 <div className="flex justify-between items-end">
@@ -226,7 +226,7 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                   </span>
                 </div>
               </div>
-              
+
             </div>
           </div>
         </div>

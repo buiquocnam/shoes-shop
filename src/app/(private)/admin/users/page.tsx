@@ -12,7 +12,7 @@ import { PurchasedOrdersDialog } from "@/features/admin/users/components/Purchas
 import { useUpdateUser } from "@/features/admin/users/hooks";
 import { usePurchasedItems } from "@/features/admin/users/hooks";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
-import { User } from "@/types/global";
+import { User } from "@/types";
 import { SearchInput } from "@/features/admin/components/SearchInput";
 
 export default function AdminUsersPage() {
@@ -24,10 +24,6 @@ export default function AdminUsersPage() {
   const handleSearch = useCallback((name?: string) => {
     updateParams({ name, page: 1 });
   }, [updateParams]);
-
-  const handlePageChange = (page: number) => {
-    updateParams({ page: page.toString() });
-  };
 
   const { data, isLoading } = useGetUsers({
     name: nameFromUrl || undefined,
@@ -43,41 +39,45 @@ export default function AdminUsersPage() {
 
   const purchasedItems = usePurchasedItems(
     purchasedUser?.id ?? null,
-    purchasedUser ? { page: purchasedPage, limit: 10 } : undefined
+    purchasedUser ? { page: purchasedPage, size: 10 } : undefined
   );
 
-  const columns = userColumns(setEditingUser, setPurchasedUser);
+  const columns = useMemo(() => userColumns(setEditingUser, setPurchasedUser), []);
 
-  if (isLoading) return <Loading />;
+  const pagination = useMemo(() => ({
+    currentPage: data?.currentPage || pageFromUrl,
+    totalPages: data?.totalPages || 1,
+    totalElements: data?.totalElements || 0,
+    pageSize: data?.pageSize || 10,
+  }), [data, pageFromUrl]);
 
   return (
     <div className="p-4 md:p-8 space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-        Quản lý người dùng
-      </h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-1">
+            Người dùng
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Quản lý tài khoản khách hàng và phân quyền hệ thống.
+          </p>
+        </div>
+      </div>
 
-      <SearchInput
-        onSearch={handleSearch}
-        defaultValue={nameFromUrl}
-        placeholder="Tìm kiếm tên người dùng..."
-        withContainer
+      <DataTable
+        columns={columns}
+        data={data?.data || []}
+        pagination={pagination}
+        onPageChange={(p) => updateParams({ page: p })}
+        toolbar={
+          <SearchInput
+            onSearch={handleSearch}
+            defaultValue={nameFromUrl}
+            placeholder="Tìm kiếm người dùng..."
+            className="h-10 w-[200px] lg:w-[300px]"
+          />
+        }
       />
-
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={data?.data || []}
-          pagination={{
-            currentPage: data?.currentPage || 1,
-            totalPages: data?.totalPages || 1,
-            totalElements: data?.totalElements || 0,
-            pageSize: data?.pageSize || 10,
-          }}
-          onPageChange={handlePageChange}
-        />
-      )}
 
       {editingUser && (
         <UserForm

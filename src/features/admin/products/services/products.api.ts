@@ -19,9 +19,9 @@ import type {
   VariantHistoryFilters,
   VariantHistoryPaginationResponse,
   PurchasedProductByProductPaginationResponse,
-  PurchasedItemFilters,
 } from "../types";
-import { OrderDetail } from "@/features/shared/types/order";
+import { PurchasedItemFilters } from "@/features/profile/types";
+import { OrderDetail } from "@/types/order";
 
 export const adminProductsApi = {
   /**
@@ -152,7 +152,7 @@ export const adminProductsApi = {
     const queryParams = filters
       ? toQueryString({
           page: filters.page,
-          size: filters.limit,
+          size: filters.size,
         })
       : "";
     const response = await axiosInstance.get<PurchasedProductByProductPaginationResponse>(

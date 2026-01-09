@@ -1,10 +1,11 @@
-export { default as ProductCard } from "./ProductCard";
-export { default as ProductInfo } from "./ProductInfo";
-
-export { default as ProductGallery } from "./ProductGallery";
-export { default as ProductReview } from "./ProductReview/ProductReview";
-export { default as Sidebar } from "./Sidebar";
-export { default as AlertLogin } from "./AlertLogin";
-export { default as ProductList } from "./ProductList";
-export { default as ProductListLoading } from "./ProductList/ProductListLoading";
-export { default as SortSelect } from "./SortSelect";
+export { default as ProductCard } from "./listing/ProductCard";
+export { default as ProductInfo } from "./details/ProductInfo";
+export { default as ProductGallery } from "./details/ProductGallery";
+export { default as ProductReview } from "./details/ProductReview/ProductReview";
+export { Sidebar } from "./Sidebar";
+export { default as AlertLogin } from "./common/AlertLogin";
+export { default as ProductList } from "./listing/ProductList";
+export { default as ProductListLoading } from "./listing/ProductList/ProductListLoading";
+export { default as SortSelect } from "./listing/SortSelect";
+export { default as SimilarProducts } from "./details/SimilarProducts";
+export { default as ReviewsLoading } from "./details/ReviewsLoading";

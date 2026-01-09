@@ -13,10 +13,7 @@ export const getCart = async () => {
  * Add item to cart
  */
 export const addToCart = async (request: AddToCartRequest) => {
-    const response = await axiosInstance.post<CartResponse>(`/shoes/cart`, { 
-        quantity: request.quantity,
-        variantSizeId: request.varianSizeId
-    });
+    const response = await axiosInstance.post<CartResponse>(`/shoes/cart`, request);
     return response.data;
 };
 

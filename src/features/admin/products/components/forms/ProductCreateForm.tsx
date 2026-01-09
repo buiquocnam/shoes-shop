@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { FieldGroup } from "@/components/ui/field";
 import { createProductSchema, CreateProductFormValues } from "../../schemas";
 import { ProductBasicInfoSection } from "../sections/ProductBasicInfoSection";
 import { ProductMediaSection } from "../sections/ProductMediaSection";
@@ -16,11 +17,6 @@ interface ProductCreateFormProps {
   onSuccess: (productId: string) => void;
 }
 
-/**
- * Form để Create Product
- * Step 1: Product Info + Images
- * Payload: FormData với JSON body (info) + multipart files (images)
- */
 export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
   onSuccess,
 }) => {
@@ -48,8 +44,7 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
     const updatedImages = [...images, ...newFiles];
     setImages(updatedImages);
     form.setValue("images", updatedImages);
-    
-    // Ảnh đầu tiên được tải lên tự động là ảnh chính
+
     if (images.length === 0 && newFiles.length > 0) {
       form.setValue("primaryName", newFiles[0].name);
     }
@@ -60,8 +55,7 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
     form.setValue("images", newImages);
-    
-    // Nếu xóa ảnh chính, đặt ảnh đầu tiên còn lại làm ảnh chính
+
     const currentPrimary = form.getValues("primaryName");
     if (removedImage.name === currentPrimary && newImages.length > 0) {
       form.setValue("primaryName", newImages[0].name);
@@ -71,10 +65,8 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
   };
 
   const onSubmit = async (data: CreateProductFormValues) => {
-    // Tạo FormData với JSON body (info) + multipart files (images)
     const formData = new FormData();
 
-    // Add JSON data
     const productData = {
       name: data.name,
       description: data.description,
@@ -89,7 +81,7 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
       type: "application/json",
     });
     formData.append("request", jsonBlob);
-    // Add images
+
     if (data.images && data.images.length > 0) {
       data.images.forEach((file) => {
         formData.append("files", file);
@@ -102,9 +94,11 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="space-y-6">
+      <FieldGroup className="gap-10">
         <ProductBasicInfoSection
+          register={form.register}
           control={form.control}
+          errors={form.formState.errors}
           categories={categories}
           brands={brands}
         />
@@ -114,19 +108,17 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
           onAddImages={handleAddImages}
           onRemoveNewImage={handleRemoveImage}
         />
-      </div>
 
-      <div className="flex items-center justify-end gap-x-6 pt-6 mt-8">
-        <Button
-          type="submit"
-          disabled={createProduct.isPending}
-          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
-        >
-          {createProduct.isPending ? <Spinner /> : "Tạo sản phẩm"}
-        </Button>
-      </div>
+        <div className="flex items-center justify-end gap-x-6">
+          <Button
+            type="submit"
+            disabled={createProduct.isPending}
+            className="px-10 py-3.5 font-bold shadow-lg"
+          >
+            {createProduct.isPending ? <Spinner /> : "Tạo sản phẩm"}
+          </Button>
+        </div>
+      </FieldGroup>
     </form>
   );
 };
-
-

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore, useCartStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { API_BASE_URL, isDev } from "./config";
 import { isTokenExpired } from "./jwt";
 import type { AuthResponse } from "@/features/auth/types";
@@ -24,7 +24,6 @@ const refreshAxiosInstance = axios.create({
  */
 export async function refreshAccessToken(): Promise<string> {
   const { setAuth, logout, refreshToken } = useAuthStore.getState();
-  const { clearCart } = useCartStore.getState();
 
   // Kiểm tra có refresh token không
   if (!refreshToken) {
@@ -32,7 +31,6 @@ export async function refreshAccessToken(): Promise<string> {
       console.error("❌ No refresh token available");
     }
     logout();
-    clearCart();
     throw new Error("Session expired. Please login again.");
   }
 
@@ -49,7 +47,7 @@ export async function refreshAccessToken(): Promise<string> {
     );
 
     // Extract result từ ApiResponse (vì không đi qua interceptor)
-    const data = response.data
+    const data = response.data;
     const authResponse: AuthResponse = data.result;
 
     const { user, access_token, refresh_token } = authResponse;
@@ -67,18 +65,12 @@ export async function refreshAccessToken(): Promise<string> {
     }
 
     logout();
-    clearCart();
-
     throw new Error("Session expired. Please login again.");
   }
 }
 
 /**
  * Check và refresh token nếu cần (với lock mechanism)
- * Flow:
- * 1. Nếu token expired → refresh token
- * 2. Nếu refresh thành công → token đã được set trong store
- * 3. Nếu refresh fail → throw error (sẽ redirect login ở component)
  */
 export async function ensureValidToken(): Promise<void> {
   const { accessToken } = useAuthStore.getState();

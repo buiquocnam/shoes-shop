@@ -11,14 +11,18 @@ interface VariantHistoryColumnsProps {
   variantId?: string;
 }
 
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+
 export const createVariantHistoryColumns = ({
   productId,
   variantId,
 }: VariantHistoryColumnsProps = {}): ColumnDef<VariantHistoryItem>[] => [
     {
       accessorKey: "date",
-      header: "Timestamp",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Thời gian" />
+      ),
+      cell: ({ row }) => {
         const date = new Date(row.original.date);
         const formattedDate = date.toLocaleString("vi-VN", {
           year: "numeric",
@@ -28,7 +32,7 @@ export const createVariantHistoryColumns = ({
           minute: "2-digit",
         });
         return (
-          <span className="text-gray-500 dark:text-gray-400 whitespace-nowrap">
+          <span className="text-muted-foreground whitespace-nowrap text-xs font-mono">
             {formattedDate}
           </span>
         );
@@ -36,8 +40,10 @@ export const createVariantHistoryColumns = ({
     },
     {
       accessorKey: "product.name",
-      header: "Product Variant",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Sản phẩm & Biến thể" />
+      ),
+      cell: ({ row }) => {
         const product = row.original.product;
         const color = row.original.color;
         const size = row.original.size;
@@ -46,14 +52,14 @@ export const createVariantHistoryColumns = ({
         const canNavigate = !productId;
 
         const content = (
-          <div className="max-w-[300px]">
-            <p className="font-bold text-[#181112] dark:text-white text-base">{product.name}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant="secondary" className="text-xs font-medium">
-                Color: {color}
+          <div className="max-w-[300px] py-1">
+            <p className="font-semibold text-foreground text-sm line-clamp-1">{product.name}</p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <Badge variant="secondary" className="text-[10px] font-bold h-5 uppercase px-1.5">
+                {color}
               </Badge>
-              <Badge variant="secondary" className="text-xs font-medium">
-                Size: {size}
+              <Badge variant="outline" className="text-[10px] font-bold h-5 uppercase px-1.5">
+                Size {size}
               </Badge>
             </div>
           </div>
@@ -63,7 +69,7 @@ export const createVariantHistoryColumns = ({
           return (
             <Link
               href={`/admin/products/history?productId=${product.id}`}
-              className="hover:text-primary"
+              className="hover:text-primary transition-colors"
             >
               {content}
             </Link>
@@ -75,11 +81,13 @@ export const createVariantHistoryColumns = ({
     },
     {
       accessorKey: "oldStock",
-      header: "Old Stock",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Trước" />
+      ),
+      cell: ({ row }) => {
         const oldStock = row.original.oldStock;
         return (
-          <span className="font-medium text-gray-500 dark:text-gray-400">
+          <span className="font-medium text-muted-foreground">
             {oldStock}
           </span>
         );
@@ -87,11 +95,13 @@ export const createVariantHistoryColumns = ({
     },
     {
       accessorKey: "variant.stock",
-      header: "New Stock",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Sau" />
+      ),
+      cell: ({ row }) => {
         const stock = row.original.variant?.stock ?? 0;
         return (
-          <span className="font-bold text-gray-900 dark:text-white ">
+          <span className="font-bold text-foreground">
             {stock}
           </span>
         );
@@ -99,22 +109,24 @@ export const createVariantHistoryColumns = ({
     },
     {
       accessorKey: "count",
-      header: "Change",
-      cell: ({ row }: { row: Row<VariantHistoryItem> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Thay đổi" />
+      ),
+      cell: ({ row }) => {
         const count = row.original.count;
         const isPositive = count > 0;
         return (
-          <span
+          <div
             className={cn(
-              " gap-1 rounded-full px-2 py-1 font-bold",
+              "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset",
               isPositive
-                ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"
+                ? "bg-emerald-50 text-emerald-700 ring-emerald-600/20"
+                : "bg-red-50 text-red-700 ring-red-600/20"
             )}
           >
             {isPositive ? "+" : ""}
             {count}
-          </span>
+          </div>
         );
       },
     },

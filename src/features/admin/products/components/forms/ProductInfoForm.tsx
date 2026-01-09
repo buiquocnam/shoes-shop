@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { FieldGroup } from "@/components/ui/field";
 import { productInfoSchema, InfoFormValues, ProductContentInput } from "../../schemas";
 import { ProductBasicInfoSection } from "../sections/ProductBasicInfoSection";
 import { Spinner } from "@/components/ui/spinner";
@@ -30,7 +31,6 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
     const { categories, brands } = useProductFormData(true);
     const updateProductInfo = useUpdateProductInfo();
 
-    // Tính toán defaultValues từ data - chỉ tính khi có data
     const defaultValues = useMemo<InfoFormValues>(() => {
         if (!data?.product) {
             return {
@@ -54,20 +54,17 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
         };
 
     }, [data?.product]);
-   
 
-    // Khởi tạo form với defaultValues - form chỉ được tạo khi có data (từ cache hoặc fetch xong)
     const form = useForm<InfoFormValues>({
         resolver: zodResolver(productInfoSchema),
         defaultValues,
     });
 
-    // Reset form khi data đến (từ undefined → có giá trị)
-useEffect(() => {
-    if (data?.product && !loadingProduct) {
-        form.reset(defaultValues);
-    }
-}, [data?.product, loadingProduct, defaultValues, form]);
+    useEffect(() => {
+        if (data?.product && !loadingProduct) {
+            form.reset(defaultValues);
+        }
+    }, [data?.product, loadingProduct, defaultValues, form]);
 
     const onSubmit = async (data: InfoFormValues) => {
         const input: ProductContentInput = {
@@ -90,33 +87,34 @@ useEffect(() => {
 
     return (
         <form key={productId} onSubmit={form.handleSubmit(onSubmit)}>
-            <ProductBasicInfoSection
-                control={form.control}
-                categories={categories}
-                brands={brands}
-            />
+            <FieldGroup className="gap-10">
+                <ProductBasicInfoSection
+                    register={form.register}
+                    control={form.control}
+                    errors={form.formState.errors}
+                    categories={categories}
+                    brands={brands}
+                />
 
-            <div className="flex items-center justify-end gap-x-6 pt-6 mt-8">
-                <Button
-                    variant="ghost"
-                    type="button"
-                    disabled={updateProductInfo.isPending}
-                    onClick={onCancel}
-                    className="px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
-                >
-                    Hủy bỏ
-                </Button>
-                <Button
-                    type="submit"
-                    disabled={updateProductInfo.isPending}
-                    className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
-                >
-                    {updateProductInfo.isPending ? <Spinner /> : "Lưu"}
-                </Button>
-            </div>
+                <div className="flex items-center justify-end gap-x-6">
+                    <Button
+                        variant="ghost"
+                        type="button"
+                        disabled={updateProductInfo.isPending}
+                        onClick={onCancel}
+                        className="font-semibold text-muted-foreground hover:text-foreground"
+                    >
+                        Hủy bỏ
+                    </Button>
+                    <Button
+                        type="submit"
+                        disabled={updateProductInfo.isPending}
+                        className="px-10 py-3.5 font-bold shadow-lg"
+                    >
+                        {updateProductInfo.isPending ? <Spinner className="h-4 w-4" /> : "Lưu thay đổi"}
+                    </Button>
+                </div>
+            </FieldGroup>
         </form>
     );
 };
-
-
-

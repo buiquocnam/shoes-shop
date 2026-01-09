@@ -240,10 +240,6 @@ img {
   content-visibility: auto;
 }
 
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
-}
 
 /* Shimmer animation for skeleton */
 @keyframes shimmer {

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../../services/chat.api";
 import type { Message, CreateMessageRequest } from "../../types";
 import { toast } from "sonner";
-import { useSocket } from "@/features/shared/hooks/useSocket";
+import { useSocketStore } from "@/store";
 
 /**
  * Hook to send a message
@@ -12,10 +12,10 @@ import { useSocket } from "@/features/shared/hooks/useSocket";
  */
 export function useSendMessage() {
   const queryClient = useQueryClient();
-  const socket = useSocket();
+  const socket = useSocketStore((state) => state.socket);
 
-  return useMutation({
-    mutationFn: async (data) => {
+  return useMutation<Message, Error, CreateMessageRequest>({
+    mutationFn: (data) => {
       return chatApi.sendMessage(data);
     },
     onSuccess: (data, variables) => {

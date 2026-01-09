@@ -24,7 +24,7 @@ const VariantHistoryPage = () => {
   const variantId = searchParams.get("variantId") || undefined;
   const nameFromUrl = searchParams.get("name") || "";
 
-  const handleSearch = useCallback((name: string) => {
+  const handleSearch = useCallback((name?: string) => {
     updateParams({ name: name || undefined, page: 1 });
   }, [updateParams]);
 
@@ -39,84 +39,66 @@ const VariantHistoryPage = () => {
     [page, size, productId, variantId, nameFromUrl]
   );
 
-  /** ---------------- fetch ---------------- */
   const { data, isLoading } = useVariantHistory(filters);
-
   const historyItems = data?.data || [];
 
-  const pagination = {
-    currentPage: data?.currentPage || 1,
+  const pagination = useMemo(() => ({
+    currentPage: data?.currentPage || page,
     totalPages: data?.totalPages || 1,
     totalElements: data?.totalElements || 0,
     pageSize: data?.pageSize || size,
-  };
+  }), [data, page, size]);
 
-  // Create columns with filter props
-  const columns = createVariantHistoryColumns({
+  const columns = useMemo(() => createVariantHistoryColumns({
     productId: productId || undefined,
     variantId: variantId || undefined
-  });
+  }), [productId, variantId]);
 
-  if (isLoading) return <Loading />;
+  if (isLoading && historyItems.length === 0) {
+    return <Loading />;
+  }
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <History className="h-8 w-8 text-primary" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <History className="h-6 w-6" />
+          </div>
           <div>
-            <h1 className="text-4xl font-black tracking-tight">Product Variant Quantity History</h1>
-            {productId && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Đang lọc theo sản phẩm
-              </p>
-            )}
-            {variantId && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Đang lọc theo biến thể
-              </p>
-            )}
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Lịch sử nhập kho
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Theo dõi biến động số lượng tồn kho của các sản phẩm.
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
-          {variantId && productId && (
-            <Link href={`/admin/products/history?productId=${productId}`}>
-              <Button variant="outline" size="sm">
+          {productId && (
+            <Link href="/admin/products">
+              <Button variant="outline" size="sm" className="rounded-lg h-9">
                 ← Quay lại sản phẩm
               </Button>
             </Link>
           )}
-          {productId && !variantId && (
-            <Link href="/admin/products">
-              <Button variant="outline" size="sm">
-                ← Quay lại danh sách
-              </Button>
-            </Link>
-          )}
-          {!productId && (
-            <Link href="/admin/products">
-              <Button variant="outline">Quay lại danh sách sản phẩm</Button>
-            </Link>
-          )}
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <SearchInput
-          onSearch={handleSearch}
-          defaultValue={nameFromUrl}
-          placeholder="Tìm kiếm tên sản phẩm..."
-        />
-      </div>
-
-      <div className="rounded-lg  ">
-        <DataTable
-          columns={columns}
-          data={historyItems}
-          pagination={pagination}
-          onPageChange={(newPage) => updateParams({ page: newPage })}
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={historyItems}
+        pagination={pagination}
+        onPageChange={(newPage) => updateParams({ page: newPage })}
+        toolbar={
+          <SearchInput
+            onSearch={handleSearch}
+            defaultValue={nameFromUrl}
+            placeholder="Tìm kiếm sản phẩm..."
+            className="h-10 w-[200px] lg:w-[300px]"
+          />
+        }
+      />
     </div>
   );
 };

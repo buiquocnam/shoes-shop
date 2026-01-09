@@ -1,15 +1,27 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { CategoryType } from "@/features/product/types";
 import { adminCategoriesApi } from "@/features/admin/categories/services/categories.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { categoriesApi } from "@/features/shared/services/categories.api";
 import { toast } from "sonner";
+import { Filters } from "@/features/shared/types";
+
 // Re-export shared useCategories for convenience
 export { useCategories } from "@/features/shared/hooks/useCategories";
+
+// Admin-specific hook with pagination support
+export const useGetCategories = (filters?: Filters) => {
+  return useQuery({
+    queryKey: sharedQueryKeys.category.list(filters),
+    queryFn: () => categoriesApi.getAll(filters),
+    placeholderData: (previousData) => previousData,
+  });
+};
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data) => adminCategoriesApi.create(data),
+    mutationFn: (data: { name: string; description: string }) => adminCategoriesApi.create(data),
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
@@ -26,7 +38,7 @@ export const useCreateCategory = () => {
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }) => adminCategoriesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: { name: string; description: string } }) => adminCategoriesApi.update(id, data),
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({

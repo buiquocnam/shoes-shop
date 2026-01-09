@@ -1,53 +1,39 @@
-import { ProductType } from "@/features/product/types";
-import { User } from "@/types/global";
-import { PaginatedResponse, PaginationParams } from "@/types/global";
+import { PaginatedResponse } from "@/types";
+import { OrderDetail } from "@/types/order";
+import { AddressType } from "@/types/address";
+import { Product } from "@/types/product";
+import { Variant } from "@/types/variant";
 
-/**
- * Payment Variant
- */
-export interface PaymentVariant {
+// Aliases for backward compatibility or clarity within Payment context
+export type PaymentAddress = AddressType;
+export type PaymentProduct = Product;
+export type PaymentVariant = Variant;
+
+export interface PaymentOrderResponse extends OrderDetail {}
+
+// User info specific to PaymentRecord (the top level user who paid, might be different from order user?)
+export interface PaymentUser {
   id: string;
-  productId: string;
-  stock: number;
-  color: string;
-  status: "ACTIVE" | "INACTIVE";
-  countSell: number;
-  size: string;
+  name: string;
+  email: string;
 }
 
-/**
- * Payment Product (with imageUrl as object)
- */
-export interface PaymentProduct extends Omit<ProductType, "imageUrl"> {
-  imageUrl: {
-    fileName: string;
-    url: string;
-    isPrimary: boolean;
-  } | null;
+// Main payment record
+export interface PaymentRecord {
+  paymentId: string;
+  response: PaymentOrderResponse | null;
+  user: PaymentUser;
 }
 
-/**
- * Payment Item
- */
-export interface Payment {
-  id: string;
-  variantSizeId: string;
-  userId: string;
-  code: string;
-  amount: number;
-  bankCode: string;
-  expiryDate: string | null;
-  user: User;
-  product: PaymentProduct;
-  variant: PaymentVariant;
+// Paginated response
+export interface PaymentPaginationResponse extends PaginatedResponse<PaymentRecord> {}
+
+// Filters for payment list
+export interface PaymentFilters {
+  page?: number;
+  size?: number;
+  userId?: string;
+  email?: string;
+  startDate?: string;
+  endDate?: string;
 }
-
-/**
- * Payment Pagination Response
- */
-export interface PaymentPaginationResponse extends PaginatedResponse<Payment> {}
-
-/**
- * Payment Filters
- */
-export interface PaymentFilters extends PaginationParams {}

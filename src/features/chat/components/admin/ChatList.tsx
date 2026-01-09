@@ -19,14 +19,15 @@ export function ChatList({
   selectedConversationId,
   className,
 }: ChatListProps) {
-  const { data: messages, isLoading } = useConversations();
+  const { data: messages = [], isLoading } = useConversations();
   const [searchQuery, setSearchQuery] = useState("");
   const selectedItemRef = useRef<HTMLButtonElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
 
-  // Extract unique conversations from messages
-  // Group messages by conversationId and get the latest message for each conversation
-  // Also track the other participant's name (not the current user)
+  // Still use Map logic if we need to refine "otherParticipantName" 
+  // but useChatStore.conversations already contains the latest messages.
+  // Let's refine it slightly to ensure unique conversation entries for the UI list.
+
   const conversationsMap = new Map<
     string,
     { latestMessage: Message; otherParticipantName: string }
@@ -35,34 +36,18 @@ export function ChatList({
   if (messages) {
     messages.forEach((msg: Message) => {
       const existing = conversationsMap.get(msg.conversationId);
-      const isNewer =
-        !existing ||
-        (msg.createdDate &&
-          existing.latestMessage.createdDate &&
-          new Date(msg.createdDate) > new Date(existing.latestMessage.createdDate));
+      const otherParticipantName = !msg.me ? msg.senderName : existing?.otherParticipantName || "Khách hàng";
 
-
-      const otherParticipantName =
-        !msg.me
-          ? msg.senderName
-          : existing?.otherParticipantName || "Không xác định";
-
-      if (isNewer) {
+      if (!existing) {
         conversationsMap.set(msg.conversationId, {
           latestMessage: msg,
           otherParticipantName,
-        });
-      } else if (!msg.me && !existing?.otherParticipantName) {
-        // Update otherParticipantName if we found it
-        conversationsMap.set(msg.conversationId, {
-          latestMessage: existing.latestMessage,
-          otherParticipantName: msg.senderName,
         });
       }
     });
   }
 
-  let conversations = Array.from(conversationsMap.values()).reverse();
+  let conversations = Array.from(conversationsMap.values());
 
   // Filter conversations by search query
   if (searchQuery.trim()) {

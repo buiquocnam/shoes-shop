@@ -1,28 +1,15 @@
-import { ProductType } from "../product";
+import { Cart, CartItem } from "@/types";
+import { Product } from "@/types/product";
 
-export interface CartResponse {
-    id: string;
-    userId: string;
-    count: number;
-    totalPrice: number;
+export interface CartResponse extends Cart {
     items: CartType[];
 }
 
-export interface CartType {
-   id: string;
-   cartId: string;
-   quantity: number;
-   variant: {
-    id: string;
-    productId: string;
-    color: string;
-    sizeLabel: string;
-    stock: number;
-  };
-   product: ProductType;
+export interface CartType extends CartItem {
+   product: Product;
 }
 
 export interface AddToCartRequest {
-    varianSizeId: string;
+    variantSizeId: string;
     quantity: number;
 }

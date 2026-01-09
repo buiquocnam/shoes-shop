@@ -1,11 +1,6 @@
-import { ProductType } from "@/features/product/types";
-import { PaginatedResponse, User } from "@/types/global";
-import {
-  PurchasedProduct,
-  PurchasedVariant,
-  PurchasedListPaginationResponse,
-  PurchasedItemFilters,
-} from "@/features/profile/types";
+import { PaginatedResponse, User } from "@/types";
+import { Product } from "@/types/product";
+import { Variant } from "@/types/variant";
 
 // ===== PRODUCT INPUT TYPES =====
 export interface CreateProductInput {
@@ -66,7 +61,7 @@ export interface VariantResponse {
 // ===== VARIANT HISTORY TYPES =====
 export interface VariantHistoryItem {
   id: string;
-  product: ProductType;
+  product: Product;
   color: string;
   size: string;
   count: number;
@@ -98,8 +93,8 @@ export interface VariantHistoryPaginationResponse
 // ===== PURCHASED PRODUCT BY PRODUCT TYPES =====
 export interface PurchasedProductByProduct {
   id: string;
-  product: ProductType;
-  variant: PurchasedVariant;
+  product: Product;
+  variant: Variant & { size: string; countSell: number; stock: number }; // Extended variant info often returned in stats
   countBuy: number;
   totalMoney: number;
   userId: string;
@@ -108,7 +103,3 @@ export interface PurchasedProductByProduct {
 
 export interface PurchasedProductByProductPaginationResponse
   extends PaginatedResponse<PurchasedProductByProduct> {}
-
-// ===== RE-EXPORT PURCHASED ITEM TYPES =====
-export type { PurchasedItemFilters };
-

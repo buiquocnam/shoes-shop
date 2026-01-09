@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { CategoryType } from "@/features/product/types";
 import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
 import { useDeleteCategory } from "../hooks/useCategories";
+import Link from "next/link";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 
 export const categoryColumns = (
   onEdit?: (category: CategoryType) => void
@@ -13,14 +15,15 @@ export const categoryColumns = (
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
+        <DataTableColumnHeader column={column} title="Tên danh mục" />
+      ),
+      cell: ({ row }) => (
+        <Link
+          href={`/admin/products?category_id=${row.original.id}`}
+          className="font-medium text-foreground hover:text-primary transition-colors"
         >
-          Tên danh mục
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          {row.original.name}
+        </Link>
       ),
     },
     {
@@ -38,14 +41,15 @@ export const categoryColumns = (
     {
       accessorKey: "countProduct",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
+        <DataTableColumnHeader column={column} title="Sản phẩm" />
+      ),
+      cell: ({ row }) => (
+        <Link
+          href={`/admin/products?category_id=${row.original.id}`}
+          className="text-sm text-muted-foreground hover:text-primary transition-colors"
         >
-          Sản phẩm
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          {row.original.countProduct || 0} sản phẩm
+        </Link>
       ),
     },
     {
@@ -68,10 +72,10 @@ export const categoryColumns = (
           </div>
         );
       },
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
 
 // Delete Category Button Component
 function DeleteCategoryButton({ category }: { category: CategoryType }) {

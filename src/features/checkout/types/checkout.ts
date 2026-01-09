@@ -1,3 +1,5 @@
+import { Product, Variant, VariantSize } from "@/types";
+
 export interface CreateOrderRequest {
   items: OrderItem[];
   couponCode: string | null;
@@ -21,21 +23,11 @@ export interface CreateOrderResponse {
 
 export interface CheckoutItem {
   // Product information for display
-  product: {
-    id: string;
-    name: string;
-    price: number;
-    discount: number;
+  product: Pick<Product, 'id' | 'name' | 'price' | 'discount'> & {
     imageUrl: string | null;
   };
-  variant: {
-    id: string;
-    color: string;
-  };
-  size: {
-    id: string;
-    size: string;
-  };
+  variant: Pick<Variant, 'id' | 'color'>;
+  size: Pick<VariantSize, 'id' | 'size'>;
   quantity: number;
   totalPrice: number;
 }

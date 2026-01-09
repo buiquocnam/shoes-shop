@@ -3,13 +3,11 @@
 import { CartList } from './CartList';
 import { CartSummary } from './CartSummary';
 import { CartEmpty } from './CartEmpty';
-import { useCartStore } from '@/store/useCartStore';
+import { useCart, useUpdateCartItem, useRemoveCartItem } from '../hooks/useCart';
 import { Spinner } from '@/components/ui/spinner';
-import { useUpdateCartItem, useRemoveCartItem } from '../hooks/useCart';
 
 export function CartContent() {
-    const cart = useCartStore((state) => state.cart);
-    const isLoading = useCartStore((state) => state.isLoading);
+    const { cart, isLoading } = useCart();
     const { mutate: updateItem } = useUpdateCartItem();
     const { mutate: removeItem } = useRemoveCartItem();
 
@@ -54,8 +52,8 @@ export function CartContent() {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                     <div className="lg:col-span-8">
-                        <CartList 
-                            items={cart.items} 
+                        <CartList
+                            items={cart.items}
                             updateQuantity={handleUpdateQuantity}
                             remove={handleRemove}
                         />

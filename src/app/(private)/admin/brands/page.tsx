@@ -38,14 +38,20 @@ const AdminBrandsPage: React.FC = () => {
   }, [updateParams]);
 
   const filters: Filters = useMemo(() => ({
-    page,
     size,
     search: searchFromUrl,
-  }), [page, size, searchFromUrl]);
+  }), [size, searchFromUrl]);
 
   const { data, isLoading } = useBrands(filters);
   const upsertBrandMutation = useUpsertBrand();
   const brands: BrandType[] = data?.data || [];
+
+  const pagination = useMemo(() => ({
+    currentPage: data?.currentPage || page,
+    totalPages: data?.totalPages || 1,
+    totalElements: data?.totalElements || brands.length,
+    pageSize: data?.pageSize || size,
+  }), [data, brands, page, size]);
 
   const handleUpsertBrand = async (formData: FormData) => {
     await upsertBrandMutation.mutateAsync(formData);
@@ -59,52 +65,48 @@ const AdminBrandsPage: React.FC = () => {
 
   const columns = useMemo(() => brandColumns(handleEdit), [handleEdit]);
 
-  if (isLoading) {
-    return (
-      <Loading />
-    );
+  if (isLoading && brands.length === 0) {
+    return <Loading />;
   }
 
   return (
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Quản lý thương hiệu
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-1">
+            Thương hiệu
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Quản lý danh sách các thương hiệu sản phẩm của cửa hàng.
+          </p>
+        </div>
         <BrandForm
           onSubmit={handleUpsertBrand}
           isLoading={upsertBrandMutation.isPending}
           open={createFormOpen}
           onOpenChange={setCreateFormOpen}
           trigger={
-            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover">
+            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
               + Thêm thương hiệu
             </Button>
           }
         />
       </div>
 
-      <SearchInput
-        onSearch={handleSearch}
-        defaultValue={searchFromUrl}
-        placeholder="Tìm kiếm tên thương hiệu..."
-        withContainer
+      <DataTable
+        columns={columns}
+        data={brands}
+        pagination={pagination}
+        onPageChange={(p) => updateParams({ page: p })}
+        toolbar={
+          <SearchInput
+            onSearch={handleSearch}
+            defaultValue={searchFromUrl}
+            placeholder="Tìm kiếm thương hiệu..."
+            className="h-10 w-[200px] lg:w-[300px]"
+          />
+        }
       />
-
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={brands}
-          pagination={{
-            currentPage: 1,
-            totalPages: 1,
-            totalElements: brands.length,
-            pageSize: 10,
-          }}
-        />
-      )}
 
       {selectedBrand && (
         <BrandForm

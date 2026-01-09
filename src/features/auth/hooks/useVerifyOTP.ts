@@ -11,7 +11,7 @@ export function useVerifyOTP() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (data) => authApi.verifyOTP(data),
+    mutationFn: (data: VerifyEmailType) => authApi.verifyOTP(data),
     onSuccess: async (response) => {
       if (response) {
         await clearOtpData();

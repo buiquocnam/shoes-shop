@@ -7,7 +7,7 @@ import { CategoryType } from "@/features/product/types";
 import {
   CategoryForm,
   categoryColumns,
-  useCategories,
+  useGetCategories,
   useCreateCategory,
   useUpdateCategory,
 } from "@/features/admin/categories";
@@ -45,11 +45,18 @@ const AdminCategoriesPage: React.FC = () => {
     [page, size, nameFromUrl]
   );
 
-  const { data: categories, isLoading } = useCategories(filters);
+  const { data: categories, isLoading } = useGetCategories(filters);
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
 
   const categoriesData: CategoryType[] = categories?.data || [];
+
+  const pagination = useMemo(() => ({
+    currentPage: categories?.currentPage || page,
+    totalPages: categories?.totalPages || 1,
+    totalElements: categories?.totalElements || 0,
+    pageSize: categories?.pageSize || size,
+  }), [categories, page, size]);
 
   const handleCreateCategory = async (data: { name: string; description: string }) => {
     await createCategoryMutation.mutateAsync(data);
@@ -66,58 +73,54 @@ const AdminCategoriesPage: React.FC = () => {
     }
   };
 
-  const handleEdit = (category: CategoryType) => {
+  const handleEdit = useCallback((category: CategoryType) => {
     setSelectedCategory(category);
-  };
+  }, []);
 
-  const columns = categoryColumns(handleEdit);
+  const columns = useMemo(() => categoryColumns(handleEdit), [handleEdit]);
 
-  if (isLoading) {
-    return (
-      <Loading />
-    );
+  if (isLoading && categoriesData.length === 0) {
+    return <Loading />;
   }
 
   return (
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Quản lý danh mục
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-1">
+            Danh mục
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Quản lý các danh mục phân loại sản phẩm của cửa hàng.
+          </p>
+        </div>
         <CategoryForm
           onSubmit={handleCreateCategory}
           isLoading={createCategoryMutation.isPending}
           open={createFormOpen}
           onOpenChange={setCreateFormOpen}
           trigger={
-            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover">
+            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
               + Thêm danh mục
             </Button>
           }
         />
       </div>
 
-      <SearchInput
-        onSearch={handleSearch}
-        defaultValue={nameFromUrl}
-        placeholder="Tìm kiếm tên danh mục..."
-        withContainer
+      <DataTable
+        columns={columns}
+        data={categoriesData}
+        pagination={pagination}
+        onPageChange={(p) => updateParams({ page: p })}
+        toolbar={
+          <SearchInput
+            onSearch={handleSearch}
+            defaultValue={nameFromUrl}
+            placeholder="Tìm kiếm danh mục..."
+            className="h-10 w-[200px] lg:w-[300px]"
+          />
+        }
       />
-
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={categoriesData}
-          pagination={{
-            currentPage: categories?.currentPage || 1,
-            totalPages: categories?.totalPages || 1,
-            totalElements: categories?.totalElements || 0,
-            pageSize: categories?.pageSize || 10,
-          }}
-        />
-      )}
 
       {selectedCategory && (
         <CategoryForm

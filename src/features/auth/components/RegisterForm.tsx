@@ -5,15 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useState } from 'react';
 import { EyeIcon, EyeClosedIcon } from 'lucide-react';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Field, FieldError, FieldLabel, FieldGroup, FieldDescription } from '@/components/ui/field';
 import { registerSchema, type RegisterFormData } from '@/features/auth/schema';
 import { useRegister } from '@/features/auth/hooks';
 import { Spinner } from '@/components/ui/spinner';
@@ -38,7 +32,6 @@ export default function RegisterForm() {
         const { confirmPassword, ...registerData } = values;
         register(registerData as Omit<RegisterFormData, 'confirmPassword'>, {
             onSuccess: async () => {
-                // Save email to cookie before redirecting
                 await setOtpData(registerData.email, 'REGISTER');
                 router.push("/verify-otp");
             },
@@ -46,146 +39,98 @@ export default function RegisterForm() {
     }
 
     return (
-        <div className="w-full max-w-md space-y-8">
-            <div className="text-center lg:text-left">
-                <p className="text-3xl sm:text-4xl">
+        <div className="w-full max-w-md mx-auto">
+            <div className="flex flex-col gap-2 mb-8">
+                <h1 className="text-4xl font-bold tracking-tight">
                     Tạo tài khoản
-                </p>
-                <p className="font-normal leading-normal mt-2">
+                </h1>
+                <p className="text-muted-foreground">
                     Nhận quyền truy cập các ưu đãi độc quyền và thanh toán nhanh hơn.
                 </p>
             </div>
 
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                >
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <div className="flex flex-col">
-                                    <label className="font-medium pb-2">
-                                        Họ và tên
-                                    </label>
-                                    <FormControl>
-                                        <Input
-                                            id="full-name"
-                                            placeholder="Nhập họ và tên của bạn"
-                                            className="w-full h-12 focus:border-primary"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FieldGroup>
+                    <Field data-invalid={!!form.formState.errors.name}>
+                        <FieldLabel htmlFor="full-name">Họ và tên</FieldLabel>
+                        <Input
+                            id="full-name"
+                            placeholder="Nhập họ và tên của bạn"
+                            className="h-12"
+                            {...form.register("name")}
+                        />
+                        <FieldError errors={[form.formState.errors.name]} />
+                    </Field>
 
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <div className="flex flex-col">
-                                    <label className="font-medium pb-2">
-                                        Email Address
-                                    </label>
-                                    <FormControl>
-                                        <Input
-                                            id="email"
-                                            type="text"
-                                            placeholder="Enter your email"
-                                            className="w-full h-12 focus:border-primary"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <Field data-invalid={!!form.formState.errors.email}>
+                        <FieldLabel htmlFor="email">Địa chỉ email</FieldLabel>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            className="h-12"
+                            {...form.register("email")}
+                        />
+                        <FieldError errors={[form.formState.errors.email]} />
+                    </Field>
 
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <div className="flex flex-col">
-                                    <label className="font-medium pb-2">
-                                        Mật khẩu
-                                    </label>
-                                    <div className="relative flex w-full flex-1 items-stretch">
-                                        <FormControl>
-                                            <Input
-                                                id="password"
-                                                type={showPassword ? "text" : "password"}
-                                                placeholder="Tạo mật khẩu"
-                                                className="w-full h-12 focus:border-primary"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <Button
-                                            className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center pr-4 "
-                                            variant="ghost"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                        >
-                                            {showPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
-                                        </Button>
-                                    </div>
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <Field data-invalid={!!form.formState.errors.password}>
+                        <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Tạo mật khẩu"
+                                className="h-12 pr-12"
+                                {...form.register("password")}
+                            />
+                            <Button
+                                className="absolute right-0 top-0 h-12 w-12 p-0"
+                                variant="ghost"
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex={-1}
+                            >
+                                {showPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
+                            </Button>
+                        </div>
+                        <FieldError errors={[form.formState.errors.password]} />
+                    </Field>
 
-                    <FormField
-                        control={form.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                            <FormItem>
-                                <div className="flex flex-col">
-                                    <label className="font-medium pb-2">
-                                        Confirm Password
-                                    </label>
-                                    <FormControl>
-                                        <Input
-                                            id="confirm-password"
-                                            type="password"
-                                            placeholder="Confirm your password"
-                                            className="w-full h-12 focus:border-primary"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <Field data-invalid={!!form.formState.errors.confirmPassword}>
+                        <FieldLabel htmlFor="confirm-password">Xác nhận mật khẩu</FieldLabel>
+                        <Input
+                            id="confirm-password"
+                            type="password"
+                            placeholder="Nhập lại mật khẩu"
+                            className="h-12"
+                            {...form.register("confirmPassword")}
+                        />
+                        <FieldError errors={[form.formState.errors.confirmPassword]} />
+                    </Field>
 
                     {error && (
-                        <div className="bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-lg text-sm">
+                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm font-medium">
                             {error.message}
                         </div>
                     )}
 
                     <Button
-                        className="w-full rounded-lg bg-primary h-12 px-6 font-bold hover:bg-primary/90"
+                        className="w-full h-12 px-6 font-bold"
                         disabled={isPending}
+                        type="submit"
                     >
-                        {isPending ? <Spinner className="size-6" /> : <span className="text-white">Tạo tài khoản</span>}
+                        {isPending ? <Spinner className="size-6" /> : "Tạo tài khoản"}
                     </Button>
-                </form>
-            </Form>
 
-            <p className="text-center text-base font-normal text-subtle-light dark:text-subtle-dark">
-                Đã có tài khoản?{' '}
-                <Link className="font-bold text-primary hover:underline" href="/login">
-                    Đăng nhập
-                </Link>
-            </p>
+                    <FieldDescription className="text-center text-base">
+                        Đã có tài khoản?{' '}
+                        <Link className="font-bold text-primary hover:underline" href="/login">
+                            Đăng nhập
+                        </Link>
+                    </FieldDescription>
+                </FieldGroup>
+            </form>
         </div>
     );
 }

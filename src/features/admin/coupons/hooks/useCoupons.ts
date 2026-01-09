@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { adminCouponsApi } from "../services/coupons.api";
-import { CouponFilters, CouponPaginationResponse } from "../types";
+import { CouponFilters, CouponPaginationResponse } from "@/types/coupon";
 import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
 
 /**

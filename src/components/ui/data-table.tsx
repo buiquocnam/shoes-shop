@@ -8,7 +8,7 @@ import {
   useReactTable,
   SortingState,
   getSortedRowModel,
-  ColumnFiltersState,
+  VisibilityState,
 } from "@tanstack/react-table";
 
 import {
@@ -19,21 +19,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
-} from "@/components/ui/pagination";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableViewOptions } from "./data-table-view-options";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 
-  pagination: {
+  pagination?: {
     currentPage: number;
     totalPages: number;
     totalElements: number;
@@ -41,8 +34,11 @@ interface DataTableProps<TData, TValue> {
   };
 
   onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
   onRowClick?: (row: TData) => void;
-  columnFilters?: ColumnFiltersState;
+
+  // Custom toolbar elements
+  toolbar?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,88 +47,85 @@ export function DataTable<TData, TValue>({
   pagination,
   onPageChange,
   onRowClick,
+  toolbar,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
     columns,
-
-    // ✅ core only
-    getCoreRowModel: getCoreRowModel(),
-
-    // sorting (nếu backend chưa sort thì bỏ)
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-
-    // ✅ server-side states
     state: {
       sorting,
-      pagination: {
-        pageIndex: pagination.currentPage - 1, // 0-based
+      columnVisibility,
+      pagination: pagination ? {
+        pageIndex: pagination.currentPage - 1,
         pageSize: pagination.pageSize,
-      },
+      } : undefined,
     },
-
-    manualPagination: true,
-    pageCount: pagination.totalPages,
-
-    // ❌ KHÔNG dùng
-    // getFilteredRowModel
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    manualPagination: !!pagination,
+    pageCount: pagination?.totalPages ?? -1,
   });
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-border/50 bg-card shadow-sm">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-1 items-center space-x-2">
+          {toolbar}
+        </div>
+        <DataTableViewOptions table={table} />
+      </div>
+
+      <div className="rounded-md border border-border/50 bg-card overflow-hidden">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id} className="border-b border-border/50 hover:bg-transparent">
-                {hg.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="h-12 whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  </TableHead>
-                ))}
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id} className="h-10 text-xs font-semibold uppercase text-muted-foreground whitespace-nowrap">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
-
           <TableBody>
-            {data.length ? (
-              data.map((_, rowIndex) => {
-                const row = table.getRowModel().rows[rowIndex];
-                return (
-                  <TableRow
-                    key={row.id}
-                    className="border-b border-border/50 transition-colors hover:bg-muted/50 cursor-pointer"
-                    onClick={() => onRowClick?.(row.original)}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-4">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={onRowClick ? "cursor-pointer transition-colors hover:bg-muted/50" : ""}
+                  onClick={() => onRowClick?.(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-3">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No data found.
+                  Không có dữ liệu.
                 </TableCell>
               </TableRow>
             )}
@@ -140,110 +133,12 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between py-4">
-        <div className="text-sm text-muted-foreground">
-          Showing <span className="font-medium text-foreground">{data.length}</span> of{" "}
-          <span className="font-medium text-foreground">{pagination.totalElements}</span> results
-          {pagination.totalPages > 1 && (
-            <span className="ml-2">
-              (Page <span className="font-medium text-foreground">{pagination.currentPage}</span> /{" "}
-              <span className="font-medium text-foreground">{pagination.totalPages}</span>)
-            </span>
-          )}
-        </div>
-
-        {pagination.totalPages > 1 && (
-          <Pagination>
-            <PaginationContent>
-              {pagination.currentPage > 1 && (
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onPageChange?.(pagination.currentPage - 1);
-                    }}
-                    className="cursor-pointer"
-                  />
-                </PaginationItem>
-              )}
-
-              {(() => {
-                const pages: (number | 'ellipsis')[] = [];
-                const maxVisible = 5;
-
-                if (pagination.totalPages <= maxVisible) {
-                  for (let i = 1; i <= pagination.totalPages; i++) {
-                    pages.push(i);
-                  }
-                } else {
-                  if (pagination.currentPage <= 3) {
-                    for (let i = 1; i <= 4; i++) {
-                      pages.push(i);
-                    }
-                    pages.push('ellipsis');
-                    pages.push(pagination.totalPages);
-                  } else if (pagination.currentPage >= pagination.totalPages - 2) {
-                    pages.push(1);
-                    pages.push('ellipsis');
-                    for (let i = pagination.totalPages - 3; i <= pagination.totalPages; i++) {
-                      pages.push(i);
-                    }
-                  } else {
-                    pages.push(1);
-                    pages.push('ellipsis');
-                    for (let i = pagination.currentPage - 1; i <= pagination.currentPage + 1; i++) {
-                      pages.push(i);
-                    }
-                    pages.push('ellipsis');
-                    pages.push(pagination.totalPages);
-                  }
-                }
-
-                return pages.map((page, index) => {
-                  if (page === 'ellipsis') {
-                    return (
-                      <PaginationItem key={`ellipsis-${index}`}>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    );
-                  }
-
-                  return (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onPageChange?.(page);
-                        }}
-                        isActive={page === pagination.currentPage}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                });
-              })()}
-
-              {pagination.currentPage < pagination.totalPages && (
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onPageChange?.(pagination.currentPage + 1);
-                    }}
-                    className="cursor-pointer"
-                  />
-                </PaginationItem>
-              )}
-            </PaginationContent>
-          </Pagination>
-        )}
-      </div>
+      {pagination && (
+        <DataTablePagination
+          table={table}
+          onPageChange={onPageChange}
+        />
+      )}
     </div>
   );
 }

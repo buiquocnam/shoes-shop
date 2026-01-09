@@ -3,10 +3,13 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Pencil, Trash2, ArrowUpDown, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { User } from "@/types/global";
+import { User } from "@/types";
 import { cn } from "@/lib/utils";
 import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
 import { useDeleteUser } from "../hooks/useUsers";
+
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { Badge } from "@/components/ui/badge";
 
 export const userColumns = (
   onEdit?: (user: User) => void,
@@ -14,92 +17,89 @@ export const userColumns = (
 ): ColumnDef<User>[] => [
     {
       accessorKey: "name",
-      header: "Tên",
-      cell: ({ row }: { row: Row<User> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tên người dùng" />
+      ),
+      cell: ({ row }) => {
         const name = row.original.name;
-        return <span className="">{name}</span>;
+        return <span className="font-medium">{name}</span>;
       },
-      enableSorting: false,
-      enableHiding: false,
     },
     {
       accessorKey: "email",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <DataTableColumnHeader column={column} title="Email" />
       ),
+      cell: ({ row }) => <span className="text-muted-foreground">{row.getValue("email")}</span>,
     },
     {
       accessorKey: "phone",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
-        >
-          Điện thoại
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <DataTableColumnHeader column={column} title="Điện thoại" />
       ),
+      cell: ({ row }) => <span className="text-muted-foreground">{row.getValue("phone") || "—"}</span>,
     },
     {
       accessorKey: "status",
-      header: "Trạng thái",
-      cell: ({ row }: { row: Row<User> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Trạng thái" />
+      ),
+      cell: ({ row }) => {
         const status = row.original.status;
         return (
-          <span
+          <Badge
+            variant="outline"
             className={cn(
               "font-medium",
-              status ? "text-green-600" : "text-red-600"
+              status
+                ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                : "bg-red-50 text-red-600 border-red-200"
             )}
           >
-            {status ? "Hoạt động" : "Không hoạt động"}
-          </span>
+            {status ? "Hoạt động" : "Bị khóa"}
+          </Badge>
         );
       },
     },
     {
       id: "actions",
-      header: "Thao tác",
-      cell: ({ row }: { row: Row<User> }) => {
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Thao tác" />
+      ),
+      cell: ({ row }) => {
         return (
-          <div className="flex space-x-1">
+          <div className="flex items-center gap-1">
             {onViewPurchasedItems && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
-                title="Xem sản phẩm đã mua"
+                className="h-8 w-8 text-muted-foreground hover:bg-blue-50 hover:text-blue-600"
+                title="Xem đơn hàng"
                 onClick={() => onViewPurchasedItems(row.original)}
               >
                 <ShoppingBag className="h-4 w-4" />
+                <span className="sr-only">Đơn hàng</span>
               </Button>
             )}
             {onEdit && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-gray-100"
+                className="h-8 w-8 text-muted-foreground hover:bg-gray-100 hover:text-foreground"
                 onClick={() => onEdit(row.original)}
               >
                 <Pencil className="h-4 w-4" />
+                <span className="sr-only">Sửa</span>
               </Button>
             )}
             <DeleteUserButton user={row.original} />
           </div>
         );
       },
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
 
 // Delete User Button Component
 function DeleteUserButton({ user }: { user: User }) {

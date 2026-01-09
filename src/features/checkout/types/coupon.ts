@@ -1,4 +1,4 @@
-import { PaginatedResponse } from "@/types/global";
+import { PaginatedResponse } from "@/types";
 
 export interface CouponFilters {
   page: number;

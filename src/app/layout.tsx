@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import '../styles/globals.css';
 import Header from '@/components/layout/Header';
-import { CartProvider, QueryProvider, } from '@/providers';
+import { QueryProvider, SocketProvider } from '@/providers';
 import { Toaster } from 'sonner';
 import { Footer } from '@/components/layout/Footer';
-import { ChatProvider } from '@/features/chat/components';
+import { ChatProvider } from '@/providers';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -24,18 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" style={{ fontSize: '90%' }}>
+    <html lang="vi">
       <body className={`${plusJakarta.className} antialiased`}>
         <QueryProvider>
-          <CartProvider />
-          <Header />
-          {children}
-          <Footer />
-          <ChatProvider />
-          <Toaster position="top-right" />
+          <SocketProvider>
+            <Header />
+            {children}
+            <Footer />
+            <ChatProvider />
+            <Toaster position="top-right" />
+          </SocketProvider>
         </QueryProvider>
       </body>
     </html>
   );
 }
-

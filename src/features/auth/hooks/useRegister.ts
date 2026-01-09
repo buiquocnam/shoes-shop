@@ -11,7 +11,7 @@ export function useRegister() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (data) => authApi.register(data),
+    mutationFn: (data: Omit<RegisterFormData, 'confirmPassword'>) => authApi.register(data),
     onSuccess: () => {
       toast.success("Vui lòng kiểm tra email để xác thực");
     },

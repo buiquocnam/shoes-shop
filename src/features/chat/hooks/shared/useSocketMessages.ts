@@ -2,34 +2,26 @@
 
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSocket } from "@/features/shared/hooks/useSocket";
+import { useSocketStore } from "@/store";
 import type { Message } from "../../types";
 
 /**
  * Hook to listen for new messages via socket for a specific conversation
+ * Patches React Query cache directly for real-time updates
  */
 export function useSocketMessages(conversationId: string | null) {
-  const socket = useSocket();
+  const socket = useSocketStore((state) => state.socket);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!socket || !conversationId) {
-      console.log("⚠️ [SOCKET] Cannot setup listener:", {
-        hasSocket: !!socket,
-        hasConversationId: !!conversationId,
-        socketConnected: socket?.connected,
-      });
-      return;
-    }
+    if (!socket || !conversationId) return;
 
     const handleNewMessage = (data: string | Message) => {
-      // Backend sends JSON string, need to parse it
       let message: Message;
       
       try {
         if (typeof data === "string") {
           message = JSON.parse(data) as Message;
-          console.log("📨 [SOCKET] Parsed JSON string to Message:", message);
         } else {
           message = data;
         }
@@ -38,173 +30,93 @@ export function useSocketMessages(conversationId: string | null) {
         return;
       }
 
-      console.log("📨 [SOCKET] Received 'message' event:", {
-        messageId: message.id,
-        conversationId: message.conversationId,
-        currentConversationId: conversationId,
-        matches: message.conversationId === conversationId,
-      });
-
-      // Only process messages for current conversation
+      // 1. Update active conversation messages cache
       if (message.conversationId === conversationId) {
         queryClient.setQueryData<Message[]>(
           ["chat", "messages", conversationId],
           (oldData) => {
             if (!oldData) return [message];
             // Prevent duplicates
-            const exists = oldData.some((msg) => msg.id === message.id);
-            if (exists) return oldData;
-            // Add to end (newest at bottom)
+            if (oldData.some((msg) => msg.id === message.id)) return oldData;
             return [...oldData, message];
           }
         );
-        console.log("✅ [SOCKET] Message added to conversation cache");
       }
 
-      // Always invalidate conversations list to update latest message
-      queryClient.invalidateQueries({ queryKey: ["chat", "conversations"] });
+      // 2. Always update conversations list cache (the latest message for this conversation)
+      queryClient.setQueryData<Message[]>(
+        ["chat", "conversations"],
+        (oldData) => {
+          if (!oldData) return [message];
+          
+          // Remove old entry for this conversation if exists
+          const filteredData = oldData.filter(m => m.conversationId !== message.conversationId);
+          // Add new message to top (sorted by recency)
+          return [message, ...filteredData];
+        }
+      );
     };
 
-    // Setup listener when socket is connected
-    const setupListener = () => {
-      if (socket && socket.connected) {
-        // Remove any existing listener first to avoid duplicates
-        socket.off("message", handleNewMessage);
-        
-        socket.on("message", handleNewMessage);
-        console.log("👂 [SOCKET] Listening for 'message' event (conversation)", {
-          socketId: socket.id,
-          conversationId,
-          connected: socket.connected,
-        });
-      } else {
-        console.warn("⚠️ [SOCKET] Socket not connected when trying to setup listener", {
-          hasSocket: !!socket,
-          connected: socket?.connected,
-        });
-      }
-    };
-
-    // Setup immediately if already connected
-    if (socket && socket.connected) {
-      setupListener();
-    } else if (socket) {
-      // Wait for connection - use 'on' to handle reconnects
-      socket.on("connect", setupListener);
-      socket.on("reconnect", setupListener);
-      console.log("⏳ [SOCKET] Waiting for socket connection before listening...", {
-        socketId: socket.id,
-        connected: socket.connected,
-      });
-    }
+    // Socket.io listeners are persistent if setup once. 
+    // We cleanup old listener and add new one to avoid double handling.
+    socket.off("message", handleNewMessage);
+    socket.on("message", handleNewMessage);
 
     return () => {
-      if (socket) {
-        socket.off("message", handleNewMessage);
-        socket.off("connect", setupListener);
-        socket.off("reconnect", setupListener);
-      }
+      socket.off("message", handleNewMessage);
     };
   }, [socket, conversationId, queryClient]);
 }
 
 /**
- * Hook to listen for all new messages (for conversations list)
- * Used to update conversation list when any message is received
+ * Hook to listen for all new messages (global listener for notifications or lists)
  */
 export function useSocketConversations() {
-  const socket = useSocket();
+  const socket = useSocketStore((state) => state.socket);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!socket) {
-      console.log("⚠️ [SOCKET] Cannot setup conversations listener: no socket");
-      return;
-    }
+    if (!socket) return;
 
     const handleNewMessage = (data: string | Message) => {
-      // Backend sends JSON string, need to parse it
       let message: Message;
       
       try {
         if (typeof data === "string") {
           message = JSON.parse(data) as Message;
-          console.log("📨 [SOCKET] Parsed JSON string to Message (conversations list):", message);
         } else {
           message = data;
         }
       } catch (error) {
-        console.error("❌ [SOCKET] Failed to parse message:", error, { data });
         return;
       }
 
-      console.log("📨 [SOCKET] Received 'message' event (conversations list):", {
-        messageId: message.id,
-        conversationId: message.conversationId,
-        senderId: message.senderId,
-        me: message.me,
-      });
-
-      // Update conversations list
-      queryClient.invalidateQueries({ queryKey: ["chat", "conversations"] });
-
-      // Also update the specific conversation's messages if it exists in cache
+      // Update conversations list (the source for ChatList)
       queryClient.setQueryData<Message[]>(
-        ["chat", "messages", message.conversationId],
+        ["chat", "conversations"],
         (oldData) => {
           if (!oldData) return [message];
-          // Prevent duplicates
-          const exists = oldData.some((msg) => msg.id === message.id);
-          if (exists) return oldData;
-          // Add to end (newest at bottom)
-          return [...oldData, message];
+          const filteredData = oldData.filter(m => m.conversationId !== message.conversationId);
+          return [message, ...filteredData];
         }
       );
       
-      console.log("✅ [SOCKET] Message processed and cache updated");
+      // Also patch the specific conversation if it happens to be open in cache
+      queryClient.setQueryData<Message[]>(
+        ["chat", "messages", message.conversationId],
+        (oldData) => {
+          if (!oldData) return undefined; // Don't create if not exists
+          if (oldData.some((msg) => msg.id === message.id)) return oldData;
+          return [...oldData, message];
+        }
+      );
     };
 
-    // Setup listener when socket is connected
-    const setupListener = () => {
-      if (socket && socket.connected) {
-        // Remove any existing listener first to avoid duplicates
-        socket.off("message", handleNewMessage);
-        
-        socket.on("message", handleNewMessage);
-        console.log("👂 [SOCKET] Listening for 'message' event (conversations list)", {
-          socketId: socket.id,
-          connected: socket.connected,
-        });
-      } else {
-        console.warn("⚠️ [SOCKET] Socket not connected when trying to setup listener", {
-          hasSocket: !!socket,
-          connected: socket?.connected,
-        });
-      }
-    };
-
-    // Setup immediately if already connected
-    if (socket && socket.connected) {
-      setupListener();
-    } else if (socket) {
-      // Wait for connection - use 'on' to handle reconnects
-      socket.on("connect", setupListener);
-      socket.on("reconnect", setupListener);
-      console.log("⏳ [SOCKET] Waiting for socket connection before listening...", {
-        socketId: socket.id,
-        connected: socket.connected,
-      });
-    } else {
-      console.warn("⚠️ [SOCKET] No socket available for conversations listener");
-    }
+    socket.off("message", handleNewMessage);
+    socket.on("message", handleNewMessage);
 
     return () => {
-      if (socket) {
-        socket.off("message", handleNewMessage);
-        socket.off("connect", setupListener);
-        socket.off("reconnect", setupListener);
-        console.log("🧹 [SOCKET] Cleaned up conversations listener");
-      }
+      socket.off("message", handleNewMessage);
     };
   }, [socket, queryClient]);
 }

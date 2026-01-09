@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { Role } from "@/types/global";
+import { Role } from "@/types";
 
 /**
  * JWT Payload interface
@@ -57,7 +57,7 @@ export function getUserRoleFromToken(token: string): Role | null {
   if (!payload?.roles) return null;
 
   // Validate role
-  if (payload.roles === Role.ADMIN || payload.roles === Role.USER) {
+  if (payload.roles === "ADMIN" || payload.roles === "USER") {
     return payload.roles;
   }
 

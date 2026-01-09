@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminUsersApi } from "@/features/admin/users/services/users.api";
 import { adminQueryKeys } from "@/features/shared";
-import { User } from "@/types/global";
-import { UserUpdate, UserFilters } from "../types";
+import { User } from "@/types";
+import { UserFilters } from "../types";
 import { toast } from "sonner";
 
 export const useGetUsers = (filters?: UserFilters) => {
@@ -15,7 +15,7 @@ export const useGetUsers = (filters?: UserFilters) => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (user) => adminUsersApi.updateUser(user),
+    mutationFn: (user: Partial<User>) => adminUsersApi.updateUser(user),
     onSuccess: (_, variables) => {
       // Invalidate users list
       queryClient.invalidateQueries({
@@ -39,7 +39,7 @@ export const useUpdateUser = () => {
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (userIds) => adminUsersApi.deleteUser(userIds),
+    mutationFn: (userIds: string[]) => adminUsersApi.deleteUser(userIds),
     onSuccess: () => {
       // Invalidate users list after deletion
       queryClient.invalidateQueries({

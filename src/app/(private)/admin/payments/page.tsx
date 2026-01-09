@@ -4,14 +4,14 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
-import { PaymentDetailDialog, usePayments, paymentColumns } from "@/features/admin/payments";
-import { PaymentFilters, Payment } from "@/features/admin/payments";
+import { usePayments, paymentColumns, PaymentFilters, PaymentRecord } from "@/features/admin/payments";
+import { OrderDetailDialog } from "@/features/shared/components/order/OrderDetailDialog";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 
 const AdminPaymentsPage = () => {
   const searchParams = useSearchParams();
   const updateParams = useUpdateParams();
-  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null);
 
   /** ---------------- derive filters from URL ---------------- */
   const page = Number(searchParams.get("page") || 1);
@@ -28,7 +28,7 @@ const AdminPaymentsPage = () => {
   /** ---------------- fetch ---------------- */
   const { data, isLoading } = usePayments(filters);
 
-  const payments: Payment[] = useMemo(
+  const payments: PaymentRecord[] = useMemo(
     () => data?.data || [],
     [data?.data]
   );
@@ -44,7 +44,7 @@ const AdminPaymentsPage = () => {
   );
 
   // Handlers - không cần useCallback vì components không được memoized
-  const handleViewDetail = (payment: Payment) => {
+  const handleViewDetail = (payment: PaymentRecord) => {
     setSelectedPayment(payment);
   };
 
@@ -81,10 +81,11 @@ const AdminPaymentsPage = () => {
       )}
 
       {selectedPayment && (
-        <PaymentDetailDialog
-          paymentId={selectedPayment.id}
+        <OrderDetailDialog
+          orderId={selectedPayment.paymentId}
           open={!!selectedPayment}
           onOpenChange={handleDialogClose}
+          apiType="admin-payment"
         />
       )}
     </div>

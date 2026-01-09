@@ -4,84 +4,79 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ShoppingBag, Users, DollarSign, Package } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 import { format } from 'date-fns';
 import { useDashboard } from '../hooks';
 import { RevenueChart } from './RevenueChart';
 import { DateRangePicker } from './DateRangePicker';
 import { RevenueSummary } from './RevenueSummary';
+import { cn } from '@/lib/utils';
 
 const STATS_CARDS = [
     {
         key: 'totalRevenue' as const,
         label: 'Tổng doanh thu',
         isCurrency: true,
-        icon: DollarSign,
-        color: 'bg-chart-1/10 text-chart-1 border-chart-1/20',
     },
     {
         key: 'totalOrders' as const,
         label: 'Tổng đơn hàng',
-        icon: ShoppingBag,
-        color: 'bg-chart-2/10 text-chart-2 border-chart-2/20',
     },
     {
         key: 'totalUsers' as const,
         label: 'Tổng người dùng',
-        icon: Users,
-        color: 'bg-chart-3/10 text-chart-3 border-chart-3/20',
     },
     {
         key: 'totalProducts' as const,
         label: 'Sản phẩm',
-        icon: Package,
-        color: 'bg-chart-4/10 text-chart-4 border-chart-4/20',
     },
 ];
 
 export function DashboardContent() {
-    const { dateRange, setDateRange, filteredOrders, chartData, stats, topProducts, isLoading } = useDashboard();
+    const { dateRange, setDateRange, filteredOrders, chartData, stats, isLoading } = useDashboard();
 
     const formatOrderId = (id: string) => {
         return id.slice(0, 8).toUpperCase();
     };
 
     return (
-        <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-                {/* Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-                        <p className="text-sm sm:text-base text-muted-foreground mt-1">
-                            Overview of your store performance
+        <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 p-4 sm:p-6 lg:p-8 space-y-8 animate-in fade-in duration-500">
+            <div className="max-w-7xl mx-auto space-y-8">
+                {/* Header Section */}
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="space-y-1">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
+                            Bảng điều khiển Admin
+                        </h1>
+                        <p className="text-muted-foreground font-medium">
+                            Tổng quan thông tin cửa hàng
                         </p>
                     </div>
-                    <DateRangePicker onChange={setDateRange} defaultFrom={dateRange.from} defaultTo={dateRange.to} />
+                    <div className="bg-background/60 backdrop-blur-md border rounded-xl p-1 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800">
+                        <DateRangePicker onChange={setDateRange} defaultFrom={dateRange.from} defaultTo={dateRange.to} />
+                    </div>
                 </div>
 
-                {/* Revenue Summary - Today & This Month */}
+                {/* Revenue Highlights */}
                 <RevenueSummary />
 
-                {/* Stats Cards */}
+                {/* Key Metrics Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {STATS_CARDS.map(({ key, label, isCurrency, icon: Icon, color }) => {
+                    {STATS_CARDS.map(({ key, label, isCurrency}) => {
                         const value = stats[key];
                         const displayValue = isLoading ? (
-                            <Skeleton className="h-8 w-24" />
+                            <Skeleton className="h-9 w-24" />
                         ) : isCurrency ? (
                             formatCurrency(value)
                         ) : (
                             value.toLocaleString()
                         );
+
                         return (
-                            <Card key={key} className="transition-all hover:shadow-md">
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardDescription className="font-medium">{label}</CardDescription>
-                                    <div className={`rounded-lg p-2 ${color}`}>
-                                        <Icon className="h-5 w-5" />
-                                    </div>
+                            <Card key={key} className={cn("relative overflow-hidden group border-none shadow-md hover:shadow-xl transition-all duration-300 ring-1")}>
+                                <div className={cn("absolute inset-0 opacity-5 transition-opacity group-hover:opacity-10")} />
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                                    <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-3xl font-bold tracking-tight">{displayValue}</div>
@@ -91,84 +86,91 @@ export function DashboardContent() {
                     })}
                 </div>
 
-                {/* Revenue Chart */}
-                <Card>
-                    <CardHeader>
-                        <div>
-                            <CardTitle className="text-xl">Tổng quan doanh thu</CardTitle>
-                            <CardDescription className="mt-1">Phân tích doanh thu theo tháng</CardDescription>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {isLoading ? (
-                            <Skeleton className="h-[300px] w-full" />
-                        ) : (
-                            <RevenueChart data={chartData} />
-                        )}
-                    </CardContent>
-                </Card>
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Revenue Bar Chart */}
+                    <Card className="lg:col-span-2 shadow-lg border-slate-200/60 dark:border-slate-800 overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between pb-8">
+                            <div>
+                                <CardTitle className="text-xl font-bold">
+                                    Doanh thu theo thời gian
+                                </CardTitle>
+                                <CardDescription>Hiệu suất doanh thu hàng tháng của bạn</CardDescription>
+                            </div>
+                            <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-slate-50 dark:bg-slate-900 border-slate-200">
+                                Dữ liệu thực tế
+                            </Badge>
+                        </CardHeader>
+                        <CardContent>
+                            {isLoading ? (
+                                <Skeleton className="h-[350px] w-full" />
+                            ) : (
+                                <RevenueChart data={chartData} />
+                            )}
+                        </CardContent>
+                    </Card>
 
-                {/* Recent Orders */}
-                <Card >
-                    <CardHeader>
-                        <CardTitle className="text-xl">Đơn hàng gần đây</CardTitle>
-                        <CardDescription>Danh sách các đơn hàng gần đây từ cửa hàng của bạn</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Mã đơn hàng</TableHead>
-                                    <TableHead>ID người dùng</TableHead>
-                                    <TableHead>Ngày</TableHead>
-                                    <TableHead className="text-right">Tổng tiền</TableHead>
-                                    <TableHead className="text-right">Số lượng</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    Array.from({ length: 5 }).map((_, i) => (
-                                        <TableRow key={i}>
-                                            <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                                            <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                            <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                                            <TableCell><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
-                                            <TableCell><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                    {/* Top Products or Activities could go here, for now Recent Orders */}
+                    <Card className="shadow-lg border-slate-200/60 dark:border-slate-800">
+                        <CardHeader className="pb-4">
+                            <CardTitle className="text-xl font-bold">Đơn hàng gần đây</CardTitle>
+                            <CardDescription>Cập nhật mới nhất từ khách hàng</CardDescription>
+                        </CardHeader>
+                        <CardContent className="px-0 sm:px-6">
+                            <div className="relative overflow-auto max-h-[400px]">
+                                <Table>
+                                    <TableHeader className="bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                                        <TableRow>
+                                            <TableHead className="font-bold text-xs">MÃ ĐƠN</TableHead>
+                                            <TableHead className="text-right font-bold text-xs uppercase">TỔNG</TableHead>
                                         </TableRow>
-                                    ))
-                                ) : filteredOrders.length > 0 ? (
-                                    filteredOrders.map((order) => (
-                                        <TableRow key={order.id} className="hover:bg-muted/50 transition-colors">
-                                            <TableCell className="font-mono font-medium text-sm">
-                                                {formatOrderId(order.id)}
-                                            </TableCell>
-                                            <TableCell className="font-mono text-sm text-muted-foreground">
-                                                {order.userId.slice(0, 8)}
-                                            </TableCell>
-                                            <TableCell className="text-sm">
-                                                {format(new Date(order.createdAt), 'dd/MM/yyyy HH:mm')}
-                                            </TableCell>
-                                            <TableCell className="text-right font-semibold text-chart-1">
-                                                {formatCurrency(order.totalMoney)}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <Badge variant="secondary" className="text-xs font-medium">
-                                                    {order.countBuy}
-                                                </Badge>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                                            Không tìm thấy đơn hàng
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {isLoading ? (
+                                            Array.from({ length: 5 }).map((_, i) => (
+                                                <TableRow key={i}>
+                                                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                                                    <TableCell><Skeleton className="h-4 w-20 ml-auto" /></TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : filteredOrders.length > 0 ? (
+                                            filteredOrders.slice(0, 8).map((order) => (
+                                                <TableRow key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors group">
+                                                    <TableCell>
+                                                        <div className="flex flex-col gap-1">
+                                                            <span className="font-mono font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tighter">
+                                                                #{formatOrderId(order.id)}
+                                                            </span>
+                                                            <span className="text-[10px] text-muted-foreground">
+                                                                {format(new Date(order.createdAt), 'dd/MM, HH:mm')}
+                                                            </span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <div className="flex flex-col items-end gap-1">
+                                                            <span className="font-bold text-chart-1">
+                                                                {formatCurrency(order.totalMoney)}
+                                                            </span>
+                                                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+                                                                {order.countBuy} SP
+                                                            </Badge>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={2} className="text-center text-muted-foreground py-12">
+                                                    Chưa có đơn hàng
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     );

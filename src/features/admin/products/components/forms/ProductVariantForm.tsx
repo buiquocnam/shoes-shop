@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { FieldGroup } from "@/components/ui/field";
 import { toast } from "sonner";
 import { productVariantsSchema, VariantsFormValues } from "../../schemas";
 import { ProductVariantsSection } from "../sections/ProductVariantsSection";
@@ -43,7 +44,6 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     defaultValues,
   });
 
-  // Reset form khi data thay đổi (khi productId thay đổi hoặc data được fetch)
   useEffect(() => {
     if (data && !loadingProduct) {
       const newDefaultValues = {
@@ -54,10 +54,8 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
   }, [data, loadingProduct, productId, form]);
 
   const onSubmit = async (data: VariantsFormValues) => {
-    // Step 1: Upsert Variants (CREATE/UPDATE tất cả variants trong một lần gọi)
-    // Chuẩn bị payload: có id → UPDATE, không có id → CREATE
     const upsertPayload = data.variants.map((variant) => ({
-      id: variant.id, // Có id → UPDATE variant này
+      id: variant.id,
       color: variant.color,
       sizes: variant.sizes.map((size) => ({
         id: size.id,
@@ -70,48 +68,35 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
       variants: upsertPayload,
     });
 
-    // Step 2: Import Stock (gọi API riêng)
-    // Response là array flat của variant sizes, cần map lại với form data
     const allVariantSizes: Array<{ variantSizeId: string; count: number }> = [];
-
-    // Map response (flat array) với form variants
-    // Response được sắp xếp theo thứ tự: variant1.size1, variant1.size2, variant2.size1, ...
-    let responseIndex = 0;
 
     data.variants.forEach((formVariant) => {
       formVariant.sizes.forEach((formSize) => {
-        // Tìm variant size trong response theo color và size
         const responseItem = result.find(
-          (item) =>
-            item.color === formVariant.color
+          (item) => item.color === formVariant.color
         );
 
         if (responseItem) {
           const currentStock = formSize.currentStock ?? 0;
           const deltaStock = formSize.stock ?? 0;
 
-          // Validation: Nếu deltaStock âm, currentStock phải >= |deltaStock|
           if (deltaStock < 0 && currentStock < Math.abs(deltaStock)) {
             toast.error(
               `Không thể giảm ${Math.abs(deltaStock)} sản phẩm. Stock hiện tại (${currentStock}) không đủ.`
             );
-            return; // Dừng submit
+            return;
           }
 
-          // Chỉ import nếu có thay đổi (delta !== 0)
           if (deltaStock !== 0) {
             allVariantSizes.push({
-              variantSizeId: responseItem.id, // variantSizeId từ response
-              count: deltaStock, // API nhận delta (số lượng thay đổi)
+              variantSizeId: responseItem.id,
+              count: deltaStock,
             });
           }
         }
       });
     });
 
-
-
-    // Import stock nếu có thay đổi
     if (allVariantSizes.length > 0) {
       await importStock.mutateAsync({
         productId,
@@ -132,32 +117,37 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <ProductVariantsSection control={form.control} productId={productId} />
+      <FieldGroup className="gap-10">
+        <ProductVariantsSection
+          register={form.register}
+          control={form.control}
+          errors={form.formState.errors}
+          productId={productId}
+        />
 
-      <div className="flex items-center justify-end gap-x-6 pt-6 mt-8">
-        <Button
-          variant="ghost"
-          type="button"
-          disabled={upsertVariants.isPending || importStock.isPending}
-          onClick={onCancel}
-          className="px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
-        >
-          Hủy bỏ
-        </Button>
-        <Button
-          type="submit"
-          disabled={upsertVariants.isPending || importStock.isPending}
-          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
-        >
-          {upsertVariants.isPending || importStock.isPending ? (
-            <Spinner />
-          ) : (
-            "Lưu"
-          )}
-        </Button>
-      </div>
+        <div className="flex items-center justify-end gap-x-6">
+          <Button
+            variant="ghost"
+            type="button"
+            disabled={upsertVariants.isPending || importStock.isPending}
+            onClick={onCancel}
+            className="font-semibold text-muted-foreground hover:text-foreground"
+          >
+            Hủy bỏ
+          </Button>
+          <Button
+            type="submit"
+            disabled={upsertVariants.isPending || importStock.isPending}
+            className="px-10 py-3.5 font-bold shadow-lg"
+          >
+            {upsertVariants.isPending || importStock.isPending ? (
+              <Spinner className="h-4 w-4" />
+            ) : (
+              "Lưu biến thể"
+            )}
+          </Button>
+        </div>
+      </FieldGroup>
     </form>
   );
 };
-
-

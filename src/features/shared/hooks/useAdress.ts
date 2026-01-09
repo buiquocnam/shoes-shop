@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { addressApi, CreateAddressRequest } from "../services/address.api";
+import { addressApi } from "../services/address.api";
+import { CreateAddressRequest } from "@/types/address";
 import { addressQueryKeys } from "../constants/shared-queryKeys";
 import { toast } from "sonner";
 

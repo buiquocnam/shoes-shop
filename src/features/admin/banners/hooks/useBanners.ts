@@ -1,11 +1,10 @@
-import { useQuery, useMutation, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminBannersApi } from "../services/banners.api";
 import {
-  BannerType,
   FetchBannersParams,
-  BannerPaginationResponse,
+  BannerSlot,
 } from "../types";
 
 const BANNER_QUERY_KEYS = {
@@ -17,17 +16,12 @@ const BANNER_QUERY_KEYS = {
 
 export function useBanners(
   filters?: FetchBannersParams,
-  options?: Omit<
-    UseQueryOptions<BannerPaginationResponse>,
-    "queryKey" | "queryFn"
-  >
 ) {
   return useQuery({
     queryKey: BANNER_QUERY_KEYS.list(filters),
     queryFn: () => adminBannersApi.search(filters),
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5, // 5 minutes
-    ...options,
   });
 }
 
@@ -47,4 +41,11 @@ export const useUpsertBanner = () => {
     },
   });
 };
+
+export function useBannerBySlot(slot: string) {
+  return useQuery({
+    queryKey: [...BANNER_QUERY_KEYS.all, "slot", slot],
+    queryFn: () => adminBannersApi.getBySlot(slot as BannerSlot),
+  });
+}
 

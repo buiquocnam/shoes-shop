@@ -4,19 +4,8 @@ import {
   DistrictsType,
   WardsType,
   AddressType,
-} from "../types/address";
-
-export interface CreateAddressRequest {
-  userId: string;
-  provinceCode: number;
-  provinceName: string;
-  districtCode: number;
-  districtName: string;
-  wardCode: number;
-  wardName: string;
-  addressLine: string;
-  isDefault: boolean;
-}
+  CreateAddressRequest,
+} from "@/types/address";
 
 export const addressApi = {
   getUsersAddress: async (userId: string) => {
@@ -34,9 +23,11 @@ export const addressApi = {
     return response.data;
   },
 
-  updateAddress: async (data: AddressType) => {
-    const response = await axiosInstance.put<AddressType>(
-      `/shoes/public/address/${data.id}`,
+  updateAddress: async (data: CreateAddressRequest) => {
+     // User said share endpoint /shoes/public/address/create
+     // So update also calls this.
+    const response = await axiosInstance.post<AddressType>(
+      "/shoes/public/address/create",
       data
     );
     return response.data;

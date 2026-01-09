@@ -1,39 +1,31 @@
 "use client";
 
 import { checkoutApi, VnPayPaymentRequest } from "../services/checkout.api";
-
-import {
-  CreateOrderResponse,
-  CreateOrderRequest,
-} from "../types/checkout";
+import { CreateOrderResponse, CreateOrderRequest } from "../types/checkout";
 import { useMutation } from "@tanstack/react-query";
-import { AddressType } from "@/features/shared/types/address";
 import { toast } from "sonner";
-import { useCartStore } from "@/store/useCartStore";
-import { clearCheckoutItems } from "../utils/checkoutStorage";
+import { useCheckoutStore } from '@/store';
 import { useQueryClient } from "@tanstack/react-query";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 import { clearCart as clearCartApi } from "@/features/cart/services";
 
 export const useCreateOrder = () => {
-  const { clearCart: clearCartStore, setCart } = useCartStore();
   const queryClient = useQueryClient();
+  const checkoutSource = useCheckoutStore((state) => state.source);
+  const clearCheckout = useCheckoutStore((state) => state.clearCheckout);
 
   return useMutation({
-    mutationFn: ({ request }: { request: CreateOrderRequest; source?: string }) => {
+    mutationFn: ({ request }: { request: CreateOrderRequest }) => {
       return checkoutApi.createOrder(request);
     },
 
-    onSuccess: async (response, { source }) => {
+    onSuccess: async () => {
       try {
-        clearCheckoutItems();
-
-        if (source === "cart") {
+        // If it was from cart, clean up cart
+        if (checkoutSource === "cart") {
           try {
             await clearCartApi();
-            clearCartStore();
-            setCart(null);
-            queryClient.removeQueries({
+            queryClient.invalidateQueries({
               queryKey: userQueryKeys.cart.current(),
             });
           } catch (err) {
@@ -41,7 +33,7 @@ export const useCreateOrder = () => {
           }
         }
       } catch (err) {
-        // Don't throw - we don't want to fail the mutation if cleanup fails
+        // Don't throw
       }
     },
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { Coupon } from "../types";
+import { Coupon } from "@/types/coupon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2 } from "lucide-react";
@@ -14,49 +14,42 @@ interface CreateColumnsOptions {
   onDelete?: (coupon: Coupon) => void;
 }
 
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+
 export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>[] => [
   {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }: { row: Row<Coupon> }) => {
-      const id = row.original.id;
-      // Format: #CP-XXXX (last 4 chars)
-      const shortId = id.slice(-4).toUpperCase();
-      return (
-        <span className="font-medium text-gray-500">
-          #CP-{shortId}
-        </span>
-      );
-    },
-  },
-  {
     accessorKey: "code",
-    header: "Code",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Mã giảm giá" />
+    ),
+    cell: ({ row }) => {
       const coupon = row.original;
       const isExpired = new Date(coupon.expirationDate) < new Date();
       return (
-        <span
-          className={`inline-flex items-center rounded-md bg-gray-50 px-2.5 py-1 text-sm font-bold font-mono tracking-wide border border-gray-200 ${
-            isExpired
-              ? "text-gray-500 line-through"
+        <div className="flex flex-col gap-1">
+          <span
+            className={`inline-flex w-fit items-center rounded-md bg-gray-50 px-2 py-0.5 text-xs font-bold font-mono tracking-wider border border-border/50 ${isExpired
+              ? "text-muted-foreground line-through"
               : "text-primary"
-          }`}
-        >
-          {coupon.code}
-        </span>
+              }`}
+          >
+            {coupon.code}
+          </span>
+        </div>
       );
     },
   },
   {
     accessorKey: "discountPercent",
-    header: "Discount",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Giảm giá" />
+    ),
+    cell: ({ row }) => {
       const coupon = row.original;
       const isExpired = new Date(coupon.expirationDate) < new Date();
       return (
         <span
-          className={`font-semibold ${isExpired ? "opacity-50" : ""}`}
+          className={`font-bold text-base ${isExpired ? "opacity-40" : "text-foreground"}`}
         >
           {coupon.discountPercent}%
         </span>
@@ -65,12 +58,14 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
   },
   {
     accessorKey: "minOrder",
-    header: "Min Order",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Đơn tối thiểu" />
+    ),
+    cell: ({ row }) => {
       const coupon = row.original;
       const isExpired = new Date(coupon.expirationDate) < new Date();
       return (
-        <span className={isExpired ? "opacity-50" : ""}>
+        <span className={`font-medium ${isExpired ? "opacity-40" : "text-muted-foreground"}`}>
           {formatCurrency(coupon.minOrder)}
         </span>
       );
@@ -78,102 +73,98 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
   },
   {
     accessorKey: "quantity",
-    header: "Quantity",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Số lượng còn" />
+    ),
+    cell: ({ row }) => {
       const coupon = row.original;
       const isExpired = new Date(coupon.expirationDate) < new Date();
-      // Calculate used quantity (assuming we need to track this separately)
-      // For now, showing total quantity
-      const used = 0; // This should come from API if available
-      const percentage = coupon.quantity > 0 ? (used / coupon.quantity) * 100 : 0;
-      
+
       return (
-        <div className={`flex flex-col gap-1 ${isExpired ? "opacity-50" : ""}`}>
-          <span className="text-xs font-medium text-gray-500">
-            {used} / {coupon.quantity} used
-          </span>
-          <div className="h-1.5 w-full rounded-full bg-gray-200">
-            <div
-              className={`h-1.5 rounded-full ${
-                isExpired ? "bg-gray-400" : "bg-primary"
-              }`}
-              style={{ width: `${Math.min(percentage, 100)}%` }}
-            ></div>
-          </div>
+        <div className={`flex w-24 flex-col gap-1.5 ${isExpired ? "opacity-40" : ""}`}>
+          <span>{coupon.quantity} </span>
         </div>
       );
     },
   },
   {
     accessorKey: "expirationDate",
-    header: "Expiration",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Hạn dùng" />
+    ),
+    cell: ({ row }) => {
       const date = new Date(row.original.expirationDate);
       const isExpired = date < new Date();
       return (
-        <span className={isExpired ? "opacity-50" : ""}>
-          {date.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </span>
+        <div className={`flex flex-col ${isExpired ? "opacity-40" : ""}`}>
+          <span className="text-sm font-medium">
+            {date.toLocaleDateString("vi-VN", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+        </div>
       );
     },
   },
   {
     accessorKey: "active",
-    header: "Status",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Trạng thái" />
+    ),
+    cell: ({ row }) => {
       const coupon = row.original;
       const isExpired = new Date(coupon.expirationDate) < new Date();
-      
+
       if (isExpired) {
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-            <span className="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
-            Expired
-          </span>
+          <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">
+            Hết hạn
+          </Badge>
         );
       }
-      
+
       if (!coupon.active) {
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-            <span className="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
-            Disabled
-          </span>
+          <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200">
+            Đã tắt
+          </Badge>
         );
       }
-      
+
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-          Active
-        </span>
+        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+          Hoạt động
+        </Badge>
       );
     },
   },
   {
     id: "actions",
-    header: "Actions",
-    cell: ({ row }: { row: Row<Coupon> }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Thao tác" />
+    ),
+    cell: ({ row }) => {
       const coupon = row.original;
       return (
-        <div className="flex gap-2">
+        <div className="flex items-center gap-1">
           <Button
             variant="ghost"
-            size="sm"
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-primary"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:bg-gray-100 hover:text-foreground"
             title="Chỉnh sửa"
             onClick={() => options?.onEdit?.(coupon)}
           >
-            <Edit className="h-5 w-5" />
+            <Edit className="h-4 w-4" />
+            <span className="sr-only">Sửa</span>
           </Button>
           <DeleteCouponButton coupon={coupon} />
         </div>
       );
     },
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
 

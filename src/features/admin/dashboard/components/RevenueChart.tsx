@@ -1,6 +1,6 @@
 'use client';
 
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, LabelList } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { formatCurrency } from '@/utils/format';
 import { ChartDataPoint } from '../types';
@@ -31,65 +31,67 @@ export function RevenueChart({ data }: RevenueChartProps) {
     }));
 
     return (
-        <ChartContainer config={chartConfig} className="h-[300px] w-full [&>div]:!aspect-auto">
-            <AreaChart
+        <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+            <BarChart
                 accessibilityLayer
                 data={chartData}
                 margin={{
-                    left: 12,
+                    top: 20,
                     right: 12,
-                    top: 12,
+                    left: 12,
                     bottom: 12,
                 }}
             >
-                <defs>
-                    <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="var(--color-revenue)" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="var(--color-revenue)" stopOpacity={0.1} />
-                    </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted/50" />
                 <XAxis
                     dataKey="month"
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={8}
+                    tickMargin={12}
                     tickFormatter={(value) => {
                         const parts = value.split('/');
                         return parts.length === 2 ? `${parts[0]}/${parts[1].slice(-2)}` : value;
                     }}
+                    className="text-xs font-medium"
                 />
                 <YAxis
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={8}
+                    tickMargin={12}
                     tickFormatter={(value) => {
+                        if (value >= 1000000) {
+                            return `${(value / 1000000).toFixed(1)}M`;
+                        }
                         if (value >= 1000) {
-                            return `${(value / 1000).toFixed(1)}k`;
+                            return `${(value / 1000).toFixed(0)}k`;
                         }
                         return value.toString();
                     }}
+                    className="text-xs font-medium"
                 />
                 <ChartTooltip
-                    cursor={true}
+                    cursor={{ fill: 'var(--muted)', opacity: 0.4 }}
                     content={
                         <ChartTooltipContent
                             indicator="dot"
-                            formatter={(value) => formatCurrency(Number(value))}
+                            formatter={(value) => (
+                                <span className="font-bold text-chart-1">
+                                    {formatCurrency(Number(value))}
+                                </span>
+                            )}
                             labelFormatter={(value) => `Tháng: ${value}`}
                         />
                     }
                 />
-                <Area
+                <Bar
                     dataKey="revenue"
-                    type="monotone"
-                    stroke="var(--color-revenue)"
-                    fill="url(#fillRevenue)"
-                    strokeWidth={2}
-                    dot={{ fill: 'var(--color-revenue)', r: 4 }}
-                    activeDot={{ r: 6 }}
+                    fill="var(--color-revenue)"
+                    radius={[6, 6, 0, 0]}
+                    maxBarSize={50}
+                    animationDuration={1500}
+                    animationEasing="ease-in-out"
                 />
-            </AreaChart>
+            </BarChart>
         </ChartContainer>
     );
 }

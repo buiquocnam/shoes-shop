@@ -5,6 +5,7 @@ import { BrandType, CategoryType } from "@/features/product/types";
 export interface FetchBrandsParams {
   page?: number;
   size?: number;
+  search?: string;
   sort_order?: "asc" | "desc";
 }
 
@@ -14,6 +15,7 @@ export interface BrandPaginationResponse extends PaginatedResponse<BrandType> {}
 export interface FetchCategoriesParams {
   page?: number;
   size?: number;
+  search?: string;
   sort_order?: "asc" | "desc";
 }
 

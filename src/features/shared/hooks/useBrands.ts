@@ -11,10 +11,10 @@ export function useBrands(
   >
 ) {
   return useQuery({
-    queryKey: sharedQueryKeys.brand.list(),
+    queryKey: sharedQueryKeys.brand.list(filters),
     queryFn: () => brandsApi.search(filters),
     placeholderData: (previousData) => previousData,
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
     ...options,
   });
 }

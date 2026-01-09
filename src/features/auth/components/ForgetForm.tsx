@@ -6,16 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldDescription } from '@/components/ui/field';
 import { authApi } from '@/features/auth/services/auth.api';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/features/auth/schema';
 import { setOtpData } from '@/lib/auth';
@@ -35,66 +29,58 @@ export default function ForgetForm() {
         setIsLoading(true);
         try {
             await authApi.sendResetPasswordEmail(data);
-            toast.success('OTP sent to your email!');
+            toast.success('OTP đã được gửi đến email của bạn!');
             await setOtpData(data.email, 'FORGET_PASS');
             router.push('/verify-otp');
         } catch (error) {
             console.error('Error sending reset password email:', error);
-            toast.error(error instanceof Error ? error.message : 'Failed to send OTP. Please try again.');
+            toast.error(error instanceof Error ? error.message : 'Gửi OTP thất bại. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
     };
 
-
-
     return (
         <div className="w-full max-w-md mx-auto">
-            <div className="flex flex-col items-center justify-center gap-2 mb-8">
-                <p className="text-4xl font-bold">
+            <div className="flex flex-col gap-2 mb-8">
+                <h1 className="text-4xl font-bold tracking-tight">
                     Đặt lại mật khẩu
-                </p>
-                <p className="text-gray-500 mt-2 text-center">
-                    Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
+                </h1>
+                <p className="text-muted-foreground">
+                    Nhập địa chỉ email của bạn và chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.
                 </p>
             </div>
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSendResetPasswordEmail)} className="flex flex-col gap-6">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input
-                                        type="text"
-                                        placeholder="Nhập email của bạn"
-                                        className="w-full h-12"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+            <form onSubmit={form.handleSubmit(handleSendResetPasswordEmail)}>
+                <FieldGroup>
+                    <Field data-invalid={!!form.formState.errors.email}>
+                        <FieldLabel htmlFor="email">Địa chỉ email</FieldLabel>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="Nhập email của bạn"
+                            className="h-12"
+                            {...form.register("email")}
+                        />
+                        <FieldError errors={[form.formState.errors.email]} />
+                    </Field>
 
                     <Button
                         type="submit"
-                        className="w-full rounded-lg bg-primary h-12 px-6 font-bold hover:bg-primary/90 text-white"
+                        className="w-full h-12 font-bold"
                         disabled={isLoading}
                     >
-                        {isLoading ? <Spinner className="size-6" /> : <span>Gửi liên kết đặt lại</span>}
+                        {isLoading ? <Spinner className="size-6" /> : "Gửi mã xác thực"}
                     </Button>
-                </form>
-            </Form>
 
-            <p className="text-center text-base mt-8">
-                Nhớ mật khẩu của bạn?{' '}
-                <Link className="font-semibold text-primary hover:underline" href="/login">
-                    Đăng nhập
-                </Link>
-            </p>
+                    <FieldDescription className="text-center text-base">
+                        Nhớ mật khẩu của bạn?{' '}
+                        <Link className="font-semibold text-primary hover:underline" href="/login">
+                            Đăng nhập
+                        </Link>
+                    </FieldDescription>
+                </FieldGroup>
+            </form>
         </div>
     );
 }

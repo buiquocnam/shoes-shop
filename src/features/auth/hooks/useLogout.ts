@@ -1,19 +1,20 @@
 "use client";
 
 import { authApi } from "../services/auth.api";
-import { useAuthStore, useCartStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export function useLogout() {
   const router = useRouter();
   const { logout } = useAuthStore();
-  const { clearCart } = useCartStore();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      await Promise.all([logout(), clearCart()]);
+      await logout();
+      queryClient.clear();
     },
     onSuccess: () => {
       toast.success("Đăng xuất thành công");

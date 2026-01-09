@@ -1,12 +1,11 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useState } from 'react';
 import { EyeIcon, EyeClosedIcon } from 'lucide-react';
-import { Form } from '@/components/ui/form';
-import { Field, FieldLabel, FieldError } from '@/components/ui/field';
+import { Field, FieldLabel, FieldError, FieldGroup, FieldDescription } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { changePasswordSchema, type ChangePasswordFormData } from '@/features/auth/schema';
@@ -45,130 +44,106 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <div className="flex flex-col items-center justify-center gap-2 mb-8">
-                <p className="text-4xl font-bold">
+            <div className="flex flex-col gap-2 mb-8">
+                <h1 className="text-4xl font-bold tracking-tight">
                     Đổi mật khẩu
-                </p>
-                <p className="text-gray-500 mt-2 text-center">
+                </h1>
+                <p className="text-muted-foreground">
                     {status === 'FORGET_PASS'
                         ? 'Nhập mật khẩu mới để đặt lại tài khoản của bạn.'
                         : 'Nhập mật khẩu hiện tại và mật khẩu mới.'}
                 </p>
             </div>
 
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                >
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FieldGroup>
                     {status === 'CHANGE_PASS' && (
-                        <Controller
-                            control={form.control}
-                            name="password"
-                            render={({ field, fieldState }) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel className="font-medium pb-2">
-                                        Mật khẩu hiện tại
-                                    </FieldLabel>
-                                    <div className="relative flex w-full flex-1 items-stretch">
-                                        <Input
-                                            id="password"
-                                            type={showPassword ? "text" : "password"}
-                                            placeholder="Nhập mật khẩu hiện tại của bạn"
-                                            className="w-full h-12 focus:border-primary"
-                                            {...field}
-                                        />
-                                        <Button
-                                            type="button"
-                                            className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center pr-4"
-                                            variant="ghost"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                        >
-                                            {showPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
-                                        </Button>
-                                    </div>
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
+                        <Field data-invalid={!!form.formState.errors.password}>
+                            <FieldLabel htmlFor="password">Mật khẩu hiện tại</FieldLabel>
+                            <div className="relative">
+                                <Input
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Nhập mật khẩu hiện tại của bạn"
+                                    className="h-12 pr-12"
+                                    {...form.register("password")}
+                                />
+                                <Button
+                                    type="button"
+                                    className="absolute right-0 top-0 h-12 w-12 p-0"
+                                    variant="ghost"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
+                                </Button>
+                            </div>
+                            <FieldError errors={[form.formState.errors.password]} />
+                        </Field>
                     )}
 
-                    <Controller
-                        control={form.control}
-                        name="newPass"
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel className="font-medium pb-2">
-                                    Mật khẩu mới
-                                </FieldLabel>
-                                <div className="relative flex w-full flex-1 items-stretch">
-                                    <Input
-                                        id="new-password"
-                                        type={showNewPassword ? "text" : "password"}
-                                        placeholder="Nhập mật khẩu mới của bạn"
-                                        className="w-full h-12 focus:border-primary"
-                                        {...field}
-                                    />
-                                    <Button
-                                        type="button"
-                                        className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center pr-4"
-                                        variant="ghost"
-                                        onClick={() => setShowNewPassword(!showNewPassword)}
-                                    >
-                                        {showNewPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
-                                    </Button>
-                                </div>
-                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                            </Field>
-                        )}
-                    />
+                    <Field data-invalid={!!form.formState.errors.newPass}>
+                        <FieldLabel htmlFor="new-password">Mật khẩu mới</FieldLabel>
+                        <div className="relative">
+                            <Input
+                                id="new-password"
+                                type={showNewPassword ? "text" : "password"}
+                                placeholder="Nhập mật khẩu mới của bạn"
+                                className="h-12 pr-12"
+                                {...form.register("newPass")}
+                            />
+                            <Button
+                                type="button"
+                                className="absolute right-0 top-0 h-12 w-12 p-0"
+                                variant="ghost"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                tabIndex={-1}
+                            >
+                                {showNewPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
+                            </Button>
+                        </div>
+                        <FieldError errors={[form.formState.errors.newPass]} />
+                    </Field>
 
-                    <Controller
-                        control={form.control}
-                        name="confirmNewPass"
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel className="font-medium pb-2">
-                                    Xác nhận mật khẩu mới
-                                </FieldLabel>
-                                <div className="relative flex w-full flex-1 items-stretch">
-                                    <Input
-                                        id="confirm-new-password"
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Xác nhận mật khẩu mới của bạn"
-                                        className="w-full h-12 focus:border-primary"
-                                        {...field}
-                                    />
-                                    <Button
-                                        type="button"
-                                        className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center pr-4"
-                                        variant="ghost"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    >
-                                        {showConfirmPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
-                                    </Button>
-                                </div>
-                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                            </Field>
-                        )}
-                    />
+                    <Field data-invalid={!!form.formState.errors.confirmNewPass}>
+                        <FieldLabel htmlFor="confirm-new-password">Xác nhận mật khẩu mới</FieldLabel>
+                        <div className="relative">
+                            <Input
+                                id="confirm-new-password"
+                                type={showConfirmPassword ? "text" : "password"}
+                                placeholder="Xác nhận mật khẩu mới của bạn"
+                                className="h-12 pr-12"
+                                {...form.register("confirmNewPass")}
+                            />
+                            <Button
+                                type="button"
+                                className="absolute right-0 top-0 h-12 w-12 p-0"
+                                variant="ghost"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                tabIndex={-1}
+                            >
+                                {showConfirmPassword ? <EyeClosedIcon className="size-5" /> : <EyeIcon className="size-5" />}
+                            </Button>
+                        </div>
+                        <FieldError errors={[form.formState.errors.confirmNewPass]} />
+                    </Field>
 
                     <Button
                         type="submit"
-                        className="w-full rounded-lg bg-primary h-12 px-6 font-bold hover:bg-primary/90 text-white"
+                        className="w-full h-12 font-bold"
                         disabled={isPending}
                     >
-                        {isPending ? <Spinner className="size-6" /> : <span>Đổi mật khẩu</span>}
+                        {isPending ? <Spinner className="size-6" /> : "Đổi mật khẩu"}
                     </Button>
-                </form>
-            </Form>
 
-            <p className="text-center text-base mt-8">
-                Nhớ mật khẩu của bạn?{' '}
-                <Link className="font-semibold text-primary hover:underline" href="/login">
-                    Đăng nhập
-                </Link>
-            </p>
+                    <FieldDescription className="text-center text-base">
+                        Nhớ mật khẩu của bạn?{' '}
+                        <Link className="font-semibold text-primary hover:underline" href="/login">
+                            Đăng nhập
+                        </Link>
+                    </FieldDescription>
+                </FieldGroup>
+            </form>
         </div>
     );
 }

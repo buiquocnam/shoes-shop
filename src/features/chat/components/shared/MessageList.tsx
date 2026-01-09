@@ -12,16 +12,17 @@ interface MessageListProps {
 }
 
 export function MessageList({ conversationId, className }: MessageListProps) {
-  const { data: messages, isLoading } = useMessages(conversationId);
+  const { data: messages = [], isLoading } = useMessages(conversationId);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (messages && messages.length > 0 && messagesEndRef.current) {
+    if (messages.length > 0 && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages.length]);
 
   // Auto-scroll when conversation changes
   useEffect(() => {

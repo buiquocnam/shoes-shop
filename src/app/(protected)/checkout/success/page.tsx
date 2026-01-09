@@ -1,149 +1,61 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CheckCircle2 } from 'lucide-react';
-import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
-
-import { CreateOrderRequest } from '@/features/checkout/types/checkout';
-import { checkoutApi } from '@/features/checkout/services/checkout.api';
-import { getCheckoutSource, clearCheckoutItems } from '@/features/checkout/utils/checkoutStorage';
+import { useCheckoutStore } from '@/store';
 import { clearCart as clearCartApi } from '@/features/cart/services';
-import { useCartStore } from '@/store/useCartStore';
 import { userQueryKeys } from '@/features/shared/constants/user-queryKeys';
-
-interface CheckoutData {
-  orderSummary: any[];
-  selectedAddress: any;
-  totalAmount: number;
-  couponCode: string | null;
-  totalMoney?: number;
-}
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const { clearCart: clearCartStore, setCart } = useCartStore();
-  const hasCreatedOrderRef = useRef(false);
-  const [orderId, setOrderId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { items, orderId: storeOrderId, source } = useCheckoutStore();
+
+  const orderId = storeOrderId || searchParams.get('orderId');
 
   useEffect(() => {
-    // Chỉ chạy ở client-side
-    if (typeof window === 'undefined') return;
-    if (hasCreatedOrderRef.current) return;
-
-    const storedData = sessionStorage.getItem('checkoutData');
-
-    if (!storedData) {
+    if (!orderId && items.length === 0) {
       router.replace('/checkout');
       return;
     }
 
-    const checkoutData: CheckoutData = JSON.parse(storedData);
-
-    const orderRequest: CreateOrderRequest = {
-      items: checkoutData.orderSummary.map((item: any) => ({
-        variantSizeId: item.size.id,
-        quantity: item.quantity,
-      })),
-      couponCode: checkoutData.couponCode,
-      addressId: checkoutData.selectedAddress.id,
-    };
-
-    hasCreatedOrderRef.current = true;
-
-    const checkoutSource = getCheckoutSource();
-    const source = checkoutSource === "cart" ? "cart" : "buy-now";
-
-    checkoutApi
-      .createOrder(orderRequest)
-      .then(async (response) => {
-        const id = response?.orderId;
-        if (id) {
-          setOrderId(id);
-        }
-
-        // Cleanup logic
-        try {
-          clearCheckoutItems();
-          sessionStorage.removeItem('checkoutData');
-
-          if (source === "cart") {
-            try {
-              await clearCartApi();
-              clearCartStore();
-              setCart(null);
-              queryClient.removeQueries({
-                queryKey: userQueryKeys.cart.current(),
-              });
-            } catch (err) {
-              // Silently handle cart cleanup errors
-            }
-          }
-          
-          setIsLoading(false);
-        } catch (err) {
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        const errorMessage =
-          error?.response?.data?.message || error?.message || 'Không thể tạo đơn hàng';
-        setError(errorMessage);
-        setIsLoading(false);
-        toast.error(errorMessage);
+    if (source === 'cart') {
+      clearCartApi().finally(() => {
+        queryClient.invalidateQueries({
+          queryKey: userQueryKeys.cart.current(),
+        });
       });
-  }, [router, queryClient, clearCartStore, setCart]);
+    }
+  }, [orderId, items.length, source, router, queryClient]);
 
-  if (error) {
-    return (
-      <main className="flex min-h-[calc(100vh-200px)] items-center justify-center">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <p className="text-lg font-semibold text-destructive">{error}</p>
-          <Button onClick={() => router.replace('/checkout')}>
-            Quay lại checkout
-          </Button>
-        </div>
-      </main>
-    );
-  }
-
-  // Show loading if still loading
-  if (isLoading) {
-    return (
-      <main className="flex min-h-[calc(100vh-200px)] items-center justify-center bg-background-light dark:bg-background-dark">
-        <div className="flex flex-col items-center gap-4">
-          <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-lg font-semibold text-text-main dark:text-white">Đang xử lý đơn hàng...</p>
-        </div>
-      </main>
-    );
-  }
+  if (!orderId && items.length === 0) return null;
 
   return (
-    <main className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark">
-      <div className="flex flex-col items-center gap-6 text-center max-w-md px-4">
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-          <CheckCircle2 className="h-8 w-8 text-primary" />
+    <main className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-center">
+      <div className="flex flex-col items-center gap-6 max-w-md px-4 py-8 animate-in fade-in zoom-in duration-500">
+        <div className="w-20 h-20 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center shadow-sm">
+          <CheckCircle2 className="h-10 w-10 text-emerald-500" />
         </div>
-        <div>
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
+
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
             Đặt hàng thành công!
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-base">
-            Cảm ơn bạn đã mua hàng tại cửa hàng của chúng tôi
+          <p className="text-muted-foreground text-lg">
+            Cảm ơn bạn đã tin tưởng và mua hàng tại Shoes Shop.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="flex-1"
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full pt-4">
+          <Button
+            variant="outline"
+            size="lg"
+            className="flex-1 rounded-xl h-12 font-semibold"
             onClick={() => {
               if (orderId) {
                 router.push(`/checkout/success/${orderId}`);
@@ -152,14 +64,14 @@ export default function CheckoutSuccessPage() {
               }
             }}
           >
-            Xem chi tiết đơn hàng
+            Xem chi tiết
           </Button>
-          <Button 
-            size="lg" 
-            className="flex-1 bg-primary hover:bg-primary/90"
+          <Button
+            size="lg"
+            className="flex-1 rounded-xl h-12 font-semibold bg-gray-900 hover:bg-gray-800 text-white"
             onClick={() => router.push('/products')}
           >
-            Tiếp tục mua sắm
+            Tiếp tục mua hàng
           </Button>
         </div>
       </div>

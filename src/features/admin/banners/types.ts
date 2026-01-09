@@ -1,14 +1,6 @@
-import { PaginatedResponse } from "@/types";
+import { PaginatedResponse, Banner } from "@/types";
 
-export interface BannerType {
-  id: string;
-  title: string;
-  imageUrl: string;
-  nameImage: string;
-  link: string;
-  active: boolean;
-  slot: string;
-}
+// Re-export or alias if needed, otherwise components should import Banner from types
 
 export interface FetchBannersParams {
   page?: number;
@@ -17,5 +9,6 @@ export interface FetchBannersParams {
   active?: boolean;
 }
 
-export interface BannerPaginationResponse
-  extends PaginatedResponse<BannerType> {}
+export type BannerPaginationResponse = PaginatedResponse<Banner> 
+
+export type BannerSlot = "HOME_HERO" | "HOME_MID" | "HOME_BOTTOM";

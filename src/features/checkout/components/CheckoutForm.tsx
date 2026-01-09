@@ -10,6 +10,7 @@ import { useUsersAddress } from '@/features/shared/hooks/useAdress';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { Coupon } from '../types/coupon';
+import { useCheckoutStore } from '@/store';
 
 interface CheckoutFormProps {
     orderSummary: CheckoutItem[];
@@ -49,23 +50,19 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
                 return;
             }
 
-            sessionStorage.setItem(
-                "checkoutData",
-                JSON.stringify({
-                    orderSummary,
-                    selectedAddress,
-                    totalAmount,
-                    totalMoney: totalAmount,
-                    couponCode: coupon?.code || null,
-                })
-            );
-
             const orderItems = orderSummary.map(item => ({
                 variantSizeId: item.size.id,
                 quantity: item.quantity
             }));
 
             setIsNavigating(true);
+
+            // Save details to store for success/fallback
+            useCheckoutStore.getState().setCheckoutDetails({
+                addressId: selectedAddress.id,
+                couponCode: coupon?.code || null,
+                totalAmount,
+            });
 
             createOrder({
                 request: {
@@ -75,6 +72,9 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
                 }
             }, {
                 onSuccess: (data) => {
+                    // Save orderId in store
+                    useCheckoutStore.getState().setCheckoutDetails({ orderId: data.orderId });
+
                     createVnPayPayment({
                         amount: totalAmount,
                         bankCode: 'NCB',
@@ -90,19 +90,18 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
     );
 
     const showLoading = isPending || isNavigating;
+    if (showLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] w-full py-20">
+                <Spinner className="h-10 w-10 text-primary mb-4" />
+                <h2 className="text-xl font-semibold mb-2">Đang xử lý đơn hàng...</h2>
+                <p className="text-muted-foreground text-sm">Vui lòng đợi trong giây lát</p>
+            </div>
+        );
+    }
 
     return (
         <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
-            {showLoading && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
-                    <div className="flex flex-col items-center gap-4">
-                        <Spinner className="h-8 w-8 text-primary" />
-                        <p className="text-lg font-semibold">Đang xử lý đơn hàng...</p>
-                        <p className="text-sm text-muted-foreground">Vui lòng đợi trong giây lát</p>
-                    </div>
-                </div>
-            )}
-
             <div className="w-full lg:w-3/5">
                 <AddressManagement userId={userId} />
             </div>

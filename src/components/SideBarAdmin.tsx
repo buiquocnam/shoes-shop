@@ -11,11 +11,13 @@ import {
     SidebarMenuSub,
     SidebarMenuSubItem,
     SidebarMenuSubButton,
-    SidebarHeader
+    SidebarHeader,
+    SidebarFooter,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import Image from "next/image"
-
+import { useLogout } from "@/features/auth"
+import { Button } from "@/components/ui/button"
 
 const items = [
     {
@@ -61,6 +63,7 @@ const items = [
 ]
 
 export function SideBarAdmin() {
+    const { mutateAsync: logout } = useLogout(); 
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader > 
@@ -98,7 +101,11 @@ export function SideBarAdmin() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
+               
             </SidebarContent>
+            <SidebarFooter>
+                <Button variant="destructive" onClick={() => logout()}>Đăng xuất</Button>
+            </SidebarFooter>
         </Sidebar>
     )
 }

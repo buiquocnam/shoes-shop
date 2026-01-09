@@ -11,7 +11,7 @@ export function useChangePassword() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (data) => authApi.changePassword(data),
+    mutationFn: (data: ChangePasswordType) => authApi.changePassword(data),
     onSuccess: async (_, variables) => {
       await clearOtpData();
       toast.success("Đổi mật khẩu thành công!");

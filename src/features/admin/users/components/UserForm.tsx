@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { InputField } from "@/components/form/InputField";
-import { CustomField } from "@/components/form/CustomField";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { Input } from "@/components/ui/input";
+import { Field, FieldLabel, FieldError, FieldGroup, FieldContent } from "@/components/ui/field";
 import {
     Dialog,
     DialogContent,
@@ -17,10 +17,10 @@ import {
     DialogClose,
 } from "@/components/ui/dialog";
 import { userSchema, UserFormValues } from "../schema";
-import { User } from "@/types/global";
+import { User } from "@/types";
 
 interface UserFormProps {
-    onSubmit: (data: { id: string; name: string; phone?: string; status?: boolean }) => void;
+    onSubmit: (data: Partial<User> & { id: string }) => void;
     isLoading?: boolean;
     user?: User;
     trigger?: React.ReactNode;
@@ -40,19 +40,19 @@ export function UserForm({
         resolver: zodResolver(userSchema),
         defaultValues: {
             name: user?.name || "",
-            email: user?.email || "",
             phone: user?.phone || "",
             status: user?.status || false,
         },
     });
 
     const handleFormSubmit = async (data: UserFormValues) => {
+        if (!user) return;
+
         try {
             await onSubmit({
-                id: user!.id,
-                name: data.name,
-                phone: data.phone || "",
-                status: data.status,
+                id: user.id,
+                ...data,
+                phone: data.phone ?? undefined,
             });
             form.reset();
             onOpenChange(false);
@@ -71,57 +71,53 @@ export function UserForm({
                     </DialogTitle>
                 </DialogHeader>
 
-                <FormProvider {...form}>
-                    <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-                        <InputField
-                            control={form.control}
-                            name="name"
-                            label="Tên"
-                            placeholder="Nhập tên"
-                        />
+                <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+                    <FieldGroup>
+                        <Field data-invalid={!!form.formState.errors.name}>
+                            <FieldLabel htmlFor="user-name">Tên</FieldLabel>
+                            <Input id="user-name" placeholder="Nhập tên" {...form.register("name")} />
+                            <FieldError errors={[form.formState.errors.name]} />
+                        </Field>
 
-                        <InputField
-                            control={form.control}
-                            name="email"
-                            label="Email"
-                            placeholder="Nhập email"
-                            disabled={true}
-                        />
+                        <Field>
+                            <FieldLabel htmlFor="user-email">Email</FieldLabel>
+                            <Input
+                                id="user-email"
+                                value={user?.email || ""}
+                                disabled={true}
+                                readOnly
+                            />
+                        </Field>
 
-                        <InputField
-                            control={form.control}
-                            name="phone"
-                            label="Điện thoại"
-                            placeholder="Nhập số điện thoại"
-                        />
+                        <Field data-invalid={!!form.formState.errors.phone}>
+                            <FieldLabel htmlFor="user-phone">Điện thoại</FieldLabel>
+                            <Input id="user-phone" placeholder="Nhập số điện thoại" {...form.register("phone")} />
+                            <FieldError errors={[form.formState.errors.phone]} />
+                        </Field>
 
-                        <CustomField
+                        <Controller
                             control={form.control}
                             name="status"
-                            render={(field, fieldState) => (
-                                <div className="flex items-start space-x-3 rounded-md border border-gray-200 dark:border-gray-700 p-4 bg-gray-50/50 dark:bg-gray-800/50 hover:bg-gray-100/50 dark:hover:bg-gray-800/70 transition-colors">
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid} orientation="horizontal">
                                     <Checkbox
-                                        id="status"
+                                        id="user-status"
                                         checked={field.value}
                                         onCheckedChange={(checked) => {
                                             field.onChange(!!checked);
                                         }}
-                                        className="mt-0.5"
                                     />
-                                    <div className="space-y-1 leading-none flex-1">
-                                        <Label
-                                            htmlFor="status"
-                                            className="font-medium cursor-pointer text-sm text-gray-900 dark:text-gray-100"
-                                        >
+                                    <FieldContent>
+                                        <FieldLabel htmlFor="user-status" className="font-medium cursor-pointer">
                                             Trạng thái hoạt động
-                                        </Label>
-                                      
-                                    </div>
-                                </div>
+                                        </FieldLabel>
+                                    </FieldContent>
+                                    <FieldError errors={[fieldState.error]} />
+                                </Field>
                             )}
                         />
 
-                        <div className="flex justify-end gap-3">
+                        <div className="flex justify-end gap-3 pt-4">
                             <DialogClose asChild>
                                 <Button
                                     type="button"
@@ -144,15 +140,14 @@ export function UserForm({
                                 )}
                             </Button>
                         </div>
-                        {isLoading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg z-50">
-                                <Spinner className="h-8 w-8" />
-                            </div>
-                        )}
-                    </form>
-                </FormProvider>
+                    </FieldGroup>
+                    {isLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg z-50">
+                            <Spinner className="h-8 w-8" />
+                        </div>
+                    )}
+                </form>
             </DialogContent>
         </Dialog>
     );
 }
-

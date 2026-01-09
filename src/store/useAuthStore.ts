@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User } from "@/types/global";
+import type { User } from "@/types";
 import { getRoleFromToken } from "@/lib/jwt";
-import { Role } from "@/types/global";
+import { Role } from "@/types";
 
 interface AuthState {
   user: User | null;
@@ -76,6 +76,6 @@ export function useIsAdmin() {
   return useAuthStore((state) => {
     if (!state.accessToken) return false;
     const role = getRoleFromToken(state.accessToken);
-    return role === Role.ADMIN;
+    return role === "ADMIN";
   });
 }

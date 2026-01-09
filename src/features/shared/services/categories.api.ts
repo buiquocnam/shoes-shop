@@ -2,7 +2,7 @@ import axiosInstance from "@/lib/axios";
 import { CategoryType } from "@/features/product/types";
 import { Filters } from "../types";
 import { toQueryString } from "@/utils/queryString";
-import { PaginatedResponse } from "@/types/global";
+import { PaginatedResponse } from "@/types";
 
 export const categoriesApi = {
   getAll: async (filters?: Filters) => {

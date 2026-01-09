@@ -9,7 +9,7 @@ import type {
   VerifyEmailType,
   ChangePasswordType,
 } from "@/features/auth/types";
-import { useAuthStore, useCartStore } from "@/store";
+import { useAuthStore } from "@/store";
 
 export const authApi = {
   login: async (credentials: LoginFormData) => {
@@ -63,10 +63,7 @@ export const authApi = {
     return response.data;
   },
   logout: async () => {
-    await Promise.all([
-      useAuthStore.getState().logout(),
-      useCartStore.getState().clearCart(),
-    ]);
+    useAuthStore.getState().logout();
   },
 
   loginWithGoogle: async (code: string) => {

@@ -20,42 +20,57 @@ import { cn } from "@/lib/utils";
 import { useDeleteProduct } from "../hooks/mutations/useDeleteProduct";
 import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
 
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+
 export const columns: ColumnDef<ProductType>[] = [
     {
         accessorKey: "image",
         header: "Hình ảnh",
-        cell: ({ row }: { row: Row<ProductType> }) => {
-            const image = row.original.imageUrl?.url || " ";
+        cell: ({ row }) => {
+            const image = row.original.imageUrl?.url || "";
 
             return (
-                <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-muted">
-                    <Image
-                        src={image}
-                        alt={row.original.name}
-                        fill
-                        unoptimized
-                        className="object-cover"
-                    />
+                <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-gray-50 border border-border/50 shadow-sm">
+                    {image ? (
+                        <Image
+                            src={image}
+                            alt={row.original.name}
+                            fill
+                            unoptimized
+                            className="object-cover transition-transform hover:scale-105"
+                        />
+                    ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                            <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                    )}
                 </div>
             );
         },
+        enableSorting: false,
+        enableHiding: false,
     },
     {
         accessorKey: "name",
-        header: "Tên sản phẩm",
-        cell: ({ row }: { row: Row<ProductType> }) => (
-            <div className="max-w-[300px]">
-                <p className="font-medium text-foreground">{row.original.name}</p>
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Tên sản phẩm" />
+        ),
+        cell: ({ row }) => (
+            <div className="max-w-[250px]">
+                <p className="font-semibold text-foreground line-clamp-1">{row.original.name}</p>
+                <p className="text-[10px] text-muted-foreground uppercase font-medium">#{row.original.id.slice(-6)}</p>
             </div>
         ),
     },
     {
         accessorKey: "price",
-        header: "Giá",
-        cell: ({ row }: { row: Row<ProductType> }) => {
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Giá bán" />
+        ),
+        cell: ({ row }) => {
             const price = row.original.price;
             return (
-                <span className="font-semibold text-foreground">
+                <span className="font-bold text-foreground">
                     {formatCurrency(price)}
                 </span>
             );
@@ -63,23 +78,27 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "discount",
-        header: "Giảm giá",
-        cell: ({ row }: { row: Row<ProductType> }) => {
-            const discount = row.original.discount;
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Giảm" />
+        ),
+        cell: ({ row }) => {
+            const discount = row.original.discount || 0;
             return (
-                <span className="font-semibold text-red-500">
-                    {discount}%
-                </span>
+                <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200 font-bold">
+                    -{discount}%
+                </Badge>
             );
         },
     },
     {
         accessorKey: "brand",
-        header: "Thương hiệu",
-        cell: ({ row }: { row: Row<ProductType> }) => {
-            const brandName = row.original.brand?.name || "Chưa có";
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Hãng" />
+        ),
+        cell: ({ row }) => {
+            const brandName = row.original.brand?.name || "—";
             return (
-                <Badge variant="secondary" className="font-normal">
+                <Badge variant="secondary" className="font-medium">
                     {brandName}
                 </Badge>
             );
@@ -87,11 +106,13 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "category",
-        header: "Danh mục",
-        cell: ({ row }: { row: Row<ProductType> }) => {
-            const categoryName = row.original.category?.name || "Chưa có";
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Danh mục" />
+        ),
+        cell: ({ row }) => {
+            const categoryName = row.original.category?.name || "—";
             return (
-                <Badge variant="outline" className="font-normal">
+                <Badge variant="outline" className="font-medium text-muted-foreground">
                     {categoryName}
                 </Badge>
             );
@@ -99,32 +120,49 @@ export const columns: ColumnDef<ProductType>[] = [
     },
     {
         accessorKey: "totalStock",
-        header: "Tồn kho",
-        cell: ({ row }: { row: Row<ProductType> }) => {
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Tồn kho" />
+        ),
+        cell: ({ row }) => {
             const stock = row.original.totalStock ?? 0;
             return (
-                <span className={cn(
-                    "font-medium",
-                    stock === 0 ? "text-destructive" : stock < 10 ? "text-orange-600" : "text-foreground"
-                )}>
-                    {stock}
-                </span>
+                <div className="flex flex-col gap-1">
+                    <span className={cn(
+                        "text-sm font-bold",
+                        stock === 0 ? "text-destructive" : stock < 10 ? "text-orange-500" : "text-emerald-600"
+                    )}>
+                        {stock} SP
+                    </span>
+                    <div className="h-1 w-12 rounded-full bg-gray-100 overflow-hidden">
+                        <div
+                            className={cn(
+                                "h-full rounded-full transition-all",
+                                stock === 0 ? "bg-destructive" : stock < 10 ? "bg-orange-500" : "bg-emerald-500"
+                            )}
+                            style={{ width: `${Math.min((stock / 50) * 100, 100)}%` }}
+                        />
+                    </div>
+                </div>
             );
         },
     },
     {
         id: "actions",
-        header: "Thao tác",
-        cell: ({ row }: { row: Row<ProductType> }) => {
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Thao tác" />
+        ),
+        cell: ({ row }) => {
             return <ProductActions product={row.original} />;
         },
+        enableSorting: false,
+        enableHiding: false,
     },
 ];
 
 // Memoize ProductActions để tránh re-render không cần thiết
 const ProductActions = React.memo(({ product }: { product: ProductType }) => {
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
-    
+
     // Memoize callback để tránh re-create
     const handleStopPropagation = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
@@ -185,9 +223,9 @@ const ProductActions = React.memo(({ product }: { product: ProductType }) => {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DeleteProductButton 
-                        product={product} 
-                        onDeleteSuccess={handleDropdownClose} 
+                    <DeleteProductButton
+                        product={product}
+                        onDeleteSuccess={handleDropdownClose}
                     />
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -198,10 +236,10 @@ const ProductActions = React.memo(({ product }: { product: ProductType }) => {
 ProductActions.displayName = "ProductActions";
 
 // Delete Product Button Component
-function DeleteProductButton({ 
-    product, 
-    onDeleteSuccess 
-}: { 
+function DeleteProductButton({
+    product,
+    onDeleteSuccess
+}: {
     product: ProductType;
     onDeleteSuccess?: () => void;
 }) {

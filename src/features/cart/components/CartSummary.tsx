@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { CheckoutItem } from '@/features/checkout/types/checkout';
-import { setCheckoutItems } from '@/features/checkout/utils/checkoutStorage';
+import { useCheckoutStore } from '@/store';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { CheckoutItem } from '@/features/checkout';
 
 interface CartSummaryProps {
     cart: CartResponse;
@@ -15,18 +15,19 @@ interface CartSummaryProps {
 
 export function CartSummary({ cart }: CartSummaryProps) {
     const router = useRouter();
+    const setCheckout = useCheckoutStore((state) => state.setCheckout);
 
     // Calculate totals
     const originalTotal = cart.items.reduce((sum, item) => {
         return sum + (item.product.price * item.quantity);
     }, 0);
-    
+
     const discountedTotal = cart.items.reduce((sum, item) => {
         const discountPercent = item.product.discount || 0;
         const discountedPrice = item.product.price - (item.product.price * discountPercent) / 100;
         return sum + (discountedPrice * item.quantity);
     }, 0);
-    
+
     const totalDiscount = originalTotal - discountedTotal;
 
     const handleCheckout = () => {
@@ -56,7 +57,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
             };
         });
 
-        setCheckoutItems(checkoutItems, 'cart');
+        setCheckout(checkoutItems, 'cart');
         router.push('/checkout');
     };
 
@@ -111,6 +112,3 @@ export function CartSummary({ cart }: CartSummaryProps) {
         </div>
     );
 }
-
-
-

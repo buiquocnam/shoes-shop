@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { AddressType } from '@/features/shared/types/address';
+import { AddressType } from '@/types/address';
 import { formatFullAddress } from '@/features/shared/utils/addressHelpers';
 import { useDeleteAddress, useUpdateDefaultAddress } from '@/features/shared/hooks/useAdress';
 import { Trash2, Star } from 'lucide-react';
@@ -11,12 +11,14 @@ interface AddressLineProps {
   address: AddressType;
   addresses: AddressType[];
   userId: string;
+  onEdit: (address: AddressType) => void;
 }
 
 export function AddressLine({
   address,
   addresses,
   userId,
+  onEdit,
 }: AddressLineProps) {
   const fullAddress = formatFullAddress(address);
   const deleteAddressMutation = useDeleteAddress(userId);
@@ -41,11 +43,17 @@ export function AddressLine({
     }
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onEdit(address);
+  };
+
   const handleSetDefault = async (e?: React.MouseEvent) => {
     e?.preventDefault();
     e?.stopPropagation();
     if (address.isDefault) return;
-    
+
     try {
       await updateDefaultAddressMutation.mutateAsync(address.id);
     } catch (error) {
@@ -72,7 +80,9 @@ export function AddressLine({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="font-bold text-sm sm:text-base text-slate-900 truncate">
-              {address.addressLine}
+              {address.nameReceiver && address.phoneReceiver
+                ? `${address.nameReceiver} - ${address.phoneReceiver}`
+                : "Người nhận"}
             </span>
             {address.isDefault && (
               <span className="text-[9px] sm:text-[10px] font-bold uppercase bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 rounded-full">
@@ -80,13 +90,25 @@ export function AddressLine({
               </span>
             )}
           </div>
+          <p className="text-sm font-medium text-slate-700 mb-0.5">
+            {address.addressLine}
+          </p>
           <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 sm:line-clamp-1">
-            {fullAddress}
+            {fullAddress.replace(`${address.addressLine}, `, '')}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-2   transition-all shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-2 hover:opacity-100 transition-all shrink-0">
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleEdit}
+          className="size-8 sm:size-9 text-slate-500 hover:text-primary hover:bg-primary/10"
+          title="Chỉnh sửa"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.91l-1.12 6.363a2 2 0 0 0 2.494 2.494l6.363-1.12a2 2 0 0 0 .91-.5l13.174-13.328z" /></svg>
+        </Button>
         {!address.isDefault && (
           <Button
             size="icon"

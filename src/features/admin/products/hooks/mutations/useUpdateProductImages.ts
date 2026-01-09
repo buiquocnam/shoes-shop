@@ -15,7 +15,7 @@ export interface UpdateProductImagesInput {
 export const useUpdateProductImages = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ data }) => adminProductsApi.updateImages(data),
+    mutationFn: ({ productId, data }: UpdateProductImagesInput) => adminProductsApi.updateImages(data),
     onSuccess: (_, variables) => {
       // Chỉ invalidate list để cập nhật khi quay lại trang products
       // Không invalidate detail vì đang ở trang detail và sẽ chuyển trang ngay

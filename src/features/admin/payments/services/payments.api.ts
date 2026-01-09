@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import { toQueryString } from "@/utils/queryString";
-import { Payment, PaymentPaginationResponse, PaymentFilters } from "../types";
+import { PaymentRecord, PaymentPaginationResponse, PaymentFilters } from "../types";
 
 export const adminPaymentsApi = {
   /**
@@ -20,7 +20,7 @@ export const adminPaymentsApi = {
    * Get payment detail by ID
    */
   getDetail: async (paymentId: string) => {
-    const response = await axiosInstance.get<Payment>(
+    const response = await axiosInstance.get<PaymentRecord>(
       `/shoes/payment/detail/${paymentId}`
     );
     return response.data;

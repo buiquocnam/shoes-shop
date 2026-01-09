@@ -1,6 +1,7 @@
 export { CategoryForm, categoryColumns } from './components';
 export {
   useCategories,
+  useGetCategories,
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,

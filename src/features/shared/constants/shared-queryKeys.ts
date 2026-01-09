@@ -1,7 +1,4 @@
-/**
- * Query keys for shared resources used across multiple features
- * Used in: shared services (categories, brands), auth, products (user & admin)
- */
+import { FetchBrandsParams } from "../types";
 
 export const sharedQueryKeys = {
   product: {
@@ -21,7 +18,7 @@ export const sharedQueryKeys = {
   },
   brand: {
     key: ["brand"] as const,
-    list: () => [...sharedQueryKeys.brand.key, "list"] as const,
+    list: (filters?: FetchBrandsParams) => [...sharedQueryKeys.brand.key, "list", filters] as const,
   },
   banner: {
     key: ["banner"] as const,

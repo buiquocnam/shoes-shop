@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 import { useQuery } from '@tanstack/react-query';
 import { adminDashboardApi } from '../services';
@@ -36,24 +35,21 @@ export function RevenueSummary() {
     const monthRevenue = monthData?.totalRevenue || 0;
 
     return (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {/* Today Revenue */}
-            <Card className="border-2 bg-gradient-to-br from-chart-1/5 to-chart-1/10 border-chart-1/30">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Doanh thu hôm nay</CardTitle>
-                    <div className="rounded-lg p-2 bg-chart-1/20 text-chart-1">
-                        <Calendar className="h-5 w-5" />
-                    </div>
+            <Card className="relative overflow-hidden border-none shadow-lg ring-1 ring-emerald-500/20 bg-white dark:bg-slate-900 group">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                    <CardTitle className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                        Doanh thu hôm nay
+                    </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative z-10">
                     {isLoadingToday ? (
-                        <Skeleton className="h-10 w-32" />
+                        <Skeleton className="h-10 w-40" />
                     ) : (
-                        <div className="space-y-1">
-                            <div className="text-3xl font-bold text-chart-1">{formatCurrency(todayRevenue)}</div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
-                                <span>{format(today, 'dd MMMM yyyy')}</span>
+                        <div className="space-y-3">
+                            <div className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                {formatCurrency(todayRevenue)}
                             </div>
                         </div>
                     )}
@@ -61,22 +57,19 @@ export function RevenueSummary() {
             </Card>
 
             {/* This Month Revenue */}
-            <Card className="border-2 bg-gradient-to-br from-chart-2/5 to-chart-2/10 border-chart-2/30">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Doanh thu tháng này</CardTitle>
-                    <div className="rounded-lg p-2 bg-chart-2/20 text-chart-2">
-                        <TrendingUp className="h-5 w-5" />
-                    </div>
+            <Card className="relative overflow-hidden border-none shadow-lg ring-1 ring-blue-500/20 bg-white dark:bg-slate-900 group">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                    <CardTitle className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                        Doanh thu tháng này
+                    </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative z-10">
                     {isLoadingMonth ? (
-                        <Skeleton className="h-10 w-32" />
+                        <Skeleton className="h-10 w-40" />
                     ) : (
-                        <div className="space-y-1">
-                            <div className="text-3xl font-bold text-chart-2">{formatCurrency(monthRevenue)}</div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
-                                <span>{format(startOfMonth, 'dd MMM')} - {format(endOfMonth, 'dd MMM yyyy')}</span>
+                        <div className="space-y-3">
+                            <div className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                {formatCurrency(monthRevenue)}
                             </div>
                         </div>
                     )}

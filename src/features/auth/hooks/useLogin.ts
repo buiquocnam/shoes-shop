@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { getUserRoleFromToken } from "@/lib/jwt";
-import { Role } from "@/types/global";
+import { Role } from "@/types";
 import { toast } from "sonner";
 
 export function useLogin() {
@@ -22,7 +22,7 @@ export function useLogin() {
       setAuth(response.user, response.access_token, response.refresh_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
-      if (userRole === Role.ADMIN) {
+      if (userRole === "ADMIN") {
         router.replace("/admin/dashboard");
         return;
       }

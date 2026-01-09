@@ -7,6 +7,8 @@ import Image from "next/image";
 import { BrandType } from "@/features/product/types";
 import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
 import { useDeleteBrand } from "../hooks/useBrands";
+import Link from "next/link";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 
 export const brandColumns = (
   onEdit?: (brand: BrandType) => void
@@ -42,27 +44,29 @@ export const brandColumns = (
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
+        <DataTableColumnHeader column={column} title="Thương hiệu" />
+      ),
+      cell: ({ row }) => (
+        <Link
+          href={`/admin/products?brand_id=${row.original.id}`}
+          className="font-medium text-foreground hover:text-primary transition-colors"
         >
-          Thương hiệu
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          {row.original.name}
+        </Link>
       ),
     },
     {
       accessorKey: "countProduct",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 py-0 h-auto font-semibold text-gray-700 hover:bg-transparent hover:text-red-700"
+        <DataTableColumnHeader column={column} title="Số sản phẩm" />
+      ),
+      cell: ({ row }) => (
+        <Link
+          href={`/admin/products?brand_id=${row.original.id}`}
+          className="text-sm text-muted-foreground hover:text-primary transition-colors"
         >
-          Số sản phẩm
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          {row.original.countProduct || 0} sản phẩm
+        </Link>
       ),
     },
     {
@@ -85,10 +89,10 @@ export const brandColumns = (
           </div>
         );
       },
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
 
 // Delete Brand Button Component
 function DeleteBrandButton({ brand }: { brand: BrandType }) {

@@ -15,7 +15,6 @@ export {
   ProductReview,
   Sidebar,
   AlertLogin,
-  ProductListServer,
 } from './components';
 export {
   useProducts,
@@ -25,4 +24,3 @@ export {
   useCreateReview,
 } from './hooks';
 export { productApi } from './services/product.api';
-

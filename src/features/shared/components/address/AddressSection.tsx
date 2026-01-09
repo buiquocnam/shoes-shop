@@ -11,11 +11,31 @@ interface AddressSectionProps {
   userId: string;
 }
 
+import { AddressType } from '@/types/address';
+
+// ... imports
+
 export function AddressSection({
   userId,
 }: AddressSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<AddressType | null>(null);
   const { data: addresses = [], isLoading } = useUsersAddress(userId);
+
+  const handleCreate = () => {
+    setEditingAddress(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (address: AddressType) => {
+    setEditingAddress(address);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsModalOpen(open);
+    if (!open) setEditingAddress(null);
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -26,7 +46,7 @@ export function AddressSection({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleCreate}
           className="text-primary text-xs sm:text-sm font-bold flex items-center w-full sm:w-auto"
         >
           <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:scale-125 transition-transform" />
@@ -46,6 +66,7 @@ export function AddressSection({
               address={addr}
               addresses={addresses}
               userId={userId}
+              onEdit={handleEdit}
             />
           ))
         ) : (
@@ -56,7 +77,7 @@ export function AddressSection({
             </p>
             <Button
               variant="link"
-              onClick={() => setIsModalOpen(true)}
+              onClick={handleCreate}
               className="mt-3 sm:mt-4 text-primary font-bold text-xs sm:text-sm hover:underline"
             >
               Thêm địa chỉ đầu tiên
@@ -69,8 +90,9 @@ export function AddressSection({
       <AddressDialog
         userId={userId}
         open={isModalOpen}
-        onOpenChange={setIsModalOpen}
+        onOpenChange={handleOpenChange}
         defaultIsDefault={addresses.length === 0}
+        initialData={editingAddress}
       />
     </div>
   );

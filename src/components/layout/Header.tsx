@@ -4,9 +4,9 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { User, ShoppingCart, LogOut, Search, Menu, ArrowRight } from "lucide-react";
 import { useAuthStore, useIsAuthenticated } from "@/store/useAuthStore";
-import { useCartStore } from "@/store/useCartStore";
+import { useCart } from "@/features/cart/hooks/useCart";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useLogout } from "@/features/auth/hooks/useLogout";
+import { useLogout } from "@/features/auth/hooks";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -41,7 +41,7 @@ const NAV_LINKS = [
 export default function Header() {
     const { user } = useAuthStore();
     const isAuthenticated = useIsAuthenticated();
-    const { cart } = useCartStore();
+    const { cart } = useCart();
     const pathname = usePathname();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -56,7 +56,7 @@ export default function Header() {
     }, [searchFromUrl]);
 
     const shouldHide = useMemo(
-        () => pathname.startsWith('/admin') ,
+        () => pathname.startsWith('/admin'),
         [pathname]
     );
 

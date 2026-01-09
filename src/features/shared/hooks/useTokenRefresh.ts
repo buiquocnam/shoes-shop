@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { isTokenExpired, getRoleFromToken, decodeToken } from "@/lib/jwt";
-import { Role } from "@/types/global";
+import { Role } from "@/types";
 import { isDev } from "@/lib/config";
 
 export function useTokenRefresh() {
@@ -50,7 +50,7 @@ export function useTokenRefresh() {
       // Check role nếu redirect đến admin route
       if (redirectPath.startsWith("/admin")) {
         const role = getRoleFromToken(accessToken);
-        if (role !== Role.ADMIN) {
+        if (role !== "ADMIN") {
           router.replace("/");
           return;
         }
@@ -75,15 +75,15 @@ export function useTokenRefresh() {
           const decoded = accessToken ? decodeToken(accessToken) : null;
           console.log("🔍 Admin route check:", {
             role,
-            expectedRole: Role.ADMIN,
-            isAdmin: role === Role.ADMIN,
+            expectedRole: "ADMIN",
+            isAdmin: role === "ADMIN",
             pathname,
             decoded,
             payloadRoles: decoded?.roles,
           });
         }
         // Nếu không có role hoặc role không phải ADMIN -> redirect đến trang unauthorized
-        if (!role || role !== Role.ADMIN) {
+        if (!role || role !== "ADMIN") {
           if (isDev) {
             console.log(
               "❌ Not admin or no role, redirecting to /unauthorized"

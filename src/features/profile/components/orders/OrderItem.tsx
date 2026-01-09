@@ -11,12 +11,14 @@ interface OrderItemProps {
 
 export function OrderItem({ purchasedItem }: OrderItemProps) {
   const router = useRouter();
-  const imageUrl = purchasedItem.product.imageUrl?.url || purchasedItem.product.imageUrl?.fileName || '/images/no-image.png';
+  const imageUrl = purchasedItem.product.imageUrl?.url || '/images/no-image.png';
   const brandName = purchasedItem.product.brand?.name || '';
   const originalPrice = purchasedItem.product.price;
   const discount = purchasedItem.product.discount || 0;
   const hasDiscount = discount > 0;
 
+  console.log("purchasedItem", purchasedItem
+  );
   const handleProductClick = () => {
     router.push(`/products/${purchasedItem.product.id}`);
   };

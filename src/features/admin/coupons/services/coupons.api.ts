@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import { toQueryString } from "@/utils/queryString";
-import { CouponPaginationResponse, CouponFilters, Coupon } from "../types";
+import { CouponPaginationResponse, CouponFilters, Coupon } from "@/types/coupon";
 
 export interface SaveCouponInput {
   id?: string;
