@@ -21,19 +21,23 @@ export default function ContactPage() {
           <div className="max-w-2xl mx-auto">
             <div className="bg-primary text-primary-foreground rounded-2xl shadow-xl overflow-hidden border border-border p-8 lg:p-10 relative">
               {/* Decorative circles */}
-              <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-white/10 blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-primary-foreground/10 blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 rounded-full bg-primary-foreground/10 blur-3xl"></div>
 
               <div className="relative z-10">
-                <h2 className="text-2xl font-bold mb-5">{t('title')}</h2>
-                <p className="text-primary-foreground/80 mb-7 leading-relaxed text-base">
-                  {t('description')}
-                </p>
+                <div className="text-center space-y-4">
+                  <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
+                    {t('title')}
+                  </h1>
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    {t('subtitle')}
+                  </p>
+                </div>
 
                 <div className="space-y-6">
                   {/* Phone */}
                   <div className="flex items-start gap-4 group">
-                    <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                    <div className="p-3 bg-primary-foreground/10 rounded-lg group-hover:bg-primary-foreground/20 transition-colors">
                       <Phone className="w-5 h-5" />
                     </div>
                     <div>
@@ -46,7 +50,7 @@ export default function ContactPage() {
 
                   {/* Email */}
                   <div className="flex items-start gap-4 group">
-                    <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                    <div className="p-3 bg-primary-foreground/10 rounded-lg group-hover:bg-primary-foreground/20 transition-colors">
                       <Mail className="w-5 h-5" />
                     </div>
                     <div>
@@ -59,7 +63,7 @@ export default function ContactPage() {
 
                   {/* Address */}
                   <div className="flex items-start gap-4 group">
-                    <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                    <div className="p-3 bg-primary-foreground/10 rounded-lg group-hover:bg-primary-foreground/20 transition-colors">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
@@ -74,35 +78,35 @@ export default function ContactPage() {
               </div>
 
               {/* Social Media */}
-              <div className="relative z-10 mt-10 pt-7 border-t border-white/20">
-                <p className="text-sm font-bold text-primary-foreground/90 mb-4 uppercase tracking-widest">
-                  {t('followUs')}
-                </p>
+              <div className="bg-card rounded-3xl p-8 border border-border shadow-soft">
+                <h2 className="text-2xl font-bold text-foreground mb-6">
+                  {t('form.title')}
+                </h2>
                 <div className="flex gap-4">
                   <a
                     href="#"
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white hover:text-primary flex items-center justify-center transition-all duration-300"
+                    className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary flex items-center justify-center transition-all duration-300"
                     aria-label="Facebook"
                   >
                     <Facebook className="w-5 h-5" />
                   </a>
                   <a
                     href="#"
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white hover:text-primary flex items-center justify-center transition-all duration-300"
+                    className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary flex items-center justify-center transition-all duration-300"
                     aria-label="Twitter"
                   >
                     <Twitter className="w-5 h-5" />
                   </a>
                   <a
                     href="#"
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white hover:text-primary flex items-center justify-center transition-all duration-300"
+                    className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary flex items-center justify-center transition-all duration-300"
                     aria-label="Instagram"
                   >
                     <Instagram className="w-5 h-5" />
                   </a>
                   <a
                     href="#"
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white hover:text-primary flex items-center justify-center transition-all duration-300"
+                    className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary flex items-center justify-center transition-all duration-300"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="w-5 h-5" />

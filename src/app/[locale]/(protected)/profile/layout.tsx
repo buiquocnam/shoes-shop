@@ -39,7 +39,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     ];
 
     const activeClass = "flex items-center gap-3 px-4 py-3 rounded-full bg-primary/10 text-primary font-medium transition-colors";
-    const inactiveClass = "flex items-center gap-3 px-4 py-3 rounded-full text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors font-medium";
+    const inactiveClass = "flex items-center gap-3 px-4 py-3 rounded-full text-muted-foreground hover:bg-muted hover:text-primary transition-colors font-medium";
 
     return (
         <div className="min-h-screen bg-background py-4 sm:py-6 lg:py-8">
@@ -47,20 +47,20 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                 <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 sm:gap-6">
                     {/* Left column: Sidebar */}
                     <aside className="w-full md:w-72 flex-shrink-0">
-                        <div className="sticky top-24 bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-slate-100">
+                        <div className="sticky top-24 bg-card rounded-xl p-4 sm:p-6 shadow-sm border border-border">
                             {/* User Info Section */}
                             {user && (
-                                <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-slate-100">
+                                <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-border">
                                     <div className="size-10 sm:size-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                                         <span className="text-sm sm:text-base font-bold text-primary">
                                             {getInitials(user.name || user.email)}
                                         </span>
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <h3 className="text-sm sm:text-base text-slate-900 font-semibold leading-tight truncate">
+                                        <h3 className="text-sm sm:text-base text-foreground font-semibold leading-tight truncate">
                                             {user.name || user.email}
                                         </h3>
-                                        <p className="text-xs text-slate-500 truncate">
+                                        <p className="text-xs text-muted-foreground truncate">
                                             {user.email}
                                         </p>
                                     </div>
@@ -86,13 +86,13 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                                 })}
 
                                 {/* Separator */}
-                                <div className="h-px bg-slate-100 my-2"></div>
+                                <div className="h-px bg-border my-2"></div>
 
                                 {/* Logout Button */}
                                 <Button
                                     variant="ghost"
                                     onClick={handleLogout}
-                                    className="w-full flex items-center gap-3 px-4 py-3 justify-start rounded-full text-slate-600 hover:bg-slate-50 hover:text-primary font-medium"
+                                    className="w-full flex items-center gap-3 px-4 py-3 justify-start rounded-full text-muted-foreground hover:bg-muted hover:text-primary font-medium"
                                 >
                                     <LogOut className="w-5 h-5 shrink-0" />
                                     <span>{tHeader('logout')}</span>

@@ -5,9 +5,7 @@ export const bannerSchema = z.object({
   link: z.string().min(1, "Link không được để trống"),
   slot: z.string().min(1, "Slot không được để trống"),
   image: z.instanceof(File).optional(),
-}).refine((data) => data.image instanceof File, {
-  message: "Vui lòng chọn hình ảnh",
-  path: ["image"],
+  active: z.boolean().optional(),
 });
 
 export type BannerFormValues = z.infer<typeof bannerSchema>;

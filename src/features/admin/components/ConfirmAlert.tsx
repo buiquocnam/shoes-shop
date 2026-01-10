@@ -42,13 +42,13 @@ export function ConfirmAlert({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <div className="flex items-center space-x-3">
-                        <Trash2 className="w-5 h-5 text-red-600 flex-shrink-0" />
+                        <Trash2 className="w-5 h-5 text-destructive flex-shrink-0" />
                         <AlertDialogTitle>{title}</AlertDialogTitle>
                     </div>
                 </AlertDialogHeader>
 
                 <AlertDialogDescription asChild>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                         {description || defaultDescription}
                     </div>
                 </AlertDialogDescription>

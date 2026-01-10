@@ -136,7 +136,7 @@ export const ProductImageForm: React.FC<ProductImageFormProps> = ({
         <Button
           type="submit"
           disabled={updateImages.isPending}
-          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all duration-300"
+          className="px-10 py-3.5 text-sm font-semibold shadow-lg shadow-destructive/20 hover:shadow-destructive/40 transition-all duration-300"
         >
           {updateImages.isPending ? (
             <Spinner />

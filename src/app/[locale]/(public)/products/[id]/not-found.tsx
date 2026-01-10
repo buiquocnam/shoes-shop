@@ -5,8 +5,8 @@ const NotFound = () => {
         <div className="flex flex-col items-center justify-center h-screen">
 
             <h1 className="text-2xl font-bold">Không tìm thấy sản phẩm</h1>
-            <p className="text-gray-500">Sản phẩm bạn đang tìm kiếm không tồn tại.</p>
-            <Link href="/" className="text-blue-500 hover:text-blue-600">Quay về trang chủ</Link>
+            <p className="text-muted-foreground">Sản phẩm bạn đang tìm kiếm không tồn tại.</p>
+            <Link href="/" className="text-primary hover:underline">Quay về trang chủ</Link>
         </div>
     );
 }

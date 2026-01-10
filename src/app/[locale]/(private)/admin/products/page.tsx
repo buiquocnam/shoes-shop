@@ -119,7 +119,7 @@ const AdminProductsPage: React.FC = () => {
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-1">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1">
             Sản phẩm
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -134,7 +134,7 @@ const AdminProductsPage: React.FC = () => {
             </Button>
           </Link>
           <Link href="/admin/products/new">
-            <Button className="rounded-lg h-10 bg-primary px-5 font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all font-sans">
+            <Button className="rounded-lg h-10 bg-primary px-5 font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all font-sans">
               <Plus className="mr-2 h-4 w-4" />
               Thêm sản phẩm
             </Button>
@@ -160,7 +160,7 @@ const AdminProductsPage: React.FC = () => {
               value={categoryIdFromUrl || "all"}
               onValueChange={handleCategoryChange}
             >
-              <SelectTrigger className="h-10 w-[130px] bg-white border-border/50">
+              <SelectTrigger className="h-10 w-[130px] bg-card border-border/50">
                 <SelectValue placeholder="Danh mục" />
               </SelectTrigger>
               <SelectContent>
@@ -176,7 +176,7 @@ const AdminProductsPage: React.FC = () => {
               value={brandIdFromUrl || "all"}
               onValueChange={handleBrandChange}
             >
-              <SelectTrigger className="h-10 w-[130px] bg-white border-border/50">
+              <SelectTrigger className="h-10 w-[130px] bg-card border-border/50">
                 <SelectValue placeholder="Thương hiệu" />
               </SelectTrigger>
               <SelectContent>

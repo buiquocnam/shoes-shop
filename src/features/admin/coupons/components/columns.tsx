@@ -28,7 +28,7 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
       return (
         <div className="flex flex-col gap-1">
           <span
-            className={`inline-flex w-fit items-center rounded-md bg-gray-50 px-2 py-0.5 text-xs font-bold font-mono tracking-wider border border-border/50 ${isExpired
+            className={`inline-flex w-fit items-center rounded-md bg-muted/50 px-2 py-0.5 text-xs font-bold font-mono tracking-wider border border-border/50 ${isExpired
               ? "text-muted-foreground line-through"
               : "text-primary"
               }`}
@@ -119,7 +119,7 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
 
       if (isExpired) {
         return (
-          <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">
+          <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
             Hết hạn
           </Badge>
         );
@@ -127,14 +127,14 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
 
       if (!coupon.active) {
         return (
-          <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200">
+          <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
             Đã tắt
           </Badge>
         );
       }
 
       return (
-        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+        <Badge variant="outline" className="bg-success/10 text-success border-success/20">
           Hoạt động
         </Badge>
       );
@@ -152,7 +152,7 @@ export const createColumns = (options?: CreateColumnsOptions): ColumnDef<Coupon>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:bg-gray-100 hover:text-foreground"
+            className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             title="Chỉnh sửa"
             onClick={() => options?.onEdit?.(coupon)}
           >
@@ -190,7 +190,7 @@ function DeleteCouponButton({ coupon }: { coupon: Coupon }) {
       <Button
         variant="ghost"
         size="sm"
-        className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         title="Xóa"
       >
         <Trash2 className="h-5 w-5" />

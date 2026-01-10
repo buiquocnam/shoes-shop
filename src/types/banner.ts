@@ -11,7 +11,7 @@ export interface Banner extends BaseEntity {
 export type BannerSlot = "HOME_HERO" | "HOME_MID" | "HOME_BOTTOM";
 
 export interface BannerFilters extends PaginationParams {
-  title?: string;
+  title?: string; 
   active?: boolean;
 }
 

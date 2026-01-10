@@ -24,10 +24,10 @@ export function OrderItem({ purchasedItem }: OrderItemProps) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 p-5 border-b border-[#f4ebe7] last:border-0">
+    <div className="flex flex-col sm:flex-row gap-4 p-5 border-b border-border last:border-0">
       <div className="shrink-0">
         <div
-          className="relative size-24 rounded-lg bg-background border border-[#f4ebe7] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+          className="relative size-24 rounded-lg bg-background border border-border overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
           onClick={handleProductClick}
         >
           <Image
@@ -56,19 +56,19 @@ export function OrderItem({ purchasedItem }: OrderItemProps) {
           </h4>
           <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
             <span>{purchasedItem.variant.color}</span>
-            <span className="size-1 rounded-full bg-gray-300"></span>
+            <span className="size-1 rounded-full bg-muted-foreground/30"></span>
             <span>{purchasedItem.variant.size}</span>
           </div>
         </div>
       </div>
-      <div className="flex flex-col sm:items-end justify-center gap-1 min-w-[140px] text-left sm:text-right border-t sm:border-t-0 border-dashed border-[#f4ebe7] pt-3 sm:pt-0 mt-2 sm:mt-0">
+      <div className="flex flex-col sm:items-end justify-center gap-1 min-w-[140px] text-left sm:text-right border-t sm:border-t-0 border-dashed border-border pt-3 sm:pt-0 mt-2 sm:mt-0">
         <div className="text-sm text-muted-foreground">x{purchasedItem.countBuy}</div>
         <div className="flex flex-col items-end">
           <span className="font-bold text-lg text-primary">
             {formatCurrency(purchasedItem.totalMoney)}
           </span>
           {hasDiscount && (
-            <span className="text-sm text-muted-foreground line-through decoration-slate-400">
+            <span className="text-sm text-muted-foreground line-through decoration-muted-foreground/40">
               {formatCurrency(originalPrice * purchasedItem.countBuy)}
             </span>
           )}

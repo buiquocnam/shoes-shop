@@ -38,7 +38,7 @@ export function BrandFilter({
                                     variant="outline"
                                     onClick={() => setSelectedBrandId(isActive ? "" : brand.id)}
                                     className={cn(
-                                        "flex flex-col items-center justify-center p-3 rounded-2xl bg-white border transition-all group overflow-hidden h-auto aspect-square",
+                                        "flex flex-col items-center justify-center p-3 rounded-2xl bg-card transition-all group overflow-hidden h-auto aspect-square",
                                         isActive
                                             ? "border-primary ring-1 ring-primary/20 shadow-md"
                                             : "border-border shadow-sm hover:border-primary/30 text-foreground"
@@ -54,8 +54,8 @@ export function BrandFilter({
                                                 className={cn(
                                                     "max-h-full max-w-full object-contain transition-all",
                                                     isActive
-                                                        ? "grayscale-0 opacity-100 scale-110"
-                                                        : "grayscale opacity-40 group-hover:opacity-100 group-hover:grayscale-0 group-hover:scale-110"
+                                                        ? "brightness-100 opacity-100 scale-110"
+                                                        : "opacity-40 group-hover:opacity-100 group-hover:brightness-100 group-hover:scale-110"
                                                 )}
                                                 unoptimized
                                             />

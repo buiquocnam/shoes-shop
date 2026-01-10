@@ -21,13 +21,13 @@ export function ReviewList({
   const isEmpty = reviews.length === 0;
 
   return (
-    <div className="mt-10 border-t border-gray-200 pt-10">
+    <div className="mt-10 border-t border-border pt-10">
       {isEmpty ? (
-        <div className="text-center py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+        <div className="text-center py-12 bg-muted/50 rounded-2xl border-2 border-dashed border-border">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-gray-400"
+                className="w-8 h-8 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -41,10 +41,10 @@ export function ReviewList({
               </svg>
             </div>
             <div>
-              <p className="text-base font-semibold text-gray-900 mb-1">
+              <p className="text-base font-semibold text-foreground mb-1">
                 {t('noReviews')}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Hãy là người đầu tiên đánh giá sản phẩm này!
               </p>
             </div>
@@ -63,7 +63,7 @@ export function ReviewList({
               <Button
                 onClick={onShowMore}
                 variant="outline"
-                className="gap-2 cursor-pointer border-2 border-primary text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 font-bold px-6 py-2.5 rounded-full shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+                className="gap-2 cursor-pointer border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 font-bold px-6 py-2.5 rounded-full shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
               >
                 <span>{tCommon('pagination.next')}</span>
                 <svg

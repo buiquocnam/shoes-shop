@@ -5,10 +5,6 @@
         "metaTitle": "Shoes Shop Home",
         "metaDescription": "Discover high-quality sneakers and footwear at Shoes Shop. Best sellers, top rated shoes and latest sneaker trends at unbeatable prices.",
         "hero": {
-            "tag": "NEW ARRIVALS",
-            "title": "DISCOVER",
-            "accent": "SPEED",
-            "description": "Experience peak comfort with shoes designed for movement. Breathable materials, superior support, and cushioning for every step.",
             "cta": "Shop Now"
         },
         "bestSeller": {
@@ -42,7 +38,8 @@
         "mobile": {
             "menu": "Menu",
             "navigation": "Navigation",
-            "account": "Account"
+            "account": "Account",
+            "settings": "Settings"
         }
     },
     "Footer": {

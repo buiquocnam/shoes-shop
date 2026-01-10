@@ -163,7 +163,7 @@ export const ProductVariantsSection: React.FC<ProductVariantsSectionProps & { re
                                 size="sm"
                                 onClick={() => handleRemoveVariant(variantIndex)}
                                 disabled={deleteVariant.isPending}
-                                className="text-destructive hover:bg-destructive hover:text-white border-destructive/20 absolute -top-3 -right-3 rounded-full h-8 w-8 p-0 md:opacity-0 group-hover/variant:opacity-100 transition-opacity bg-background shadow-sm"
+                                className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/20 absolute -top-3 -right-3 rounded-full h-8 w-8 p-0 md:opacity-0 group-hover/variant:opacity-100 transition-opacity bg-background shadow-sm"
                             >
                                 {deleteVariant.isPending ? (
                                     <Spinner className="h-4 w-4" />

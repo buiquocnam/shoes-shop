@@ -49,9 +49,10 @@ export const getInitials = (name: string): string => {
  */
 export const getAvatarColor = (name: string): { bg: string; text: string } => {
   const colors = [
-    { bg: "bg-primary/20", text: "text-primary" },
-    { bg: "bg-blue-500/20", text: "text-blue-600" },
-    { bg: "bg-green-500/20", text: "text-green-600" },
+    { bg: "bg-primary/10", text: "text-primary" },
+    { bg: "bg-success/10", text: "text-success" },
+    { bg: "bg-warning/10", text: "text-warning" },
+    { bg: "bg-destructive/10", text: "text-destructive" },
   ];
   const index = name.charCodeAt(0) % colors.length;
   return colors[index];

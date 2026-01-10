@@ -14,11 +14,11 @@ export default async function CategorySection() {
   }
 
   return (
-    <section className="py-12 md:py-20 bg-white">
+    <section className="py-12 md:py-20 bg-background">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <span className="text-primary font-bold tracking-wider uppercase text-sm">{t('tag')}</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">{t('title')}</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mt-2">{t('title')}</h2>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {categories.data.map((category) => (

@@ -107,7 +107,7 @@ export function DiscountSection({ price, setDiscountCode }: DiscountSectionProps
                             -{coupon.discountPercent}%
                           </Badge>
                           {status.isValid && (
-                            <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                            <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                           )}
                           {!status.isValid && (
                             <AlertCircle className="h-4 w-4 text-destructive shrink-0" />
@@ -127,7 +127,7 @@ export function DiscountSection({ price, setDiscountCode }: DiscountSectionProps
                       {status.isValid && (
                         <div className="text-right shrink-0">
                           <div className="text-xs text-muted-foreground">Tiết kiệm</div>
-                          <div className="text-sm font-bold text-green-600 dark:text-green-400">
+                          <div className="text-sm font-bold text-success">
                             {formatCurrency((price * coupon.discountPercent) / 100)}
                           </div>
                         </div>
@@ -165,7 +165,7 @@ export function DiscountSection({ price, setDiscountCode }: DiscountSectionProps
       {discountAmount > 0 && (
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Giảm giá</span>
-          <span className="text-sm font-medium text-green-600 dark:text-green-400">
+          <span className="text-sm font-medium text-success">
             -{formatCurrency(discountAmount)}
           </span>
         </div>

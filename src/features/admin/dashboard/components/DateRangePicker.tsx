@@ -41,13 +41,13 @@ export function DateRangePicker({ onChange, defaultFrom, defaultTo }: DateRangeP
         <Button
           variant="outline"
           className={cn(
-            'w-[280px] justify-start text-left font-medium transition-all hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 shadow-sm',
+            'w-[280px] justify-start text-left font-medium transition-all hover:bg-accent border-border shadow-sm',
             !selected && 'text-muted-foreground'
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4 text-slate-500" />
+          <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
           {selected?.from && selected?.to ? (
-            <span className="text-slate-700 dark:text-slate-300">
+            <span className="text-foreground">
               {format(selected.from, 'dd/MM/yyyy')} - {format(selected.to, 'dd/MM/yyyy')}
             </span>
           ) : (

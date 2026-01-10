@@ -65,7 +65,7 @@ const AdminPaymentsPage = () => {
 
   return (
     <div className="p-4 md:p-8 space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground">
         Quản lý thanh toán
       </h1>
 

@@ -50,7 +50,7 @@ export default async function SimilarProducts({
         return (
             <div className="border-t border-border pt-12 max-w-7xl mx-auto w-full px-4 sm:px-8">
                 <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900">Sản phẩm tương tự</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Sản phẩm tương tự</h2>
                     <Button
                         asChild
                         variant="ghost"

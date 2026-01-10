@@ -52,8 +52,8 @@ export const userColumns = (
             className={cn(
               "font-medium",
               status
-                ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-                : "bg-red-50 text-red-600 border-red-200"
+                ? "bg-success/10 text-success border-success/20"
+                : "bg-destructive/10 text-destructive border-destructive/20"
             )}
           >
             {status ? "Hoạt động" : "Bị khóa"}
@@ -73,7 +73,7 @@ export const userColumns = (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground hover:bg-blue-50 hover:text-blue-600"
+                className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 title="Xem đơn hàng"
                 onClick={() => onViewPurchasedItems(row.original)}
               >
@@ -85,7 +85,7 @@ export const userColumns = (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground hover:bg-gray-100 hover:text-foreground"
+                className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={() => onEdit(row.original)}
               >
                 <Pencil className="h-4 w-4" />
@@ -123,7 +123,7 @@ function DeleteUserButton({ user }: { user: User }) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         title="Xóa"
       >
         <Trash2 className="h-4 w-4" />

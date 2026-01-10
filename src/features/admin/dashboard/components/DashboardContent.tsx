@@ -40,19 +40,19 @@ export function DashboardContent() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 p-4 sm:p-6 lg:p-8 space-y-8 animate-in fade-in duration-500">
+        <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8 space-y-8 animate-in fade-in duration-500">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header Section */}
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                     <div className="space-y-1">
-                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                             Bảng điều khiển Admin
                         </h1>
                         <p className="text-muted-foreground font-medium">
                             Tổng quan thông tin cửa hàng
                         </p>
                     </div>
-                    <div className="bg-background/60 backdrop-blur-md border rounded-xl p-1 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800">
+                    <div className="bg-background/60 backdrop-blur-md border rounded-xl p-1 shadow-sm ring-1 ring-border">
                         <DateRangePicker onChange={setDateRange} defaultFrom={dateRange.from} defaultTo={dateRange.to} />
                     </div>
                 </div>
@@ -62,7 +62,7 @@ export function DashboardContent() {
 
                 {/* Key Metrics Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {STATS_CARDS.map(({ key, label, isCurrency}) => {
+                    {STATS_CARDS.map(({ key, label, isCurrency }) => {
                         const value = stats[key];
                         const displayValue = isLoading ? (
                             <Skeleton className="h-9 w-24" />
@@ -89,7 +89,7 @@ export function DashboardContent() {
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Revenue Bar Chart */}
-                    <Card className="lg:col-span-2 shadow-lg border-slate-200/60 dark:border-slate-800 overflow-hidden">
+                    <Card className="lg:col-span-2 shadow-lg border-border overflow-hidden">
                         <CardHeader className="flex flex-row items-center justify-between pb-8">
                             <div>
                                 <CardTitle className="text-xl font-bold">
@@ -97,7 +97,7 @@ export function DashboardContent() {
                                 </CardTitle>
                                 <CardDescription>Hiệu suất doanh thu hàng tháng của bạn</CardDescription>
                             </div>
-                            <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-slate-50 dark:bg-slate-900 border-slate-200">
+                            <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-secondary border-border">
                                 Dữ liệu thực tế
                             </Badge>
                         </CardHeader>
@@ -111,7 +111,7 @@ export function DashboardContent() {
                     </Card>
 
                     {/* Top Products or Activities could go here, for now Recent Orders */}
-                    <Card className="shadow-lg border-slate-200/60 dark:border-slate-800">
+                    <Card className="shadow-lg border-border">
                         <CardHeader className="pb-4">
                             <CardTitle className="text-xl font-bold">Đơn hàng gần đây</CardTitle>
                             <CardDescription>Cập nhật mới nhất từ khách hàng</CardDescription>
@@ -119,7 +119,7 @@ export function DashboardContent() {
                         <CardContent className="px-0 sm:px-6">
                             <div className="relative overflow-auto max-h-[400px]">
                                 <Table>
-                                    <TableHeader className="bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                                    <TableHeader className="bg-muted/50 sticky top-0 z-10">
                                         <TableRow>
                                             <TableHead className="font-bold text-xs">MÃ ĐƠN</TableHead>
                                             <TableHead className="text-right font-bold text-xs uppercase">TỔNG</TableHead>
@@ -135,10 +135,10 @@ export function DashboardContent() {
                                             ))
                                         ) : filteredOrders.length > 0 ? (
                                             filteredOrders.slice(0, 8).map((order) => (
-                                                <TableRow key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors group">
+                                                <TableRow key={order.id} className="hover:bg-accent transition-colors group">
                                                     <TableCell>
                                                         <div className="flex flex-col gap-1">
-                                                            <span className="font-mono font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tighter">
+                                                            <span className="font-mono font-bold text-foreground uppercase tracking-tighter">
                                                                 #{formatOrderId(order.id)}
                                                             </span>
                                                             <span className="text-[10px] text-muted-foreground">

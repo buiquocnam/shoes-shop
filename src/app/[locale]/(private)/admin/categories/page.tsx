@@ -87,7 +87,7 @@ const AdminCategoriesPage: React.FC = () => {
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-1">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1">
             Danh mục
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -100,7 +100,7 @@ const AdminCategoriesPage: React.FC = () => {
           open={createFormOpen}
           onOpenChange={setCreateFormOpen}
           trigger={
-            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+            <Button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
               + Thêm danh mục
             </Button>
           }

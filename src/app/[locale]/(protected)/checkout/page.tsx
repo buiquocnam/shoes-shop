@@ -13,10 +13,10 @@ export default function CheckoutPage() {
 
     if (checkoutItems.length === 0) {
         return (
-            <div className="min-h-screen bg-gray-50 py-12">
+            <div className="min-h-screen bg-background py-12">
                 <div className="max-w-[1200px] mx-auto px-4">
                     <div className="text-center py-12">
-                        <p className="text-gray-600 text-lg mb-4">{t('noItems')}</p>
+                        <p className="text-muted-foreground text-lg mb-4">{t('noItems')}</p>
                         <Button
                             asChild
                             variant="default"
@@ -33,7 +33,7 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-4 md:py-8">
+        <div className="min-h-screen bg-background py-4 md:py-8">
             <div className="max-w-[1200px] mx-auto px-4">
                 <CheckoutForm orderSummary={checkoutItems} />
             </div>

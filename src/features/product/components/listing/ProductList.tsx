@@ -48,8 +48,8 @@ export default function ProductList() {
         return (
             <div className="w-full flex items-center justify-center py-16">
                 <div className="text-center">
-                    <p className="text-lg font-medium mb-2 text-gray-900">{t('noProducts')}</p>
-                    <p className="text-sm text-gray-600">{t('noProductsDesc')}</p>
+                    <p className="text-lg font-medium mb-2 text-foreground">{t('noProducts')}</p>
+                    <p className="text-sm text-muted-foreground">{t('noProductsDesc')}</p>
                 </div>
             </div>
         );

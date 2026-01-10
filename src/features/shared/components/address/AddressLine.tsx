@@ -67,19 +67,19 @@ export function AddressLine({
         'relative flex flex-col sm:flex-row items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 transition-all group',
         address.isDefault
           ? 'border-primary bg-primary/5'
-          : 'border-slate-100 hover:border-primary/50'
+          : 'border-border hover:border-primary/50'
       )}
     >
       <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0 w-full">
         {address.isDefault && (
           <div className="mt-0.5 sm:mt-1 size-4 sm:size-5 rounded-full border-2 border-primary bg-primary flex items-center justify-center transition-all shrink-0">
-            <div className="size-1.5 sm:size-2 rounded-full bg-white"></div>
+            <div className="size-1.5 sm:size-2 rounded-full bg-background"></div>
           </div>
         )}
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="font-bold text-sm sm:text-base text-slate-900 truncate">
+            <span className="font-bold text-sm sm:text-base text-foreground truncate">
               {address.nameReceiver && address.phoneReceiver
                 ? `${address.nameReceiver} - ${address.phoneReceiver}`
                 : "Người nhận"}
@@ -90,10 +90,10 @@ export function AddressLine({
               </span>
             )}
           </div>
-          <p className="text-sm font-medium text-slate-700 mb-0.5">
+          <p className="text-sm font-medium text-foreground mb-0.5">
             {address.addressLine}
           </p>
-          <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 sm:line-clamp-1">
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 sm:line-clamp-1">
             {fullAddress.replace(`${address.addressLine}, `, '')}
           </p>
         </div>
@@ -104,7 +104,7 @@ export function AddressLine({
           size="icon"
           variant="ghost"
           onClick={handleEdit}
-          className="size-8 sm:size-9 text-slate-500 hover:text-primary hover:bg-primary/10"
+          className="size-8 sm:size-9 text-muted-foreground hover:text-primary hover:bg-primary/10"
           title="Chỉnh sửa"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.91l-1.12 6.363a2 2 0 0 0 2.494 2.494l6.363-1.12a2 2 0 0 0 .91-.5l13.174-13.328z" /></svg>

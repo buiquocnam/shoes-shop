@@ -63,12 +63,12 @@ export default function SortSelect() {
   return (
     <div className="relative group">
       <Select value={currentSort} onValueChange={handleSortChange} >
-        <SelectTrigger className="flex items-center bg-white gap-2 px-4 py-2 rounded-full cursor-pointer">
+        <SelectTrigger className="flex items-center bg-card gap-2 px-4 py-2 rounded-full cursor-pointer">
           <span>
             {t('label')} <span className="text-primary font-bold">{currentLabel}</span>
           </span>
         </SelectTrigger>
-        <SelectContent className="bg-white border-none">
+        <SelectContent className="bg-card border-none">
           {SORT_OPTIONS.map((option) => (
             <SelectItem key={option.value} value={option.value} className="cursor-pointer">
               {t(option.labelKey)}

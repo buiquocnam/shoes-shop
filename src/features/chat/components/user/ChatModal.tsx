@@ -45,7 +45,7 @@ export function ChatModal({ open, onOpenChange }: ChatModalProps) {
         side="right"
         className="w-full sm:max-w-lg p-0 flex flex-col h-full"
       >
-        <SheetHeader className="p-4 bg-white shadow-md">
+        <SheetHeader className="p-4 bg-card shadow-md">
           <SheetTitle>Hỗ Trợ Trò Chuyện</SheetTitle>
         </SheetHeader>
         <div className="flex-1 overflow-hidden min-h-0">

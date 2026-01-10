@@ -136,7 +136,7 @@ export default function BrandForm({
                                                 <button
                                                     type="button"
                                                     onClick={handleRemoveLogo}
-                                                    className="absolute top-2 right-2 p-1.5 bg-destructive text-white rounded-full hover:bg-destructive/90 transition-colors"
+                                                    className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 transition-colors"
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </button>

@@ -73,7 +73,7 @@ function BrandItemCircle({ brand }: { brand: BrandType }) {
   return (
     <Link
       href={`/products?brand_id=${brand.id}`}
-      className="group flex items-center justify-center size-24 sm:size-32 p-4 sm:p-6 bg-gray-50 border-2 border-transparent hover:border-primary rounded-full transition-all duration-300 shadow-sm hover:shadow-glow hover:-translate-y-1"
+      className="group flex items-center justify-center size-24 sm:size-32 p-4 sm:p-6 bg-card border-2 border-transparent hover:border-primary rounded-full transition-all duration-300 shadow-sm hover:shadow-glow hover:-translate-y-1"
     >
       {/* Logo */}
       <div className="relative h-8 sm:h-10 w-16">
@@ -81,7 +81,7 @@ function BrandItemCircle({ brand }: { brand: BrandType }) {
           src={brandImage}
           alt={brand.name}
           fill
-          className="object-contain opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0"
+          className="object-contain opacity-60 group-hover:opacity-100 transition-opacity  group-hover:brightness-100 scale-0"
           loading="lazy"
           unoptimized
         />

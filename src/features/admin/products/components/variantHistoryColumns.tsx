@@ -120,8 +120,8 @@ export const createVariantHistoryColumns = ({
             className={cn(
               "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset",
               isPositive
-                ? "bg-emerald-50 text-emerald-700 ring-emerald-600/20"
-                : "bg-red-50 text-red-700 ring-red-600/20"
+                ? "bg-success/10 text-success ring-success/20"
+                : "bg-destructive/10 text-destructive ring-destructive/20"
             )}
           >
             {isPositive ? "+" : ""}

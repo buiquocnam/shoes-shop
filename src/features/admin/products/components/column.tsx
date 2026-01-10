@@ -30,7 +30,7 @@ export const columns: ColumnDef<ProductType>[] = [
             const image = row.original.imageUrl?.url || "";
 
             return (
-                <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-gray-50 border border-border/50 shadow-sm">
+                <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-muted/30 border border-border/50 shadow-sm">
                     {image ? (
                         <Image
                             src={image}
@@ -40,7 +40,7 @@ export const columns: ColumnDef<ProductType>[] = [
                             className="object-cover transition-transform hover:scale-105"
                         />
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                        <div className="flex h-full w-full items-center justify-center bg-muted">
                             <ImageIcon className="h-4 w-4 text-muted-foreground" />
                         </div>
                     )}
@@ -84,7 +84,7 @@ export const columns: ColumnDef<ProductType>[] = [
         cell: ({ row }) => {
             const discount = row.original.discount || 0;
             return (
-                <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200 font-bold">
+                <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 font-bold">
                     -{discount}%
                 </Badge>
             );
@@ -129,15 +129,15 @@ export const columns: ColumnDef<ProductType>[] = [
                 <div className="flex flex-col gap-1">
                     <span className={cn(
                         "text-sm font-bold",
-                        stock === 0 ? "text-destructive" : stock < 10 ? "text-orange-500" : "text-emerald-600"
+                        stock === 0 ? "text-destructive" : stock < 10 ? "text-warning" : "text-success"
                     )}>
                         {stock} SP
                     </span>
-                    <div className="h-1 w-12 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="h-1 w-12 rounded-full bg-muted overflow-hidden">
                         <div
                             className={cn(
                                 "h-full rounded-full transition-all",
-                                stock === 0 ? "bg-destructive" : stock < 10 ? "bg-orange-500" : "bg-emerald-500"
+                                stock === 0 ? "bg-destructive" : stock < 10 ? "bg-warning" : "bg-success"
                             )}
                             style={{ width: `${Math.min((stock / 50) * 100, 100)}%` }}
                         />

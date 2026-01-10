@@ -1,16 +1,13 @@
 import axiosInstance from "@/lib/axios";
-import { toQueryString } from "@/utils/queryString";
-import { BannerPaginationResponse, FetchBannersParams } from "@/features/admin/banners/types";
+import { BannerPaginationResponse } from "@/features/admin/banners/types";
 
 export const bannersApi = {
   /**
-   * Search banners with filters (public API, no auth required)
+   * Search banners (public API, no auth required)
    */
-  search: async (
-    filters?: FetchBannersParams
-  ) => {
+  search: async () => {
     const banners = await axiosInstance.get<BannerPaginationResponse>(
-      `/shoes/banners/search${toQueryString(filters)}`
+      `/shoes/banners/search`
     );
     return banners.data;
   },

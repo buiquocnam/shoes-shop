@@ -29,7 +29,7 @@ export function OrdersPagination({
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between py-4 border-t border-[#e8d7ce]">
+    <div className="flex items-center justify-between py-4 border-t border-border">
       <div className="text-sm text-muted-foreground">
         Hiển thị <span className="font-medium text-foreground">{currentItemsCount}</span> trong{' '}
         <span className="font-medium text-foreground">{totalElements}</span> đơn hàng

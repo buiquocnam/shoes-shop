@@ -6,7 +6,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/globals.css';
 // Header and Footer are client components, so they can be imported here
 import Header from '@/components/layout/Header';
-import { QueryProvider, SocketProvider, ChatProvider } from '@/providers';
+import { QueryProvider, SocketProvider, ChatProvider, ThemeProvider } from '@/providers';
 import { Toaster } from 'sonner';
 import { Footer } from '@/components/layout/Footer';
 import type { Metadata } from 'next';
@@ -54,18 +54,25 @@ export default async function LocaleLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale} style={{ fontSize: '90%' }}>
+        <html lang={locale} suppressHydrationWarning>
             <body className={`${plusJakarta.className} antialiased`}>
                 <NextIntlClientProvider messages={messages}>
-                    <QueryProvider>
-                        <SocketProvider>
-                            <Header />
-                            {children}
-                            <Footer />
-                            <ChatProvider />
-                            <Toaster position="top-right" />
-                        </SocketProvider>
-                    </QueryProvider>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <QueryProvider>
+                            <SocketProvider>
+                                <Header />
+                                {children}
+                                <Footer />
+                                <ChatProvider />
+                                <Toaster position="top-right" />
+                            </SocketProvider>
+                        </QueryProvider>
+                    </ThemeProvider>
                 </NextIntlClientProvider>
             </body>
         </html>

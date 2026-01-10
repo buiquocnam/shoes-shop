@@ -32,7 +32,7 @@ export const categoryColumns = (
       cell: ({ row }: { row: Row<CategoryType> }) => {
         const description = row.getValue("description") as string;
         return (
-          <div className="max-w-md truncate text-gray-600">
+          <div className="max-w-md truncate text-muted-foreground">
             {description || "Không có mô tả"}
           </div>
         );
@@ -62,7 +62,7 @@ export const categoryColumns = (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-gray-100"
+                className="h-8 w-8 text-muted-foreground hover:bg-accent"
                 onClick={() => onEdit(row.original)}
               >
                 <Pencil className="h-4 w-4" />
@@ -99,7 +99,7 @@ function DeleteCategoryButton({ category }: { category: CategoryType }) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         title="Xóa"
       >
         <Trash2 className="h-4 w-4" />

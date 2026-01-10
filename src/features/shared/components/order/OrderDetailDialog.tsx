@@ -10,7 +10,7 @@ import { formatCurrency } from "@/utils/format";
 import { formatDateTime } from "@/utils/date";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreditCard, MapPin, Package, Receipt, User,  } from "lucide-react";
+import { CreditCard, MapPin, Package, Receipt, User, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { adminProductsApi } from "@/features/admin/products/services/products.api";
 import { adminUsersApi } from "@/features/admin/users/services/users.api";
@@ -271,7 +271,7 @@ export function OrderDetailDialog({
                                     <span>{formatCurrency(totalPrice)}</span>
                                 </div>
                                 {(discountPercent || 0) > 0 && (
-                                    <div className="flex justify-between text-sm text-green-600">
+                                    <div className="flex justify-between text-sm text-success">
                                         <span>Giảm giá ({discountPercent}%)</span>
                                         <span>- {formatCurrency(totalPrice - finishPrice)}</span>
                                     </div>

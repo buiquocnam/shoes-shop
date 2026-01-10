@@ -50,7 +50,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 </div>
             </div>
 
-            <div className="border-t border-gray-100 pt-12">
+            <div className="border-t border-border pt-12">
                 <ProductReviewDynamic productId={product.product.id} />
             </div>
 

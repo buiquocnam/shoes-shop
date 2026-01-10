@@ -23,6 +23,7 @@ export interface CreateOrderResponse {
 
 export interface CheckoutItem {
   // Product information for display
+  cartItemId?: string; // ID from the cart if coming from there
   product: Pick<Product, 'id' | 'name' | 'price' | 'discount'> & {
     imageUrl: string | null;
   };

@@ -115,8 +115,8 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                 key={`${item.type}-${item.idx}`}
                                                 onClick={() => field.onChange(item.fileName)}
                                                 className={`group relative aspect-square rounded-lg overflow-hidden bg-muted transition-all cursor-pointer ${isPrimary
-                                                        ? 'ring-2 ring-primary ring-offset-2'
-                                                        : 'border hover:border-primary/50'
+                                                    ? 'ring-2 ring-primary ring-offset-2'
+                                                    : 'border hover:border-primary/50'
                                                     }`}
                                             >
                                                 <Image
@@ -135,7 +135,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                     </div>
                                                 )}
 
-                                                <div className={`absolute inset-0 transition-colors ${!isPrimary ? 'group-hover:bg-black/10' : ''}`}>
+                                                <div className={`absolute inset-0 transition-colors ${!isPrimary ? 'group-hover:bg-accent/20' : ''}`}>
                                                     {(onRemoveExistingImage || onRemoveNewImage) && (
                                                         <button
                                                             type="button"
@@ -163,7 +163,7 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                                     }
                                                                 }
                                                             }}
-                                                            className={`absolute top-2 right-2 p-1 bg-background/90 text-muted-foreground rounded-full hover:bg-destructive hover:text-white ${!isPrimary ? 'opacity-0 group-hover:opacity-100' : ''
+                                                            className={`absolute top-2 right-2 p-1 bg-background/90 text-muted-foreground rounded-full hover:bg-destructive hover:text-destructive-foreground ${!isPrimary ? 'opacity-0 group-hover:opacity-100' : ''
                                                                 } transition-all`}
                                                             title="Xóa ảnh"
                                                         >
@@ -177,11 +177,11 @@ export const ProductMediaSection: React.FC<ProductMediaSectionProps> = ({
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
                                                     <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${isPrimary
-                                                            ? 'bg-primary border-primary'
-                                                            : 'bg-black/20 backdrop-blur-sm border-white/80 hover:bg-black/40'
+                                                        ? 'bg-primary border-primary'
+                                                        : 'bg-muted/50 backdrop-blur-sm border-border hover:bg-accent'
                                                         }`}
                                                         onClick={() => field.onChange(item.fileName)}>
-                                                        <Check className={`h-3 w-3 text-white ${isPrimary ? 'opacity-100' : 'opacity-0'} transition-opacity`} />
+                                                        <Check className={`h-3 w-3 text-primary-foreground ${isPrimary ? 'opacity-100' : 'opacity-0'} transition-opacity`} />
                                                     </div>
                                                 </div>
                                             </div>

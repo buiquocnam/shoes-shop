@@ -131,7 +131,7 @@ export default function Sidebar() {
     return (
         <ShadcnSidebar
             collapsible="none"
-            className="w-full border-none p-4 rounded-lg bg-white h-full max-h-[calc(100vh-4rem)]"
+            className="w-full border-none p-4 rounded-lg bg-card h-full max-h-[calc(100vh-4rem)]"
         >
             <SidebarHeader className="px-0 pb-4">
                 <h3 className="text-xl font-bold text-center">{t('title')}</h3>
@@ -174,7 +174,6 @@ export default function Sidebar() {
                         />
                     </AccordionItem>
 
-                    <Separator className="bg-border/50" />
 
                     {/* Brands Section */}
                     <AccordionItem value="brand" className="border-none">
@@ -190,8 +189,6 @@ export default function Sidebar() {
                             setSelectedBrandId={setSelectedBrandId}
                         />
                     </AccordionItem>
-
-                    <Separator className="bg-border/50" />
 
                     {/* Categories Section */}
                     <AccordionItem value="category" className="border-none">

@@ -187,46 +187,46 @@ function OrderCard({
 }) {
   return (
     <div
-      className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden transition-shadow hover:shadow-md cursor-pointer"
+      className="rounded-xl border border-border bg-card overflow-hidden transition-shadow hover:shadow-md cursor-pointer"
       onClick={onViewOrder}
     >
-      <div className="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-muted/50 px-6 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-wrap gap-y-2 gap-x-8">
           <div>
-            <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Order ID</span>
-            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">#{order.orderId.slice(-6)}</span>
+            <span className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">Order ID</span>
+            <span className="block text-sm font-bold text-foreground">#{order.orderId.slice(-6)}</span>
           </div>
           <div>
-            <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Amount</span>
-            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">
+            <span className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Amount</span>
+            <span className="block text-sm font-bold text-foreground">
               {formatCurrency(order.finishPrice)}
             </span>
           </div>
           {order.discountPercent && (
             <div>
-              <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Discount</span>
-              <span className="block text-sm font-medium text-green-600 dark:text-green-400">
+              <span className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">Discount</span>
+              <span className="block text-sm font-medium text-success">
                 {order.discountPercent}%
               </span>
             </div>
           )}
         </div>
       </div>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="divide-y divide-border">
         {order.listPurchase && order.listPurchase.length > 0 ? (
           order.listPurchase.map((purchasedItem, index) => (
             <div key={`${purchasedItem.id}-${index}`} className="p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
               <div className="flex-1 min-w-0">
-                <h4 className="text-base font-bold text-gray-900 dark:text-gray-100 truncate">
+                <h4 className="text-base font-bold text-foreground truncate">
                   {purchasedItem.product.name}
                 </h4>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Size: {purchasedItem.variant.size} | Color: {purchasedItem.variant.color}
                 </p>
               </div>
               <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 sm:gap-0">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Qty: <span className="font-medium text-gray-900 dark:text-gray-100">{purchasedItem.countBuy}</span>
+                <span className="text-sm text-muted-foreground">
+                  Qty: <span className="font-medium text-foreground">{purchasedItem.countBuy}</span>
                 </span>
                 <span className="text-base font-bold text-primary">
                   {formatCurrency(purchasedItem.totalMoney)}
@@ -235,7 +235,7 @@ function OrderCard({
             </div>
           ))
         ) : (
-          <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="p-6 text-center text-sm text-muted-foreground">
             Không có sản phẩm trong đơn hàng này
           </div>
         )}

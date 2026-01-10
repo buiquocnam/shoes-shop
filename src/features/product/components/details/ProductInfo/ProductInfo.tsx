@@ -17,9 +17,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         : originalPrice;
 
     return (
-        <div className="flex flex-col gap-6 bg-white rounded-xl shadow-lg p-6">
+        <div className="flex flex-col gap-6 bg-card rounded-xl shadow-lg p-6">
             <div>
-                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-gray-900">
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-foreground">
                     {productInfo.name}
                 </h1>
                 <div className="flex items-center gap-3 mb-2">
@@ -28,20 +28,20 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                     </span>
                     {productInfo.category?.name && (
                         <>
-                            <span className="text-gray-400">•</span>
+                            <span className="text-muted-foreground">•</span>
                             <span className="text-sm">
                                 {productInfo.category.name}
                             </span>
                         </>
                     )}
                 </div>
-                <div className="flex items-center text-amber-400 text-sm font-medium mb-4">
+                <div className="flex items-center text-warning text-sm font-medium mb-4">
                     <Star className="w-[18px] h-[18px] fill-current" />
-                    <span className="text-gray-900 ml-1">
+                    <span className="text-foreground ml-1">
                         {productInfo.averageRating?.toFixed(1) || "0.0"} ({productInfo.countSell || 0} đánh giá)
                     </span>
                 </div>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                     {productInfo.description || "Không có mô tả"}
                 </p>
             </div>
@@ -51,7 +51,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                     {formatCurrency(discountedPrice)}
                 </span>
                 {discountPercent > 0 && (
-                    <span className="text-lg text-gray-600 line-through mb-1.5 font-medium">
+                    <span className="text-lg text-muted-foreground line-through mb-1.5 font-medium">
                         {formatCurrency(originalPrice)}
                     </span>
                 )}

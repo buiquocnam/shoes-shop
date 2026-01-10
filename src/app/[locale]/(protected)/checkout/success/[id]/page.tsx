@@ -25,7 +25,7 @@ export default function CheckoutSuccessByIdPage() {
       <main className="flex min-h-[calc(100vh-200px)] items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-lg font-semibold text-gray-900">{t('loading')}</p>
+          <p className="text-lg font-semibold text-foreground">{t('loading')}</p>
         </div>
       </main>
     );
@@ -61,19 +61,19 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
     <main className="flex-1 px-4 md:px-10 lg:px-20 py-10 bg-background">
       <div className="max-w-[1280px] mx-auto flex flex-col">
         {/* Header */}
-        <h1 className="text-gray-900 font-serif font-extrabold text-3xl md:text-4xl leading-tight tracking-tight mb-2">
+        <h1 className="text-foreground font-serif font-extrabold text-3xl md:text-4xl leading-tight tracking-tight mb-2">
           {t('title')}
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8 flex flex-col gap-8">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-gray-900 text-xl font-bold flex items-center gap-3">
+            <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+              <div className="px-8 py-6 border-b border-border flex justify-between items-center bg-muted/50">
+                <h2 className="text-foreground text-xl font-bold flex items-center gap-3">
                   <Package className="h-5 w-5 text-primary" />
                   {t('purchasedItems')}
                 </h2>
-                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                <span className="bg-muted text-muted-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                   {t('itemsCount', { count: items.length })}
                 </span>
               </div>
@@ -85,8 +85,8 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
 
                   return (
                     <div key={item.id}>
-                      <div className="flex flex-col sm:flex-row gap-6 p-6 rounded-xl hover:bg-[#fcfbfb] transition-colors group">
-                        <div className="relative w-full sm:w-28 h-28 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-inner">
+                      <div className="flex flex-col sm:flex-row gap-6 p-6 rounded-xl hover:bg-accent/50 transition-colors group">
+                        <div className="relative w-full sm:w-28 h-28 rounded-xl bg-muted flex-shrink-0 overflow-hidden shadow-inner">
                           {imageUrl ? (
                             <Image
                               src={imageUrl}
@@ -96,33 +96,33 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                               unoptimized
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-600">
-                              <span className="text-xs">{t('noImage')}</span>
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                              <span className="text-xs text-muted-foreground">{t('noImage')}</span>
                             </div>
                           )}
                         </div>
                         <div className="flex flex-1 flex-col justify-between py-1">
                           <div className="flex justify-between items-start gap-4">
                             <div>
-                              <h3 className="text-gray-900 font-bold text-lg group-hover:text-primary transition-colors">
+                              <h3 className="text-foreground font-bold text-lg group-hover:text-primary transition-colors">
                                 {product.name}
                               </h3>
-                              <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 font-medium">
+                              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground font-medium">
                                 <span>{variant.color}</span>
-                                <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                                <span className="w-1 h-1 rounded-full bg-border"></span>
                                 <span>Size {variant.size}</span>
                               </div>
                             </div>
-                            <p className="text-gray-900 font-bold text-xl">
+                            <p className="text-foreground font-bold text-xl">
                               {formatCurrency(item.totalMoney / item.countBuy)}
                             </p>
                           </div>
                           <div className="flex justify-between items-end mt-4 sm:mt-0">
-                            <div className="text-gray-600 text-sm font-medium">
-                              {t('quantity')}: <span className="text-gray-900 font-bold">{item.countBuy}</span>
+                            <div className="text-muted-foreground text-sm font-medium">
+                              {t('quantity')}: <span className="text-foreground font-bold">{item.countBuy}</span>
                             </div>
                             <div className="text-right">
-                              <p className="text-xs text-gray-600 uppercase font-bold tracking-wider mb-0.5">
+                              <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
                                 {t('total')}
                               </p>
                               <p className="text-primary font-bold text-lg">
@@ -133,7 +133,7 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                         </div>
                       </div>
                       {index < items.length - 1 && (
-                        <div className="h-px bg-gray-50 mx-6"></div>
+                        <div className="h-px bg-border mx-6"></div>
                       )}
                     </div>
                   );
@@ -143,8 +143,8 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
 
             {/* Shipping Information */}
             {address && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                <h2 className="text-gray-900 text-xl font-bold mb-6 flex items-center gap-3">
+              <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
+                <h2 className="text-foreground text-xl font-bold mb-6 flex items-center gap-3">
                   <MapPin className="h-5 w-5 text-primary" />
                   {t('shippingInfo')}
                 </h2>
@@ -154,7 +154,7 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-col gap-2">
-                      <div className="text-gray-900 text-base leading-relaxed">
+                      <div className="text-foreground text-base leading-relaxed">
                         {address.addressLine}<br />
                         {address.wardName}, {address.districtName}<br />
                         {address.provinceName}
@@ -168,22 +168,22 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
 
           {/* Right Column - Order Overview */}
           <div className="lg:col-span-4 flex flex-col gap-8">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sticky top-28">
-              <h2 className="text-gray-900 text-xl font-bold mb-6 flex items-center gap-2">
+            <div className="bg-card rounded-2xl shadow-sm border border-border p-8 sticky top-28">
+              <h2 className="text-foreground text-xl font-bold mb-6 flex items-center gap-2">
                 <ReceiptIcon className="h-5 w-5 text-primary" />
                 {t('overview')}
               </h2>
               <div className="flex flex-col gap-5">
-                <div className="flex flex-col gap-3 pb-5 border-b border-gray-100">
-                  <div className="flex justify-between items-center text-gray-600 text-sm">
+                <div className="flex flex-col gap-3 pb-5 border-b border-border">
+                  <div className="flex justify-between items-center text-muted-foreground text-sm">
                     <span>{t('orderCode')}</span>
-                    <span className="text-gray-900 font-medium text-xs bg-gray-100 px-2 py-1 rounded">
+                    <span className="text-foreground font-medium text-xs bg-muted px-2 py-1 rounded">
                       #{orderDetail.id}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-gray-600 text-sm">
+                  <div className="flex justify-between items-center text-muted-foreground text-sm">
                     <span>{t('orderDate')}</span>
-                    <span className="text-gray-900 font-medium text-sm">
+                    <span className="text-foreground font-medium text-sm">
                       {orderDate.toLocaleDateString(locale === 'vi' ? 'vi-VN' : 'en-US', {
                         day: 'numeric',
                         month: 'short',
@@ -193,17 +193,17 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3">
-                  <div className="flex justify-between items-center text-gray-600">
+                  <div className="flex justify-between items-center text-muted-foreground">
                     <span className="text-sm">{t('subtotal')}</span>
-                    <span className="text-gray-900 font-bold">
+                    <span className="text-foreground font-bold">
                       {formatCurrency(orderDetail.totalPrice)}
                     </span>
                   </div>
                   {orderDetail.discountPercent && (
-                    <div className="flex justify-between items-center text-gray-600">
+                    <div className="flex justify-between items-center text-muted-foreground">
                       <span className="text-sm">
                         {t('discount')}{' '}
-                        <span className="text-green-600 text-xs font-bold bg-green-50 px-1.5 py-0.5 rounded ml-1">
+                        <span className="text-success text-xs font-bold bg-success/10 px-1.5 py-0.5 rounded ml-1">
                           -{orderDetail.discountPercent}%
                         </span>
                       </span>
@@ -213,7 +213,7 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                     </div>
                   )}
                   {orderDetail.couponCode && (
-                    <div className="flex justify-between items-center text-gray-600">
+                    <div className="flex justify-between items-center text-muted-foreground">
                       <span className="text-sm">{t('coupon')}</span>
                       <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold border-primary/20">
                         {orderDetail.couponCode}
@@ -222,9 +222,9 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
                   )}
 
                 </div>
-                <div className="h-px bg-gray-100 my-2"></div>
+                <div className="h-px bg-border my-2"></div>
                 <div className="flex justify-between items-end">
-                  <span className="text-gray-900 font-bold text-lg">{t('totalPayment')}</span>
+                  <span className="text-foreground font-bold text-lg">{t('totalPayment')}</span>
                   <span className="text-primary font-black text-3xl leading-none">
                     {formatCurrency(orderDetail.finishPrice)}
                   </span>

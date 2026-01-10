@@ -66,7 +66,7 @@ const VariantHistoryPage = () => {
             <History className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               Lịch sử nhập kho
             </h1>
             <p className="text-sm text-muted-foreground">

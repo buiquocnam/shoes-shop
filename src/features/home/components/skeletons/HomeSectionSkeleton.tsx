@@ -14,10 +14,10 @@ export default function HomeSectionSkeleton() {
                         <Skeleton className="size-10 rounded-full" />
                     </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {[...Array(4)].map((_, i) => (
-                        <div key={i} className="group relative flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden">
+                        <div key={i} className="group relative flex flex-col bg-card rounded-2xl shadow-sm overflow-hidden">
                             <Skeleton className="w-full aspect-[4/4]" />
                             <div className="p-4 space-y-3">
                                 <div className="flex justify-between items-start">
@@ -34,7 +34,7 @@ export default function HomeSectionSkeleton() {
                         </div>
                     ))}
                 </div>
-                
+
                 <div className="mt-12 text-center">
                     <Skeleton className="h-12 w-64 mx-auto rounded-full" />
                 </div>

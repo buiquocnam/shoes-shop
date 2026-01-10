@@ -69,7 +69,7 @@ export default function ProfileInfoPage() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden p-6">
+    <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden p-6">
       <h1 className="text-2xl md:text-3xl font-extrabold mb-6">{t('edit')}</h1>
       {/* Form */}
       <div className=" space-y-10">

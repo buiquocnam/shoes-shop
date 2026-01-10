@@ -70,7 +70,7 @@ export default function AddReviewDialog({
                         {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                                 key={i}
-                                className={`w-6 h-6 cursor-pointer ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                                className={`w-6 h-6 cursor-pointer ${i < rating ? "fill-warning text-warning" : "text-muted-foreground/30"
                                     }`}
                                 onClick={() => setRating(i + 1)}
                                 data-testid={`star-rating-${i + 1}`}

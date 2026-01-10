@@ -22,8 +22,8 @@ export function OrderCard({ order }: OrderCardProps) {
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-xl border border-[#f4ebe7] shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-4 p-5 bg-[#fcf9f8] border-b border-[#f4ebe7]">
+    <div className="flex flex-col bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 bg-muted/30 border-b border-border">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
           <h3 className="font-bold text-lg">#{order.orderId}</h3>
           {formattedDate && (

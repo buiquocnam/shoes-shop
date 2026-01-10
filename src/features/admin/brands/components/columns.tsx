@@ -19,7 +19,7 @@ export const brandColumns = (
       cell: ({ row }: { row: Row<BrandType> }) => {
         const logoUrl = row.getValue("logo");
         return (
-          <div className="flex items-center justify-center h-10 w-10 bg-gray-100 rounded-lg overflow-hidden">
+          <div className="flex items-center justify-center h-10 w-10 bg-muted rounded-lg overflow-hidden">
             {logoUrl ? (
               <Image
                 src={row.original.logo || ""}
@@ -31,7 +31,7 @@ export const brandColumns = (
                 unoptimized
               />
             ) : (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground">
                 {row.original.name.charAt(0)}
               </span>
             )}
@@ -79,7 +79,7 @@ export const brandColumns = (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:bg-gray-100"
+                className="h-8 w-8 text-muted-foreground hover:bg-accent"
                 onClick={() => onEdit(row.original)}
               >
                 <Pencil className="h-4 w-4" />
@@ -116,7 +116,7 @@ function DeleteBrandButton({ brand }: { brand: BrandType }) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         title="Xóa"
       >
         <Trash2 className="h-4 w-4" />

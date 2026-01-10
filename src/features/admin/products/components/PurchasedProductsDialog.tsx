@@ -66,10 +66,10 @@ export function PurchasedProductsDialog({
           {/* Header */}
           <DialogHeader className="flex items-start justify-between shrink-0">
             <div>
-              <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
                 Sản phẩm đã mua
               </DialogTitle>
-              <DialogDescription className="mt-1 text-sm text-gray-500">
+              <DialogDescription className="mt-1 text-sm text-muted-foreground">
                 Danh sách sản phẩm đã mua theo sản phẩm
               </DialogDescription>
             </div>
@@ -92,11 +92,11 @@ export function PurchasedProductsDialog({
               </div>
             ) : !purchasedItems || purchasedItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <ShoppingBag className="h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-lg font-medium text-gray-500">
+                <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-lg font-medium text-muted-foreground">
                   Không tìm thấy giao dịch mua
                 </p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Không có giao dịch mua nào
                 </p>
               </div>
@@ -110,7 +110,7 @@ export function PurchasedProductsDialog({
                   />
                 ))}
                 {totalPages > 1 && (
-                  <div className="mt-6 pt-4border-gray-200">
+                  <div className="mt-6 pt-4 border-border">
                     <Pagination>
                       <PaginationContent>
                         {currentPageNum > 1 && (
@@ -173,11 +173,11 @@ export function PurchasedProductsDialog({
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 bg-gray-50 rounded-b-2xl flex justify-end shrink-0">
+          <div className="px-6 py-4 bg-muted/30 rounded-b-2xl flex justify-end shrink-0">
             <Button
               variant="outline"
               onClick={() => setOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-lg hover:bg-accent transition-colors"
             >
               Đóng
             </Button>
@@ -209,13 +209,13 @@ function PurchasedProductCard({
 
   return (
     <div
-      className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer"
+      className="group bg-card border border-border rounded-xl p-4 hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer"
       onClick={onViewOrder}
     >
       <div className="flex gap-5">
         {/* Image */}
         <div className="flex-shrink-0">
-          <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-100 bg-gray-50 relative">
+          <div className="w-24 h-24 rounded-lg overflow-hidden border border-border bg-muted relative">
             {imageUrl ? (
               <Image
                 src={imageUrl}
@@ -225,7 +225,7 @@ function PurchasedProductCard({
                 unoptimized
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
                 Không có hình ảnh
               </div>
             )}
@@ -236,12 +236,12 @@ function PurchasedProductCard({
         <div className="flex-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start">
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
+              <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                 {product.name}
               </h3>
               {/* User Badge */}
               {item.user && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-100">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
                   <User className="h-3.5 w-3.5 text-primary" />
                   <span className="text-xs font-semibold text-primary">{item.user.name}</span>
                   <span className="text-[10px] text-primary/60">• {item.user.email}</span>
@@ -250,14 +250,14 @@ function PurchasedProductCard({
             </div>
             {/* Badges */}
             <div className="flex flex-wrap gap-2 mt-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground border border-border">
                 {variant.color}
               </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground border border-border">
                 Size: {variant.size}
               </span>
               {product.brand && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 font-mono">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground border border-border font-mono">
                   {product.brand.name}
                 </span>
               )}
@@ -265,13 +265,13 @@ function PurchasedProductCard({
           </div>
           {/* Quantity & Price */}
           <div className="flex items-center gap-4 mt-3">
-            <div className="flex items-center text-sm text-gray-500">
+            <div className="flex items-center text-sm text-muted-foreground">
               Số lượng:{" "}
-              <span className="ml-2 w-6 h-6 flex items-center justify-center rounded-full bg-primary text-white text-xs font-bold shadow-sm">
+              <span className="ml-2 w-6 h-6 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-sm">
                 {item.countBuy}
               </span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+            <div className="w-1 h-1 rounded-full bg-muted-foreground/30"></div>
             <div className="text-lg font-bold text-primary">
               {formatCurrency(item.totalMoney)}
             </div>

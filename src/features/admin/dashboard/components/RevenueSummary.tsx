@@ -37,9 +37,9 @@ export function RevenueSummary() {
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {/* Today Revenue */}
-            <Card className="relative overflow-hidden border-none shadow-lg ring-1 ring-emerald-500/20 bg-white dark:bg-slate-900 group">
+            <Card className="relative overflow-hidden border-none shadow-lg ring-1 ring-success/20 bg-card group">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                    <CardTitle className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                    <CardTitle className="text-sm font-bold text-success uppercase tracking-widest">
                         Doanh thu hôm nay
                     </CardTitle>
                 </CardHeader>
@@ -48,7 +48,7 @@ export function RevenueSummary() {
                         <Skeleton className="h-10 w-40" />
                     ) : (
                         <div className="space-y-3">
-                            <div className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                            <div className="text-4xl font-extrabold tracking-tight text-foreground">
                                 {formatCurrency(todayRevenue)}
                             </div>
                         </div>
@@ -57,9 +57,9 @@ export function RevenueSummary() {
             </Card>
 
             {/* This Month Revenue */}
-            <Card className="relative overflow-hidden border-none shadow-lg ring-1 ring-blue-500/20 bg-white dark:bg-slate-900 group">
+            <Card className="relative overflow-hidden border-none shadow-lg ring-1 ring-primary/20 bg-card group">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                    <CardTitle className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                    <CardTitle className="text-sm font-bold text-primary uppercase tracking-widest">
                         Doanh thu tháng này
                     </CardTitle>
                 </CardHeader>
@@ -68,7 +68,7 @@ export function RevenueSummary() {
                         <Skeleton className="h-10 w-40" />
                     ) : (
                         <div className="space-y-3">
-                            <div className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                            <div className="text-4xl font-extrabold tracking-tight text-foreground">
                                 {formatCurrency(monthRevenue)}
                             </div>
                         </div>

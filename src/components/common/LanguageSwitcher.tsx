@@ -23,9 +23,9 @@ export default function LanguageSwitcher() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-10 px-2 flex items-center gap-2 hover:bg-slate-100 rounded-full transition-colors">
-                    <Globe className="h-4 w-4 text-slate-600" />
-                    <span className="text-sm font-bold text-slate-900 uppercase">
+                <Button variant="ghost" size="sm" className="h-10 px-2 flex items-center gap-2 hover:bg-accent rounded-full transition-colors">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-bold text-foreground uppercase">
                         {locale}
                     </span>
                 </Button>

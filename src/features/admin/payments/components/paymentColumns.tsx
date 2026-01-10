@@ -36,7 +36,7 @@ export const paymentColumns = (
       cell: ({ row }: { row: Row<PaymentRecord> }) => {
         const isSuccess = !!row.original.response;
         return (
-          <Badge variant={isSuccess ? "default" : "destructive"} className={isSuccess ? "bg-green-600 hover:bg-green-700" : ""}>
+          <Badge variant={isSuccess ? "default" : "destructive"} className={isSuccess ? "bg-success hover:bg-success/90" : ""}>
             {isSuccess ? "Thành công" : "Thất bại"}
           </Badge>
         );
@@ -71,7 +71,7 @@ export const paymentColumns = (
 
         return (
           <div className="flex items-center gap-3 min-w-[250px] max-w-[350px]">
-            <div className="relative h-10 w-10 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
+            <div className="relative h-10 w-10 flex-shrink-0 rounded-md overflow-hidden bg-muted border border-border">
               {imageUrl ? (
                 <Image
                   src={imageUrl}
@@ -81,7 +81,7 @@ export const paymentColumns = (
                   unoptimized
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-[10px] text-gray-400">IMG</div>
+                <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground/50">IMG</div>
               )}
             </div>
             <div className="flex flex-col min-w-0">
@@ -117,7 +117,7 @@ export const paymentColumns = (
               {formatCurrency(response.finishPrice)}
             </span>
             {(response.discountPercent || 0) > 0 && (
-              <span className="text-[10px] text-green-600 bg-green-50 px-1 rounded">
+              <span className="text-[10px] text-success bg-success/10 px-1 rounded">
                 -{response.discountPercent}%
               </span>
             )}

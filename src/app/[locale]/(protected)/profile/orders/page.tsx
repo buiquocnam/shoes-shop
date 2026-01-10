@@ -41,7 +41,7 @@ export default function ProfileOrdersPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 bg-white rounded-lg p-6 ">
+    <div className="flex flex-col gap-6 bg-card rounded-lg p-6 ">
       <h2 className="text-3xl font-extrabold ">{t('title')}</h2>
 
       {orders.length === 0 ? (

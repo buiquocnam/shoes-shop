@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { useCheckoutStore } from '@/store';
 import { useQueryClient } from "@tanstack/react-query";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
-import { clearCart as clearCartApi } from "@/features/cart/services";
 
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
@@ -17,24 +16,6 @@ export const useCreateOrder = () => {
   return useMutation({
     mutationFn: ({ request }: { request: CreateOrderRequest }) => {
       return checkoutApi.createOrder(request);
-    },
-
-    onSuccess: async () => {
-      try {
-        // If it was from cart, clean up cart
-        if (checkoutSource === "cart") {
-          try {
-            await clearCartApi();
-            queryClient.invalidateQueries({
-              queryKey: userQueryKeys.cart.current(),
-            });
-          } catch (err) {
-            // Silently handle cart cleanup errors
-          }
-        }
-      } catch (err) {
-        // Don't throw
-      }
     },
 
     onError: (error: any) => {

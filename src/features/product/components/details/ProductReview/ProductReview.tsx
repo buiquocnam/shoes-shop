@@ -56,16 +56,16 @@ export default function ProductReview({ productId }: { productId: string }) {
 
   if (isLoading && accumulatedReviews.length === 0) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-white rounded-xl shadow-lg">
-        <div className="text-center py-8 text-gray-600">{tCommon('loading')}</div>
+      <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-card rounded-xl shadow-lg">
+        <div className="text-center py-8 text-muted-foreground">{tCommon('loading')}</div>
       </div>
     );
   }
 
   if (error && accumulatedReviews.length === 0) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-white rounded-xl shadow-lg">
-        <div className="text-center py-8 text-red-500">
+      <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-card rounded-xl shadow-lg">
+        <div className="text-center py-8 text-destructive">
           {tCommon('error')}
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function ProductReview({ productId }: { productId: string }) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-primary/3 rounded-xl shadow-xl mt-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-card rounded-xl shadow-xl mt-8">
       <h2 className="text-3xl font-bold mb-12 mt-20 text-center uppercase">
         {t('title')}
       </h2>

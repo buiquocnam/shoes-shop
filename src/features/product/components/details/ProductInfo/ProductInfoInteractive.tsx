@@ -41,7 +41,7 @@ const SizeButton = ({
       <Button
         disabled
         variant="outline"
-        className="h-10 min-w-[3.5rem] px-2 rounded-xl border border-border bg-border text-gray-600 opacity-50 cursor-not-allowed line-through text-sm"
+        className="h-10 min-w-[3.5rem] px-2 rounded-xl border border-border bg-border text-muted-foreground opacity-50 cursor-not-allowed line-through text-sm"
       >
         {size}
       </Button>
@@ -64,7 +64,7 @@ const SizeButton = ({
     <Button
       onClick={onSelect}
       variant="outline"
-      className="h-10 min-w-[3.5rem] px-2 rounded-xl border-2 border-border text-gray-900 font-medium text-sm bg-white"
+      className="h-10 min-w-[3.5rem] px-2 rounded-xl border-2 border-border text-foreground font-medium text-sm bg-card"
     >
       {size}
     </Button>
@@ -176,8 +176,8 @@ export default function ProductInfoInteractive({
 
   if (variants.length === 0 || !firstAvailableVariant) {
     return (
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-        <span className="inline-block text-sm font-bold text-white uppercase bg-red-600 px-3 py-1.5 rounded-md">
+      <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+        <span className="inline-block text-sm font-bold text-destructive-foreground uppercase bg-destructive px-3 py-1.5 rounded-md">
           {t('outOfStock')}
         </span>
       </div>
@@ -196,7 +196,7 @@ export default function ProductInfoInteractive({
               <div className="flex items-center gap-2">
                 <span className={cn(
                   "font-bold text-sm uppercase",
-                  isSelected ? "text-gray-900" : "text-gray-400"
+                  isSelected ? "text-foreground" : "text-muted-foreground"
                 )}>
                   {variant.color.toUpperCase()}
                 </span>
@@ -226,15 +226,15 @@ export default function ProductInfoInteractive({
       {/* Stock Info and Quantity Selector */}
       {selectedData && (
         <div className="flex flex-col gap-3">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground">
             <span className="font-medium">{t('remaining')} </span>
             <span className="font-bold">
               {stock} {t('items')}
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="font-bold text-sm uppercase text-gray-600">{t('quantity')}</span>
-            <div className="flex items-center gap-2 border-2 border-[#f4ebe7] rounded-xl">
+            <span className="font-bold text-sm uppercase text-muted-foreground">{t('quantity')}</span>
+            <div className="flex items-center gap-2 border-2 border-border rounded-xl">
               <Button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
@@ -243,7 +243,7 @@ export default function ProductInfoInteractive({
               >
                 <Minus className="w-4 h-4" />
               </Button>
-              <span className="w-12 text-center font-bold text-gray-900">{quantity}</span>
+              <span className="w-12 text-center font-bold text-foreground">{quantity}</span>
               <Button
                 onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
                 disabled={quantity >= maxQuantity}
@@ -271,7 +271,7 @@ export default function ProductInfoInteractive({
           <Button
             onClick={handleBuy}
             disabled={!canPurchase}
-            className="flex-1 bg-primary hover:bg-primary-hover text-white font-bold text-lg h-14 rounded-2xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
+            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg h-14 rounded-2xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
           >
             <Zap className="w-5 h-5" />
             {t('buyNow')}

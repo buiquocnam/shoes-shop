@@ -57,7 +57,7 @@ export function AddressSection({
       <div className="grid grid-cols-1 gap-3 sm:gap-4">
         {isLoading ? (
           <div className="text-center py-8 sm:py-12">
-            <p className="text-sm sm:text-base text-slate-500 font-medium">{tCommon('loading')}</p>
+            <p className="text-sm sm:text-base text-muted-foreground font-medium">{tCommon('loading')}</p>
           </div>
         ) : addresses.length > 0 ? (
           addresses.map((addr) => (
@@ -70,9 +70,9 @@ export function AddressSection({
             />
           ))
         ) : (
-          <div className="text-center py-8 sm:py-12 border-2 border-dashed border-slate-200 rounded-2xl sm:rounded-3xl px-4">
-            <MapPin className="h-10 w-10 sm:h-12 sm:w-12 text-slate-200 mx-auto mb-2" />
-            <p className="text-sm sm:text-base text-slate-500 font-medium">
+          <div className="text-center py-8 sm:py-12 border-2 border-dashed border-border rounded-2xl sm:rounded-3xl px-4">
+            <MapPin className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/30 mx-auto mb-2" />
+            <p className="text-sm sm:text-base text-muted-foreground font-medium">
               {tAddress('noAddressSaved') || "No address saved"}
             </p>
             <Button

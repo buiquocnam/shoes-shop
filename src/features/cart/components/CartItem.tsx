@@ -6,13 +6,18 @@ import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import { Plus, Minus, Trash2 } from 'lucide-react';
 
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
+
 interface CartItemProps {
     item: CartType;
     updateQuantity: (id: string, size: number, delta: number) => void;
     remove: (id: string) => void;
+    isSelected: boolean;
+    onToggle: () => void;
 }
 
-export function CartItem({ item, updateQuantity, remove }: CartItemProps) {
+export function CartItem({ item, updateQuantity, remove, isSelected, onToggle }: CartItemProps) {
     const router = useRouter();
 
     const originalPrice = item.product.price;
@@ -25,49 +30,64 @@ export function CartItem({ item, updateQuantity, remove }: CartItemProps) {
     };
 
     return (
-        <div className="group flex flex-col md:grid md:grid-cols-12 gap-6 md:gap-4 items-center p-4 bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 shadow-sm hover:border-primary/30 transition-all">
-            <div className="col-span-6 w-full flex items-center gap-6">
-                <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 border border-slate-100 dark:border-slate-600">
+        <div className={cn(
+            "group flex flex-col md:grid md:grid-cols-12 gap-6 md:gap-4 items-center p-4 bg-card rounded-2xl border transition-all duration-300",
+            isSelected ? "border-primary bg-primary/5 shadow-md" : "border-border shadow-sm hover:border-primary/30"
+        )}>
+            {/* Selection Checkbox */}
+            <div className="md:col-span-1 w-full flex justify-start items-center md:justify-center border-b md:border-b-0 md:border-r border-border/50 pb-4 md:pb-0">
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={onToggle}
+                    className="size-6 rounded-md border-2 border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                />
+            </div>
+
+            <div className="col-span-5 w-full flex items-center gap-4">
+                <div className="relative w-24 h-24 md:w-28 md:h-28 shrink-0 rounded-xl overflow-hidden bg-muted border border-border">
                     <Image
                         src={item.product.imageUrl?.url || '/images/no-image.png'}
                         alt={item.product.name}
                         fill
                         unoptimized
                         className="object-cover mix-blend-multiply dark:mix-blend-normal group-hover:scale-110 transition-transform duration-500"
-                        sizes="112px"
+                        sizes="(max-width: 768px) 96px, 112px"
                     />
                 </div>
                 <div className="flex flex-col gap-1">
-                    <h3 
-                        className="text-lg font-bold text-slate-900 dark:text-white leading-tight cursor-pointer hover:text-primary transition-colors"
+                    <h3
+                        className="text-base md:text-lg font-bold text-foreground leading-tight cursor-pointer hover:text-primary transition-colors line-clamp-2"
                         onClick={handleProductClick}
                     >
                         {item.product.name}
                     </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                        Phân loại: {item.variant.color}
-                    </p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                        Kích cỡ: {item.variant.sizeLabel} (EU)
-                    </p>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1">
+                        <p className="text-xs md:text-sm text-muted-foreground font-medium">
+                            Phân loại: <span className="text-foreground">{item.variant.color}</span>
+                        </p>
+                        <p className="text-xs md:text-sm text-muted-foreground font-medium">
+                            Kích cỡ: <span className="text-foreground">{item.variant.sizeLabel} (EU)</span>
+                        </p>
+                    </div>
                     <div className="md:hidden mt-2 flex items-center gap-2">
                         <span className="font-extrabold text-primary text-lg">
                             {formatCurrency(itemTotal)}
                         </span>
                         {discountPercent > 0 && (
-                            <span className="text-sm text-slate-400 line-through font-medium">
+                            <span className="text-sm text-muted-foreground line-through font-medium">
                                 {formatCurrency(originalPrice * item.quantity)}
                             </span>
                         )}
                     </div>
                 </div>
             </div>
-            <div className="col-span-3 w-full flex flex-col items-center justify-center md:justify-center">
-                <div className="flex items-center border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800">
+
+            <div className="col-span-3 w-full flex flex-col items-center justify-center">
+                <div className="flex items-center border border-border rounded-lg bg-card shadow-sm">
                     <button
                         onClick={() => updateQuantity(item.id, Number(item.variant.sizeLabel), -1)}
                         disabled={item.quantity <= 1}
-                        className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 rounded-l-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-accent rounded-l-lg transition-colors disabled:opacity-50"
                     >
                         <Minus className="h-4 w-4" />
                     </button>
@@ -76,34 +96,36 @@ export function CartItem({ item, updateQuantity, remove }: CartItemProps) {
                         min="1"
                         value={item.quantity}
                         readOnly
-                        className="w-10 text-center border-none bg-transparent p-0 text-sm font-bold text-slate-900 dark:text-white focus:ring-0"
+                        className="w-10 text-center border-none bg-transparent p-0 text-sm font-bold text-foreground focus:ring-0"
                     />
                     <button
                         onClick={() => updateQuantity(item.id, Number(item.variant.sizeLabel), 1)}
                         disabled={item.quantity >= item.variant.stock}
-                        className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 rounded-r-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-accent rounded-r-lg transition-colors disabled:opacity-50"
                     >
                         <Plus className="h-4 w-4" />
                     </button>
                 </div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-2">
+                <span className="text-[10px] md:text-xs text-muted-foreground font-bold mt-2 uppercase tracking-tight">
                     Còn lại: {item.variant.stock}
                 </span>
             </div>
-            <div className="col-span-2 w-full text-center md:text-right hidden md:flex flex-col items-end justify-center">
-                <span className="text-lg font-extrabold text-primary">
+
+            <div className="col-span-2 w-full text-right hidden md:flex flex-col items-end justify-center">
+                <span className="text-lg font-black text-primary">
                     {formatCurrency(itemTotal)}
                 </span>
                 {discountPercent > 0 && (
-                    <span className="text-sm font-medium text-slate-400 line-through">
+                    <span className="text-xs font-bold text-muted-foreground line-through opacity-70">
                         {formatCurrency(originalPrice * item.quantity)}
                     </span>
                 )}
             </div>
+
             <div className="col-span-1 w-full flex justify-center md:justify-end">
                 <button
                     onClick={() => remove(item.id)}
-                    className="size-10 flex items-center justify-center rounded-full text-red-500 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-all"
+                    className="size-10 flex items-center justify-center rounded-full text-destructive bg-destructive/10 hover:bg-destructive/20 hover:scale-110 transition-all active:scale-95"
                     title="Xóa sản phẩm"
                 >
                     <Trash2 className="h-4 w-4" />

@@ -2,24 +2,12 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminBannersApi } from "../services/banners.api";
-import {
-  FetchBannersParams,
-  BannerSlot,
-} from "../types";
+import { sharedQueryKeys } from "@/features/shared/constants";
 
-const BANNER_QUERY_KEYS = {
-  all: ["banners"] as const,
-  lists: () => [...BANNER_QUERY_KEYS.all, "list"] as const,
-  list: (filters?: FetchBannersParams) =>
-    [...BANNER_QUERY_KEYS.lists(), filters] as const,
-} as const;
-
-export function useBanners(
-  filters?: FetchBannersParams,
-) {
+export function useBanners() {
   return useQuery({
-    queryKey: BANNER_QUERY_KEYS.list(filters),
-    queryFn: () => adminBannersApi.search(filters),
+    queryKey: [sharedQueryKeys.banner.list],
+    queryFn: () => adminBannersApi.search(),
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -32,7 +20,7 @@ export const useUpsertBanner = () => {
     mutationFn: (data: FormData) => adminBannersApi.createOrUpdate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: BANNER_QUERY_KEYS.all,
+        queryKey: [sharedQueryKeys.banner.list],
       });
       toast.success("Thành công");
     },
@@ -41,11 +29,4 @@ export const useUpsertBanner = () => {
     },
   });
 };
-
-export function useBannerBySlot(slot: string) {
-  return useQuery({
-    queryKey: [...BANNER_QUERY_KEYS.all, "slot", slot],
-    queryFn: () => adminBannersApi.getBySlot(slot as BannerSlot),
-  });
-}
 
