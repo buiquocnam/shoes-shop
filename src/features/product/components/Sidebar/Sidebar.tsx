@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCategories } from "@/features/shared/hooks/useCategories";
 import { useBrands } from "@/features/shared/hooks/useBrands";
@@ -16,6 +16,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
+import { useTranslations } from "next-intl";
 
 import { BrandFilter } from "./BrandFilter";
 import { CategoryFilter } from "./CategoryFilter";
@@ -25,6 +26,7 @@ const MIN_PRICE = 50 * 1000; // 50,000 VND
 const MAX_PRICE = 50000 * 1000; // 50,000,000 VND
 
 export default function Sidebar() {
+    const t = useTranslations('Sidebar');
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -132,18 +134,18 @@ export default function Sidebar() {
             className="w-full border-none p-4 rounded-lg bg-white h-full max-h-[calc(100vh-4rem)]"
         >
             <SidebarHeader className="px-0 pb-4">
-                <h3 className="text-xl font-bold text-center">Bộ lọc</h3>
+                <h3 className="text-xl font-bold text-center">{t('title')}</h3>
                 <div className="flex items-center gap-4">
                     <Button
                         variant="outline"
                         onClick={handleReset}
                         className="hover:underline flex-1"
                     >
-                        Reset
+                        {t('reset')}
                     </Button>
 
                     <Button onClick={handleApplyFilters} className="flex-1">
-                        Áp dụng
+                        {t('apply')}
                     </Button>
                 </div>
             </SidebarHeader>
@@ -158,7 +160,7 @@ export default function Sidebar() {
                     <AccordionItem value="price" className="border-none">
                         <AccordionTrigger className="hover:no-underline py-4">
                             <span className="font-bold text-sm uppercase tracking-wide text-primary">
-                                Giá
+                                {t('price')}
                             </span>
                         </AccordionTrigger>
                         <PriceFilter
@@ -178,7 +180,7 @@ export default function Sidebar() {
                     <AccordionItem value="brand" className="border-none">
                         <AccordionTrigger className="hover:no-underline py-4">
                             <span className="font-bold text-sm uppercase tracking-wide text-primary">
-                                Thương hiệu
+                                {t('brand')}
                             </span>
                         </AccordionTrigger>
                         <BrandFilter
@@ -195,7 +197,7 @@ export default function Sidebar() {
                     <AccordionItem value="category" className="border-none">
                         <AccordionTrigger className="hover:no-underline py-4">
                             <span className="font-bold text-sm uppercase tracking-wide text-primary">
-                                Danh mục
+                                {t('category')}
                             </span>
                         </AccordionTrigger>
                         <CategoryFilter

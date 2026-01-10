@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
+import { useRouter, Link } from '@/i18n/routing';
 import { useState } from 'react';
 import { EyeIcon, EyeClosedIcon } from 'lucide-react';
 import { Field, FieldLabel, FieldError, FieldGroup, FieldDescription } from '@/components/ui/field';
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { changePasswordSchema, type ChangePasswordFormData } from '@/features/auth/schema';
 import { useChangePassword } from '@/features/auth/hooks';
 import { Spinner } from '@/components/ui/spinner';
+import { useTranslations } from 'next-intl';
 
 interface ChangePasswordFormProps {
     email: string;
@@ -18,6 +19,9 @@ interface ChangePasswordFormProps {
 }
 
 export default function ChangePasswordForm({ email, status }: ChangePasswordFormProps) {
+    const t = useTranslations('Auth.changePassword');
+    const tAuth = useTranslations('Auth.login');
+    const tCommon = useTranslations('Common');
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -46,12 +50,12 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
         <div className="w-full max-w-md mx-auto">
             <div className="flex flex-col gap-2 mb-8">
                 <h1 className="text-4xl font-bold tracking-tight">
-                    Đổi mật khẩu
+                    {t('title')}
                 </h1>
                 <p className="text-muted-foreground">
                     {status === 'FORGET_PASS'
-                        ? 'Nhập mật khẩu mới để đặt lại tài khoản của bạn.'
-                        : 'Nhập mật khẩu hiện tại và mật khẩu mới.'}
+                        ? t('descriptionForget')
+                        : t('descriptionChange')}
                 </p>
             </div>
 
@@ -59,12 +63,12 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                 <FieldGroup>
                     {status === 'CHANGE_PASS' && (
                         <Field data-invalid={!!form.formState.errors.password}>
-                            <FieldLabel htmlFor="password">Mật khẩu hiện tại</FieldLabel>
+                            <FieldLabel htmlFor="password">{t('currentPassword')}</FieldLabel>
                             <div className="relative">
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="Nhập mật khẩu hiện tại của bạn"
+                                    placeholder={t('currentPasswordPlaceholder')}
                                     className="h-12 pr-12"
                                     {...form.register("password")}
                                 />
@@ -83,12 +87,12 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                     )}
 
                     <Field data-invalid={!!form.formState.errors.newPass}>
-                        <FieldLabel htmlFor="new-password">Mật khẩu mới</FieldLabel>
+                        <FieldLabel htmlFor="new-password">{t('newPassword')}</FieldLabel>
                         <div className="relative">
                             <Input
                                 id="new-password"
                                 type={showNewPassword ? "text" : "password"}
-                                placeholder="Nhập mật khẩu mới của bạn"
+                                placeholder={t('newPasswordPlaceholder')}
                                 className="h-12 pr-12"
                                 {...form.register("newPass")}
                             />
@@ -106,12 +110,12 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                     </Field>
 
                     <Field data-invalid={!!form.formState.errors.confirmNewPass}>
-                        <FieldLabel htmlFor="confirm-new-password">Xác nhận mật khẩu mới</FieldLabel>
+                        <FieldLabel htmlFor="confirm-new-password">{t('confirmNewPassword')}</FieldLabel>
                         <div className="relative">
                             <Input
                                 id="confirm-new-password"
                                 type={showConfirmPassword ? "text" : "password"}
-                                placeholder="Xác nhận mật khẩu mới của bạn"
+                                placeholder={t('confirmNewPasswordPlaceholder')}
                                 className="h-12 pr-12"
                                 {...form.register("confirmNewPass")}
                             />
@@ -133,13 +137,13 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
                         className="w-full h-12 font-bold"
                         disabled={isPending}
                     >
-                        {isPending ? <Spinner className="size-6" /> : "Đổi mật khẩu"}
+                        {isPending ? <Spinner className="size-6" /> : t('submit')}
                     </Button>
 
                     <FieldDescription className="text-center text-base">
-                        Nhớ mật khẩu của bạn?{' '}
-                        <Link className="font-semibold text-primary hover:underline" href="/login">
-                            Đăng nhập
+                        {tAuth('noAccount')} {' '}
+                        <Link className="font-semibold text-primary hover:underline" href="/register">
+                            {tAuth('register')}
                         </Link>
                     </FieldDescription>
                 </FieldGroup>

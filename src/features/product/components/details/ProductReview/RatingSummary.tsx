@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Star as StarIcon, MessageCircle } from "lucide-react";
 import { STAR_COLOR } from "./constants";
+import { useTranslations } from "next-intl";
 
 interface RatingSummaryProps {
   averageRating: string;
@@ -15,6 +16,8 @@ export function RatingSummary({
   totalReviews,
   onWriteReview,
 }: RatingSummaryProps) {
+  const t = useTranslations('Reviews');
+
   return (
     <div className="md:col-span-1 text-center">
       <span className="text-5xl font-bold text-gray-900 block leading-none mb-1">
@@ -36,7 +39,7 @@ export function RatingSummary({
         ))}
       </div>
       <p className="text-sm text-gray-500 mb-6">
-        Dựa trên {totalReviews} đánh giá
+        {t('rating', { count: totalReviews })}
       </p>
       <div className="flex justify-center">
         <div className="w-full max-w-xs">
@@ -46,7 +49,7 @@ export function RatingSummary({
             className="gap-2 cursor-pointer border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-150 font-semibold px-5 py-2 rounded-full shadow"
           >
             <MessageCircle className="w-5 h-5" />
-            Viết đánh giá
+            {t('writeReview')}
           </Button>
         </div>
       </div>

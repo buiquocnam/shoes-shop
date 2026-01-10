@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import Link from "next/link";
 import { User, ShoppingCart, LogOut, Search, Menu, ArrowRight } from "lucide-react";
 import { useAuthStore, useIsAuthenticated } from "@/store/useAuthStore";
 import { useCart } from "@/features/cart/hooks/useCart";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing"; // Use i18n routing
+import { Link } from "@/i18n/routing"; // Use i18n Link
+import { useSearchParams } from "next/navigation";
 import { useLogout } from "@/features/auth/hooks";
 import {
     DropdownMenu,
@@ -24,21 +25,16 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-
-const NAV_LINKS = [
-    { name: 'Trang chủ', href: '/' },
-    { name: 'Sản phẩm', href: '/products' },
-    { name: 'Liên hệ', href: '/contact' },
-] as const;
-
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "../common/LanguageSwitcher";
 
 export default function Header() {
+    const t = useTranslations('Header');
     const { user } = useAuthStore();
     const isAuthenticated = useIsAuthenticated();
     const { cart } = useCart();
@@ -66,12 +62,18 @@ export default function Header() {
         logout();
     }, [logout]);
 
+    const NAV_LINKS = useMemo(() => [
+        { name: t('nav.home'), href: '/' },
+        { name: t('nav.products'), href: '/products' },
+        { name: t('nav.contact'), href: '/contact' },
+    ], [t]);
+
     const accountLinks = useMemo(
         () => [
-            { name: 'Hồ sơ của tôi', href: '/profile', icon: User },
-            { name: 'Đăng xuất', href: '#', icon: LogOut, onClick: handleLogout },
+            { name: t('account.profile'), href: '/profile', icon: User },
+            { name: t('account.logout'), href: '#', icon: LogOut, onClick: handleLogout },
         ],
-        [handleLogout]
+        [handleLogout, t]
     );
 
     const handleSearch = useCallback(
@@ -154,13 +156,15 @@ export default function Header() {
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onKeyDown={handleSearchKeyDown}
                                     className="w-full bg-white border-border rounded-full py-2.5 pl-11 pr-4 shadow-sm"
-                                    placeholder="Tìm kiếm sản phẩm..."
+                                    placeholder={t('search.placeholder')}
                                 />
                             </div>
                         </div>
 
                         {/* Actions */}
                         <div className="flex items-center gap-1 md:gap-3">
+                            <LanguageSwitcher />
+
                             {/* Mobile Search Toggle */}
                             <Button
                                 onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
@@ -261,12 +265,12 @@ export default function Header() {
                                 </SheetTrigger>
                                 <SheetContent side="right" className="w-80">
                                     <SheetHeader>
-                                        <SheetTitle>Menu</SheetTitle>
+                                        <SheetTitle>{t('mobile.menu')}</SheetTitle>
                                     </SheetHeader>
                                     <div className="mt-6 flex flex-col gap-6">
                                         {/* Navigation */}
                                         <div className="space-y-2">
-                                            <h3 className="text-sm font-semibold text-muted-foreground">Điều hướng</h3>
+                                            <h3 className="text-sm font-semibold text-muted-foreground">{t('mobile.navigation')}</h3>
                                             <Separator />
                                             <nav className="flex flex-col gap-1">
                                                 {NAV_LINKS.map((link) => {
@@ -294,7 +298,7 @@ export default function Header() {
                                             <>
                                                 <Separator />
                                                 <div className="space-y-2">
-                                                    <h3 className="text-sm font-semibold text-muted-foreground">Tài khoản</h3>
+                                                    <h3 className="text-sm font-semibold text-muted-foreground">{t('mobile.account')}</h3>
                                                     <Separator />
                                                     <div className="flex flex-col gap-1">
                                                         {accountLinks.map((link) => {
@@ -338,7 +342,7 @@ export default function Header() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyDown={handleSearchKeyDown}
                             className="w-full bg-slate-50 border-none rounded-full py-2.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus-visible:ring-2 focus-visible:ring-primary shadow-sm"
-                            placeholder="Tìm kiếm sản phẩm..."
+                            placeholder={t('search.placeholder')}
                         />
                     </div>
                 </div>

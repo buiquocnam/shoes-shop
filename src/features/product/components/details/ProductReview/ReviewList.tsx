@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { ReviewItem } from "./ReviewItem";
-import type { ProductReviewType } from "../../types";
+import type { ProductReviewType } from "@/features/product/types";
+import { useTranslations } from "next-intl";
 
 interface ReviewListProps {
   reviews: ProductReviewType[];
@@ -15,6 +16,8 @@ export function ReviewList({
   hasMoreReviews,
   onShowMore,
 }: ReviewListProps) {
+  const t = useTranslations('Reviews');
+  const tCommon = useTranslations('Common');
   const isEmpty = reviews.length === 0;
 
   return (
@@ -39,7 +42,7 @@ export function ReviewList({
             </div>
             <div>
               <p className="text-base font-semibold text-gray-900 mb-1">
-                Chưa có đánh giá nào
+                {t('noReviews')}
               </p>
               <p className="text-sm text-gray-500">
                 Hãy là người đầu tiên đánh giá sản phẩm này!
@@ -62,7 +65,7 @@ export function ReviewList({
                 variant="outline"
                 className="gap-2 cursor-pointer border-2 border-primary text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 font-bold px-6 py-2.5 rounded-full shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
               >
-                <span>Xem thêm đánh giá</span>
+                <span>{tCommon('pagination.next')}</span>
                 <svg
                   className="w-4 h-4"
                   fill="none"

@@ -1,9 +1,11 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { brandsApi } from "@/features/shared/services/brands.api";
 import { BrandType } from "@/features/product/types";
+import { getTranslations } from "next-intl/server";
 
 export default async function BrandList() {
+  const t = await getTranslations('HomePage.brands');
   const brandsResponse = await brandsApi.search({ size: 6 });
 
   if (!brandsResponse || !brandsResponse.data || brandsResponse.data.length === 0) {
@@ -17,7 +19,7 @@ export default async function BrandList() {
       {/* Mobile / Tablet */}
       <section className="py-12 md:py-16 bg-surface-light lg:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-6 text-center">Thương hiệu</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">{t('title')}</h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 justify-items-center">
             {displayBrands.map((brand) => (

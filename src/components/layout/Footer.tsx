@@ -1,12 +1,17 @@
 'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/i18n/routing";
+import { usePathname } from "@/i18n/routing";
 import Image from "next/image";
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
   const pathname = usePathname();
+  const t = useTranslations('Footer');
+
+  // Checking for admin route: simplified check or use middleware/layout separation
+  // For now simple check on pathname is fine, but note that pathname doesn't include locale prefix with `i18n/routing` hooks usually
   const isAdmin = pathname.startsWith("/admin");
   if (isAdmin) {
     return null;
@@ -20,7 +25,7 @@ export function Footer() {
         <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
           {/* social media */}
           <div className="space-y-4">
-            <h3 className="font-bold text-gray-900 mb-4">Liên hệ</h3>
+            <h3 className="font-bold text-gray-900 mb-4">{t('contact')}</h3>
             <div className="flex items-center gap-2">
               <Image
                 src="/images/logo.png"
@@ -32,7 +37,7 @@ export function Footer() {
               />
             </div>
             <p className="text-sm text-gray-600 leading-relaxed">
-              Cửa hàng giày thể thao chính hãng, đa dạng mẫu mã. Cam kết chất lượng và dịch vụ tốt nhất.
+              {t('description')}
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -79,12 +84,12 @@ export function Footer() {
           <div> </div>
           {/* Contact Info */}
           <div>
-            <h3 className="font-bold text-gray-900 mb-4">Thông tin liên hệ</h3>
+            <h3 className="font-bold text-gray-900 mb-4">{t('contactInfo')}</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                 <span className="text-sm text-gray-600">
-                  123 Đường ABC, Quận XYZ, TP.HCM
+                  {t('address')}
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -107,14 +112,14 @@ export function Footer() {
         <div className="border-t border-gray-200 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-600">
-              © {currentYear} Cửa hàng giày KICKS. Đã đăng ký bản quyền.
+              {t('copyright', { year: currentYear })}
             </p>
             <div className="flex items-center gap-6">
               <Link href="/privacy" className="text-sm text-gray-600 hover:text-primary transition-colors">
-                Chính sách bảo mật
+                {t('privacy')}
               </Link>
               <Link href="/terms" className="text-sm text-gray-600 hover:text-primary transition-colors">
-                Điều khoản
+                {t('terms')}
               </Link>
             </div>
           </div>

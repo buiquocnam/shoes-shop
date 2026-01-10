@@ -1,4 +1,8 @@
+import { useTranslations } from "next-intl";
+
 export function OrderEmptyState() {
+  const t = useTranslations('Profile.orders');
+
   return (
     <div className="bg-white rounded-xl border border-[#f4ebe7] shadow-sm p-12">
       <div className="flex flex-col items-center justify-center gap-4 text-center">
@@ -18,8 +22,7 @@ export function OrderEmptyState() {
           </svg>
         </div>
         <div>
-          <h3 className="text-lg font-semibold mb-1">Chưa có đơn hàng</h3>
-          <p className="text-sm text-muted-foreground">Bạn chưa thực hiện bất kỳ giao dịch mua nào.</p>
+          <h3 className="text-lg font-semibold mb-1">{t('noOrders')}</h3>
         </div>
       </div>
     </div>

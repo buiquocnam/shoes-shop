@@ -9,22 +9,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 
 export type SortOption = {
   value: string;
-  label: string;
+  labelKey: string;
   sort_by?: string;
 };
 
-const SORT_OPTIONS: SortOption[] = [
-  { value: "countSell", label: "Bán chạy", sort_by: "countSell" },
-  { value: "asc", label: "Cũ", sort_by: "asc" },
-  { value: "desc", label: "Mới", sort_by: "desc" },
-];
-
 export default function SortSelect() {
+  const t = useTranslations('Products.sort');
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const SORT_OPTIONS: SortOption[] = useMemo(() => [
+    { value: "countSell", labelKey: "bestSelling", sort_by: "countSell" },
+    { value: "asc", labelKey: "oldest", sort_by: "asc" },
+    { value: "desc", labelKey: "newest", sort_by: "desc" },
+  ], []);
 
   const currentSort = useMemo(() => {
     const sortBy = searchParams.get("sort_by");
@@ -36,7 +38,7 @@ export default function SortSelect() {
     const option = SORT_OPTIONS.find((opt) => opt.sort_by === sortBy);
 
     return option?.value || "countSell";
-  }, [searchParams]);
+  }, [searchParams, SORT_OPTIONS]);
 
   const handleSortChange = (value: string) => {
     const option = SORT_OPTIONS.find((opt) => opt.value === value);
@@ -55,20 +57,21 @@ export default function SortSelect() {
     router.push(`?${params.toString()}`);
   };
 
-  const currentLabel = SORT_OPTIONS.find((opt) => opt.value === currentSort)?.label || "Bán chạy";
+  const currentOption = SORT_OPTIONS.find((opt) => opt.value === currentSort);
+  const currentLabel = currentOption ? t(currentOption.labelKey) : t('bestSelling');
 
   return (
     <div className="relative group">
       <Select value={currentSort} onValueChange={handleSortChange} >
         <SelectTrigger className="flex items-center bg-white gap-2 px-4 py-2 rounded-full cursor-pointer">
           <span>
-            Sắp xếp theo: <span className="text-primary font-bold">{currentLabel}</span>
+            {t('label')} <span className="text-primary font-bold">{currentLabel}</span>
           </span>
         </SelectTrigger>
         <SelectContent className="bg-white border-none">
           {SORT_OPTIONS.map((option) => (
             <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-              {option.label}
+              {t(option.labelKey)}
             </SelectItem>
           ))}
         </SelectContent>

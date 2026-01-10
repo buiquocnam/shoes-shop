@@ -24,23 +24,37 @@ import {
     useCreateAddress,
 } from "@/features/shared/hooks/useAdress";
 import { AddressType } from "@/types/address";
+import { useTranslations } from "next-intl";
 
-export const addressDialogSchema = z.object({
+const getAddressSchema = (t: any) => z.object({
     addressId: z.string().optional(),
-    userId: z.string().min(1, { message: "ID người dùng là bắt buộc" }),
-    nameReceiver: z.string().min(1, { message: "Tên người nhận là bắt buộc" }),
-    phoneReceiver: z.string().min(10, { message: "Số điện thoại không hợp lệ" }).max(11, "Số điện thoại không hợp lệ"),
-    provinceCode: z.number().int({ message: "Vui lòng chọn tỉnh/thành phố" }).min(1, "Vui lòng chọn tỉnh/thành phố"),
-    provinceName: z.string().min(1, { message: "Tên tỉnh/thành phố là bắt buộc" }),
-    districtCode: z.number().int({ message: "Vui lòng chọn quận/huyện" }).min(1, "Vui lòng chọn quận/huyện"),
-    districtName: z.string().min(1, { message: "Tên quận/huyện là bắt buộc" }),
-    wardCode: z.number().int({ message: "Vui lòng chọn phường/xã" }).min(1, "Vui lòng chọn phường/xã"),
-    wardName: z.string().min(1, { message: "Tên phường/xã là bắt buộc" }),
-    addressLine: z.string().min(1, { message: "Địa chỉ chi tiết không được để trống" }),
+    userId: z.string().min(1, { message: t('validation.required', { field: 'ID' }) }),
+    nameReceiver: z.string().min(1, { message: t('validation.required', { field: t('receiver') }) }),
+    phoneReceiver: z.string().min(10, { message: t('validation.invalidPhone') }).max(11, t('validation.invalidPhone')),
+    provinceCode: z.number().int({ message: t('validation.selectProvince') }).min(1, t('validation.selectProvince')),
+    provinceName: z.string().min(1, { message: t('validation.required', { field: t('province') }) }),
+    districtCode: z.number().int({ message: t('validation.selectDistrict') }).min(1, t('validation.selectDistrict')),
+    districtName: z.string().min(1, { message: t('validation.required', { field: t('district') }) }),
+    wardCode: z.number().int({ message: t('validation.selectWard') }).min(1, t('validation.selectWard')),
+    wardName: z.string().min(1, { message: t('validation.required', { field: t('ward') }) }),
+    addressLine: z.string().min(1, { message: t('validation.detailEmpty') }),
     isDefault: z.boolean(),
 });
 
-export type AddressDialogValues = z.infer<typeof addressDialogSchema>;
+export type AddressDialogValues = {
+    addressId?: string;
+    userId: string;
+    nameReceiver: string;
+    phoneReceiver: string;
+    provinceCode: number;
+    provinceName: string;
+    districtCode: number;
+    districtName: string;
+    wardCode: number;
+    wardName: string;
+    addressLine: string;
+    isDefault: boolean;
+};
 
 interface AddressDialogProps {
     userId: string;
@@ -57,7 +71,12 @@ export function AddressDialog({
     defaultIsDefault = false,
     initialData,
 }: AddressDialogProps) {
+    const t = useTranslations('Address');
+    const tCommon = useTranslations('Common');
     const isEdit = !!initialData;
+
+    const addressDialogSchema = getAddressSchema(t);
+
     const form = useForm<AddressDialogValues>({
         resolver: zodResolver(addressDialogSchema),
         defaultValues: {
@@ -118,10 +137,8 @@ export function AddressDialog({
     }, [open, initialData, userId, defaultIsDefault, form]);
 
 
-    // Handle resetting dependent fields logic (same as before but careful not to wipe during edit load)
+    // Handle resetting dependent fields logic
     useEffect(() => {
-        // Only reset if user manually changes province (dirty field)
-        // For simplicity, we can rely on standard behavior or add explicit check if form is dirty
         const subscription = form.watch((value, { name, type }) => {
             if (name === 'provinceCode' && type === 'change') {
                 form.setValue("districtCode", 0);
@@ -166,7 +183,6 @@ export function AddressDialog({
     };
 
     const onSubmit = async (data: AddressDialogValues) => {
-        // useCreateAddress now calls the shared endpoint which handles both Create and Update (if addressId present)
         await createAddressMutation.mutateAsync(data);
         form.reset();
         onOpenChange(false);
@@ -192,7 +208,7 @@ export function AddressDialog({
             <DialogContent className="max-w-2xl p-0 overflow-hidden max-h-[90vh] flex flex-col">
                 <DialogHeader className="p-6 border-b bg-muted/30 flex-shrink-0">
                     <DialogTitle className="text-xl font-bold uppercase tracking-tight">
-                        {isEdit ? "Cập nhật" : "Thêm"} <span className="text-primary">Địa chỉ</span>
+                        {isEdit ? t('title.edit') : t('title.add')}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -201,20 +217,20 @@ export function AddressDialog({
                         <FieldGroup className="p-6 gap-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Field data-invalid={!!form.formState.errors.nameReceiver}>
-                                    <FieldLabel htmlFor="nameReceiver">Tên người nhận</FieldLabel>
+                                    <FieldLabel htmlFor="nameReceiver">{t('receiver')}</FieldLabel>
                                     <Input
                                         id="nameReceiver"
-                                        placeholder="Nhập tên người nhận"
+                                        placeholder={t('receiverPlaceholder')}
                                         className="h-11"
                                         {...form.register("nameReceiver")}
                                     />
                                     <FieldError errors={[form.formState.errors.nameReceiver]} />
                                 </Field>
                                 <Field data-invalid={!!form.formState.errors.phoneReceiver}>
-                                    <FieldLabel htmlFor="phoneReceiver">Số điện thoại</FieldLabel>
+                                    <FieldLabel htmlFor="phoneReceiver">{t('phone')}</FieldLabel>
                                     <Input
                                         id="phoneReceiver"
-                                        placeholder="Nhập số điện thoại"
+                                        placeholder={t('phonePlaceholder')}
                                         className="h-11"
                                         {...form.register("phoneReceiver")}
                                     />
@@ -228,7 +244,7 @@ export function AddressDialog({
                                     name="provinceCode"
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel htmlFor="province-select">Tỉnh/Thành phố</FieldLabel>
+                                            <FieldLabel htmlFor="province-select">{t('province')}</FieldLabel>
                                             <Select
                                                 onValueChange={(value) => {
                                                     handleProvinceChange(value);
@@ -236,7 +252,7 @@ export function AddressDialog({
                                                 value={field.value?.toString() || ""}
                                             >
                                                 <SelectTrigger id="province-select" className="h-11">
-                                                    <SelectValue placeholder="Chọn" />
+                                                    <SelectValue placeholder={t('select')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {provinceOptions.map((option) => (
@@ -256,14 +272,14 @@ export function AddressDialog({
                                     name="districtCode"
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel htmlFor="district-select">Quận/Huyện</FieldLabel>
+                                            <FieldLabel htmlFor="district-select">{t('district')}</FieldLabel>
                                             <Select
                                                 disabled={!provinceCode}
                                                 onValueChange={handleDistrictChange}
                                                 value={field.value?.toString() || ""}
                                             >
                                                 <SelectTrigger id="district-select" className="h-11">
-                                                    <SelectValue placeholder="Chọn" />
+                                                    <SelectValue placeholder={t('select')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {districtOptions.map((option) => (
@@ -283,14 +299,14 @@ export function AddressDialog({
                                     name="wardCode"
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel htmlFor="ward-select">Phường/Xã</FieldLabel>
+                                            <FieldLabel htmlFor="ward-select">{t('ward')}</FieldLabel>
                                             <Select
                                                 disabled={!districtCode}
                                                 onValueChange={handleWardChange}
                                                 value={field.value?.toString() || ""}
                                             >
                                                 <SelectTrigger id="ward-select" className="h-11">
-                                                    <SelectValue placeholder="Chọn" />
+                                                    <SelectValue placeholder={t('select')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {wardOptions.map((option) => (
@@ -307,10 +323,10 @@ export function AddressDialog({
                             </div>
 
                             <Field data-invalid={!!form.formState.errors.addressLine}>
-                                <FieldLabel htmlFor="address-line">Địa chỉ chi tiết</FieldLabel>
+                                <FieldLabel htmlFor="address-line">{t('detail')}</FieldLabel>
                                 <Input
                                     id="address-line"
-                                    placeholder="Số nhà, tên đường, số phòng..."
+                                    placeholder={t('detailPlaceholder')}
                                     className="h-11"
                                     {...form.register("addressLine")}
                                 />
@@ -329,10 +345,10 @@ export function AddressDialog({
                                         />
                                         <FieldContent>
                                             <FieldLabel htmlFor="address-default" className="font-bold cursor-pointer">
-                                                Đặt làm địa chỉ mặc định
+                                                {t('default')}
                                             </FieldLabel>
                                             <p className="text-xs text-muted-foreground">
-                                                Địa chỉ này sẽ được sử dụng mặc định khi thanh toán
+                                                {t('defaultDescription')}
                                             </p>
                                         </FieldContent>
                                         <FieldError errors={[fieldState.error]} />
@@ -346,7 +362,7 @@ export function AddressDialog({
                                     className="w-full h-12 font-bold uppercase tracking-wide"
                                 >
                                     {createAddressMutation.isPending ? <Spinner className="h-4 w-4 mr-2" /> : null}
-                                    {createAddressMutation.isPending ? "Đang lưu..." : "Lưu địa chỉ"}
+                                    {createAddressMutation.isPending ? t('saving') : t('save')}
                                 </Button>
                             </div>
                         </FieldGroup>

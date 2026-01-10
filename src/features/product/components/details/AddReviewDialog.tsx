@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCreateReview } from "../../hooks/useReviews";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
 
 interface AddReviewDialogProps {
     productId: string;
@@ -25,6 +26,8 @@ export default function AddReviewDialog({
     open,
     onOpenChange
 }: AddReviewDialogProps) {
+    const t = useTranslations('Reviews.dialog');
+    const tCommon = useTranslations('Common');
     const { mutate: createReview, isPending } = useCreateReview(productId);
 
     const [rating, setRating] = useState<number>(0);
@@ -41,10 +44,10 @@ export default function AddReviewDialog({
             {
                 onError: (error: Error) => {
                     console.error("Create review error:", error);
-                    toast.error(error.message || "Gửi đánh giá thất bại");
+                    toast.error(error.message || tCommon('error'));
                 },
                 onSuccess: () => {
-                    toast.success("Gửi đánh giá thành công");
+                    toast.success(tCommon('save')); // Or a specific success message
                     setRating(0);
                     setComment("");
                     onOpenChange(false);
@@ -58,7 +61,7 @@ export default function AddReviewDialog({
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="text-lg font-bold text-center">
-                        Viết đánh giá
+                        {t('title')}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -75,7 +78,7 @@ export default function AddReviewDialog({
                         ))}
                     </div>
                     <Textarea
-                        placeholder="Viết đánh giá của bạn..."
+                        placeholder={t('placeholder')}
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         className="min-h-[100px]"
@@ -87,15 +90,16 @@ export default function AddReviewDialog({
                             className="flex-1"
                             onClick={() => onOpenChange(false)}
                             disabled={isPending}
+                            type="button"
                         >
-                            Hủy
+                            {tCommon('cancel')}
                         </Button>
                         <Button
                             type="submit"
                             className="flex-1"
                             disabled={isPending || rating === 0 || !comment.trim()}
                         >
-                            {isPending ? <Spinner /> : "Gửi đánh giá"}
+                            {isPending ? <Spinner /> : t('submit')}
                         </Button>
                     </div>
                 </form>

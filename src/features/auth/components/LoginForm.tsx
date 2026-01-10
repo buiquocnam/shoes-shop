@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLogin } from "@/features/auth/hooks";
@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel, FieldGroup, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "@/features/auth/schema";
+import { useTranslations } from "next-intl";
 
 export default function LoginForm() {
+  const t = useTranslations('Auth.login');
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending, error } = useLogin();
   const form = useForm({
@@ -35,17 +37,17 @@ export default function LoginForm() {
     <div className="w-full max-w-md mx-auto">
       <div className="flex flex-col gap-2 mb-8">
         <h1 className="text-4xl font-bold tracking-tight">
-          Chào mừng trở lại
+          {t('title')}
         </h1>
         <p className="text-muted-foreground">
-          Đăng nhập để truy cập tài khoản và bắt đầu mua sắm.
+          {t('description')}
         </p>
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field data-invalid={!!form.formState.errors.email}>
-            <FieldLabel htmlFor="email">Địa chỉ email</FieldLabel>
+            <FieldLabel htmlFor="email">{t('email')}</FieldLabel>
             <Input
               id="email"
               // type="email"
@@ -59,19 +61,19 @@ export default function LoginForm() {
 
           <Field data-invalid={!!form.formState.errors.password}>
             <div className="flex items-center justify-between">
-              <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
+              <FieldLabel htmlFor="password">{t('password')}</FieldLabel>
               <Link
                 className="text-sm font-medium text-primary hover:underline"
                 href="/forget-password"
               >
-                Quên mật khẩu?
+                {t('forgotPassword')}
               </Link>
             </div>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Nhập mật khẩu của bạn"
+                placeholder={t('passwordPlaceholder')}
                 className="h-12 pr-12"
                 {...form.register("password")}
               />
@@ -99,7 +101,7 @@ export default function LoginForm() {
             disabled={isPending}
             type="submit"
           >
-            {isPending ? "Đang đăng nhập..." : "Đăng nhập"}
+            {isPending ? t('loading') : t('submit')}
           </Button>
 
           <div className="relative">
@@ -108,7 +110,7 @@ export default function LoginForm() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Hoặc tiếp tục với
+                {t('or')}
               </span>
             </div>
           </div>
@@ -138,13 +140,13 @@ export default function LoginForm() {
                 fill="#EA4335"
               />
             </svg>
-            Tiếp tục với Google
+            {t('google')}
           </Button>
 
           <FieldDescription className="text-center text-base">
-            Chưa có tài khoản?{" "}
+            {t('noAccount')}{" "}
             <Link className="font-semibold text-primary hover:underline" href="/register">
-              Đăng ký
+              {t('register')}
             </Link>
           </FieldDescription>
         </FieldGroup>

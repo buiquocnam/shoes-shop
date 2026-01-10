@@ -16,8 +16,11 @@ import {
 } from "@/components/ui/pagination";
 import { getPageNumbers, createPaginationUrl } from "@/utils/pagination";
 import ProductListLoading from "./ProductList/ProductListLoading";
+import { useTranslations } from "next-intl";
 
 export default function ProductList() {
+    const t = useTranslations('Products');
+    const tCommon = useTranslations('Common');
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -45,8 +48,8 @@ export default function ProductList() {
         return (
             <div className="w-full flex items-center justify-center py-16">
                 <div className="text-center">
-                    <p className="text-lg font-medium mb-2 text-gray-900">Không tìm thấy sản phẩm</p>
-                    <p className="text-sm text-gray-600">Thử điều chỉnh bộ lọc của bạn</p>
+                    <p className="text-lg font-medium mb-2 text-gray-900">{t('noProducts')}</p>
+                    <p className="text-sm text-gray-600">{t('noProductsDesc')}</p>
                 </div>
             </div>
         );
@@ -56,7 +59,7 @@ export default function ProductList() {
         <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-1">Sản phẩm</h1>
+                    <h1 className="text-3xl font-bold tracking-tight mb-1">{t('title')}</h1>
                 </div>
                 <div className="flex items-center gap-3">
                     <SortSelect />
@@ -74,7 +77,9 @@ export default function ProductList() {
                             <PaginationItem>
                                 <PaginationPrevious
                                     href={createPaginationUrl(searchParams, currentPageNum - 1)}
-                                />
+                                >
+                                    {tCommon('pagination.previous')}
+                                </PaginationPrevious>
                             </PaginationItem>
                         )}
 
@@ -103,7 +108,9 @@ export default function ProductList() {
                             <PaginationItem>
                                 <PaginationNext
                                     href={createPaginationUrl(searchParams, currentPageNum + 1)}
-                                />
+                                >
+                                    {tCommon('pagination.next')}
+                                </PaginationNext>
                             </PaginationItem>
                         )}
                     </PaginationContent>

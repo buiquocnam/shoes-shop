@@ -7,7 +7,6 @@ import { buttonVariants } from "@/components/ui/button"
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
     role="navigation"
-    aria-label="phân trang"
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props}
   />
@@ -60,14 +59,14 @@ PaginationLink.displayName = "PaginationLink"
 const PaginationPrevious = React.forwardRef<
   HTMLAnchorElement,
   React.ComponentProps<typeof PaginationLink>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <PaginationLink
     ref={ref}
-    aria-label="Đi tới trang trước"
-    className={cn("gap-1 pl-2.5", className)}
+    className={cn("gap-1 pl-2.5 w-auto px-4", className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
+    {children}
   </PaginationLink>
 ))
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -75,13 +74,13 @@ PaginationPrevious.displayName = "PaginationPrevious"
 const PaginationNext = React.forwardRef<
   HTMLAnchorElement,
   React.ComponentProps<typeof PaginationLink>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <PaginationLink
     ref={ref}
-    aria-label="Đi tới trang sau"
-    className={cn("gap-1 pr-2.5", className)}
+    className={cn("gap-1 pr-2.5 w-auto px-4", className)}
     {...props}
   >
+    {children}
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 ))
@@ -97,7 +96,6 @@ const PaginationEllipsis = ({
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">Nhiều trang hơn</span>
   </span>
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"

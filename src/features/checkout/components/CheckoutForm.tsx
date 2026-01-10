@@ -11,12 +11,14 @@ import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { Coupon } from '../types/coupon';
 import { useCheckoutStore } from '@/store';
+import { useTranslations } from 'next-intl';
 
 interface CheckoutFormProps {
     orderSummary: CheckoutItem[];
 }
 
 export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
+    const t = useTranslations('Checkout');
     const { mutate: createOrder, isPending: isCreatingOrder } = useCreateOrder();
     const { mutate: createVnPayPayment, isPending: isPaymentPending, isError } = useVnPayPayment();
     const isPending = isCreatingOrder || isPaymentPending;
@@ -41,12 +43,12 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
     const handleCheckout = useCallback(
         (coupon: Coupon | null, totalAmount: number) => {
             if (!selectedAddress) {
-                toast.error('Vui lòng chọn địa chỉ giao hàng');
+                toast.error(t('selectAddress'));
                 return;
             }
 
             if (orderSummary.length === 0) {
-                toast.error('Không có sản phẩm nào để thanh toán');
+                toast.error(t('noItems'));
                 return;
             }
 
@@ -86,7 +88,7 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
                 }
             });
         },
-        [orderSummary, createVnPayPayment, selectedAddress]
+        [orderSummary, createVnPayPayment, selectedAddress, t]
     );
 
     const showLoading = isPending || isNavigating;
@@ -94,8 +96,8 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] w-full py-20">
                 <Spinner className="h-10 w-10 text-primary mb-4" />
-                <h2 className="text-xl font-semibold mb-2">Đang xử lý đơn hàng...</h2>
-                <p className="text-muted-foreground text-sm">Vui lòng đợi trong giây lát</p>
+                <h2 className="text-xl font-semibold mb-2">{t('processing')}</h2>
+                <p className="text-muted-foreground text-sm">{t('wait')}</p>
             </div>
         );
     }

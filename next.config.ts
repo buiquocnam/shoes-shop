@@ -1,39 +1,18 @@
+import createNextIntlPlugin from 'next-intl/plugin';
 import type { NextConfig } from "next";
 
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+
 const nextConfig: NextConfig = {
+  /* config options here */
   images: {
-    qualities: [70, 75, 85],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'thumbs.dreamstime.com',
+        hostname: '**',
       },
-      {
-        protocol: 'https',
-        hostname: 'img.freepik.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-      },
-      {
-        protocol: 'http', 
-        hostname: 'minio-api',
-        port: '9000',
-        pathname: '/resources/**', 
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '9000',
-        pathname: '/resources/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',   
-      }
     ],
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

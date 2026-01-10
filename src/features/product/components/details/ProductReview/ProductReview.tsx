@@ -10,10 +10,13 @@ import { RatingStats } from "./RatingStats";
 import { ReviewList } from "./ReviewList";
 import { calculateRatingStats } from "./utils";
 import type { ProductReviewType } from "@/features/product/types";
+import { useTranslations } from "next-intl";
 
 const DEFAULT_PAGE_SIZE = 10;
 
 export default function ProductReview({ productId }: { productId: string }) {
+  const t = useTranslations('Reviews');
+  const tCommon = useTranslations('Common');
   const [currentPage, setCurrentPage] = useState(1);
   const [accumulatedReviews, setAccumulatedReviews] = useState<ProductReviewType[]>([]);
   const pageSize = DEFAULT_PAGE_SIZE;
@@ -54,7 +57,7 @@ export default function ProductReview({ productId }: { productId: string }) {
   if (isLoading && accumulatedReviews.length === 0) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-white rounded-xl shadow-lg">
-        <div className="text-center py-8 text-gray-600">Đang tải đánh giá...</div>
+        <div className="text-center py-8 text-gray-600">{tCommon('loading')}</div>
       </div>
     );
   }
@@ -63,7 +66,7 @@ export default function ProductReview({ productId }: { productId: string }) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-white rounded-xl shadow-lg">
         <div className="text-center py-8 text-red-500">
-          Không thể tải đánh giá
+          {tCommon('error')}
         </div>
       </div>
     );
@@ -90,7 +93,7 @@ export default function ProductReview({ productId }: { productId: string }) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 md:px-10 bg-primary/3 rounded-xl shadow-xl mt-8">
       <h2 className="text-3xl font-bold mb-12 mt-20 text-center uppercase">
-        Đánh giá khách hàng
+        {t('title')}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         <RatingSummary

@@ -1,0 +1,300 @@
+{
+    "HomePage": {
+        "title": "Shoes Shop",
+        "description": "Your favorite shoes shop",
+        "metaTitle": "Shoes Shop Home",
+        "metaDescription": "Discover high-quality sneakers and footwear at Shoes Shop. Best sellers, top rated shoes and latest sneaker trends at unbeatable prices.",
+        "hero": {
+            "tag": "NEW ARRIVALS",
+            "title": "DISCOVER",
+            "accent": "SPEED",
+            "description": "Experience peak comfort with shoes designed for movement. Breathable materials, superior support, and cushioning for every step.",
+            "cta": "Shop Now"
+        },
+        "bestSeller": {
+            "tag": "Most Popular",
+            "title": "Best Sellers",
+            "viewAll": "View all best sellers"
+        },
+        "category": {
+            "tag": "Explore",
+            "title": "Product Categories",
+            "productCount": "Items",
+            "viewAll": "View all"
+        },
+        "brands": {
+            "title": "Our Brands"
+        }
+    },
+    "Header": {
+        "nav": {
+            "home": "Home",
+            "products": "Products",
+            "contact": "Contact"
+        },
+        "search": {
+            "placeholder": "Search products..."
+        },
+        "account": {
+            "profile": "My Profile",
+            "logout": "Logout"
+        },
+        "mobile": {
+            "menu": "Menu",
+            "navigation": "Navigation",
+            "account": "Account"
+        }
+    },
+    "Footer": {
+        "contact": "Contact",
+        "description": "Authentic sports shoes store with diverse designs. Committed to quality and best service.",
+        "contactInfo": "Contact Information",
+        "address": "123 ABC Street, XYZ District, HCMC",
+        "copyright": "© {year} KICKS Shoe Store. All rights reserved.",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service"
+    },
+    "Sidebar": {
+        "title": "Filters",
+        "reset": "Reset",
+        "apply": "Apply",
+        "price": "Price",
+        "brand": "Brand",
+        "category": "Category",
+        "minPrice": "Min",
+        "maxPrice": "Max",
+        "allCategories": "All Categories",
+        "currency": "$"
+    },
+    "Products": {
+        "title": "Products",
+        "metaTitle": "Products - Shoe Shop",
+        "metaDescription": "Explore our latest collection of premium footwear.",
+        "filter": "Product Filters",
+        "noProducts": "No products found",
+        "noProductsDesc": "Try adjusting your filters",
+        "sort": {
+            "label": "Sort by:",
+            "bestSelling": "Best Selling",
+            "oldest": "Oldest",
+            "newest": "Newest"
+        },
+        "details": {
+            "outOfStock": "Out of Stock",
+            "inStock": "In Stock",
+            "remaining": "Remaining:",
+            "items": "items",
+            "quantity": "Quantity:",
+            "addToCart": "Add to Cart",
+            "buyNow": "Buy Now",
+            "similarProducts": "Similar Products",
+            "backToShopping": "Continue Shopping"
+        }
+    },
+    "Reviews": {
+        "title": "Customer Reviews",
+        "writeReview": "Write a review",
+        "noReviews": "No reviews yet",
+        "rating": "{count} reviews",
+        "average": "Average {rating} stars",
+        "dialog": {
+            "title": "Submit your review",
+            "description": "Share your experience with this product.",
+            "label": "Your Review",
+            "placeholder": "Enter review content...",
+            "submit": "Submit Review"
+        }
+    },
+    "Auth": {
+        "login": {
+            "title": "Welcome Back",
+            "description": "Login to access your account and start shopping.",
+            "email": "Email Address",
+            "password": "Password",
+            "forgotPassword": "Forgot password?",
+            "submit": "Login",
+            "loading": "Logging in...",
+            "or": "Or continue with",
+            "google": "Continue with Google",
+            "noAccount": "Don't have an account?",
+            "register": "Register",
+            "passwordPlaceholder": "Enter your password"
+        },
+        "register": {
+            "title": "Create Account",
+            "description": "Join us to get the best offers.",
+            "name": "Full Name",
+            "namePlaceholder": "Enter your full name",
+            "email": "Email Address",
+            "password": "Password",
+            "confirmPassword": "Confirm Password",
+            "submit": "Register",
+            "loading": "Registering...",
+            "hasAccount": "Already have an account?",
+            "login": "Login"
+        },
+        "otp": {
+            "title": "Verify OTP",
+            "description": "Please enter the OTP code sent to your email.",
+            "submit": "Confirm",
+            "resend": "Resend Code",
+            "timer": "Resend in {seconds}s",
+            "resendSuccess": "OTP resat successfully",
+            "verifySuccess": "OTP verified successfully",
+            "invalidOtp": "Invalid OTP",
+            "noCode": "Did not receive code?"
+        },
+        "forgotPassword": {
+            "title": "Forgot Password",
+            "description": "Enter your email to receive a password reset link.",
+            "submit": "Send Link",
+            "success": "OTP sent to your email!",
+            "hasAccount": "Remember your password?"
+        },
+        "changePassword": {
+            "title": "Change Password",
+            "descriptionForget": "Enter a new password to reset your account.",
+            "descriptionChange": "Enter your current and new password.",
+            "currentPassword": "Current Password",
+            "currentPasswordPlaceholder": "Enter your current password",
+            "newPassword": "New Password",
+            "newPasswordPlaceholder": "Enter your new password",
+            "confirmNewPassword": "Confirm New Password",
+            "confirmNewPasswordPlaceholder": "Confirm your new password",
+            "submit": "Change Password"
+        }
+    },
+    "Cart": {
+        "title": "Shopping Cart",
+        "description": "Review the items in your cart and proceed to checkout",
+        "empty": "Your cart is empty",
+        "startShopping": "Start shopping",
+        "checkout": "Checkout",
+        "summary": "Order Summary",
+        "subtotal": "Subtotal",
+        "discount": "Total Discount",
+        "total": "Order Total",
+        "items": "items",
+        "continueShopping": "Continue Shopping",
+        "remove": "Remove"
+    },
+    "Checkout": {
+        "title": "Checkout",
+        "processing": "Processing your order...",
+        "wait": "Please wait a moment",
+        "selectAddress": "Please select a shipping address",
+        "noItems": "No items to checkout",
+        "success": {
+            "title": "Order Successful!",
+            "description": "Thank you for trust and shopping at Shoes Shop."
+        }
+    },
+    "Order": {
+        "detail": {
+            "title": "Order Details",
+            "loading": "Loading order information...",
+            "error": "Could not load order information",
+            "notFound": "Order not found",
+            "viewMyOrders": "View my orders",
+            "purchasedItems": "Purchased items",
+            "itemsCount": "{count} items",
+            "noImage": "No image available",
+            "quantity": "Quantity",
+            "total": "Total",
+            "shippingInfo": "Shipping Information",
+            "overview": "Order Overview",
+            "orderCode": "Order Code",
+            "orderDate": "Order Date",
+            "subtotal": "Subtotal",
+            "discount": "Discount",
+            "coupon": "Coupon code",
+            "totalPayment": "Total payment"
+        }
+    },
+    "Profile": {
+        "info": {
+            "title": "Personal Profile",
+            "edit": "Edit Profile",
+            "name": "Username",
+            "namePlaceholder": "Enter your name",
+            "phone": "Phone Number",
+            "phonePlaceholder": "Enter your phone number",
+            "email": "Email",
+            "save": "Save Changes",
+            "saving": "Saving...",
+            "cancel": "Cancel",
+            "validation": {
+                "nameMin": "Name must be at least 2 characters"
+            }
+        },
+        "orders": {
+            "title": "Order History",
+            "loading": "Loading order history...",
+            "noOrders": "You have no orders yet"
+        },
+        "sidebar": {
+            "title": "My Account",
+            "info": "Personal Info",
+            "orders": "Order History",
+            "address": "Shipping Addresses"
+        }
+    },
+    "Contact": {
+        "title": "Contact Us",
+        "metaTitle": "Contact - Shoe Shop",
+        "metaDescription": "Contact Shoe Shop for support with orders, sizing, or any other questions.",
+        "description": "Contact us through the following channels. We are always ready to help.",
+        "phone": "Phone",
+        "email": "Email",
+        "address": "Shop Address",
+        "followUs": "Follow Us"
+    },
+    "Unauthorized": {
+        "title": "Access Denied",
+        "description": "You do not have permission to access this page. Please contact the administrator if you need access.",
+        "backHome": "Back to Home"
+    },
+    "Common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "search": "Search",
+        "cancel": "Cancel",
+        "save": "Save",
+        "confirm": "Confirm",
+        "back": "Back",
+        "pagination": {
+            "previous": "Prev",
+            "next": "Next"
+        }
+    },
+    "Address": {
+        "title": {
+            "add": "Add Address",
+            "edit": "Edit Address",
+            "addFirst": "Add your first address"
+        },
+        "noAddressSaved": "No address saved yet.",
+        "receiver": "Receiver Name",
+        "receiverPlaceholder": "Enter receiver name",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter phone number",
+        "province": "Province/City",
+        "district": "District",
+        "ward": "Ward",
+        "select": "Select",
+        "detail": "Detailed Address",
+        "detailPlaceholder": "House number, street name, room number...",
+        "default": "Set as default address",
+        "defaultDescription": "This address will be used by default during checkout",
+        "save": "Save Address",
+        "saving": "Saving...",
+        "validation": {
+            "required": "{field} is required",
+            "invalidPhone": "Invalid phone number",
+            "selectProvince": "Please select a province/city",
+            "selectDistrict": "Please select a district",
+            "selectWard": "Please select a ward",
+            "detailEmpty": "Detailed address cannot be empty"
+        }
+    }
+}

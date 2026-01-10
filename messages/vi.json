@@ -1,0 +1,300 @@
+{
+    "HomePage": {
+        "title": "Shoes Shop",
+        "description": "Cửa hàng giày yêu thích của bạn",
+        "metaTitle": "Trang Chủ Cửa Hàng Giày",
+        "metaDescription": "Khám phá giày thể thao và giày dép chất lượng cao tại Cửa hàng giày. Sản phẩm bán chạy nhất, giày được đánh giá cao và xu hướng giày thể thao mới nhất với giá không thể đánh bại.",
+        "hero": {
+            "tag": "HÀNG MỚI VỀ",
+            "title": "KHAI PHÁ",
+            "accent": "TỐC ĐỘ",
+            "description": "Trải nghiệm cảm giác thoải mái vượt trội với những đôi giày được thiết kế tối ưu cho chuyển động. Đế giày êm, đàn hồi tốt, hỗ trợ bàn chân hiệu quả.",
+            "cta": "Mua Ngay"
+        },
+        "bestSeller": {
+            "tag": "Được yêu thích nhất",
+            "title": "Sản phẩm bán chạy",
+            "viewAll": "Xem tất cả sản phẩm bán chạy"
+        },
+        "category": {
+            "tag": "Khám phá",
+            "title": "Danh mục sản phẩm",
+            "productCount": "Sản phẩm",
+            "viewAll": "Xem tất cả"
+        },
+        "brands": {
+            "title": "Thương hiệu"
+        }
+    },
+    "Header": {
+        "nav": {
+            "home": "Trang chủ",
+            "products": "Sản phẩm",
+            "contact": "Liên hệ"
+        },
+        "search": {
+            "placeholder": "Tìm kiếm sản phẩm..."
+        },
+        "account": {
+            "profile": "Hồ sơ của tôi",
+            "logout": "Đăng xuất"
+        },
+        "mobile": {
+            "menu": "Menu",
+            "navigation": "Điều hướng",
+            "account": "Tài khoản"
+        }
+    },
+    "Footer": {
+        "contact": "Liên hệ",
+        "description": "Cửa hàng giày thể thao chính hãng, đa dạng mẫu mã. Cam kết chất lượng và dịch vụ tốt nhất.",
+        "contactInfo": "Thông tin liên hệ",
+        "address": "123 Đường ABC, Quận XYZ, TP.HCM",
+        "copyright": "© {year} Cửa hàng giày KICKS. Đã đăng ký bản quyền.",
+        "privacy": "Chính sách bảo mật",
+        "terms": "Điều khoản"
+    },
+    "Sidebar": {
+        "title": "Bộ lọc",
+        "reset": "Mặc định",
+        "apply": "Áp dụng",
+        "price": "Giá",
+        "brand": "Thương hiệu",
+        "category": "Danh mục",
+        "minPrice": "Tối thiểu",
+        "maxPrice": "Tối đa",
+        "allCategories": "Tất cả danh mục",
+        "currency": "₫"
+    },
+    "Products": {
+        "title": "Sản phẩm",
+        "metaTitle": "Sản phẩm - Shoe Shop",
+        "metaDescription": "Khám phá bộ sưu tập giày mới nhất của chúng tôi.",
+        "filter": "Bộ lọc sản phẩm",
+        "noProducts": "Không tìm thấy sản phẩm",
+        "noProductsDesc": "Thử điều chỉnh bộ lọc của bạn",
+        "sort": {
+            "label": "Sắp xếp theo:",
+            "bestSelling": "Bán chạy",
+            "oldest": "Cũ",
+            "newest": "Mới"
+        },
+        "details": {
+            "outOfStock": "Hết hàng",
+            "inStock": "Còn hàng",
+            "remaining": "Số lượng còn lại:",
+            "items": "sản phẩm",
+            "quantity": "Số lượng:",
+            "addToCart": "Thêm vào giỏ hàng",
+            "buyNow": "Mua Ngay",
+            "similarProducts": "Sản phẩm tương tự",
+            "backToShopping": "Tiếp tục mua hàng"
+        }
+    },
+    "Reviews": {
+        "title": "Đánh giá từ khách hàng",
+        "writeReview": "Viết đánh giá",
+        "noReviews": "Chưa có đánh giá nào",
+        "rating": "{count} đánh giá",
+        "average": "Trung bình {rating} sao",
+        "dialog": {
+            "title": "Gửi đánh giá của bạn",
+            "description": "Chia sẻ trải nghiệm của bạn về sản phẩm này.",
+            "label": "Đánh giá của bạn",
+            "placeholder": "Nhập nội dung đánh giá...",
+            "submit": "Gửi đánh giá"
+        }
+    },
+    "Auth": {
+        "login": {
+            "title": "Chào mừng trở lại",
+            "description": "Đăng nhập để truy cập tài khoản và bắt đầu mua sắm.",
+            "email": "Địa chỉ email",
+            "password": "Mật khẩu",
+            "forgotPassword": "Quên mật khẩu?",
+            "submit": "Đăng nhập",
+            "loading": "Đang đăng nhập...",
+            "or": "Hoặc tiếp tục với",
+            "google": "Tiếp tục với Google",
+            "noAccount": "Chưa có tài khoản?",
+            "register": "Đăng ký",
+            "passwordPlaceholder": "Nhập mật khẩu của bạn"
+        },
+        "register": {
+            "title": "Tạo tài khoản",
+            "description": "Tham gia cùng chúng tôi để nhận những ưu đãi tốt nhất.",
+            "name": "Họ và tên",
+            "namePlaceholder": "Nhập họ tên của bạn",
+            "email": "Địa chỉ email",
+            "password": "Mật khẩu",
+            "confirmPassword": "Xác nhận mật khẩu",
+            "submit": "Đăng ký",
+            "loading": "Đang đăng ký...",
+            "hasAccount": "Đã có tài khoản?",
+            "login": "Đăng nhập"
+        },
+        "otp": {
+            "title": "Xác thực OTP",
+            "description": "Vui lòng nhập mã OTP đã được gửi đến email của bạn.",
+            "submit": "Xác nhận",
+            "resend": "Gửi lại mã",
+            "timer": "Gửi lại sau {seconds}s",
+            "resendSuccess": "OTP đã được gửi lại đến email của bạn!",
+            "verifySuccess": "Xác thực OTP thành công!",
+            "invalidOtp": "OTP không hợp lệ. Vui lòng thử lại.",
+            "noCode": "Nhận mã?"
+        },
+        "forgotPassword": {
+            "title": "Quên mật khẩu",
+            "description": "Nhập email của bạn để nhận liên kết đặt lại mật khẩu.",
+            "submit": "Gửi liên kết",
+            "success": "OTP đã được gửi đến email của bạn!",
+            "hasAccount": "Nhớ mật khẩu của bạn?"
+        },
+        "changePassword": {
+            "title": "Đổi mật khẩu",
+            "descriptionForget": "Nhập mật khẩu mới để đặt lại tài khoản của bạn.",
+            "descriptionChange": "Nhập mật khẩu hiện tại và mật khẩu mới.",
+            "currentPassword": "Mật khẩu hiện tại",
+            "currentPasswordPlaceholder": "Nhập mật khẩu hiện tại của bạn",
+            "newPassword": "Mật khẩu mới",
+            "newPasswordPlaceholder": "Nhập mật khẩu mới của bạn",
+            "confirmNewPassword": "Xác nhận mật khẩu mới",
+            "confirmNewPasswordPlaceholder": "Xác nhận mật khẩu mới của bạn",
+            "submit": "Đổi mật khẩu"
+        }
+    },
+    "Cart": {
+        "title": "Giỏ hàng",
+        "description": "Xem lại các sản phẩm trong giỏ hàng và tiến hành thanh toán",
+        "empty": "Giỏ hàng của bạn đang trống",
+        "startShopping": "Bắt đầu mua sắm",
+        "checkout": "Thanh toán",
+        "summary": "Tóm tắt đơn hàng",
+        "subtotal": "Giá gốc tổng cộng",
+        "discount": "Tổng giảm giá",
+        "total": "Tổng thanh toán",
+        "items": "sản phẩm",
+        "continueShopping": "Tiếp tục mua sắm",
+        "remove": "Xóa"
+    },
+    "Checkout": {
+        "title": "Thanh toán",
+        "processing": "Đang xử lý đơn hàng...",
+        "wait": "Vui lòng đợi trong giây lát",
+        "selectAddress": "Vui lòng chọn địa chỉ giao hàng",
+        "noItems": "Không có sản phẩm nào để thanh toán",
+        "success": {
+            "title": "Đặt hàng thành công!",
+            "description": "Cảm ơn bạn đã tin tưởng và mua hàng tại Shoes Shop."
+        }
+    },
+    "Order": {
+        "detail": {
+            "title": "Chi tiết đơn hàng",
+            "loading": "Đang tải thông tin đơn hàng...",
+            "error": "Không thể tải thông tin đơn hàng",
+            "notFound": "Không tìm thấy đơn hàng",
+            "viewMyOrders": "Xem đơn hàng của tôi",
+            "purchasedItems": "Sản phẩm đã mua",
+            "itemsCount": "{count} sản phẩm",
+            "noImage": "Không có hình ảnh",
+            "quantity": "Số lượng",
+            "total": "Tổng",
+            "shippingInfo": "Thông tin giao hàng",
+            "overview": "Tổng quan đơn hàng",
+            "orderCode": "Mã đơn hàng",
+            "orderDate": "Ngày đặt",
+            "subtotal": "Tạm tính",
+            "discount": "Giảm giá",
+            "coupon": "Mã giảm giá",
+            "totalPayment": "Tổng thanh toán"
+        }
+    },
+    "Profile": {
+        "info": {
+            "title": "Hồ sơ cá nhân",
+            "edit": "Chỉnh sửa hồ sơ",
+            "name": "Tên người dùng",
+            "namePlaceholder": "Nhập tên của bạn",
+            "phone": "Số điện thoại",
+            "phonePlaceholder": "Nhập số điện thoại",
+            "email": "Email",
+            "save": "Lưu thay đổi",
+            "saving": "Đang lưu...",
+            "cancel": "Hủy",
+            "validation": {
+                "nameMin": "Tên phải có ít nhất 2 ký tự"
+            }
+        },
+        "orders": {
+            "title": "Lịch sử đơn hàng",
+            "loading": "Đang tải lịch sử đơn hàng...",
+            "noOrders": "Bạn chưa có đơn hàng nào"
+        },
+        "sidebar": {
+            "title": "Tài khoản của tôi",
+            "info": "Thông tin cá nhân",
+            "orders": "Lịch sử mua hàng",
+            "address": "Địa chỉ giao hàng"
+        }
+    },
+    "Contact": {
+        "title": "Liên hệ với chúng tôi",
+        "metaTitle": "Liên hệ - Shoe Shop",
+        "metaDescription": "Liên hệ với Shoe Shop để được hỗ trợ về đơn hàng, kích thước, hoặc bất kỳ câu hỏi nào.",
+        "description": "Liên hệ với chúng tôi qua các kênh sau. Chúng tôi luôn sẵn sàng hỗ trợ bạn.",
+        "phone": "Điện thoại",
+        "email": "Email",
+        "address": "Địa chỉ cửa hàng",
+        "followUs": "Theo dõi chúng tôi"
+    },
+    "Unauthorized": {
+        "title": "Không có quyền truy cập",
+        "description": "Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên nếu bạn cần quyền truy cập.",
+        "backHome": "Về trang chủ"
+    },
+    "Common": {
+        "loading": "Đang tải...",
+        "error": "Đã xảy ra lỗi",
+        "search": "Tìm kiếm",
+        "cancel": "Hủy",
+        "save": "Lưu",
+        "confirm": "Xác nhận",
+        "back": "Quay lại",
+        "pagination": {
+            "previous": "Trước",
+            "next": "Sau"
+        }
+    },
+    "Address": {
+        "title": {
+            "add": "Thêm Địa chỉ",
+            "edit": "Cập nhật Địa chỉ",
+            "addFirst": "Thêm địa chỉ đầu tiên"
+        },
+        "noAddressSaved": "Chưa có địa chỉ nào được lưu.",
+        "receiver": "Tên người nhận",
+        "receiverPlaceholder": "Nhập tên người nhận",
+        "phone": "Số điện thoại",
+        "phonePlaceholder": "Nhập số điện thoại",
+        "province": "Tỉnh/Thành phố",
+        "district": "Quận/Huyện",
+        "ward": "Phường/Xã",
+        "select": "Chọn",
+        "detail": "Địa chỉ chi tiết",
+        "detailPlaceholder": "Số nhà, tên đường, số phòng...",
+        "default": "Đặt làm địa chỉ mặc định",
+        "defaultDescription": "Địa chỉ này sẽ được sử dụng mặc định khi thanh toán",
+        "save": "Lưu địa chỉ",
+        "saving": "Đang lưu...",
+        "validation": {
+            "required": "{field} là bắt buộc",
+            "invalidPhone": "Số điện thoại không hợp lệ",
+            "selectProvince": "Vui lòng chọn tỉnh/thành phố",
+            "selectDistrict": "Vui lòng chọn quận/huyện",
+            "selectWard": "Vui lòng chọn phường/xã",
+            "detailEmpty": "Địa chỉ chi tiết không được để trống"
+        }
+    }
+}

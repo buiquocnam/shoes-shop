@@ -9,6 +9,7 @@ import {
     SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { CategoryType } from "@/features/product/types";
+import { useTranslations } from "next-intl";
 
 interface CategoryFilterProps {
     categories: CategoryType[];
@@ -23,6 +24,8 @@ export function CategoryFilter({
     selectedCategoryId,
     setSelectedCategoryId,
 }: CategoryFilterProps) {
+    const t = useTranslations('Sidebar');
+
     return (
         <div className="flex flex-col gap-2">
             {isLoadingCategories && categories.length === 0 ? (
@@ -45,7 +48,7 @@ export function CategoryFilter({
                                         : "text-muted-foreground hover:bg-accent"
                                 )}
                             >
-                                Tất cả danh mục
+                                {t('allCategories')}
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                         {categories.map((category) => (

@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { useState } from 'react';
 import { EyeIcon, EyeClosedIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -13,8 +13,10 @@ import { useRegister } from '@/features/auth/hooks';
 import { Spinner } from '@/components/ui/spinner';
 import { useRouter } from 'next/navigation';
 import { setOtpData } from '@/lib/auth';
+import { useTranslations } from 'next-intl';
 
 export default function RegisterForm() {
+    const t = useTranslations('Auth.register');
     const [showPassword, setShowPassword] = useState(false);
     const { mutate: register, isPending, error } = useRegister();
     const router = useRouter();
@@ -42,20 +44,20 @@ export default function RegisterForm() {
         <div className="w-full max-w-md mx-auto">
             <div className="flex flex-col gap-2 mb-8">
                 <h1 className="text-4xl font-bold tracking-tight">
-                    Tạo tài khoản
+                    {t('title')}
                 </h1>
                 <p className="text-muted-foreground">
-                    Nhận quyền truy cập các ưu đãi độc quyền và thanh toán nhanh hơn.
+                    {t('description')}
                 </p>
             </div>
 
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FieldGroup>
                     <Field data-invalid={!!form.formState.errors.name}>
-                        <FieldLabel htmlFor="full-name">Họ và tên</FieldLabel>
+                        <FieldLabel htmlFor="full-name">{t('name')}</FieldLabel>
                         <Input
                             id="full-name"
-                            placeholder="Nhập họ và tên của bạn"
+                            placeholder={t('namePlaceholder')}
                             className="h-12"
                             {...form.register("name")}
                         />
@@ -63,7 +65,7 @@ export default function RegisterForm() {
                     </Field>
 
                     <Field data-invalid={!!form.formState.errors.email}>
-                        <FieldLabel htmlFor="email">Địa chỉ email</FieldLabel>
+                        <FieldLabel htmlFor="email">{t('email')}</FieldLabel>
                         <Input
                             id="email"
                             type="email"
@@ -75,12 +77,12 @@ export default function RegisterForm() {
                     </Field>
 
                     <Field data-invalid={!!form.formState.errors.password}>
-                        <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
+                        <FieldLabel htmlFor="password">{t('password')}</FieldLabel>
                         <div className="relative">
                             <Input
                                 id="password"
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Tạo mật khẩu"
+                                placeholder={t('password')}
                                 className="h-12 pr-12"
                                 {...form.register("password")}
                             />
@@ -98,11 +100,11 @@ export default function RegisterForm() {
                     </Field>
 
                     <Field data-invalid={!!form.formState.errors.confirmPassword}>
-                        <FieldLabel htmlFor="confirm-password">Xác nhận mật khẩu</FieldLabel>
+                        <FieldLabel htmlFor="confirm-password">{t('confirmPassword')}</FieldLabel>
                         <Input
                             id="confirm-password"
                             type="password"
-                            placeholder="Nhập lại mật khẩu"
+                            placeholder={t('confirmPassword')}
                             className="h-12"
                             {...form.register("confirmPassword")}
                         />
@@ -120,13 +122,13 @@ export default function RegisterForm() {
                         disabled={isPending}
                         type="submit"
                     >
-                        {isPending ? <Spinner className="size-6" /> : "Tạo tài khoản"}
+                        {isPending ? <Spinner className="size-6" /> : t('submit')}
                     </Button>
 
                     <FieldDescription className="text-center text-base">
-                        Đã có tài khoản?{' '}
+                        {t('hasAccount')}{' '}
                         <Link className="font-bold text-primary hover:underline" href="/login">
-                            Đăng nhập
+                            {t('login')}
                         </Link>
                     </FieldDescription>
                 </FieldGroup>

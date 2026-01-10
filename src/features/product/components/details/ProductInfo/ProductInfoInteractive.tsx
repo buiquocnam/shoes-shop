@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { ProductDetail } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import { useCheckoutStore } from "@/store";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { AddToCartRequest } from "@/features/cart/types";
 import { ShoppingCart, Zap, Minus, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ProductInfoInteractiveProps {
   product: ProductDetail;
@@ -76,6 +77,7 @@ const SizeButton = ({
 export default function ProductInfoInteractive({
   product,
 }: ProductInfoInteractiveProps) {
+  const t = useTranslations('Products.details');
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
   const setCheckout = useCheckoutStore((state) => state.setCheckout);
@@ -176,7 +178,7 @@ export default function ProductInfoInteractive({
     return (
       <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
         <span className="inline-block text-sm font-bold text-white uppercase bg-red-600 px-3 py-1.5 rounded-md">
-          Hết hàng
+          {t('outOfStock')}
         </span>
       </div>
     );
@@ -225,13 +227,13 @@ export default function ProductInfoInteractive({
       {selectedData && (
         <div className="flex flex-col gap-3">
           <div className="text-sm text-gray-600">
-            <span className="font-medium">Số lượng còn lại: </span>
+            <span className="font-medium">{t('remaining')} </span>
             <span className="font-bold">
-              {stock} sản phẩm
+              {stock} {t('items')}
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="font-bold text-sm uppercase text-gray-600">Số lượng:</span>
+            <span className="font-bold text-sm uppercase text-gray-600">{t('quantity')}</span>
             <div className="flex items-center gap-2 border-2 border-[#f4ebe7] rounded-xl">
               <Button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -264,7 +266,7 @@ export default function ProductInfoInteractive({
             className="flex-1 border-2 border-primary bg-transparent text-primary hover:bg-primary/5 font-bold text-lg h-14 rounded-2xl transition-all flex items-center justify-center gap-2"
           >
             <ShoppingCart className="w-5 h-5" />
-            Thêm vào giỏ hàng
+            {t('addToCart')}
           </Button>
           <Button
             onClick={handleBuy}
@@ -272,7 +274,7 @@ export default function ProductInfoInteractive({
             className="flex-1 bg-primary hover:bg-primary-hover text-white font-bold text-lg h-14 rounded-2xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
           >
             <Zap className="w-5 h-5" />
-            Mua Ngay
+            {t('buyNow')}
           </Button>
         </div>
       </div>

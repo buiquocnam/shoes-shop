@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface PriceFilterProps {
     minPriceInput: string;
@@ -23,14 +24,16 @@ export function PriceFilter({
     setPriceRange,
     handleQuickPriceRange,
 }: PriceFilterProps) {
+    const t = useTranslations('Sidebar');
+
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3 p-2">
                 <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">₫</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">{t('currency')}</span>
                     <Input
                         type="number"
-                        placeholder="Tối thiểu"
+                        placeholder={t('minPrice')}
                         value={minPriceInput}
                         onChange={(e) => {
                             setMinPriceInput(e.target.value);
@@ -43,10 +46,10 @@ export function PriceFilter({
                 </div>
                 <div className="h-px w-3 bg-border"></div>
                 <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">₫</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">{t('currency')}</span>
                     <Input
                         type="number"
-                        placeholder="Tối đa"
+                        placeholder={t('maxPrice')}
                         value={maxPriceInput}
                         onChange={(e) => {
                             setMaxPriceInput(e.target.value);
