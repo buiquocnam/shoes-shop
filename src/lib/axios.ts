@@ -1,39 +1,35 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/store";
-import { API_BASE_URL, isDev } from "./config";
 import type { ApiResponse } from "@/types/api";
-import { ensureValidToken } from "./token";
 
-/**
- * Axios instance với cấu hình base
- */
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  
+  failedQueue = [];
+};
+
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api",
   headers: {
     Accept: "application/json",
   },
 });
 
-
-
 axiosInstance.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    try {
-      // Check và refresh token trước khi gọi API (chỉ ở client-side)
-      if (typeof window !== "undefined") {
-        await ensureValidToken();
-      }
-
-      // Inject access token vào headers
-      const { accessToken } = useAuthStore.getState();
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-    } catch (error) {
-      if (isDev) {
-        console.error("❌ Error in request interceptor:", error);
-      }
-      return Promise.reject(error);
+  (config: InternalAxiosRequestConfig) => {
+    // Inject access token vào headers
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     if (config.data instanceof FormData) {
@@ -49,33 +45,21 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse<ApiResponse | unknown>) => {
     const data = response.data as ApiResponse;
     
-    // Nếu response có dạng ApiResponse, extract result
     if (data && typeof data === "object" && "result" in data) {
       response.data = data.result;
     }
     
     return response;
   },
-  (error: AxiosError) => {
-    if (isDev) {
-      console.error("❌ API Error:", {
-        message: error.message,
-        code: error.code,
-        status: error.response?.status,
-        url: error.config?.url,
-      });
-    }
-
+  async (error: AxiosError) => {
     // Xử lý lỗi từ API
     if (error.response) {
       const responseData = error.response.data;
 
-      // Nếu error response có dạng {code, result/message}
       if (responseData && typeof responseData === "object" && "code" in responseData) {
         const apiError = responseData as ApiResponse & { message?: string };
         error.message = apiError.message || error.message || "An error occurred";
@@ -84,14 +68,55 @@ axiosInstance.interceptors.response.use(
     }
 
     // Xử lý lỗi 401 (Unauthorized)
-    if (error.response?.status === 401 && typeof window !== "undefined") {
-      useAuthStore.getState().logout();
-      window.location.href = "/login";
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    
+    if (error.response?.status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+      if (isRefreshing) {
+        return new Promise(function(resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        }).then(token => {
+          if (originalRequest.headers) {
+             originalRequest.headers.Authorization = 'Bearer ' + token;
+          }
+          return axiosInstance(originalRequest);
+        }).catch(err => {
+          return Promise.reject(err);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Dynamic import to avoid circular dependency
+        const { authApi } = await import('@/features/auth/services/auth.api');
+        const response = await authApi.refreshToken();
+        
+        const { access_token, user } = response;
+        useAuthStore.getState().setAuth(user, access_token);
+        
+         // Update cookies
+        document.cookie = `access_token=${access_token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+        
+        processQueue(null, access_token);
+        
+        if (originalRequest.headers) {
+           originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        }
+        
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        useAuthStore.getState().logout();
+        window.location.href = "/vi/login";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
 
     return Promise.reject(error);
   }
 );
-
 
 export default axiosInstance;

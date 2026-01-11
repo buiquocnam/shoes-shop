@@ -59,9 +59,14 @@ export default function VerifyOtp({ email, status }: { email: string, status: 'R
                 status: status,
             });
             if (response) {
-                await clearOtpData();
                 toast.success(t('verifySuccess') || 'OTP verified successfully');
-                router.push('/login');
+                if (status === 'FORGET_PASS') {
+                    // Do not clear OTP data here as it is needed for the ChangePasswordPage check
+                    router.push(`/change-password?email=${encodeURIComponent(email)}&status=${status}`);
+                } else {
+                    await clearOtpData();
+                    router.push('/login');
+                }
             } else {
                 toast.error(t('invalidOtp') || 'Invalid OTP');
             }

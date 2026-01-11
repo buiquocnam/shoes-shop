@@ -7,30 +7,21 @@ import { Role } from "@/types";
 interface AuthState {
   user: User | null;
   accessToken: string | null;
-  refreshToken: string | null;
-  _hasHydrated: boolean;
-  setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  setAuth: (user: User, accessToken: string) => void;
   updateUser: (user: User) => void;
   logout: () => void;
 }
 
-// Lưu set function để dùng trong onRehydrateStorage
-let setHydrated: ((state: Partial<AuthState>) => void) | null = null;
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => {
-      // Lưu set function để dùng trong onRehydrateStorage
-      setHydrated = set;
-
       return {
         user: null,
         accessToken: null,
-        refreshToken: null,
         _hasHydrated: false,
 
-        setAuth: (user, accessToken, refreshToken) => {
-          set({ user, accessToken, refreshToken });
+        setAuth: (user, accessToken) => {
+          set({ user, accessToken });
         },
 
         updateUser: (updatedUser) => {
@@ -38,7 +29,8 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: () => {
-          set({ user: null, accessToken: null, refreshToken: null });
+          document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          set({ user: null, accessToken: null });
         },
       };
     },
@@ -48,17 +40,12 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
       }),
 
       onRehydrateStorage: () => {
         return (state, error) => {
           if (error) {
             console.error("Failed to rehydrate auth store:", error);
-          }
-          
-          if (setHydrated) {
-            setHydrated({ _hasHydrated: true });
           }
         };
       },
@@ -67,15 +54,3 @@ export const useAuthStore = create<AuthState>()(
 );
 
 
-export function useIsAuthenticated() {
-  return useAuthStore((state) => Boolean(state.accessToken));
-}
-
-
-export function useIsAdmin() {
-  return useAuthStore((state) => {
-    if (!state.accessToken) return false;
-    const role = getRoleFromToken(state.accessToken);
-    return role === "ADMIN";
-  });
-}

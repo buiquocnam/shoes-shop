@@ -1,257 +1,324 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X, Upload, Trash2 } from "lucide-react";
+import { X, Upload, ImagePlus, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+} from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
+
 import { bannerSchema, BannerFormValues } from "../schema";
 import { Banner, BannerSlot } from "@/types/banner";
 
 interface BannerCardProps {
-    banner?: Banner;
-    onSubmit: (data: FormData) => Promise<void>;
-    isLoading?: boolean;
+  banner?: Banner;
+  slot: BannerSlot;
+  onSubmit: (data: FormData) => Promise<void>;
+  isLoading?: boolean;
 }
 
 export default function BannerCard({
-    banner,
-    onSubmit,
-    isLoading,
+  banner,
+  slot,
+  onSubmit,
+  isLoading,
 }: BannerCardProps) {
-   
-    const [imagePreview, setImagePreview] = useState<string | null>(
-        banner?.imageUrl || null
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    banner?.imageUrl || null
+  );
+
+  const form = useForm<BannerFormValues>({
+    resolver: zodResolver(bannerSchema),
+    defaultValues: {
+      title: banner?.title ?? "",
+      link: banner?.link ?? "",
+      slot: slot,
+      image: undefined,
+      active: banner?.active ?? true,
+    },
+  });
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = form;
+
+  // Sync with banner changes (important when a new banner is created or updated)
+  useEffect(() => {
+    if (banner) {
+      reset({
+        title: banner.title,
+        link: banner.link,
+        slot: banner.slot,
+        active: banner.active,
+        image: undefined,
+      });
+      setImagePreview(banner.imageUrl);
+    }
+  }, [banner, reset]);
+
+  const handleFormSubmit = async (data: BannerFormValues) => {
+    // Required image ONLY when creating new banner
+    if (!data.image && !banner) {
+      setError("image", {
+        type: "manual",
+        message: "Vui lòng chọn hình ảnh",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    const bannerData: Partial<Banner> = {
+      title: data.title,
+      link: data.link,
+      slot: slot,
+      active: data.active,
+    };
+
+    if (banner?.id) {
+      bannerData.id = banner.id;
+    }
+    console.log(bannerData);
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(bannerData)], {
+        type: "application/json",
+      })
     );
 
-    const form = useForm<BannerFormValues>({
-        resolver: zodResolver(bannerSchema),
-        defaultValues: {
-            title: banner?.title || "",
-            link: banner?.link || "",
-            slot: banner?.slot || "",
-            image: undefined,
-            active: banner?.active ?? false,
-        },
-    });
+    if (data.image) {
+      formData.append("file", data.image);
+    }
 
-    const handleFormSubmit = async (data: BannerFormValues) => {
-        if (!data.image && !banner) {
-            form.setError("image", {
-                type: "manual",
-                message: "Vui lòng chọn hình ảnh",
-            });
-            return;
-        }
+    try {
+      await onSubmit(formData);
+      // Optional: clear file selection after success if it was a file upload
+      if (data.image) {
+        setValue("image", undefined);
+      }
+    } catch (error) {
+      console.error("Submit banner error:", error);
+    }
+  };
 
-        const formData = new FormData();
-        const bannerData: {
-            title: string;
-            link: string;
-            slot: BannerSlot;
-            active?: boolean;
-            id?: string;
-        } = {
-            title: data.title,
-            link: data.link,
-            slot: data.slot as BannerSlot,
-        };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-        if (banner?.id) {
-            bannerData.id = banner.id;
-            bannerData.active = data.active ?? false;
-        }
+    setValue("image", file, { shouldValidate: true });
+    clearErrors("image");
 
-        const requestBlob = new Blob([JSON.stringify(bannerData)], {
-            type: "application/json",
-        });
-        formData.append("request", requestBlob);
-
-        if (data.image) {
-            formData.append("file", data.image);
-        }
-
-        try {
-            await onSubmit(formData);
-        } catch (err) {
-            console.error(err);
-        }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
     };
+    reader.readAsDataURL(file);
+  };
 
-    const handleImageChange = (files: FileList | null) => {
-        if (!files || files.length === 0) return;
-        const file = files[0];
-        form.setValue("image", file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-    };
+  const removeImage = () => {
+    setValue("image", undefined, { shouldValidate: true });
+    setImagePreview(banner?.imageUrl || null);
+  };
 
-    const handleRemoveImage = () => {
-        form.setValue("image", undefined);
-        setImagePreview(banner?.imageUrl || null);
-    };
+  const onInvalid = (errors: any) => {
+    console.error("Banner Form Validation Errors:", errors);
+  };
 
-    return (
-        <Card className={`relative overflow-hidden ${isLoading ? "opacity-60" : ""}`}>
-            {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg z-50 pointer-events-none">
-                    <Spinner className="h-8 w-8 pointer-events-auto" />
-                </div>
+  return (
+    <Card className={cn(
+      "overflow-hidden transition-all duration-300 border-muted-foreground/10 flex flex-col h-full",
+      isLoading && "opacity-60 grayscale-[0.2]",
+      !banner && "border-dashed border-2 bg-muted/20"
+    )}>
+      <CardHeader className="pb-4 space-y-4">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-xl font-bold">
+                {slot.replace("HOME_", "").replace("_", " ")}
+              </CardTitle>
+              {banner?.active && (
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              )}
+            </div>
+            <CardDescription className="text-xs uppercase font-medium tracking-tight opacity-70">
+              Vị trí: {slot}
+            </CardDescription>
+          </div>
+
+          <Controller
+            control={control}
+            name="active"
+            render={({ field }) => (
+              <div className="flex flex-col items-end gap-1.5">
+                <Switch
+                  checked={field.value}
+                  disabled={isLoading}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked);
+                    if (banner) {
+                      handleSubmit(handleFormSubmit, onInvalid)();
+                    }
+                  }}
+                />
+                <span className={cn(
+                  "text-[10px] font-bold uppercase tracking-widest",
+                  field.value ? "text-primary" : "text-muted-foreground"
+                )}>
+                  {field.value ? "Hiển thị" : "Đã ẩn"}
+                </span>
+              </div>
             )}
-            <CardHeader className="pb-4">
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                            <CardTitle className="text-xl">{banner?.slot}</CardTitle>
-                            {banner && (
-                                <Controller
-                                    control={form.control}
-                                    name="active"
-                                    render={({ field }) => {
-                                        const handleActiveToggle = async (checked: boolean) => {
-                                            field.onChange(checked);
-                                            // Lấy toàn bộ giá trị form hiện tại
-                                            const currentValues = form.getValues();
-                                            // Tạo data với active mới
-                                            const data = {
-                                                ...currentValues,
-                                                active: checked,
-                                            };
-                                            // Submit ngay với giá trị mới
-                                            await handleFormSubmit(data);
-                                        };
+          />
+        </div>
+      </CardHeader>
 
-                                        return (
-                                            <div className="flex items-center gap-2">
-                                                <Switch
-                                                    checked={field.value ?? false}
-                                                    onCheckedChange={handleActiveToggle}
-                                                    disabled={isLoading}
-                                                />
-                                                <span className="text-sm text-muted-foreground">
-                                                    {field.value ? "Hoạt động" : "Đã ẩn"}
-                                                </span>
-                                            </div>
-                                        );
-                                    }}
-                                />
-                            )}
-                        </div>
-                        <CardDescription className="mt-1">
-                            {banner ? "Cập nhật hoặc xóa banner" : "Tạo banner mới"}
-                        </CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
-
-            <CardContent>
-                <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-                    {/* Image Preview/Upload */}
-                    <Field data-invalid={!!form.formState.errors.image}>
-                        <div className="space-y-3">
-                            {imagePreview ? (
-                                <div className="relative w-full h-48 border-2 border-dashed rounded-lg overflow-hidden bg-muted/30">
-                                    <Image
-                                        src={imagePreview}
-                                        alt={banner?.title || "Banner preview"}
-                                        fill
-                                        unoptimized
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute top-2 right-2 flex gap-2">
-                                        <label
-                                            htmlFor={`banner-upload-${banner?.slot}`}
-                                            className="p-1.5 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors cursor-pointer"
-                                            title="Thay đổi ảnh"
-                                        >
-                                            <Upload className="h-4 w-4" />
-                                            <Input
-                                                id={`banner-upload-${banner?.slot}`}
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                onChange={(e) => handleImageChange(e.target.files)}
-                                            />
-                                        </label>
-                                        <button
-                                            type="button"
-                                            onClick={handleRemoveImage}
-                                            className="p-1.5 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 transition-colors"
-                                            title="Xóa ảnh"
-                                        >
-                                            <X className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <label
-                                    htmlFor={`banner-upload-new-${banner?.slot}`}
-                                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/30 transition-colors bg-muted/10 border-muted-foreground/20"
-                                >
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                                        <p className="mb-1 text-sm text-muted-foreground">
-                                            <span className="font-semibold text-foreground">Nhấp để tải lên</span> hoặc kéo thả
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">PNG, JPG, GIF tối đa 10MB</p>
-                                    </div>
-                                    <Input
-                                        id={`banner-upload-new-${banner?.slot}`}
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={(e) => handleImageChange(e.target.files)}
-                                    />
-                                </label>
-                            )}
-                        </div>
-                        <FieldError errors={[form.formState.errors.image]} />
-                    </Field>
-
-                    {/* Title */}
-                    <Field data-invalid={!!form.formState.errors.title}>
-                        <FieldLabel htmlFor={`title-${banner?.slot}`}>Tiêu đề</FieldLabel>
-                        <Input
-                            id={`title-${banner?.slot}`}
-                            placeholder="Nhập tiêu đề banner"
-                            {...form.register("title")}
-                            className="h-11"
+      <CardContent className="flex-1 flex flex-col">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit, onInvalid)}
+          className="space-y-6 flex-1 flex flex-col"
+        >
+          {/* IMAGE PREVIEW & UPLOAD */}
+          <div className="space-y-3">
+            <Field data-invalid={!!errors.image}>
+              <div className={cn(
+                "relative aspect-[16/9] w-full overflow-hidden rounded-xl border-2 transition-all group",
+                imagePreview ? "border-muted/30" : "border-dashed border-primary/20 bg-primary/5 hover:bg-primary/10"
+              )}>
+                {imagePreview ? (
+                  <>
+                    <Image
+                      src={imagePreview}
+                      alt="Banner Preview"
+                      fill
+                      unoptimized
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 flex items-center justify-center gap-3">
+                      <label className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white text-black shadow-xl ring-offset-2 ring-primary/20 hover:scale-110 active:scale-95 transition-all">
+                        <Upload className="h-5 w-5" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageChange}
                         />
-                        <FieldError errors={[form.formState.errors.title]} />
-                    </Field>
-
-                    {/* Link */}
-                    <Field data-invalid={!!form.formState.errors.link}>
-                        <FieldLabel htmlFor={`link-${banner?.slot}`}>Link</FieldLabel>
-                        <Input
-                            id={`link-${banner?.slot}`}
-                            placeholder="Nhập link (ví dụ: /products)"
-                            {...form.register("link")}
-                            className="h-11"
-                        />
-                        <FieldError errors={[form.formState.errors.link]} />
-                    </Field>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-end gap-3 pt-2">
-                        <Button type="submit" disabled={isLoading} className="w-full">
-                            {isLoading 
-                                ? (banner ? "Đang cập nhật..." : "Đang tạo...") 
-                                : (banner ? "Cập nhật" : "Tạo Banner")
-                            }
-                        </Button>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-xl hover:scale-110 active:scale-95 transition-all"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
                     </div>
-                </form>
-            </CardContent>
-        </Card>
-    );
+                    {/* Badge if new image selected */}
+                    {form.getValues("image") && (
+                      <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-[10px] font-bold text-primary-foreground rounded-md shadow-sm">
+                        ẢNH MỚI
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <label className="flex h-full w-full cursor-pointer flex-col items-center justify-center gap-4 p-6">
+                    <div className="p-4 rounded-full bg-primary/10 text-primary animate-pulse">
+                      <ImagePlus className="h-8 w-8" />
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="text-sm font-bold text-primary italic">Nhấp để tải ảnh lên</p>
+                      <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-tighter">
+                        Khuyên dùng tỷ lệ 16:9 cho vị trí này
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                )}
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[4px] z-10 font-bold italic tracking-widest text-primary animate-pulse">
+                    <Spinner className="mr-2 h-6 w-6" />
+                    ĐANG XỬ LÝ...
+                  </div>
+                )}
+              </div>
+              <FieldError errors={[errors.image]} />
+            </Field>
+          </div>
+
+          <div className="grid gap-5">
+            {/* TITLE */}
+            <Field data-invalid={!!errors.title}>
+              <FieldLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Tiêu đề quảng bá</FieldLabel>
+              <Input
+                {...register("title")}
+                placeholder="Nhập slogan hoặc tiêu đề..."
+                disabled={isLoading}
+                className="h-11 border-muted-foreground/20 bg-muted/30 transition-all focus-visible:ring-primary/20 focus-visible:bg-background"
+              />
+              <FieldError errors={[errors.title]} />
+            </Field>
+
+            {/* LINK */}
+            <Field data-invalid={!!errors.link}>
+              <FieldLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Đường dẫn hành động (CTA)</FieldLabel>
+              <Input
+                {...register("link")}
+                placeholder="https://myshop.com/promo-sale"
+                disabled={isLoading}
+                className="h-11 border-muted-foreground/20 bg-muted/30 transition-all focus-visible:ring-primary/20 focus-visible:bg-background"
+              />
+              <FieldError errors={[errors.link]} />
+            </Field>
+          </div>
+
+          <div className="mt-auto pt-6">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className={cn(
+                "w-full h-12 font-bold text-sm uppercase tracking-widest shadow-lg transition-all active:scale-[0.97]",
+                !banner ? "bg-primary hover:bg-primary/90" : "bg-neutral-800 hover:bg-black dark:bg-neutral-700"
+              )}
+            >
+              {isLoading ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4" />
+                  Gửi dữ liệu...
+                </>
+              ) : (
+                banner ? "Cập nhật dữ liệu" : "Thiết lập Banner"
+              )}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
 }

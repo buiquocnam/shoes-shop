@@ -7,7 +7,7 @@ import {
   updateCartItem,
 } from "@/features/cart/services";
 import { CartResponse, AddToCartRequest } from "@/features/cart/types";
-import { useIsAuthenticated } from "@/store/useAuthStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ import { toast } from "sonner";
  * Hook to fetch and manage cart data
  */
 export const useCart = () => {
-  const isAuthenticated = useIsAuthenticated();
+  const { user } = useAuthStore();
 
   const {
     data: cart,
@@ -26,7 +26,7 @@ export const useCart = () => {
   } = useQuery<CartResponse>({
     queryKey: userQueryKeys.cart.current(),
     queryFn: async () => await getCart(),
-    enabled: isAuthenticated,
+    enabled: !!user,
     staleTime: 30 * 1000, 
   });
 

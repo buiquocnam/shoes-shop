@@ -8,10 +8,10 @@ export interface Banner extends BaseEntity {
   slot: BannerSlot;
 }
 
-export type BannerSlot = "HOME_HERO" | "HOME_MID" | "HOME_BOTTOM";
+export type BannerSlot = "HOME_HERO" | "HOME_MID" | "SIDEBAR";
 
 export interface BannerFilters extends PaginationParams {
-  title?: string; 
+  title?: string;
   active?: boolean;
 }
 

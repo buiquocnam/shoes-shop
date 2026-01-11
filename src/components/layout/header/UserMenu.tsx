@@ -1,7 +1,7 @@
 'use client';
 
 import { User, ShoppingCart, LogOut } from "lucide-react";
-import { useAuthStore, useIsAuthenticated } from "@/store/useAuthStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useCart } from "@/features/cart/hooks/useCart";
 import { Link, useRouter } from "@/i18n/routing";
 import { useLogout } from "@/features/auth/hooks";
@@ -24,7 +24,6 @@ import { ThemeToggle } from "../../common/ThemeToggle";
 export function UserMenu() {
     const t = useTranslations('Header');
     const { user } = useAuthStore();
-    const isAuthenticated = useIsAuthenticated();
     const { cart } = useCart();
     const router = useRouter();
     const { mutateAsync: logout } = useLogout();
@@ -61,7 +60,7 @@ export function UserMenu() {
             </Link>
 
             {/* User Account */}
-            {isAuthenticated && user ? (
+            {user ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { AddressType } from '@/types/address';
 import { formatFullAddress } from '@/features/shared/utils/addressHelpers';
 import { useDeleteAddress, useUpdateDefaultAddress } from '@/features/shared/hooks/useAdress';
-import { Trash2, Star } from 'lucide-react';
+import { Trash2, Star, Edit2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AddressLineProps {
@@ -107,7 +107,7 @@ export function AddressLine({
           className="size-8 sm:size-9 text-muted-foreground hover:text-primary hover:bg-primary/10"
           title="Chỉnh sửa"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.91l-1.12 6.363a2 2 0 0 0 2.494 2.494l6.363-1.12a2 2 0 0 0 .91-.5l13.174-13.328z" /></svg>
+         <Edit2 />
         </Button>
         {!address.isDefault && (
           <Button
@@ -117,7 +117,7 @@ export function AddressLine({
             disabled={updateDefaultAddressMutation.isPending}
             className="size-8 sm:size-9"
           >
-            <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <Star />
           </Button>
         )}
         <Button
@@ -128,7 +128,7 @@ export function AddressLine({
           className="size-8 sm:size-9"
           title="Xóa địa chỉ"
         >
-          <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Trash2 />
         </Button>
       </div>
     </div>

@@ -144,7 +144,7 @@
         "forgotPassword": {
             "title": "Quên mật khẩu",
             "description": "Nhập email của bạn để nhận liên kết đặt lại mật khẩu.",
-            "submit": "Gửi liên kết",
+            "submit": "Gửi mã",
             "success": "OTP đã được gửi đến email của bạn!",
             "hasAccount": "Nhớ mật khẩu của bạn?"
         },
@@ -259,6 +259,7 @@
         "save": "Lưu",
         "confirm": "Xác nhận",
         "back": "Quay lại",
+        "detail": "Xem chi tiết",
         "pagination": {
             "previous": "Trước",
             "next": "Sau"

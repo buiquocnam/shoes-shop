@@ -61,7 +61,7 @@ export default function ForgetForm() {
                         <Input
                             id="email"
                             type="email"
-                            placeholder={tAuth('emailPlaceholder') || 'Enter email'}
+                            placeholder={'Enter email'}
                             className="h-12"
                             {...form.register("email")}
                         />

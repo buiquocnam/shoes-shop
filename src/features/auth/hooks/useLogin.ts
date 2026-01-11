@@ -2,12 +2,10 @@
 
 import { authApi } from "../services/auth.api";
 import type { LoginFormData } from "../schema";
-import type { AuthResponse } from "../types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { getUserRoleFromToken } from "@/lib/jwt";
-import { Role } from "@/types";
 import { toast } from "sonner";
 
 export function useLogin() {
@@ -18,8 +16,10 @@ export function useLogin() {
   return useMutation({
     mutationFn: ({email, password}: LoginFormData) => authApi.login({email, password}),
     onSuccess: (response) => {
-      // Lưu cả access token và refresh token
-      setAuth(response.user, response.access_token, response.refresh_token);
+      setAuth(response.user, response.access_token);
+      
+      document.cookie = `access_token=${response.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      
       const userRole = getUserRoleFromToken(response.access_token);
 
       if (userRole === "ADMIN") {

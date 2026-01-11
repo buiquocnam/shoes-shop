@@ -144,7 +144,7 @@
         "forgotPassword": {
             "title": "Forgot Password",
             "description": "Enter your email to receive a password reset link.",
-            "submit": "Send Link",
+            "submit": "Send Code",
             "success": "OTP sent to your email!",
             "hasAccount": "Remember your password?"
         },
@@ -259,6 +259,7 @@
         "save": "Save",
         "confirm": "Confirm",
         "back": "Back",
+        "detail": "View detail",
         "pagination": {
             "previous": "Prev",
             "next": "Next"

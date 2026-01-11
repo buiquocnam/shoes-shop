@@ -2,20 +2,9 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-import '@/styles/globals.css';
-// Header and Footer are client components, so they can be imported here
 import Header from '@/components/layout/Header';
-import { QueryProvider, SocketProvider, ChatProvider, ThemeProvider } from '@/providers';
-import { Toaster } from 'sonner';
+import { ChatProvider } from '@/providers';
 import { Footer } from '@/components/layout/Footer';
-import type { Metadata } from 'next';
-
-const plusJakarta = Plus_Jakarta_Sans({
-    subsets: ['latin', 'vietnamese'],
-    weight: ['300', '400', '500', '600', '700', '800'],
-    display: 'swap',
-});
 
 export async function generateMetadata({
     params
@@ -54,27 +43,11 @@ export default async function LocaleLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale} suppressHydrationWarning>
-            <body className={`${plusJakarta.className} antialiased`}>
-                <NextIntlClientProvider messages={messages}>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        <QueryProvider>
-                            <SocketProvider>
-                                <Header />
-                                {children}
-                                <Footer />
-                                <ChatProvider />
-                                <Toaster position="top-right" />
-                            </SocketProvider>
-                        </QueryProvider>
-                    </ThemeProvider>
-                </NextIntlClientProvider>
-            </body>
-        </html>
+        <NextIntlClientProvider messages={messages}>
+            <Header />
+            {children}
+            <Footer />
+            <ChatProvider />
+        </NextIntlClientProvider>
     );
 }

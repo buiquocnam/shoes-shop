@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCreateCart } from "@/features/cart/hooks/useCart";
 import { AlertLogin } from "@/features/product/components";
-import { useIsAuthenticated } from "@/store/useAuthStore";
-import { useCheckoutStore } from "@/store";
+import { useAuthStore, useCheckoutStore } from "@/store";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { AddToCartRequest } from "@/features/cart/types";
 import { ShoppingCart, Zap, Minus, Plus } from "lucide-react";
@@ -79,7 +78,7 @@ export default function ProductInfoInteractive({
 }: ProductInfoInteractiveProps) {
   const t = useTranslations('Products.details');
   const router = useRouter();
-  const isAuthenticated = useIsAuthenticated();
+  const { user } = useAuthStore();
   const setCheckout = useCheckoutStore((state) => state.setCheckout);
   const { mutate: createCart } = useCreateCart();
   const { variants, listImg, product: productInfo } = product;
@@ -131,7 +130,7 @@ export default function ProductInfoInteractive({
     : productInfo.price;
 
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
+    if (!user) {
       setShowLoginDialog(true);
       return;
     }
@@ -140,7 +139,7 @@ export default function ProductInfoInteractive({
   };
 
   const handleBuy = () => {
-    if (!isAuthenticated) {
+    if (!user) {
       setShowLoginDialog(true);
       return;
     }

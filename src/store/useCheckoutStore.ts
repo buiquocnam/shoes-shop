@@ -31,7 +31,7 @@ export const useCheckoutStore = create<CheckoutState>()(
     }),
     {
       name: 'checkout-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

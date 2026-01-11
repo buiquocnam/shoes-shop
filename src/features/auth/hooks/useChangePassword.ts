@@ -2,7 +2,7 @@
 
 import { authApi } from "../services/auth.api";
 import type { ChangePasswordType } from "../types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { clearOtpData } from "@/lib/auth";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -16,9 +16,9 @@ export function useChangePassword() {
       await clearOtpData();
       toast.success("Đổi mật khẩu thành công!");
       if (variables.status === "FORGET_PASS") {
-        router.push("/login");
+        router.push("/login" as any);
       } else {
-        router.push("/profile");
+        router.push("/profile" as any);
       }
     },
     onError: (error) => {

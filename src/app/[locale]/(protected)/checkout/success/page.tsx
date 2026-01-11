@@ -21,14 +21,9 @@ export default function CheckoutSuccessPage() {
   const queryClient = useQueryClient();
   const { items, orderId: storeOrderId, source } = useCheckoutStore();
 
-  const orderId = storeOrderId || searchParams.get('orderId');
+  const orderId = storeOrderId;
 
   useEffect(() => {
-    if (!orderId && items.length === 0) {
-      router.replace('/cart');
-      return;
-    }
-
     if (source === 'cart') {
       const selectedItemIds = useCartStore.getState().selectedItemIds;
 
@@ -39,7 +34,7 @@ export default function CheckoutSuccessPage() {
       const promises = selectedItemIds.map(itemId =>
         removeCartItem(itemId).catch(err => {
           console.error(`Failed to remove cart item ${itemId}:`, err);
-          return null; 
+          return null;
         })
       );
 
@@ -65,8 +60,8 @@ export default function CheckoutSuccessPage() {
   if (!orderId && items.length === 0) return null;
 
   return (
-    <main className="flex h-[70vh] items-center justify-center bg-background text-center">
-      <div className="flex flex-col items-center gap-6 max-w-md px-4 py-8 animate-in fade-in zoom-in duration-500">
+    <main className="flex h-screen items-center justify-center bg-background text-center">
+      <div className="flex flex-col items-center gap-6 max-w-md px-4 py-8">
         <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center shadow-sm">
           <CheckCircle2 className="h-10 w-10 text-success" />
         </div>
@@ -86,14 +81,10 @@ export default function CheckoutSuccessPage() {
             size="lg"
             className="flex-1 rounded-xl h-12 font-semibold"
             onClick={() => {
-              if (orderId) {
-                router.push(`/checkout/success/${orderId}` as any);
-              } else {
-                router.push('/profile/orders' as any);
-              }
+              router.push(`/checkout/success/${orderId}` as any);
             }}
           >
-            {tCommon('back')}
+            {tCommon('detail')}
           </Button>
           <Button
             size="lg"

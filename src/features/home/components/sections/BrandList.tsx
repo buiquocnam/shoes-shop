@@ -81,7 +81,7 @@ function BrandItemCircle({ brand }: { brand: BrandType }) {
           src={brandImage}
           alt={brand.name}
           fill
-          className="object-contain opacity-60 group-hover:opacity-100 transition-opacity  group-hover:brightness-100 scale-0"
+          className="object-contain opacity-60 group-hover:opacity-100 transition-opacity  group-hover:brightness-100"
           loading="lazy"
           unoptimized
         />

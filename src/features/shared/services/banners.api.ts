@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import { BannerPaginationResponse } from "@/features/admin/banners/types";
+import { BannerPaginationResponse } from "@/types/banner";
 
 export const bannersApi = {
   /**

@@ -48,7 +48,7 @@ export const authApi = {
     data: ChangePasswordType
   ) => {
     const response = await axiosInstance.post<{ message: string }>(
-      `/auth/email/change-password`,
+      `/auth/change-pass`,
       {
         email: data.email,
         password: data.password,

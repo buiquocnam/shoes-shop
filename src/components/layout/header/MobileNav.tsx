@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { NavLinks } from "./NavLinks";
 import { useTranslations } from "next-intl";
-import { useAuthStore, useIsAuthenticated } from "@/store/useAuthStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout } from "@/features/auth/hooks";
 import { useCallback, useMemo } from "react";
 import { Link, useRouter } from "@/i18n/routing";
@@ -24,7 +24,6 @@ import { useCart } from "@/features/cart/hooks/useCart";
 export function MobileNav() {
     const t = useTranslations('Header');
     const { user } = useAuthStore();
-    const isAuthenticated = useIsAuthenticated();
     const { mutateAsync: logout } = useLogout();
     const router = useRouter();
     const { cart } = useCart();
@@ -62,7 +61,7 @@ export function MobileNav() {
                     <div className="flex-1 overflow-y-auto py-6 px-6">
                         <div className="space-y-8">
                             {/* User Section */}
-                            {!isAuthenticated ? (
+                            {!user ? (
                                 <div className="space-y-4">
                                     <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
                                         Tài khoản
@@ -134,7 +133,7 @@ export function MobileNav() {
                             </div>
 
                             {/* Account Links */}
-                            {isAuthenticated && (
+                            {user && (
                                 <div className="space-y-4">
                                     <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
                                         {t('mobile.account')}

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useReviews } from "@/features/product/hooks/useReviews";
 import { AlertLogin } from "@/features/product/components";
 import AddReviewDialog from "../AddReviewDialog";
-import { useIsAuthenticated } from "@/store/useAuthStore";
+import { useAuthStore } from "@/store";
 import { RatingSummary } from "./RatingSummary";
 import { RatingStats } from "./RatingStats";
 import { ReviewList } from "./ReviewList";
@@ -27,7 +27,7 @@ export default function ProductReview({ productId }: { productId: string }) {
     size: pageSize,
   });
 
-  const isAuthenticated = useIsAuthenticated();
+  const { user } = useAuthStore();
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
@@ -83,7 +83,7 @@ export default function ProductReview({ productId }: { productId: string }) {
   };
 
   const handleWriteReview = () => {
-    if (isAuthenticated) {
+    if (user) {
       setShowReviewDialog(true);
     } else {
       setShowLoginDialog(true);

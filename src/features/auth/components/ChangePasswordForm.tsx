@@ -40,7 +40,7 @@ export default function ChangePasswordForm({ email, status }: ChangePasswordForm
         const { confirmNewPass, ...changePasswordData } = values;
         changePassword({
             email,
-            password: status === 'FORGET_PASS' ? '' : changePasswordData.password || '',
+            password: changePasswordData.password || "",
             newPass: changePasswordData.newPass,
             status,
         });
