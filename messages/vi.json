@@ -4,7 +4,11 @@
         "description": "Cửa hàng giày yêu thích của bạn",
         "metaTitle": "Trang Chủ Cửa Hàng Giày",
         "metaDescription": "Khám phá giày thể thao và giày dép chất lượng cao tại Cửa hàng giày. Sản phẩm bán chạy nhất, giày được đánh giá cao và xu hướng giày thể thao mới nhất với giá không thể đánh bại.",
-        "hero": {
+         "hero": {
+            "tag": "HÀNG MỚI VỀ",
+            "title": "KHAI PHÁ",
+            "accent": "TỐC ĐỘ",
+            "description": "Trải nghiệm cảm giác thoải mái vượt trội với những đôi giày được thiết kế tối ưu cho chuyển động. Đế giày êm, đàn hồi tốt, hỗ trợ bàn chân hiệu quả.",
             "cta": "Mua Ngay"
         },
         "bestSeller": {
@@ -91,6 +95,7 @@
     "Reviews": {
         "title": "Đánh giá từ khách hàng",
         "writeReview": "Viết đánh giá",
+        "eligibleReview": "Mua hàng để viết đánh giá",
         "noReviews": "Chưa có đánh giá nào",
         "rating": "{count} đánh giá",
         "average": "Trung bình {rating} sao",

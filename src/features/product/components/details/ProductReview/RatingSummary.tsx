@@ -9,12 +9,14 @@ interface RatingSummaryProps {
   averageRating: string;
   totalReviews: number;
   onWriteReview: () => void;
+  isEligible?: boolean;
 }
 
 export function RatingSummary({
   averageRating,
   totalReviews,
   onWriteReview,
+  isEligible = true,
 }: RatingSummaryProps) {
   const t = useTranslations('Reviews');
 
@@ -28,10 +30,10 @@ export function RatingSummary({
           <StarIcon
             key={i}
             className={cn(
-              "w-5 h-5 transition-all duration-300",
+              "w-5 h-5 transition-all duration-300 ",
               i < Math.floor(parseFloat(averageRating))
-                ? "fill-warning text-warning scale-110"
-                : "text-muted border-muted fill-muted/30 scale-100"
+                ? "fill-warning text-warning"
+                : "text-muted-foreground/30"
             )}
           />
         ))}
@@ -39,18 +41,24 @@ export function RatingSummary({
       <p className="text-sm text-muted-foreground mb-6">
         {t('rating', { count: totalReviews })}
       </p>
-      <div className="flex justify-center">
-        <div className="w-full max-w-xs">
-          <Button
-            variant="outline"
-            onClick={onWriteReview}
-            className="gap-2 cursor-pointer border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-150 font-semibold px-5 py-2 rounded-full shadow"
-          >
-            <MessageCircle className="w-5 h-5" />
-            {t('writeReview')}
-          </Button>
+      {isEligible ? (
+        <div className="flex justify-center">
+          <div className="w-full max-w-xs">
+            <Button
+              variant="outline"
+              onClick={onWriteReview}
+              className="gap-2 cursor-pointer border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-150 font-semibold px-5 py-2 rounded-full shadow"
+            >
+              <MessageCircle className="w-5 h-5" />
+              {t('writeReview')}
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="text-sm text-muted-foreground mb-6">
+          {t('eligibleReview')}
+        </p>
+      )}
     </div>
   );
 }

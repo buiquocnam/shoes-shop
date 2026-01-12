@@ -19,6 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api",
+  withCredentials: true,
   headers: {
     Accept: "application/json",
   },
@@ -28,7 +29,9 @@ axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Inject access token vào headers
     const { accessToken } = useAuthStore.getState();
-    if (accessToken && !config.headers.Authorization) {
+    const isRefreshRequest = config.url?.includes("/auth/refresh");
+
+    if (accessToken && !config.headers.Authorization && !isRefreshRequest) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 

@@ -28,31 +28,19 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
     onCancel,
 }) => {
     const { data, isLoading: loadingProduct } = useProduct(productId);
-    const { categories, brands } = useProductFormData(true);
+    const { categories, brands, isLoading: loadingFormData } = useProductFormData();
     const updateProductInfo = useUpdateProductInfo();
 
     const defaultValues = useMemo<InfoFormValues>(() => {
-        if (!data?.product) {
-            return {
-                name: "",
-                description: "",
-                categoryId: "",
-                brandId: "",
-                price: 0,
-                discount: 0,
-            };
-        }
-
-        const product = data.product;
+        const product = data?.product;
         return {
-            name: product.name ?? "",
-            description: product.description ?? "",
-            categoryId: product.category?.id ?? "",
-            brandId: product.brand?.id ?? "",
-            price: product.price ?? 0,
-            discount: product.discount ?? 0,
+            name: product?.name ?? "",
+            description: product?.description ?? "",
+            categoryId: product?.category?.id ? String(product.category.id) : "",
+            brandId: product?.brand?.id ? String(product.brand.id) : "",
+            price: product?.price ?? 0,
+            discount: product?.discount ?? 0,
         };
-
     }, [data?.product]);
 
     const form = useForm<InfoFormValues>({
@@ -61,10 +49,10 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
     });
 
     useEffect(() => {
-        if (data?.product && !loadingProduct) {
+        if (data?.product && !loadingProduct && !loadingFormData) {
             form.reset(defaultValues);
         }
-    }, [data?.product, loadingProduct, defaultValues, form]);
+    }, [data?.product, loadingProduct, loadingFormData, defaultValues, form]);
 
     const onSubmit = async (data: InfoFormValues) => {
         const input: ProductContentInput = {
@@ -77,7 +65,7 @@ export const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
         onSuccess();
     };
 
-    if (loadingProduct || !data?.product) {
+    if (loadingProduct || loadingFormData || !data?.product) {
         return (
             <div className="p-6 flex justify-center">
                 <Spinner />

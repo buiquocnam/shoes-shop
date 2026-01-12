@@ -23,3 +23,9 @@ export async function createReview(review: CreateProductReviewType) {
   const response = await axiosInstance.post<ProductReviewType>('/shoes/reviews', review);
   return response.data;
 }
+
+
+export async function checkReviewEligibility(productId: string) {
+  const response = await axiosInstance.get<boolean>(`/shoes/reviews/check-eligibility?product_id=${productId}`);
+  return response.data;
+}

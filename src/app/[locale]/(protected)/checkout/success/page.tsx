@@ -11,15 +11,17 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { removeCartItem } from '@/features/cart/services';
 import { useCartStore } from '@/store/useCartStore';
+import { useState } from 'react';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function CheckoutSuccessPage() {
   const t = useTranslations('Checkout.success');
   const tProducts = useTranslations('Products');
   const tCommon = useTranslations('Common');
   const router = useRouter();
-  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const { items, orderId: storeOrderId, source } = useCheckoutStore();
+  const [isCleaning, setIsCleaning] = useState(source === 'cart');
 
   const orderId = storeOrderId;
 
@@ -28,6 +30,7 @@ export default function CheckoutSuccessPage() {
       const selectedItemIds = useCartStore.getState().selectedItemIds;
 
       if (selectedItemIds.length === 0) {
+        setIsCleaning(false);
         return;
       }
 
@@ -53,9 +56,27 @@ export default function CheckoutSuccessPage() {
           console.error('Failed to cleanup cart after payment:', err);
           useCartStore.getState().clearSelection();
           useCheckoutStore.getState().clearCheckout();
+        })
+        .finally(() => {
+          setIsCleaning(false);
         });
+    } else {
+      setIsCleaning(false);
     }
   }, [orderId, source, router, queryClient]);
+
+  if (isCleaning) {
+    return (
+      <main className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Spinner className="size-12 text-primary" />
+          <p className="text-muted-foreground animate-pulse font-medium">
+            {tCommon('loading') || "Đang xử lý..."}
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   if (!orderId && items.length === 0) return null;
 

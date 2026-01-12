@@ -47,7 +47,7 @@ export default function AddReviewDialog({
                     toast.error(error.message || tCommon('error'));
                 },
                 onSuccess: () => {
-                    toast.success(tCommon('save')); // Or a specific success message
+                    toast.success(tCommon('save')); 
                     setRating(0);
                     setComment("");
                     onOpenChange(false);

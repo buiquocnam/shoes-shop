@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useReviews } from "@/features/product/hooks/useReviews";
+import { useReviews, useCheckReviewEligibility } from "@/features/product/hooks/useReviews";
 import { AlertLogin } from "@/features/product/components";
 import AddReviewDialog from "../AddReviewDialog";
 import { useAuthStore } from "@/store";
@@ -26,6 +26,8 @@ export default function ProductReview({ productId }: { productId: string }) {
     page: currentPage,
     size: pageSize,
   });
+
+  const { data: isEligible } = useCheckReviewEligibility(productId);
 
   const { user } = useAuthStore();
   const [showReviewDialog, setShowReviewDialog] = useState(false);
@@ -100,6 +102,7 @@ export default function ProductReview({ productId }: { productId: string }) {
           averageRating={averageRating}
           totalReviews={totalValidReviews}
           onWriteReview={handleWriteReview}
+          isEligible={isEligible ?? !user}
         />
         <RatingStats stats={stats} totalReviews={totalValidReviews} />
       </div>

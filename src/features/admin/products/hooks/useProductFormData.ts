@@ -4,14 +4,14 @@ import { useCategories } from "@/features/shared/hooks/useCategories";
 /**
  * Hook để lấy categories và brands cho product forms
  */
-export const useProductFormData = (enabled: boolean = true) => {
-  const { data: brandsData } = useBrands({}, { enabled });
-  const { data: categories } = useCategories({}, { enabled });
+export const useProductFormData = () => {
+  const { data: brandsData, isLoading: isLoadingBrands } = useBrands();
+  const { data: categories, isLoading: isLoadingCategories } = useCategories();
 
-  const brands = brandsData?.data || [];
 
   return {
     categories: categories?.data || [],
-    brands,
+    brands: brandsData?.data || [],
+    isLoading: isLoadingBrands || isLoadingCategories,
   };
 };

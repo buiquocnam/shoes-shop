@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { createReview, getReviews } from "../services/review.api";
+import { createReview, getReviews, checkReviewEligibility } from "../services/review.api";
 import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 import {
   CreateProductReviewType,
@@ -10,6 +10,7 @@ import {
   ReviewFilters,
 } from "../types";
 import { toast } from "sonner";
+import { useAuthStore } from "@/store";
 
 export function useReviews(filters: ReviewFilters) {
   return useQuery({
@@ -17,6 +18,15 @@ export function useReviews(filters: ReviewFilters) {
     queryFn: () => getReviews(filters),
     enabled: !!filters.productId,
     placeholderData: (previousData) => previousData,
+  });
+}
+
+export function useCheckReviewEligibility(productId: string) {
+  const { user } = useAuthStore();
+  return useQuery({
+    queryKey: [...userQueryKeys.review.key, "eligibility", productId, user?.id],
+    queryFn: () => checkReviewEligibility(productId),
+    enabled: !!productId && !!user,
   });
 }
 

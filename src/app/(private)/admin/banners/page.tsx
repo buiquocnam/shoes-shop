@@ -5,7 +5,7 @@ import { BannerCard } from "@/features/admin/banners";
 import { useUpsertBanner, useBanners } from "@/features/admin/banners";
 import { BannerSlot } from "@/types/banner";
 import Loading from "@/features/admin/components/Loading";
-import { LayoutDashboard, Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 
 const BANNER_SLOTS: BannerSlot[] = ["HOME_HERO", "HOME_MID", "SIDEBAR"];
 
@@ -49,16 +49,9 @@ const AdminBannersPage: React.FC = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b">
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-primary font-medium">
-            <LayoutDashboard className="h-4 w-4" />
-            <span className="text-sm uppercase tracking-wider">Trang quản trị</span>
-          </div>
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
             Quản lý Banner
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Quản lý hiển thị và nội dung các vị trí banner chiến lược trên trang chủ.
-          </p>
         </div>
 
         <div className="flex items-center gap-3 px-4 py-2 bg-muted/50 rounded-lg border text-sm font-medium">

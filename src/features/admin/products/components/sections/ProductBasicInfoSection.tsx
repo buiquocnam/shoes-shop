@@ -65,16 +65,16 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel htmlFor="product-brand">Thương hiệu</FieldLabel>
-                                    <Select
+                                    <Select key={`select-${brands.length}-${field.value}`}
                                         onValueChange={field.onChange}
-                                        value={field.value?.toString()}
+                                        value={field.value ? String(field.value) : ""}
                                     >
                                         <SelectTrigger id="product-brand" className="h-11 cursor-pointer">
                                             <SelectValue placeholder="Chọn thương hiệu" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {brands.map((brand) => (
-                                                <SelectItem key={brand.id} value={brand.id}>
+                                                <SelectItem key={brand.id} value={String(brand.id)}>
                                                     {brand.name}
                                                 </SelectItem>
                                             ))}
@@ -90,16 +90,16 @@ export const ProductBasicInfoSection: React.FC<ProductBasicInfoSectionProps> = (
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel htmlFor="product-category">Danh mục</FieldLabel>
-                                    <Select
+                                    <Select key={`select-cate-${categories.length}-${field.value}`}
                                         onValueChange={field.onChange}
-                                        value={field.value?.toString()}
+                                        value={field.value ? String(field.value) : ""}
                                     >
                                         <SelectTrigger id="product-category" className="h-11 cursor-pointer">
                                             <SelectValue placeholder="Chọn danh mục" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {categories.map((category) => (
-                                                <SelectItem key={category.id} value={category.id}>
+                                                <SelectItem key={category.id} value={String(category.id)}>
                                                     {category.name}
                                                 </SelectItem>
                                             ))}

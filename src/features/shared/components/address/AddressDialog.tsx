@@ -246,15 +246,13 @@ export function AddressDialog({
                                         <Field data-invalid={fieldState.invalid}>
                                             <FieldLabel htmlFor="province-select">{t('province')}</FieldLabel>
                                             <Select
-                                                onValueChange={(value) => {
-                                                    handleProvinceChange(value);
-                                                }}
-                                                value={field.value?.toString() || ""}
+                                                onValueChange={handleProvinceChange}
+                                                value={field.value && field.value !== 0 ? field.value.toString() : ""}
                                             >
                                                 <SelectTrigger id="province-select" className="h-11">
                                                     <SelectValue placeholder={t('select')} />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="max-h-[300px]">
                                                     {provinceOptions.map((option) => (
                                                         <SelectItem key={option.id} value={option.id}>
                                                             {option.name}
@@ -276,12 +274,12 @@ export function AddressDialog({
                                             <Select
                                                 disabled={!provinceCode}
                                                 onValueChange={handleDistrictChange}
-                                                value={field.value?.toString() || ""}
+                                                value={field.value && field.value !== 0 ? field.value.toString() : ""}
                                             >
                                                 <SelectTrigger id="district-select" className="h-11">
                                                     <SelectValue placeholder={t('select')} />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="max-h-[300px]">
                                                     {districtOptions.map((option) => (
                                                         <SelectItem key={option.id} value={option.id}>
                                                             {option.name}
@@ -303,12 +301,12 @@ export function AddressDialog({
                                             <Select
                                                 disabled={!districtCode}
                                                 onValueChange={handleWardChange}
-                                                value={field.value?.toString() || ""}
+                                                value={field.value && field.value !== 0 ? field.value.toString() : ""}
                                             >
                                                 <SelectTrigger id="ward-select" className="h-11">
                                                     <SelectValue placeholder={t('select')} />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="max-h-[300px]">
                                                     {wardOptions.map((option) => (
                                                         <SelectItem key={option.id} value={option.id}>
                                                             {option.name}

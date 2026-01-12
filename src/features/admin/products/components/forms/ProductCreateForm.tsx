@@ -21,7 +21,7 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
   onSuccess,
 }) => {
   const [images, setImages] = useState<File[]>([]);
-  const { categories, brands } = useProductFormData(true);
+  const { categories, brands, isLoading: loadingFormData } = useProductFormData();
   const createProduct = useCreateProduct();
 
   const form = useForm<CreateProductFormValues>({
@@ -91,6 +91,14 @@ export const ProductCreateForm: React.FC<ProductCreateFormProps> = ({
     const result = await createProduct.mutateAsync(formData);
     onSuccess(result.id);
   };
+
+  if (loadingFormData) {
+    return (
+      <div className="flex items-center justify-center p-20">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
