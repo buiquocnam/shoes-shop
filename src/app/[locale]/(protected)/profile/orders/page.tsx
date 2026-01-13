@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { useProductsPurchased } from '@/features/profile/hooks/useProfile';
 import { Spinner } from '@/components/ui/spinner';
 import {
@@ -14,32 +13,18 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ProfileOrdersPage() {
   const t = useTranslations('Profile.orders');
-  const searchParams = useSearchParams();
-  const initialStatus = searchParams.get('status') || "payment";
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState<string>(initialStatus);
+  const [status, setStatus] = useState<string>("shipping");
 
-  useEffect(() => {
-    const urlStatus = searchParams.get('status');
-    if (urlStatus && urlStatus !== status) {
-      setStatus(urlStatus);
-    }
-  }, [searchParams]);
   const pageSize = 10;
 
   const { data, isLoading } = useProductsPurchased({
     page: currentPage,
     size: pageSize,
+    orderStatus: status.toUpperCase(),
   });
 
   const orders = data?.data || [];
-  const filteredOrders = orders.filter(
-    (order) => order.orderStatus?.toLowerCase() === status.toLowerCase()
-  );
-
-  const lengthSuccess = orders.filter(order => order.orderStatus?.toLowerCase() === 'success').length;
-  const lengthPayment = orders.filter(order => order.orderStatus?.toLowerCase() === 'payment').length;
-  const lengthShipping = orders.filter(order => order.orderStatus?.toLowerCase() === 'shipping').length;
 
   const pagination = {
     currentPage: data?.currentPage ?? 1,
@@ -68,24 +53,23 @@ export default function ProfileOrdersPage() {
     <div className="flex flex-col gap-6 bg-card rounded-lg p-6 ">
       <h2 className="text-3xl font-extrabold ">{t('title')}</h2>
 
-      <Tabs defaultValue="payment" value={status} onValueChange={handleStatusChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
-          <TabsTrigger value="payment" className="text-sm font-bold">Chờ thanh toán ({lengthPayment})</TabsTrigger>
-          <TabsTrigger value="shipping" className="text-sm font-bold">Đang giao hàng ({lengthShipping})</TabsTrigger>
-          <TabsTrigger value="success" className="text-sm font-bold">Hoàn thành ({lengthSuccess})</TabsTrigger>
+      <Tabs defaultValue="shipping" value={status} onValueChange={handleStatusChange} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-8">
+          <TabsTrigger value="shipping" className="text-sm font-bold">{t('tabs.shipping')}</TabsTrigger>
+          <TabsTrigger value="success" className="text-sm font-bold">{t('tabs.success')}</TabsTrigger>
         </TabsList>
       </Tabs>
 
-      {filteredOrders.length === 0 ? (
+      {orders.length === 0 ? (
         <OrderEmptyState />
       ) : (
         <>
-          <OrdersList orders={filteredOrders} />
+          <OrdersList orders={orders} />
           <OrdersPagination
             currentPage={pagination.currentPage}
             totalPages={pagination.totalPages}
             totalElements={pagination.totalElements}
-            currentItemsCount={filteredOrders.length}
+            currentItemsCount={orders.length}
             onPageChange={setCurrentPage}
           />
         </>

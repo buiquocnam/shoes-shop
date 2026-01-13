@@ -53,4 +53,6 @@ export interface PurchasedList {
 export interface PurchasedListPaginationResponse
   extends PaginatedResponse<PurchasedList> {}
 
-export interface PurchasedItemFilters extends PaginationParams {}
+export interface PurchasedItemFilters extends PaginationParams {
+  orderStatus?: string;
+}

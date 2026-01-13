@@ -244,7 +244,11 @@
         "orders": {
             "title": "Order History",
             "loading": "Loading order history...",
-            "noOrders": "You have no orders yet"
+            "noOrders": "You have no orders yet",
+            "tabs": {
+                "shipping": "Shipping",
+                "success": "Success"
+            }
         },
         "sidebar": {
             "title": "My Account",

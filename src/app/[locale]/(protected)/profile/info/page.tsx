@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/store';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -10,31 +10,26 @@ import { Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useUpdateProfile } from '@/features/profile/hooks/useProfile';
-import { Mail, User, Phone, Save, Lock } from 'lucide-react';
+import { Mail, User, Save, Lock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 const getProfileSchema = (t: any) => z.object({
   name: z.string().min(2, t('validation.nameMin')),
-  phone: z.string().optional(),
 });
 
-type ProfileFormValues = {
-  name: string;
-  phone?: string;
-};
+type ProfileFormValues = z.infer<ReturnType<typeof getProfileSchema>>;
 
 export default function ProfileInfoPage() {
   const t = useTranslations('Profile.info');
   const { user } = useAuthStore();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
 
-  const profileSchema = getProfileSchema(t);
+  const profileSchema = useMemo(() => getProfileSchema(t), [t]);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: user?.name || '',
-      phone: user?.phone || '',
     },
   });
 
@@ -43,7 +38,6 @@ export default function ProfileInfoPage() {
     if (user) {
       form.reset({
         name: user.name || '',
-        phone: user.phone || '',
       });
     }
   }, [user, form]);
@@ -56,7 +50,6 @@ export default function ProfileInfoPage() {
     updateProfile({
       id: user.id,
       name: data.name,
-      phone: data.phone,
     });
   };
 
@@ -74,8 +67,7 @@ export default function ProfileInfoPage() {
       {/* Form */}
       <div className=" space-y-10">
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-          {/* Name */}
-          <Field data-invalid={!!form.formState.errors.name} className="md:col-span-1">
+          <Field data-invalid={!!form.formState.errors.name} className="md:col-span-2">
             <FieldLabel>{t('name')}</FieldLabel>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
@@ -88,20 +80,6 @@ export default function ProfileInfoPage() {
             <FieldError errors={[form.formState.errors.name]} />
           </Field>
 
-          {/* Phone */}
-          <Field data-invalid={!!form.formState.errors.phone} className="md:col-span-1">
-            <FieldLabel>{t('phone')}</FieldLabel>
-            <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" />
-              <Input
-                placeholder={t('phonePlaceholder')}
-                type="tel"
-                className="h-12 pl-11 pr-4 rounded-full"
-                {...form.register("phone")}
-              />
-            </div>
-            <FieldError errors={[form.formState.errors.phone]} />
-          </Field>
 
           {/* Email - Read only */}
           <div className="space-y-2 md:col-span-2">

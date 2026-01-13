@@ -245,7 +245,11 @@
         "orders": {
             "title": "Lịch sử đơn hàng",
             "loading": "Đang tải lịch sử đơn hàng...",
-            "noOrders": "Bạn chưa có đơn hàng nào"
+            "noOrders": "Bạn chưa có đơn hàng nào",
+            "tabs": {
+                "shipping": "Đang giao hàng",
+                "success": "Hoàn thành"
+            }
         },
         "sidebar": {
             "title": "Tài khoản của tôi",
