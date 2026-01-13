@@ -33,13 +33,6 @@ export const userColumns = (
       cell: ({ row }) => <span className="text-muted-foreground">{row.getValue("email")}</span>,
     },
     {
-      accessorKey: "phone",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Điện thoại" />
-      ),
-      cell: ({ row }) => <span className="text-muted-foreground">{row.getValue("phone") || "—"}</span>,
-    },
-    {
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Trạng thái" />

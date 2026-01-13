@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 export const useGetUsers = (filters?: UserFilters) => {
   return useQuery({
-    queryKey: adminQueryKeys.users.list(filters),
+    queryKey: adminQueryKeys.users.list(),
     queryFn: () => adminUsersApi.getUsers(filters),
   });
 };

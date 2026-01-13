@@ -40,7 +40,6 @@ export function UserForm({
         resolver: zodResolver(userSchema),
         defaultValues: {
             name: user?.name || "",
-            phone: user?.phone || "",
             status: user?.status || false,
         },
     });
@@ -52,7 +51,6 @@ export function UserForm({
             await onSubmit({
                 id: user.id,
                 ...data,
-                phone: data.phone ?? undefined,
             });
             form.reset();
             onOpenChange(false);
@@ -89,11 +87,7 @@ export function UserForm({
                             />
                         </Field>
 
-                        <Field data-invalid={!!form.formState.errors.phone}>
-                            <FieldLabel htmlFor="user-phone">Điện thoại</FieldLabel>
-                            <Input id="user-phone" placeholder="Nhập số điện thoại" {...form.register("phone")} />
-                            <FieldError errors={[form.formState.errors.phone]} />
-                        </Field>
+
 
                         <Controller
                             control={form.control}
