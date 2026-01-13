@@ -5,11 +5,19 @@ import { PaymentRecord } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/utils/format";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const paymentColumns = (
-  onViewDetail?: (payment: PaymentRecord) => void
+  onViewDetail?: (payment: PaymentRecord) => void,
+  onUpdateStatus?: (orderId: string, status: string) => void
 ): ColumnDef<PaymentRecord>[] => [
     {
       accessorKey: "paymentId",
@@ -31,14 +39,26 @@ export const paymentColumns = (
       enableSorting: false,
     },
     {
-      accessorKey: "status",
-      header: "Trạng thái",
+      accessorKey: "orderStatus",
+      header: "Trạng thái đơn hàng",
       cell: ({ row }: { row: Row<PaymentRecord> }) => {
-        const isSuccess = !!row.original.response;
+        const order = row.original.response;
+        if (!order) return <span className="text-muted-foreground">---</span>;
+
         return (
-          <Badge variant={isSuccess ? "default" : "destructive"} className={isSuccess ? "bg-success hover:bg-success/90" : ""}>
-            {isSuccess ? "Thành công" : "Thất bại"}
-          </Badge>
+          <Select
+            defaultValue={order.orderStatus?.toLowerCase()}
+            onValueChange={(value) => onUpdateStatus?.(order.id, value)}
+          >
+            <SelectTrigger className="w-[140px] h-8 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="payment" className="text-xs">Chờ thanh toán</SelectItem>
+              <SelectItem value="shipping" className="text-xs">Đang giao hàng</SelectItem>
+              <SelectItem value="success" className="text-xs">Hoàn thành</SelectItem>
+            </SelectContent>
+          </Select>
         );
       },
     },

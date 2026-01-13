@@ -10,8 +10,9 @@ import { AlertLogin } from "@/features/product/components";
 import { useAuthStore, useCheckoutStore } from "@/store";
 import { CheckoutItem } from "@/features/checkout/types/checkout";
 import { AddToCartRequest } from "@/features/cart/types";
-import { ShoppingCart, Zap, Minus, Plus } from "lucide-react";
+import { ShoppingCart, Zap, Minus, Plus, CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useCart } from "@/features/cart/hooks/useCart";
 
 interface ProductInfoInteractiveProps {
   product: ProductDetail;
@@ -26,11 +27,13 @@ const SizeButton = ({
   size,
   stock,
   isSelected,
+  isInCart,
   onSelect,
 }: {
   size: string;
   stock: number;
   isSelected: boolean;
+  isInCart?: boolean;
   onSelect: () => void;
 }) => {
   const isOutOfStock = stock <= 0;
@@ -47,25 +50,22 @@ const SizeButton = ({
     );
   }
 
-  if (isSelected) {
-    return (
-      <Button
-        onClick={onSelect}
-        variant="outline"
-        className="h-10 min-w-[3.5rem] px-2 rounded-xl border-2 border-primary bg-primary/10 text-primary font-bold text-sm hover:shadow-md"
-      >
-        {size}
-      </Button>
-    );
-  }
-
   return (
     <Button
       onClick={onSelect}
       variant="outline"
-      className="h-10 min-w-[3.5rem] px-2 rounded-xl border-2 border-border text-foreground font-medium text-sm bg-card"
+      className={cn(
+        "h-10 min-w-[3.5rem] px-2 rounded-xl border-2 text-sm transition-all relative",
+        isSelected
+          ? "border-primary bg-primary/10 text-primary font-bold hover:shadow-md"
+          : "border-border text-foreground font-medium bg-card",
+        isInCart && !isSelected && "border-success/50 bg-success/5"
+      )}
     >
       {size}
+      {isInCart && (
+        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-success rounded-full border-2 border-background" />
+      )}
     </Button>
   );
 };
@@ -79,11 +79,11 @@ export default function ProductInfoInteractive({
   const t = useTranslations('Products.details');
   const router = useRouter();
   const { user } = useAuthStore();
+  const { cart } = useCart();
   const setCheckout = useCheckoutStore((state) => state.setCheckout);
   const { mutate: createCart } = useCreateCart();
   const { variants, listImg, product: productInfo } = product;
 
-  // Tìm variant đầu tiên có size còn hàng
   const firstAvailableVariant = useMemo(() => {
     for (const variant of variants) {
       const inStockSize = variant.sizes.find((size) => size.stock > 0);
@@ -118,6 +118,13 @@ export default function ProductInfoInteractive({
 
     return null;
   }, [variants, selectedVariantId, selectedSizeId]);
+
+  const isInCart = useMemo(() => {
+    if (!selectedData || !cart?.items) return false;
+    return cart.items.some(
+      (item) => String(item.variant.sizeLabel).trim() === String(selectedData.size.size).trim()
+    );
+  }, [cart?.items, selectedData]);
 
   const stock = selectedData?.size.stock || 0;
   const canPurchase = !!selectedData && stock > 0 && quantity > 0;
@@ -201,21 +208,33 @@ export default function ProductInfoInteractive({
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {variant.sizes.map((size) => (
-                  <SizeButton
-                    key={size.id}
-                    size={size.size}
-                    stock={size.stock}
-                    isSelected={isSelected && selectedSizeId === size.id}
-                    onSelect={() => {
-                      if (size.stock > 0) {
-                        setSelectedVariantId(variant.id);
-                        setSelectedSizeId(size.id);
-                        setQuantity(1); // Reset quantity khi đổi size
-                      }
-                    }}
-                  />
-                ))}
+                {variant.sizes.map((size) => {
+                  const itemInCart = cart?.items?.find(
+                    (item) => {
+                      const isSameProduct = item.productId === productInfo.id || item.product?.id === productInfo.id;
+                      const isSameColor = item.variant.color.trim().toLowerCase() === variant.color.trim().toLowerCase();
+                      const isSameSize = String(item.variant.sizeLabel).trim() === String(size.size).trim();
+                      return isSameProduct && isSameColor && isSameSize;
+                    }
+                  );
+
+                  return (
+                    <SizeButton
+                      key={size.id}
+                      size={size.size}
+                      stock={size.stock}
+                      isSelected={isSelected && selectedSizeId === size.id}
+                      isInCart={!!itemInCart}
+                      onSelect={() => {
+                        if (size.stock > 0) {
+                          setSelectedVariantId(variant.id);
+                          setSelectedSizeId(size.id);
+                          setQuantity(1); // Reset quantity khi đổi size
+                        }
+                      }}
+                    />
+                  );
+                })}
               </div>
             </div>
           );
@@ -258,6 +277,12 @@ export default function ProductInfoInteractive({
 
       {/* Action Buttons */}
       <div className="mt-4 flex flex-col gap-4">
+        {isInCart && (
+          <div className="flex items-center gap-2 px-4 py-2 bg-success/10 border border-success/20 rounded-xl">
+            <CheckCircle2 className="w-4 h-4 text-success" />
+            <span className="text-sm font-bold text-success">{t('alreadyInCart')}</span>
+          </div>
+        )}
         <div className="flex gap-4">
           <Button
             onClick={handleAddToCart}

@@ -55,7 +55,6 @@ export default function CheckoutSuccessPage() {
         .catch(err => {
           console.error('Failed to cleanup cart after payment:', err);
           useCartStore.getState().clearSelection();
-          useCheckoutStore.getState().clearCheckout();
         })
         .finally(() => {
           setIsCleaning(false);
@@ -78,7 +77,7 @@ export default function CheckoutSuccessPage() {
     );
   }
 
-  if (!orderId && items.length === 0) return null;
+  if (!orderId) return null;
 
   return (
     <main className="flex h-screen items-center justify-center bg-background text-center">

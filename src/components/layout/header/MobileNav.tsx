@@ -1,6 +1,7 @@
 'use client';
 
 import { Menu, LogOut, User, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import {
     Sheet,
     SheetContent,
@@ -52,8 +53,16 @@ export function MobileNav() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[85vw] sm:w-80 border-l border-border bg-background p-0">
                 <SheetHeader className="p-6 text-left border-b border-border">
-                    <SheetTitle className="text-xl font-black uppercase tracking-tight text-primary">
-                        ShoeShop
+                    <SheetTitle>
+                        <Image
+                            src="/images/logo.png"
+                            alt="Logo"
+                            width={110}
+                            height={36}
+                            className="h-8 w-auto object-contain"
+                            priority
+                            unoptimized
+                        />
                     </SheetTitle>
                 </SheetHeader>
 

@@ -67,7 +67,14 @@ export function SideBarAdmin() {
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader >
-                <Image src="/images/logo.png" alt="Logo" className="mx-auto" width={100} height={100} />
+                <Image
+                    src="/images/logo.png"
+                    alt="Logo"
+                    className="mx-auto h-10 w-auto object-contain p-2"
+                    width={110}
+                    height={36}
+                    unoptimized
+                />
             </SidebarHeader>
             <SidebarContent className="p-4">
                 <SidebarGroup>

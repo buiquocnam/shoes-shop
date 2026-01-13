@@ -55,7 +55,7 @@ function OrderDetailContent({ orderDetail }: { orderDetail: OrderDetail }) {
   const locale = useLocale();
   const address = orderDetail.address;
   const items = orderDetail.items || [];
-  const orderDate = new Date(orderDetail.createdDate);
+  const orderDate = new Date(orderDetail?.createdDate || '');
 
   return (
     <main className="flex-1 px-4 md:px-10 lg:px-20 py-10 bg-background">

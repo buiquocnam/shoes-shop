@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { formatCurrency } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import { Plus, Minus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,7 @@ interface CartItemProps {
 }
 
 export function CartItem({ item, updateQuantity, remove, isSelected, onToggle }: CartItemProps) {
+    const t = useTranslations('Cart');
     const router = useRouter();
 
     const originalPrice = item.product.price;
@@ -63,10 +65,10 @@ export function CartItem({ item, updateQuantity, remove, isSelected, onToggle }:
                     </h3>
                     <div className="flex flex-wrap gap-x-3 gap-y-1">
                         <p className="text-xs md:text-sm text-muted-foreground font-medium">
-                            Phân loại: <span className="text-foreground">{item.variant.color}</span>
+                            {t('color')}: <span className="text-foreground">{item.variant.color}</span>
                         </p>
                         <p className="text-xs md:text-sm text-muted-foreground font-medium">
-                            Kích cỡ: <span className="text-foreground">{item.variant.sizeLabel} (EU)</span>
+                            {t('size')}: <span className="text-foreground">{item.variant.sizeLabel} (EU)</span>
                         </p>
                     </div>
                     <div className="md:hidden mt-2 flex items-center gap-2">
@@ -107,7 +109,7 @@ export function CartItem({ item, updateQuantity, remove, isSelected, onToggle }:
                     </button>
                 </div>
                 <span className="text-[10px] md:text-xs text-muted-foreground font-bold mt-2 uppercase tracking-tight">
-                    Còn lại: {item.variant.stock}
+                    {t('remainingStatus')}: {item.variant.stock}
                 </span>
             </div>
 
@@ -126,7 +128,7 @@ export function CartItem({ item, updateQuantity, remove, isSelected, onToggle }:
                 <button
                     onClick={() => remove(item.id)}
                     className="size-10 flex items-center justify-center rounded-full text-destructive bg-destructive/10 hover:bg-destructive/20 hover:scale-110 transition-all active:scale-95"
-                    title="Xóa sản phẩm"
+                    title={t('removeTitle')}
                 >
                     <Trash2 className="h-4 w-4" />
                 </button>

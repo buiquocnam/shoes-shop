@@ -7,17 +7,16 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { formatCurrency } from "@/utils/format";
-import { formatDateTime } from "@/utils/date";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreditCard, MapPin, Package, Receipt, User, } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { adminProductsApi } from "@/features/admin/products/services/products.api";
 import { adminUsersApi } from "@/features/admin/users/services/users.api";
 import { useQuery } from "@tanstack/react-query";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
 import { usePaymentDetail } from "@/features/admin/payments";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 
 interface OrderDetailDialogProps {
@@ -139,9 +138,22 @@ export function OrderDetailDialog({
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <Badge className="h-7">
-                            {payment?.createdDate ? "Đã thanh toán" : "Chờ xử lý"}
-                        </Badge>
+                        {data.orderStatus && (
+                            <Badge
+                                variant={
+                                    data.orderStatus.toLowerCase() === 'success' ? 'default' :
+                                        data.orderStatus.toLowerCase() === 'shipping' ? 'secondary' : 'outline'
+                                }
+                                className={cn(
+                                    "h-7 capitalize",
+                                    data.orderStatus.toLowerCase() === 'success' && "bg-success hover:bg-success/90"
+                                )}
+                            >
+                                {data.orderStatus.toLowerCase() === 'payment' ? 'Chờ thanh toán' :
+                                    data.orderStatus.toLowerCase() === 'shipping' ? 'Đang giao hàng' :
+                                        data.orderStatus.toLowerCase() === 'success' ? 'Hoàn thành' : data.orderStatus}
+                            </Badge>
+                        )}
                     </div>
                 </div>
 
@@ -162,8 +174,8 @@ export function OrderDetailDialog({
                                     </div>
                                     <div className="bg-muted/30 p-4 rounded-lg border space-y-3">
                                         <div>
-                                            <p className="text-sm font-medium">{userInfo.name}</p>
-                                            <p className="text-sm text-muted-foreground">{userInfo.email}</p>
+                                            <p className="text-sm font-medium">{(userInfo as any).name}</p>
+                                            <p className="text-sm text-muted-foreground">{(userInfo as any).email}</p>
                                         </div>
                                     </div>
                                 </div>

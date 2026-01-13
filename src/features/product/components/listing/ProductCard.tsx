@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Star, ShoppingCart } from "lucide-react";
 import { Product } from "@/types/product";
 import { formatCurrency } from "@/utils/format";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import {
     Card,
@@ -13,12 +14,26 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { useCart } from "@/features/cart/hooks/useCart";
+import { Badge } from "@/components/ui/badge";
+import { useTranslations } from "next-intl";
 
 interface ProductCardProps {
     product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+    const t = useTranslations('Products');
+    const { cart } = useCart();
+
+    // Check if any variant of this product is in cart
+    const isInCart = useMemo(() => {
+        if (!cart?.items || !product?.id) return false;
+        return cart.items.some(item =>
+            item.product?.id === product.id
+        );
+    }, [cart?.items, product?.id]);
+
     const discountedPrice =
         product.price - (product.price * (product.discount || 0)) / 100;
     const imageUrl = product.imageUrl?.url || "/placeholder.png";
@@ -33,6 +48,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                             <span className="absolute left-3 top-3 z-10 rounded-full bg-primary px-2 py-1 text-sm font-bold uppercase tracking-wider text-primary-foreground">
                                 -{product.discount}%
                             </span>
+                        )}
+
+                        {isInCart && (
+                            <Badge className="absolute right-3 top-3 z-10 gap-1 bg-success/90 hover:bg-success text-[10px] font-bold uppercase py-1 shadow-sm border-none">
+                                <ShoppingCart className="h-3 w-3" />
+                                {t('inCart')}
+                            </Badge>
                         )}
                         <Image
                             src={imageUrl}

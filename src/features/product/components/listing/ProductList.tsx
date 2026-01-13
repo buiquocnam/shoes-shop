@@ -28,10 +28,11 @@ export default function ProductList() {
         page: currentPage,
         category_id: searchParams.get('category_id') || undefined,
         brand_id: searchParams.get('brand_id') || undefined,
-        search: searchParams.get('search') || undefined,
+        name: searchParams.get('name') || undefined,
+        status: searchParams.get('status') || undefined,
         min_price: searchParams.get('min_price') ? Number(searchParams.get('min_price')) : undefined,
         max_price: searchParams.get('max_price') ? Number(searchParams.get('max_price')) : undefined,
-        sort_by: searchParams.get('sort_by') || 'countSell',
+        sort_by: (searchParams.get('sort_by') as ProductFilters['sort_by']) || 'countSell',
         sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || undefined,
     };
 

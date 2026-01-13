@@ -4,7 +4,7 @@
         "description": "Cửa hàng giày yêu thích của bạn",
         "metaTitle": "Trang Chủ Cửa Hàng Giày",
         "metaDescription": "Khám phá giày thể thao và giày dép chất lượng cao tại Cửa hàng giày. Sản phẩm bán chạy nhất, giày được đánh giá cao và xu hướng giày thể thao mới nhất với giá không thể đánh bại.",
-         "hero": {
+        "hero": {
             "tag": "HÀNG MỚI VỀ",
             "title": "KHAI PHÁ",
             "accent": "TỐC ĐỘ",
@@ -74,6 +74,7 @@
         "filter": "Bộ lọc sản phẩm",
         "noProducts": "Không tìm thấy sản phẩm",
         "noProductsDesc": "Thử điều chỉnh bộ lọc của bạn",
+        "inCart": "Trong giỏ",
         "sort": {
             "label": "Sắp xếp theo:",
             "bestSelling": "Bán chạy",
@@ -88,6 +89,7 @@
             "quantity": "Số lượng:",
             "addToCart": "Thêm vào giỏ hàng",
             "buyNow": "Mua Ngay",
+            "alreadyInCart": "Sản phẩm này đã có trong giỏ hàng của bạn",
             "similarProducts": "Sản phẩm tương tự",
             "backToShopping": "Tiếp tục mua hàng"
         }
@@ -178,7 +180,16 @@
         "total": "Tổng thanh toán",
         "items": "sản phẩm",
         "continueShopping": "Tiếp tục mua sắm",
-        "remove": "Xóa"
+        "remove": "Xóa",
+        "loading": "Đang tải giỏ hàng...",
+        "title1": "Giỏ Hàng",
+        "title2": "Của Bạn",
+        "productUnit": "Sản phẩm",
+        "selectAll": "Chọn tất cả",
+        "color": "Phân loại",
+        "size": "Kích cỡ",
+        "remainingStatus": "Còn lại",
+        "removeTitle": "Xóa sản phẩm"
     },
     "Checkout": {
         "title": "Thanh toán",

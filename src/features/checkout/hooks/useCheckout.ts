@@ -1,18 +1,11 @@
 "use client";
 
 import { checkoutApi, VnPayPaymentRequest } from "../services/checkout.api";
-import { CreateOrderResponse, CreateOrderRequest } from "../types/checkout";
+import { CreateOrderRequest } from "../types/checkout";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useCheckoutStore } from '@/store';
-import { useQueryClient } from "@tanstack/react-query";
-import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
 
 export const useCreateOrder = () => {
-  const queryClient = useQueryClient();
-  const checkoutSource = useCheckoutStore((state) => state.source);
-  const clearCheckout = useCheckoutStore((state) => state.clearCheckout);
-
   return useMutation({
     mutationFn: ({ request }: { request: CreateOrderRequest }) => {
       return checkoutApi.createOrder(request);

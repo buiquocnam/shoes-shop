@@ -16,6 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/images/logo.png" />
+      </head>
       <body className={`${plusJakarta.className} antialiased`}>
         <ThemeProvider
           attribute="class"

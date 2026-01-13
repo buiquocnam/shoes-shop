@@ -47,6 +47,7 @@ export interface PurchasedList {
   finishPrice: number;
   discountPercent: number | null;
   addressId: string;
+  orderStatus: string;
 }
 
 export interface PurchasedListPaginationResponse

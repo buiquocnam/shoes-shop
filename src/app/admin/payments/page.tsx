@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
-import { usePayments, paymentColumns, PaymentFilters, PaymentRecord } from "@/features/admin/payments";
+import { usePayments, useUpdateOrderStatus, paymentColumns, PaymentFilters, PaymentRecord } from "@/features/admin/payments";
 import { OrderDetailDialog } from "@/features/shared/components/order/OrderDetailDialog";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 
@@ -43,7 +43,6 @@ const AdminPaymentsPage = () => {
     [data?.currentPage, data?.totalPages, data?.totalElements, data?.pageSize, size]
   );
 
-  // Handlers - không cần useCallback vì components không được memoized
   const handleViewDetail = (payment: PaymentRecord) => {
     setSelectedPayment(payment);
   };
@@ -58,8 +57,13 @@ const AdminPaymentsPage = () => {
     }
   };
 
-  // columns không cần useMemo vì handleViewDetail logic không thay đổi
-  const columns = paymentColumns(handleViewDetail);
+  const { mutate: updateStatus } = useUpdateOrderStatus();
+
+  const handleUpdateStatus = (orderId: string, status: string) => {
+    updateStatus({ orderId, status: status.toUpperCase() });
+  };
+
+  const columns = paymentColumns(handleViewDetail, handleUpdateStatus);
 
   if (isLoading) return <Loading />;
 

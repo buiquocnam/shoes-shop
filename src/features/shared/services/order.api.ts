@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import { OrderDetail } from "../types/order";
+import { OrderDetail } from "@/types/order";
 
 export const orderApi = {
   /**

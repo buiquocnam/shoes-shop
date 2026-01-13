@@ -3,14 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
 import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import {
-  PurchasedProductByProductPaginationResponse,
-  PurchasedItemFilters,
-} from "../../types";
+import { PaginationParams } from "@/types/common";
 
 export const usePurchasedItemsByProduct = (
   productId: string | null,
-  filters?: PurchasedItemFilters
+  filters?: PaginationParams
 ) => {
   return useQuery({
     queryKey: [
@@ -18,7 +15,7 @@ export const usePurchasedItemsByProduct = (
       "purchased-items",
       productId || "",
       filters?.page || 1,
-      filters?.limit || 10,
+      filters?.size || 10,
     ],
     queryFn: () => adminProductsApi.getPurchasedItems(productId!, filters),
     enabled: !!productId,

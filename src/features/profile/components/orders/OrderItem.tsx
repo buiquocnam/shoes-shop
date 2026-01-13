@@ -17,8 +17,6 @@ export function OrderItem({ purchasedItem }: OrderItemProps) {
   const discount = purchasedItem.product.discount || 0;
   const hasDiscount = discount > 0;
 
-  console.log("purchasedItem", purchasedItem
-  );
   const handleProductClick = () => {
     router.push(`/products/${purchasedItem.product.id}`);
   };

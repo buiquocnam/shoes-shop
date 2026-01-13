@@ -9,11 +9,13 @@ import {
   OrdersPagination,
 } from '@/features/profile/components/orders';
 import { useTranslations } from 'next-intl';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ProfileOrdersPage() {
   const t = useTranslations('Profile.orders');
   const tCommon = useTranslations('Common');
   const [currentPage, setCurrentPage] = useState(1);
+  const [status, setStatus] = useState<string>("payment");
   const pageSize = 10;
 
   const { data, isLoading } = useProductsPurchased({
@@ -22,11 +24,24 @@ export default function ProfileOrdersPage() {
   });
 
   const orders = data?.data || [];
+  const filteredOrders = orders.filter(
+    (order) => order.orderStatus?.toLowerCase() === status.toLowerCase()
+  );
+
+  const lengthSuccess = orders.filter(order => order.orderStatus?.toLowerCase() === 'success').length;
+  const lengthPayment = orders.filter(order => order.orderStatus?.toLowerCase() === 'payment').length;
+  const lengthShipping = orders.filter(order => order.orderStatus?.toLowerCase() === 'shipping').length;  
+
   const pagination = {
     currentPage: data?.currentPage ?? 1,
     totalPages: data?.totalPages ?? 1,
     totalElements: data?.totalElements ?? 0,
     pageSize: data?.pageSize ?? pageSize,
+  };
+
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);
+    setCurrentPage(1);
   };
 
   if (isLoading) {
@@ -44,16 +59,24 @@ export default function ProfileOrdersPage() {
     <div className="flex flex-col gap-6 bg-card rounded-lg p-6 ">
       <h2 className="text-3xl font-extrabold ">{t('title')}</h2>
 
-      {orders.length === 0 ? (
+      <Tabs defaultValue="payment" value={status} onValueChange={handleStatusChange} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsTrigger value="payment" className="text-sm font-bold">Chờ thanh toán ({lengthPayment})</TabsTrigger>
+          <TabsTrigger value="shipping" className="text-sm font-bold">Đang giao hàng ({lengthShipping})</TabsTrigger>
+          <TabsTrigger value="success" className="text-sm font-bold">Hoàn thành ({lengthSuccess})</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {filteredOrders.length === 0 ? (
         <OrderEmptyState />
       ) : (
         <>
-          <OrdersList orders={orders} />
+          <OrdersList orders={filteredOrders} />
           <OrdersPagination
             currentPage={pagination.currentPage}
             totalPages={pagination.totalPages}
             totalElements={pagination.totalElements}
-            currentItemsCount={orders.length}
+            currentItemsCount={filteredOrders.length}
             onPageChange={setCurrentPage}
           />
         </>

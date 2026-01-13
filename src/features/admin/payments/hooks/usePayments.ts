@@ -2,14 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { adminPaymentsApi } from "../services/payments.api";
-import { PaymentFilters, PaymentPaginationResponse } from "../types";
+import { PaymentFilters } from "../types";
 import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
+import { PaymentPaginationResponse } from "../types";
 
-/**
- * Get all payments with filters
- */
 export const usePayments = (filters?: PaymentFilters) => {
-  return useQuery({
+  return useQuery<PaymentPaginationResponse, Error>({
     queryKey: [...adminQueryKeys.payments.key, "list", filters],
     queryFn: () => adminPaymentsApi.getAll(filters),
   });

@@ -1,6 +1,8 @@
 import { BaseEntity, ProductStatus, ImageType, PaginatedResponse } from "./common";
 import { Category } from "./category";
 import { Brand } from "./brand";
+import { Variant } from "./variant";
+
 
 export interface Product extends BaseEntity {
   category: Category;
@@ -19,7 +21,7 @@ export interface Product extends BaseEntity {
 
 export interface ProductDetail {
   product: Product;
-  variants: import("./variant").Variant[];
+  variants: Variant[];
   listImg: ImageType[];
 }
 
@@ -28,12 +30,11 @@ export interface ProductFilters {
   size?: number;
   category_id?: string;
   brand_id?: string;
-  status?: "active" | "inactive";
-  search?: string;
+  status?: string;
   name?: string;
   min_price?: number;
   max_price?: number;
-  sort_by?: string;
+  sort_by?: "name" | "price" | "discount" | "totalStock" | "averageRating" | "countSell" | "status" | "createdDate" | "modifiedDate";
   sort_order?: "asc" | "desc";
 }
 

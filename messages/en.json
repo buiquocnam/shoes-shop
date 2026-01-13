@@ -73,6 +73,7 @@
         "filter": "Product Filters",
         "noProducts": "No products found",
         "noProductsDesc": "Try adjusting your filters",
+        "inCart": "In Cart",
         "sort": {
             "label": "Sort by:",
             "bestSelling": "Best Selling",
@@ -87,6 +88,7 @@
             "quantity": "Quantity:",
             "addToCart": "Add to Cart",
             "buyNow": "Buy Now",
+            "alreadyInCart": "This product is already in your cart",
             "similarProducts": "Similar Products",
             "backToShopping": "Continue Shopping"
         }
@@ -177,7 +179,16 @@
         "total": "Order Total",
         "items": "items",
         "continueShopping": "Continue Shopping",
-        "remove": "Remove"
+        "remove": "Remove",
+        "loading": "Loading cart...",
+        "title1": "Your",
+        "title2": "Cart",
+        "productUnit": "Product",
+        "selectAll": "Select all",
+        "color": "Color",
+        "size": "Size",
+        "remainingStatus": "Stock",
+        "removeTitle": "Remove item"
     },
     "Checkout": {
         "title": "Checkout",

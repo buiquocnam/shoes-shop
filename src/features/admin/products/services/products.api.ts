@@ -184,4 +184,14 @@ export const adminProductsApi = {
     );
     return response.data;
   },
+
+  /**
+   * Update Order Status
+   */
+  updateOrderStatus: async (orderId: string, status: string) => {
+    const response = await axiosInstance.post<boolean>(
+      `/shoes/variants/update-status?orderId=${orderId}&status=${status}`
+    );
+    return response.data;
+  },
 };

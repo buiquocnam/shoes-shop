@@ -10,11 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
+import { ProductFilters } from "@/types/product";
 
 export type SortOption = {
   value: string;
   labelKey: string;
-  sort_by?: string;
+  sort_by: ProductFilters['sort_by'];
+  sort_order?: "asc" | "desc";
 };
 
 export default function SortSelect() {
@@ -23,19 +25,23 @@ export default function SortSelect() {
   const searchParams = useSearchParams();
 
   const SORT_OPTIONS: SortOption[] = useMemo(() => [
-    { value: "countSell", labelKey: "bestSelling", sort_by: "countSell" },
-    { value: "asc", labelKey: "oldest", sort_by: "asc" },
-    { value: "desc", labelKey: "newest", sort_by: "desc" },
+    { value: "countSell", labelKey: "bestSelling", sort_by: "countSell", sort_order: "desc" },
+    { value: "newest", labelKey: "newest", sort_by: "createdDate", sort_order: "desc" },
+    { value: "oldest", labelKey: "oldest", sort_by: "createdDate", sort_order: "asc" },
   ], []);
 
   const currentSort = useMemo(() => {
     const sortBy = searchParams.get("sort_by");
+    const sortOrder = searchParams.get("sort_order");
 
     if (!sortBy) {
-      return "countSell"; // Default to "Bán chạy"
+      return "countSell"; // Default
     }
 
-    const option = SORT_OPTIONS.find((opt) => opt.sort_by === sortBy);
+    const option = SORT_OPTIONS.find((opt) =>
+      opt.sort_by === sortBy &&
+      (!opt.sort_order || opt.sort_order === sortOrder)
+    );
 
     return option?.value || "countSell";
   }, [searchParams, SORT_OPTIONS]);
@@ -44,12 +50,19 @@ export default function SortSelect() {
     const option = SORT_OPTIONS.find((opt) => opt.value === value);
     const params = new URLSearchParams(searchParams.toString());
 
-    if (option?.sort_by) {
-      params.set("sort_by", option.sort_by);
-    }
+    if (option) {
+      if (option.sort_by) {
+        params.set("sort_by", option.sort_by);
+      } else {
+        params.delete("sort_by");
+      }
 
-    // Remove sort_order if exists
-    params.delete("sort_order");
+      if (option.sort_order) {
+        params.set("sort_order", option.sort_order);
+      } else {
+        params.delete("sort_order");
+      }
+    }
 
     // Reset to page 1 when sorting changes
     params.set("page", "1");
