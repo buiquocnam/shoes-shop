@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X, Upload, ImagePlus, CheckCircle2 } from "lucide-react";
+import { X, Upload, ImagePlus, CheckCircle2, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -19,10 +19,12 @@ import {
   Field,
   FieldLabel,
   FieldError,
+  FieldGroup,
 } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import { ConfirmAlert } from "@/features/admin/components/ConfirmAlert";
 
 import { bannerSchema, BannerFormValues } from "../schema";
 import { Banner, BannerSlot } from "@/types/banner";
@@ -30,14 +32,18 @@ import { Banner, BannerSlot } from "@/types/banner";
 interface BannerCardProps {
   banner?: Banner;
   slot: BannerSlot;
+  index: number;
   onSubmit: (data: FormData) => Promise<void>;
+  onDelete?: (id: string) => Promise<void>;
   isLoading?: boolean;
 }
 
 export default function BannerCard({
   banner,
   slot,
+  index,
   onSubmit,
+  onDelete,
   isLoading,
 }: BannerCardProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(
@@ -66,7 +72,7 @@ export default function BannerCard({
     formState: { errors },
   } = form;
 
-  // Sync with banner changes (important when a new banner is created or updated)
+  // Sync with banner changes (important when a new banner is created, updated or deleted)
   useEffect(() => {
     if (banner) {
       reset({
@@ -77,8 +83,17 @@ export default function BannerCard({
         image: undefined,
       });
       setImagePreview(banner.imageUrl);
+    } else {
+      reset({
+        title: "",
+        link: "",
+        slot: slot,
+        active: true,
+        image: undefined,
+      });
+      setImagePreview(null);
     }
-  }, [banner, reset]);
+  }, [banner, reset, slot]);
 
   const handleFormSubmit = async (data: BannerFormValues) => {
     // Required image ONLY when creating new banner
@@ -147,6 +162,11 @@ export default function BannerCard({
     console.error("Banner Form Validation Errors:", errors);
   };
 
+  const handleDelete = async () => {
+    if (!banner?.id || !onDelete) return;
+    await onDelete(banner.id);
+  };
+
   return (
     <Card className={cn(
       "overflow-hidden transition-all duration-300 border-muted-foreground/10 flex flex-col h-full",
@@ -158,52 +178,70 @@ export default function BannerCard({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <CardTitle className="text-xl font-bold">
-                {slot.replace("HOME_", "").replace("_", " ")}
+                Banner {index + 1}
               </CardTitle>
               {banner?.active && (
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
               )}
             </div>
-            <CardDescription className="text-xs uppercase font-medium tracking-tight opacity-70">
-              Vị trí: {slot}
-            </CardDescription>
+
           </div>
 
-          <Controller
-            control={control}
-            name="active"
-            render={({ field }) => (
-              <div className="flex flex-col items-end gap-1.5">
-                <Switch
-                  checked={field.value}
-                  disabled={isLoading}
-                  onCheckedChange={(checked) => {
-                    field.onChange(checked);
-                    if (banner) {
-                      handleSubmit(handleFormSubmit, onInvalid)();
-                    }
-                  }}
-                />
-                <span className={cn(
-                  "text-[10px] font-bold uppercase tracking-widest",
-                  field.value ? "text-primary" : "text-muted-foreground"
-                )}>
-                  {field.value ? "Hiển thị" : "Đã ẩn"}
-                </span>
-              </div>
+          <div className="flex flex-col items-end gap-3">
+            {banner && (
+              <Controller
+                control={control}
+                name="active"
+                render={({ field }) => (
+                  <div className="flex flex-col items-end gap-1.5">
+                    <Switch
+                      checked={field.value}
+                      disabled={isLoading}
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked);
+                        if (banner) {
+                          handleSubmit(handleFormSubmit, onInvalid)();
+                        }
+                      }}
+                    />
+                    <span className={cn(
+                      "text-[10px] font-bold uppercase tracking-widest",
+                      field.value ? "text-primary" : "text-muted-foreground"
+                    )}>
+                      {field.value ? "Hiển thị" : "Đã ẩn"}
+                    </span>
+                  </div>
+                )}
+              />
             )}
-          />
+
+            {banner && (
+              <ConfirmAlert
+                onConfirm={handleDelete}
+                itemName={`banner ${slot}`}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+                  disabled={isLoading}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </ConfirmAlert>
+            )}
+          </div>
         </div>
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col">
         <form
           onSubmit={handleSubmit(handleFormSubmit, onInvalid)}
-          className="space-y-6 flex-1 flex flex-col"
+          className="flex-1 flex flex-col"
         >
-          {/* IMAGE PREVIEW & UPLOAD */}
-          <div className="space-y-3">
-            <Field data-invalid={!!errors.image}>
+          <FieldGroup className="flex-1 flex flex-col gap-6">
+            {/* IMAGE PREVIEW & UPLOAD */}
+            <Field data-invalid={!!errors.image} className="w-full">
               <div className={cn(
                 "relative aspect-[16/9] w-full overflow-hidden rounded-xl border-2 transition-all group",
                 imagePreview ? "border-muted/30" : "border-dashed border-primary/20 bg-primary/5 hover:bg-primary/10"
@@ -270,55 +308,56 @@ export default function BannerCard({
               </div>
               <FieldError errors={[errors.image]} />
             </Field>
-          </div>
 
-          <div className="grid gap-5">
-            {/* TITLE */}
-            <Field data-invalid={!!errors.title}>
-              <FieldLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Tiêu đề quảng bá</FieldLabel>
-              <Input
-                {...register("title")}
-                placeholder="Nhập slogan hoặc tiêu đề..."
+            <FieldGroup className="gap-5">
+              {/* TITLE */}
+              <Field data-invalid={!!errors.title}>
+                <FieldLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Tiêu đề quảng bá</FieldLabel>
+                <Input
+                  {...register("title")}
+                  placeholder="Nhập slogan hoặc tiêu đề..."
+                  disabled={isLoading}
+                  className="h-11 border-muted-foreground/20 bg-muted/30 transition-all focus-visible:ring-primary/20 focus-visible:bg-background"
+                />
+                <FieldError errors={[errors.title]} />
+              </Field>
+
+              {/* LINK */}
+              <Field data-invalid={!!errors.link}>
+                <FieldLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Link</FieldLabel>
+                <Input
+                  {...register("link")}
+                  placeholder="https://myshop.com/promo-sale"
+                  disabled={isLoading}
+                  className="h-11 border-muted-foreground/20 bg-muted/30 transition-all focus-visible:ring-primary/20 focus-visible:bg-background"
+                />
+                <FieldError errors={[errors.link]} />
+              </Field>
+            </FieldGroup>
+
+            <div className="mt-auto pt-4">
+              <Button
+                type="submit"
                 disabled={isLoading}
-                className="h-11 border-muted-foreground/20 bg-muted/30 transition-all focus-visible:ring-primary/20 focus-visible:bg-background"
-              />
-              <FieldError errors={[errors.title]} />
-            </Field>
-
-            {/* LINK */}
-            <Field data-invalid={!!errors.link}>
-              <FieldLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">Đường dẫn hành động (CTA)</FieldLabel>
-              <Input
-                {...register("link")}
-                placeholder="https://myshop.com/promo-sale"
-                disabled={isLoading}
-                className="h-11 border-muted-foreground/20 bg-muted/30 transition-all focus-visible:ring-primary/20 focus-visible:bg-background"
-              />
-              <FieldError errors={[errors.link]} />
-            </Field>
-          </div>
-
-          <div className="mt-auto pt-6">
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className={cn(
-                "w-full h-12 font-bold text-sm uppercase tracking-widest shadow-lg transition-all active:scale-[0.97]",
-                !banner ? "bg-primary hover:bg-primary/90" : "bg-neutral-800 hover:bg-black dark:bg-neutral-700"
-              )}
-            >
-              {isLoading ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  Gửi dữ liệu...
-                </>
-              ) : (
-                banner ? "Cập nhật dữ liệu" : "Thiết lập Banner"
-              )}
-            </Button>
-          </div>
+                className={cn(
+                  "w-full h-12 font-bold text-sm uppercase tracking-widest shadow-lg transition-all active:scale-[0.97]",
+                  !banner ? "bg-primary hover:bg-primary/90" : "bg-neutral-800 hover:bg-black dark:bg-neutral-700"
+                )}
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4" />
+                    Gửi dữ liệu...
+                  </>
+                ) : (
+                  banner ? "Cập nhật dữ liệu" : "Thiết lập Banner"
+                )}
+              </Button>
+            </div>
+          </FieldGroup>
         </form>
       </CardContent>
     </Card>
   );
 }
+

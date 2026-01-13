@@ -7,19 +7,14 @@ import { ArrowRight } from "lucide-react";
 import { useBanners } from "@/features/home";
 import { useTranslations } from "next-intl";
 import { Banner } from "@/types/banner";
+import HeroBannerSkeleton from "../skeletons/HeroBannerSkeleton";
 
 const HeroBanner = () => {
   const t = useTranslations('HomePage.hero');
-  const { data } = useBanners();
+  const { data, isLoading } = useBanners();
   const banners: Banner[] = (data?.data || []).filter((banner: Banner) => banner.active);
 
-  // Fallback image and title if no banners
-  const defaultImage = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2000&auto=format&fit=crop";
-  const defaultTitle = "Discover Your Perfect Shoes";
-
-  const slides = banners.length > 0
-    ? banners.map(b => ({ imageUrl: b.imageUrl, title: b.title }))
-    : [{ imageUrl: defaultImage, title: defaultTitle }];
+  const slides = banners.map(b => ({ imageUrl: b.imageUrl, title: b.title }));
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -33,6 +28,14 @@ const HeroBanner = () => {
 
     return () => clearInterval(interval);
   }, [slides.length]);
+
+  if (isLoading) {
+    return <HeroBannerSkeleton />;
+  }
+
+  if (banners.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative w-full h-[500px] lg:h-[650px] overflow-hidden bg-muted group">
@@ -87,4 +90,5 @@ const HeroBanner = () => {
 };
 
 export default HeroBanner;
+
 

@@ -186,14 +186,14 @@ export function MessageList({ conversationId, className }: MessageListProps) {
                   )}
                   <div
                     className={cn(
-                      "rounded-2xl px-4 py-2.5 shadow-sm",
+                      "rounded-2xl px-4 py-2.5 shadow-sm w-fit",
                       isOwnMessage
                         ? "bg-primary text-primary-foreground rounded-br-md"
                         : "bg-card border border-border rounded-bl-md"
                     )}
                   >
                     <div className={cn(
-                      "text-sm whitespace-pre-wrap break-words",
+                      "text-sm whitespace-pre-wrap break-words [word-break:break-word] [overflow-wrap:anywhere]",
                       isOwnMessage ? "text-primary-foreground" : "text-foreground"
                     )}>
                       {message.message}

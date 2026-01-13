@@ -30,3 +30,19 @@ export const useUpsertBanner = () => {
   });
 };
 
+export const useDeleteBanner = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => adminBannersApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: homeQueryKeys.banner.list(),
+      });
+      toast.success("Xóa banner thành công");
+    },
+    onError: () => {
+      toast.error("Xóa banner thất bại");
+    },
+  });
+};
+

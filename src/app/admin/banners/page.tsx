@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { BannerCard } from "@/features/admin/banners";
-import { useUpsertBanner, useBanners } from "@/features/admin/banners";
+import { useUpsertBanner, useBanners, useDeleteBanner } from "@/features/admin/banners";
 import { BannerSlot } from "@/types/banner";
 import Loading from "@/features/admin/components/Loading";
 import { Image as ImageIcon } from "lucide-react";
@@ -11,6 +11,7 @@ const BANNER_SLOTS: BannerSlot[] = ["HOME_HERO", "HOME_MID", "SIDEBAR"];
 
 const AdminBannersPage: React.FC = () => {
   const upsertBannerMutation = useUpsertBanner();
+  const deleteBannerMutation = useDeleteBanner();
   const [loadingSlot, setLoadingSlot] = useState<BannerSlot | null>(null);
 
   const { data, isLoading } = useBanners();
@@ -31,6 +32,17 @@ const AdminBannersPage: React.FC = () => {
       await upsertBannerMutation.mutateAsync(formData);
     } catch (error) {
       console.error("Upsert banner error:", error);
+    } finally {
+      setLoadingSlot(null);
+    }
+  };
+
+  const handleToDelete = async (id: string, slot: BannerSlot) => {
+    try {
+      setLoadingSlot(slot);
+      await deleteBannerMutation.mutateAsync(id);
+    } catch (error) {
+      console.error("Delete banner error:", error);
     } finally {
       setLoadingSlot(null);
     }
@@ -62,34 +74,25 @@ const AdminBannersPage: React.FC = () => {
 
       {/* Banner Cards Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        {BANNER_SLOTS.map((slot) => {
+        {BANNER_SLOTS.map((slot, index) => {
           const banner = allBanners.find(b => b.slot === slot);
           return (
             <BannerCard
               key={slot}
               banner={banner}
               slot={slot}
+              index={index}
               onSubmit={handleUpsertBanner}
-              isLoading={loadingSlot === slot || (upsertBannerMutation.isPending && loadingSlot === slot)}
+              onDelete={(id) => handleToDelete(id, slot)}
+              isLoading={loadingSlot === slot}
             />
           );
         })}
       </div>
 
-      {/* Helper Footer */}
-      <div className="rounded-xl border bg-card p-6 text-sm text-muted-foreground flex items-start gap-4 shadow-sm">
-        <div className="mt-1 h-5 w-5 flex-shrink-0 rounded-full border flex items-center justify-center font-bold">!</div>
-        <div className="space-y-1">
-          <p className="font-semibold text-foreground italic">Mẹo nhỏ:</p>
-          <ul className="list-disc ml-4 space-y-1 opacity-80 decoration-primary">
-            <li>Vị trí <span className="font-medium text-foreground">HOME_HERO</span> thường hiển thị ở đầu trang với kích thước lớn nhất.</li>
-            <li>Đảm bảo hình ảnh tải lên có dung lượng tối ưu để trang web tải nhanh hơn.</li>
-            <li>Khi tắt trạng thái <span className="font-medium text-foreground">Hoạt động</span>, banner sẽ bị ẩn ngay lập tức trên trang chủ.</li>
-          </ul>
-        </div>
-      </div>
     </div>
   );
 };
 
 export default AdminBannersPage;
+

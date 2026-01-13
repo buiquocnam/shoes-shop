@@ -16,5 +16,10 @@ export const adminBannersApi = {
     );
     return response.data;
   },
+
+  delete: async (id: string) => {
+    const response = await axiosInstance.delete(`/shoes/banners/${id}`);
+    return response.data;
+  },
 };
 

@@ -128,7 +128,7 @@ export default function ProductInfoInteractive({
 
   const stock = selectedData?.size.stock || 0;
   const canPurchase = !!selectedData && stock > 0 && quantity > 0;
-  const maxQuantity = Math.min(stock, 10); // Giới hạn tối đa 10 sản phẩm
+  const maxQuantity = stock; // Giới hạn tối đa 10 sản phẩm
 
   // Tính giá sau giảm
   const discountPercent = productInfo.discount || 0;
@@ -254,7 +254,7 @@ export default function ProductInfoInteractive({
             <span className="font-bold text-sm uppercase text-muted-foreground">{t('quantity')}</span>
             <div className="flex items-center gap-2 border-2 border-border rounded-xl">
               <Button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                onClick={() => setQuantity(quantity - 1)}
                 disabled={quantity <= 1}
                 variant="ghost"
                 size="icon"
@@ -263,7 +263,7 @@ export default function ProductInfoInteractive({
               </Button>
               <span className="w-12 text-center font-bold text-foreground">{quantity}</span>
               <Button
-                onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
+                onClick={() => setQuantity(quantity + 1)}
                 disabled={quantity >= maxQuantity}
                 variant="ghost"
                 size="icon"

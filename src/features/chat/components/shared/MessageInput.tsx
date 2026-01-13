@@ -23,6 +23,15 @@ export function MessageInput({
   const [message, setMessage] = useState("");
   const { mutate: sendMessage, isPending } = useSendMessage();
   const { user } = useAuthStore();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  }, [message]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +47,9 @@ export function MessageInput({
     sendMessage(messageData, {
       onSuccess: () => {
         setMessage("");
+        if (textareaRef.current) {
+          textareaRef.current.style.height = "auto";
+        }
         onMessageSent?.();
       },
     });
@@ -51,12 +63,14 @@ export function MessageInput({
       >
         <div className="flex-1 relative">
           <Textarea
+            ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Nhập tin nhắn của bạn..."
             className={cn(
-              "min-h-[52px] max-h-[120px] resize-none pr-12",
-              "border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+              "min-h-[52px] max-h-[200px] resize-none pr-4 py-3 overflow-y-auto",
+              "border-2 focus-visible:ring-2 focus-visible:ring-primary/20",
+              "scrollbar-thin scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/30"
             )}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -67,17 +81,6 @@ export function MessageInput({
             disabled={isPending}
             rows={1}
           />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 bottom-2 h-8 w-8"
-            onClick={() => {
-              // TODO: Add emoji picker
-            }}
-          >
-            <Smile className="h-4 w-4 text-muted-foreground" />
-          </Button>
         </div>
         <Button
           type="submit"
