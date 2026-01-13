@@ -199,7 +199,9 @@
         "noItems": "Không có sản phẩm nào để thanh toán",
         "success": {
             "title": "Đặt hàng thành công!",
-            "description": "Cảm ơn bạn đã tin tưởng và mua hàng tại Shoes Shop."
+            "description": "Cảm ơn bạn đã tin tưởng và mua hàng tại Shoes Shop.",
+            "orderNotFound": "Không tìm thấy đơn hàng",
+            "orderNotFoundDesc": "Rất tiếc, chúng tôi không tìm thấy thông tin đơn hàng này."
         }
     },
     "Order": {

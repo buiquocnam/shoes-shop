@@ -1,6 +1,11 @@
+import { Metadata } from "next";
 import { ReactNode } from "react";
 import { SideBarAdmin } from "@/features/admin/components";
 import { SidebarProvider } from "@/components/ui/sidebar";
+
+export const metadata: Metadata = {
+    title: 'Admin Shoes Shop',
+};
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     return (

@@ -46,14 +46,13 @@ export function CartItem({ item, updateQuantity, remove, isSelected, onToggle }:
             </div>
 
             <div className="col-span-5 w-full flex items-center gap-4">
-                <div className="relative w-24 h-24 md:w-28 md:h-28 shrink-0 rounded-xl overflow-hidden bg-muted border border-border">
+                <div className="relative w-24 h-24 md:w-28 md:h-28 shrink-0 rounded-xl overflow-hidden bg-white border border-border">
                     <Image
                         src={item.product.imageUrl?.url || '/images/no-image.png'}
                         alt={item.product.name}
                         fill
                         unoptimized
-                        className="object-cover mix-blend-multiply dark:mix-blend-normal group-hover:scale-110 transition-transform duration-500"
-                        sizes="(max-width: 768px) 96px, 112px"
+                        className="object-contain group-hover:scale-110 transition-transform duration-500"
                     />
                 </div>
                 <div className="flex flex-col gap-1">

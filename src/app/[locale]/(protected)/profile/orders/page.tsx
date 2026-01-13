@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useProductsPurchased } from '@/features/profile/hooks/useProfile';
 import { Spinner } from '@/components/ui/spinner';
 import {
@@ -13,9 +14,17 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ProfileOrdersPage() {
   const t = useTranslations('Profile.orders');
-  const tCommon = useTranslations('Common');
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get('status') || "payment";
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState<string>("payment");
+  const [status, setStatus] = useState<string>(initialStatus);
+
+  useEffect(() => {
+    const urlStatus = searchParams.get('status');
+    if (urlStatus && urlStatus !== status) {
+      setStatus(urlStatus);
+    }
+  }, [searchParams]);
   const pageSize = 10;
 
   const { data, isLoading } = useProductsPurchased({
@@ -30,7 +39,7 @@ export default function ProfileOrdersPage() {
 
   const lengthSuccess = orders.filter(order => order.orderStatus?.toLowerCase() === 'success').length;
   const lengthPayment = orders.filter(order => order.orderStatus?.toLowerCase() === 'payment').length;
-  const lengthShipping = orders.filter(order => order.orderStatus?.toLowerCase() === 'shipping').length;  
+  const lengthShipping = orders.filter(order => order.orderStatus?.toLowerCase() === 'shipping').length;
 
   const pagination = {
     currentPage: data?.currentPage ?? 1,

@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCheckoutStore } from '@/store';
 import { userQueryKeys } from '@/constants/userQueryKeys';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
+import { useRouter, Link } from '@/i18n/routing';
 import { removeCartItem } from '@/features/cart/services';
 import { useCartStore } from '@/store/useCartStore';
 import { useState } from 'react';
@@ -18,17 +17,16 @@ export default function CheckoutSuccessPage() {
   const t = useTranslations('Checkout.success');
   const tProducts = useTranslations('Products');
   const tCommon = useTranslations('Common');
-  const router = useRouter();
   const queryClient = useQueryClient();
-  const { items, orderId: storeOrderId, source } = useCheckoutStore();
-  const [isCleaning, setIsCleaning] = useState(source === 'cart');
-
-  const orderId = storeOrderId;
+  const { source, clearCheckout, _hasHydrated: checkoutHydrated } = useCheckoutStore();
+  const { clearSelection, selectedItemIds, _hasHydrated: cartHydrated } = useCartStore();
+  const [isCleaning, setIsCleaning] = useState(true);
 
   useEffect(() => {
-    if (source === 'cart') {
-      const selectedItemIds = useCartStore.getState().selectedItemIds;
+    console.log("source",source)
+    if (!checkoutHydrated || !cartHydrated) return;
 
+    if (source === 'cart') {
       if (selectedItemIds.length === 0) {
         setIsCleaning(false);
         return;
@@ -44,25 +42,23 @@ export default function CheckoutSuccessPage() {
 
       Promise.all(promises)
         .then(() => {
-          useCartStore.getState().clearSelection();
-
+          clearSelection();
           queryClient.invalidateQueries({
             queryKey: userQueryKeys.cart.current(),
           });
-
-          useCheckoutStore.getState().clearCheckout();
-        })
-        .catch(err => {
-          console.error('Failed to cleanup cart after payment:', err);
-          useCartStore.getState().clearSelection();
+          clearCheckout();
         })
         .finally(() => {
           setIsCleaning(false);
         });
     } else {
+      // If source is null or product, we don't clean cart
       setIsCleaning(false);
+      clearCheckout();
     }
-  }, [orderId, source, router, queryClient]);
+  }, [source, checkoutHydrated, cartHydrated, queryClient, clearCheckout, selectedItemIds, clearSelection]);
+
+
 
   if (isCleaning) {
     return (
@@ -76,8 +72,6 @@ export default function CheckoutSuccessPage() {
       </main>
     );
   }
-
-  if (!orderId) return null;
 
   return (
     <main className="flex h-screen items-center justify-center bg-background text-center">
@@ -97,23 +91,25 @@ export default function CheckoutSuccessPage() {
 
         <div className="flex flex-col sm:flex-row gap-3 w-full pt-4">
           <Button
+            asChild
             variant="outline"
             size="lg"
             className="flex-1 rounded-xl h-12 font-semibold"
-            onClick={() => {
-              router.push(`/checkout/success/${orderId}` as any);
-            }}
           >
-            {tCommon('detail')}
+            <Link href="/profile/orders">
+              {tCommon('detail')}
+            </Link>
           </Button>
           <Button
+            asChild
             size="lg"
             className="flex-1 rounded-xl h-12 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
-            onClick={() => router.push('/products' as any)}
           >
-            {tProducts.rich('details.backToShopping', {
-              br: () => <br />
-            }) || "Tiếp tục mua hàng"}
+            <Link href="/products">
+              {tProducts.rich('details.backToShopping', {
+                br: () => <br />
+              }) || "Tiếp tục mua hàng"}
+            </Link>
           </Button>
         </div>
       </div>

@@ -74,9 +74,6 @@ export function CheckoutForm({ orderSummary }: CheckoutFormProps) {
                 }
             }, {
                 onSuccess: (data) => {
-                    // Save orderId in store
-                    useCheckoutStore.getState().setCheckoutDetails({ orderId: data.orderId });
-
                     createVnPayPayment({
                         amount: totalAmount,
                         bankCode: 'NCB',

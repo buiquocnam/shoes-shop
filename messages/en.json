@@ -198,7 +198,9 @@
         "noItems": "No items to checkout",
         "success": {
             "title": "Order Successful!",
-            "description": "Thank you for trust and shopping at Shoes Shop."
+            "description": "Thank you for trust and shopping at Shoes Shop.",
+            "orderNotFound": "Order Not Found",
+            "orderNotFoundDesc": "Sorry, we couldn't find the information for this order."
         }
     },
     "Order": {

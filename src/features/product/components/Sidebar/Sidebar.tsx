@@ -10,11 +10,6 @@ import {
     SidebarContent,
     SidebarHeader,
 } from "@/components/ui/sidebar";
-import {
-    Accordion,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 import { useTranslations } from "next-intl";
 
@@ -150,61 +145,52 @@ export default function Sidebar() {
                 </div>
             </SidebarHeader>
 
-            <SidebarContent className="px-0 gap-0 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/10 hover:scrollbar-thumb-primary/20 transition-colors">
-                <Accordion
-                    type="multiple"
-                    defaultValue={["price", "brand", "category"]}
-                    className="w-full"
-                >
-                    {/* Price Range Section */}
-                    <AccordionItem value="price" className="border-none">
-                        <AccordionTrigger className="hover:no-underline py-4">
-                            <span className="font-bold text-sm uppercase tracking-wide text-primary">
-                                {t('price')}
-                            </span>
-                        </AccordionTrigger>
-                        <PriceFilter
-                            minPriceInput={minPriceInput}
-                            maxPriceInput={maxPriceInput}
-                            setMinPriceInput={setMinPriceInput}
-                            setMaxPriceInput={setMaxPriceInput}
-                            priceRange={priceRange}
-                            setPriceRange={setPriceRange}
-                            handleQuickPriceRange={handleQuickPriceRange}
-                        />
-                    </AccordionItem>
+            <SidebarContent className="px-0 py-4 gap-8 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/10 hover:scrollbar-thumb-primary/20 transition-colors">
+                {/* Price Range Section */}
+                <div className="flex flex-col gap-4">
+                    <span className="font-bold text-sm uppercase tracking-wide text-primary">
+                        {t('price')}
+                    </span>
+                    <PriceFilter
+                        minPriceInput={minPriceInput}
+                        maxPriceInput={maxPriceInput}
+                        setMinPriceInput={setMinPriceInput}
+                        setMaxPriceInput={setMaxPriceInput}
+                        priceRange={priceRange}
+                        setPriceRange={setPriceRange}
+                        handleQuickPriceRange={handleQuickPriceRange}
+                    />
+                </div>
 
+                <Separator />
 
-                    {/* Brands Section */}
-                    <AccordionItem value="brand" className="border-none">
-                        <AccordionTrigger className="hover:no-underline py-4">
-                            <span className="font-bold text-sm uppercase tracking-wide text-primary">
-                                {t('brand')}
-                            </span>
-                        </AccordionTrigger>
-                        <BrandFilter
-                            brands={brands}
-                            isLoadingBrands={isLoadingBrands}
-                            selectedBrandId={selectedBrandId}
-                            setSelectedBrandId={setSelectedBrandId}
-                        />
-                    </AccordionItem>
+                {/* Brands Section */}
+                <div className="flex flex-col gap-4">
+                    <span className="font-bold text-sm uppercase tracking-wide text-primary">
+                        {t('brand')}
+                    </span>
+                    <BrandFilter
+                        brands={brands}
+                        isLoadingBrands={isLoadingBrands}
+                        selectedBrandId={selectedBrandId}
+                        setSelectedBrandId={setSelectedBrandId}
+                    />
+                </div>
 
-                    {/* Categories Section */}
-                    <AccordionItem value="category" className="border-none">
-                        <AccordionTrigger className="hover:no-underline py-4">
-                            <span className="font-bold text-sm uppercase tracking-wide text-primary">
-                                {t('category')}
-                            </span>
-                        </AccordionTrigger>
-                        <CategoryFilter
-                            categories={categories}
-                            isLoadingCategories={isLoadingCategories}
-                            selectedCategoryId={selectedCategoryId}
-                            setSelectedCategoryId={setSelectedCategoryId}
-                        />
-                    </AccordionItem>
-                </Accordion>
+                <Separator />
+
+                {/* Categories Section */}
+                <div className="flex flex-col gap-4">
+                    <span className="font-bold text-sm uppercase tracking-wide text-primary">
+                        {t('category')}
+                    </span>
+                    <CategoryFilter
+                        categories={categories}
+                        isLoadingCategories={isLoadingCategories}
+                        selectedCategoryId={selectedCategoryId}
+                        setSelectedCategoryId={setSelectedCategoryId}
+                    />
+                </div>
             </SidebarContent>
         </ShadcnSidebar>
     );

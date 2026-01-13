@@ -10,10 +10,11 @@ interface CheckoutState {
   addressId: string | null;
   couponCode: string | null;
   totalAmount: number;
-  orderId: string | null;
+  _hasHydrated: boolean;
   setCheckout: (items: CheckoutItem[], source: CheckoutSource) => void;
-  setCheckoutDetails: (details: { addressId?: string; couponCode?: string | null; totalAmount?: number; orderId?: string | null }) => void;
+  setCheckoutDetails: (details: { addressId?: string; couponCode?: string | null; totalAmount?: number }) => void;
   clearCheckout: () => void;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useCheckoutStore = create<CheckoutState>()(
@@ -24,14 +25,18 @@ export const useCheckoutStore = create<CheckoutState>()(
       addressId: null,
       couponCode: null,
       totalAmount: 0,
-      orderId: null,
+      _hasHydrated: false,
       setCheckout: (items, source) => set({ items, source }),
       setCheckoutDetails: (details) => set((state) => ({ ...state, ...details })),
-      clearCheckout: () => set({ items: [], source: null, addressId: null, couponCode: null, totalAmount: 0, orderId: null }),
+      clearCheckout: () => set({ items: [], source: null, addressId: null, couponCode: null, totalAmount: 0 }),
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
       name: 'checkout-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );
