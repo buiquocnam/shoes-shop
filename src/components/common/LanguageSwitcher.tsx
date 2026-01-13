@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function LanguageSwitcher() {
     const locale = useLocale();
@@ -31,11 +32,11 @@ export default function LanguageSwitcher() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => switchLocale('vi')}>
-                    Tiếng Việt {locale === 'vi' && '✓'}
+                <DropdownMenuItem onClick={() => switchLocale('vi')} className={cn("hover:bg-accent", locale === 'vi' && 'bg-accent')}>
+                    Tiếng Việt 
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => switchLocale('en')}>
-                    English {locale === 'en' && '✓'}
+                <DropdownMenuItem onClick={() => switchLocale('en')} className={cn("hover:bg-accent", locale === 'en' && 'bg-accent')}>
+                    English 
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

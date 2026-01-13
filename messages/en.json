@@ -255,13 +255,19 @@
     },
     "Contact": {
         "title": "Contact Us",
+        "subtitle": "Contact us through the following channels. We are always ready to help.",
         "metaTitle": "Contact - Shoe Shop",
         "metaDescription": "Contact Shoe Shop for support with orders, sizing, or any other questions.",
-        "description": "Contact us through the following channels. We are always ready to help.",
         "phone": "Phone",
+        "phoneValue": "+84 (123) 456-7890",
         "email": "Email",
+        "emailValue": "hello@shoeshop.com",
         "address": "Shop Address",
-        "followUs": "Follow Us"
+        "addressValue1": "123 Shoes Street, Fashion District",
+        "addressValue2": "Ho Chi Minh City, 70000, Vietnam",
+        "form": {
+            "title": "Follow Us"
+        }
     },
     "Unauthorized": {
         "title": "Access Denied",

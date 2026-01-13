@@ -256,13 +256,19 @@
     },
     "Contact": {
         "title": "Liên hệ với chúng tôi",
+        "subtitle": "Liên hệ với chúng tôi qua các kênh sau. Chúng tôi luôn sẵn sàng hỗ trợ bạn.",
         "metaTitle": "Liên hệ - Shoe Shop",
         "metaDescription": "Liên hệ với Shoe Shop để được hỗ trợ về đơn hàng, kích thước, hoặc bất kỳ câu hỏi nào.",
-        "description": "Liên hệ với chúng tôi qua các kênh sau. Chúng tôi luôn sẵn sàng hỗ trợ bạn.",
         "phone": "Điện thoại",
+        "phoneValue": "+84 (123) 456-7890",
         "email": "Email",
+        "emailValue": "hello@shoeshop.com",
         "address": "Địa chỉ cửa hàng",
-        "followUs": "Theo dõi chúng tôi"
+        "addressValue1": "123 Đường Shoes, Quận Thời Trang",
+        "addressValue2": "TP. Hồ Chí Minh, 70000, Việt Nam",
+        "form": {
+            "title": "Theo dõi chúng tôi"
+        }
     },
     "Unauthorized": {
         "title": "Không có quyền truy cập",

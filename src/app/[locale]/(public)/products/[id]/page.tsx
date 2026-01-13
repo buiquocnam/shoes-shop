@@ -30,7 +30,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ProductPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
     const { id } = await params;
 
-    // Fetch product trực tiếp, không cần QueryClient
     const product: ProductDetailType = await productApi.getProductById(id);
 
     if (!product) {
