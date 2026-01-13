@@ -10,7 +10,7 @@ import { adminQueryKeys } from "@/features/admin/constants/queryKeys";
  */
 export const useCoupons = (filters?: CouponFilters) => {
   return useQuery({
-    queryKey: adminQueryKeys.coupons.list(filters),
+    queryKey: adminQueryKeys.coupons.list(),
     queryFn: () => adminCouponsApi.search(filters),
   });
 };
