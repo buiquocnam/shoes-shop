@@ -1,4 +1,4 @@
 export { useMessages } from "./useMessages";
-export { useConversations } from "./useConversations";
+export { useConversation } from "./useConversation";
 export { useSendMessage } from "./useSendMessage";
 export { useSocketMessages, useSocketConversations } from "./useSocketMessages";

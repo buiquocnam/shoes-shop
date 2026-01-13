@@ -7,9 +7,6 @@ import type {
 } from "../types";
 
 export const chatApi = {
-  /**
-   * Create a new conversation
-   */
   createConversation: async (
     data: CreateConversationRequest
   ) => {
@@ -20,9 +17,6 @@ export const chatApi = {
     return response.data;
   },
 
-  /**
-   * Send a message to a conversation
-   */
   sendMessage: async (data: CreateMessageRequest) => {
     const response = await axiosInstance.post<Message>(
       "/chat/messages/create",
@@ -31,9 +25,6 @@ export const chatApi = {
     return response.data;
   },
 
-  /**
-   * Get messages by conversation ID
-   */
   getMessagesByConversationId: async (
     conversationId: string
   ) => {
@@ -43,11 +34,13 @@ export const chatApi = {
     return response.data;
   },
 
-  /**
-   * Get messages by current user ID (from JWT)
-   */
   getMessagesByUserId: async () => {
     const response = await axiosInstance.get<Message[]>("/chat/messages/user");
+    return response.data;
+  },
+
+  getConversationsList: async () => {
+    const response = await axiosInstance.get<Conversation[]>("/chat/conversations/list");
     return response.data;
   },
 };

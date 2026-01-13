@@ -1,10 +1,10 @@
 // User components
-export { ChatBubble, ChatModal, ChatProvider } from "./user";
+export * from "./user";
 
 // Admin components
-export { ChatList } from "./admin";
+export * from "./admin";
 
 // Shared components
-export { ChatWindow, MessageList, MessageInput } from "./shared";
+export * from "./shared";
 
 
