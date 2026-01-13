@@ -8,7 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import Image from 'next/image';
 
 import { formatCurrency } from '@/utils/format';
-import { useOrderDetail } from '@/features/shared/hooks/useOrderDetail';
+import { useOrderDetail } from '@/features/order/hooks/useOrderDetail';
 import { OrderDetail } from '@/types/order';
 import { useTranslations, useLocale } from 'next-intl';
 

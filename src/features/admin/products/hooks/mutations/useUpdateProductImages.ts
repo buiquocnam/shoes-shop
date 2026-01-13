@@ -1,6 +1,6 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { toast } from "sonner";
 
 export interface UpdateProductImagesInput {
@@ -21,10 +21,10 @@ export const useUpdateProductImages = () => {
       // Không invalidate detail vì đang ở trang detail và sẽ chuyển trang ngay
       // Điều này tránh refetch làm component re-render trước khi chuyển trang
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.lists(),
+        queryKey: productQueryKeys.lists(),
       });
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.detail(variables.productId),
+        queryKey: productQueryKeys.detail(variables.productId),
       });
       toast.success("Cập nhật hình ảnh thành công");
     },

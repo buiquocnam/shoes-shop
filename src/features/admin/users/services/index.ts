@@ -1,1 +1,1 @@
-export { adminBrandsApi } from "./users.api";
+export { adminUsersApi } from "./users.api";

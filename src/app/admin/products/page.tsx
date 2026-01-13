@@ -23,7 +23,8 @@ import { useUpdateParams } from "@/features/admin/util/updateParams";
 import { PurchasedProductsDialog } from "@/features/admin/products/components/PurchasedProductsDialog";
 import { usePurchasedItemsByProduct } from "@/features/admin/products/hooks/queries/usePurchasedItemsByProduct";
 import { PurchasedItemFilters } from "@/features/profile/types";
-import { useCategories, useBrands } from "@/features/shared";
+import { useCategories } from "@/features/product/hooks/useCategories";
+import { useBrands } from "@/features/product/hooks/useBrands";
 
 const AdminProductsPage: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);

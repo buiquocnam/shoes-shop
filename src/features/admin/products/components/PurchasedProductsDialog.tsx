@@ -14,7 +14,7 @@ import { formatCurrency } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { OrderDetailDialog } from "@/features/shared";
+import { OrderDetailDialog } from "@/features/order/components/OrderDetailDialog";
 import {
   Pagination,
   PaginationContent,

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { toast } from "sonner";
 
 export interface DeleteVariantSizeInput {
@@ -15,7 +15,7 @@ export const useDeleteVariantSize = () => {
       adminProductsApi.deleteVariantSize(data.sizeId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.detail(variables.productId),
+        queryKey: productQueryKeys.detail(variables.productId),
       });
       toast.success("Xóa size thành công");
     },

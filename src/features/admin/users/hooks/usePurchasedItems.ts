@@ -2,9 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { adminUsersApi } from "../services/users.api";
-import { adminQueryKeys } from "@/features/shared";
+import { adminQueryKeys } from "@/features/admin/constants/queryKeys";
 import {
-  PurchasedListPaginationResponse,
   PurchasedItemFilters,
 } from "@/features/profile/types";
 
@@ -16,7 +15,7 @@ export const usePurchasedItems = (
     queryKey: adminQueryKeys.users.purchasedItems(
       userId || "",
       filters?.page || 1,
-      filters?.limit || 10
+      filters?.size || 10
     ),
     queryFn: () => adminUsersApi.getPurchasedItems(userId!, filters),
     enabled: !!userId,

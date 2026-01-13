@@ -12,7 +12,7 @@ import { ShoppingBag } from "lucide-react";
 import { PurchasedListPaginationResponse } from "@/features/profile/types";
 import { formatCurrency } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
-import { OrderDetailDialog } from "@/features/shared";
+import { OrderDetailDialog } from "@/features/order/components/OrderDetailDialog";
 import {
   Pagination,
   PaginationContent,

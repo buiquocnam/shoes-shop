@@ -3,12 +3,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
 import { VariantHistoryFilters } from "../../types";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 
 export const useVariantHistory = (filters?: VariantHistoryFilters) => {
   return useQuery({
     queryKey: [
-      ...sharedQueryKeys.product.key,
+      ...productQueryKeys.detail(filters?.productId || ""),
       "variant-history",
       filters?.page || 1,
       filters?.size || 10,

@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { brandsApi } from "@/features/shared/services/brands.api";
+import { brandsApi } from "@/features/product/services/brands.api";
 import { BrandType } from "@/features/product/types";
 import { getTranslations } from "next-intl/server";
 

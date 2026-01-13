@@ -1,10 +1,10 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { BrandType } from "@/features/product/types";
 import { adminBrandsApi } from "@/features/admin/brands/services/brands.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { toast } from "sonner";
 // Re-export shared useBrands for convenience
-export { useBrands } from "@/features/shared/hooks/useBrands";
+export { useBrands } from "@/features/product/hooks/useBrands";
 
 export const useUpsertBrand = () => {
   const queryClient = useQueryClient();
@@ -13,7 +13,7 @@ export const useUpsertBrand = () => {
     onSuccess: (_, formData) => {
       // Invalidate all brand queries (including those with filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.brand.list(),
+        queryKey: productQueryKeys.brand.list(undefined),
       });
       toast.success("Thành công");
     },
@@ -39,7 +39,7 @@ export const useDeleteBrand = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.brand.list(),
+        queryKey: productQueryKeys.brand.list(undefined),
       });
       toast.success("Xóa thương hiệu thành công");
     },

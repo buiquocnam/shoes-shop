@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import { categoriesApi } from "@/features/shared/services/categories.api";
+import { categoriesApi } from "@/features/product/services/categories.api";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";

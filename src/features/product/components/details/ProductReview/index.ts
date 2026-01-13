@@ -5,6 +5,6 @@ export { RatingSummary } from "./RatingSummary";
 export { RatingStats } from "./RatingStats";
 export { ReviewList } from "./ReviewList";
 export { calculateRatingStats } from "./utils";
-export { STAR_COLOR } from "./constants";
+// export { STAR_COLOR } from "./constants";
 
 

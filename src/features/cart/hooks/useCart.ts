@@ -9,7 +9,7 @@ import {
 import { CartResponse, AddToCartRequest } from "@/features/cart/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { userQueryKeys } from "@/constants/userQueryKeys";
 import { toast } from "sonner";
 
 /**

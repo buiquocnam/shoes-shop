@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCheckoutStore } from '@/store';
-import { userQueryKeys } from '@/features/shared/constants/user-queryKeys';
+import { userQueryKeys } from '@/constants/userQueryKeys';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { removeCartItem } from '@/features/cart/services';

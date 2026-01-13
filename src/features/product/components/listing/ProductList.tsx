@@ -15,7 +15,7 @@ import {
     PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { getPageNumbers, createPaginationUrl } from "@/utils/pagination";
-import ProductListLoading from "./ProductList/ProductListLoading";
+import ProductListLoading from "./ProductListLoading";
 import { useTranslations } from "next-intl";
 
 export default function ProductList() {

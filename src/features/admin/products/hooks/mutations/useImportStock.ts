@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
 import { ImportStockInput } from "../../types";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { toast } from "sonner";
 
 /**
@@ -14,14 +14,14 @@ export const useImportStock = () => {
     mutationFn: (data: ImportStockInput) => adminProductsApi.importStock(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.lists(),
+        queryKey: productQueryKeys.lists(),
       });
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.detail(variables.productId),
+        queryKey: productQueryKeys.detail(variables.productId),
       });
       // Invalidate variant-history queries to refresh history data
       queryClient.invalidateQueries({
-        queryKey: [...sharedQueryKeys.product.key, "variant-history"],
+        queryKey: [...productQueryKeys.detail(variables.productId), "variant-history"],
       });
       toast.success("Nhập kho thành công");
     },

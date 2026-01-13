@@ -1,6 +1,6 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { toast } from "sonner";
 
 /**
@@ -15,10 +15,10 @@ export const useCreateProduct = () => {
     mutationFn: (data: FormData) => adminProductsApi.create(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.lists(),
+        queryKey: productQueryKeys.lists(),
       });
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.detail(data.id),
+        queryKey: productQueryKeys.detail(data.id),
       });
       toast.success("Tạo sản phẩm thành công");
     },

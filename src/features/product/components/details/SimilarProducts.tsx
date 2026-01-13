@@ -1,9 +1,13 @@
-import { productApi } from "../../services/product.api";
+"use client"
+
 import ProductCard from "../listing/ProductCard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import type { ProductFilters } from "@/types/product";
+import { useProducts } from "../../hooks/useProducts";
+import { ProductType } from "../../types";
+import ProductListLoading from "../listing/ProductListLoading";
 
 interface SimilarProductsProps {
     categoryId?: string;
@@ -11,12 +15,11 @@ interface SimilarProductsProps {
     currentProductId: string;
 }
 
-export default async function SimilarProducts({
+export default function SimilarProducts({
     categoryId,
     brandId,
     currentProductId,
 }: SimilarProductsProps) {
-    // Chỉ gọi API nếu có ít nhất category hoặc brand
     if (!categoryId && !brandId) {
         return null;
     }
@@ -34,20 +37,21 @@ export default async function SimilarProducts({
         filters.brand_id = brandId;
     }
 
-    try {
-        const productsResponse = await productApi.getProducts(filters);
-        const products = productsResponse?.data || [];
+    const { data: products, isLoading } = useProducts(filters);
+    const productList = products?.data || [];
 
-        // Loại trừ sản phẩm hiện tại
-        const similarProducts = products.filter(
-            (product) => product.id !== currentProductId
-        );
+    const similarProducts = productList.filter(
+        (product: ProductType) => product.id !== currentProductId
+    );
 
-        if (similarProducts.length === 0) {
-            return null;
-        }
+    if (similarProducts.length === 0) {
+        return null;
+    }
+    if (isLoading) {
+        return <ProductListLoading />;
+    }
 
-        return (
+    return (
             <div className="border-t border-border pt-12 max-w-7xl mx-auto w-full px-4 sm:px-8">
                 <div className="flex items-center justify-between mb-8">
                     <h2 className="text-2xl font-bold text-foreground">Sản phẩm tương tự</h2>
@@ -62,14 +66,10 @@ export default async function SimilarProducts({
                     </Button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {similarProducts.map((product) => (
+                    {similarProducts.map((product: ProductType) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
             </div>
-        );
-    } catch (error) {
-        console.error("Error fetching similar products:", error);
-        return null;
-    }
+        )
 }

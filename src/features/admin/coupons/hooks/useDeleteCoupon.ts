@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminCouponsApi } from "../services/coupons.api";
 import { toast } from "sonner";
-import { adminQueryKeys } from "@/features/shared/constants/admin-queryKeys";
+import { adminQueryKeys } from "@/features/admin/constants/queryKeys";
 
 export const useDeleteCoupon = () => {
   const queryClient = useQueryClient();
@@ -11,7 +11,7 @@ export const useDeleteCoupon = () => {
   return useMutation({
     mutationFn: (id: string) => adminCouponsApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.coupons.key, "list"] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.coupons.list() });
       toast.success("Xóa mã giảm giá thành công");
     },
     onError: (error: any) => {

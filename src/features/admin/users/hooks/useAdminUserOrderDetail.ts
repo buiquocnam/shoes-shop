@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { adminUsersApi } from "@/features/admin/users/services/users.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { orderQueryKeys } from "@/features/order/constants/queryKeys";
 
 /**
  * Get Admin Order Detail by ID (for admin users)
@@ -10,7 +10,7 @@ import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
  */
 export const useAdminUserOrderDetail = (orderId: string | null) => {
   return useQuery({
-    queryKey: [...sharedQueryKeys.product.key, "admin-user-order", orderId || ""],
+    queryKey: orderQueryKeys.adminUserDetail(orderId || ""),
     queryFn: () => adminUsersApi.getOrderDetail(orderId!),
     enabled: !!orderId,
   });

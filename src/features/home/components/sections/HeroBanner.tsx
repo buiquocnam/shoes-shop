@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { useBanners } from "@/features/shared";
+import { useBanners } from "@/features/home";
 import { useTranslations } from "next-intl";
 import { Banner } from "@/types/banner";
 

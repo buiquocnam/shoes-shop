@@ -1,4 +1,4 @@
-import type { ProductReviewType } from "../../types";
+import type { ProductReviewType } from "@/features/product/types";
 
 export const calculateRatingStats = (reviews: ProductReviewType[]) => {
   const stats = {

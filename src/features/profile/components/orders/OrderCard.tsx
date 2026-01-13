@@ -6,7 +6,7 @@ import { formatCurrency } from '@/utils/format';
 import { formatDateTime } from '@/utils/date';
 import { Button } from '@/components/ui/button';
 import { OrderItem } from './OrderItem';
-import { OrderDetailDialog } from '@/features/shared';
+import { OrderDetailDialog } from '@/features/order';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 

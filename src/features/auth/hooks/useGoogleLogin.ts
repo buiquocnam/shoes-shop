@@ -17,7 +17,7 @@ export function useGoogleLogin() {
     mutationFn: (code: string) => authApi.loginWithGoogle(code),
     onSuccess: (response) => {
       // Lưu cả access token và refresh token
-      setAuth(response.user, response.access_token, response.refresh_token);
+      setAuth(response.user, response.access_token);
       const userRole = getUserRoleFromToken(response.access_token);
 
       if (userRole === "ADMIN") {

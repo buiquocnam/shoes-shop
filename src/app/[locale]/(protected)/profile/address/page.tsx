@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuthStore } from "@/store/useAuthStore";
-import { AddressManagement } from "@/features/shared/components/address";
+import { AddressManagement } from "@/features/address";
 
 export default function ProfileAddressPage() {
   const { user } = useAuthStore();

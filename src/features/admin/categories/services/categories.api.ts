@@ -1,6 +1,6 @@
 import axiosInstance from '@/lib/axios';
 import { CategoryType } from '@/features/product/types';
-import { categoriesApi } from '@/features/shared/services/categories.api';
+import { categoriesApi } from '@/features/product/services/categories.api';
 
 export const adminCategoriesApi = {
 

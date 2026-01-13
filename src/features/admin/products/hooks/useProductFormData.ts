@@ -1,5 +1,5 @@
-import { useBrands } from "@/features/shared/hooks/useBrands";
-import { useCategories } from "@/features/shared/hooks/useCategories";
+import { useBrands } from "@/features/product/hooks/useBrands";
+import { useCategories } from "@/features/product/hooks/useCategories";
 
 /**
  * Hook để lấy categories và brands cho product forms

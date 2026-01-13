@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { userQueryKeys } from "@/constants/userQueryKeys";
 import { couponApi } from "../services/coupon.api";
 import { Coupon, CouponListResponse } from "../types/coupon";
 

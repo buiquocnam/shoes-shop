@@ -8,7 +8,7 @@ import {
   PurchasedListPaginationResponse,
 } from "../types";
 import { toast } from "sonner";
-import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { userQueryKeys } from "@/constants/userQueryKeys";
 import { useAuthStore } from "@/store";
 
 export const useUpdateProfile = () => {

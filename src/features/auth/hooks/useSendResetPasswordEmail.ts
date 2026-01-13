@@ -11,7 +11,7 @@ export function useSendResetPasswordEmail() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (data) => authApi.sendResetPasswordEmail(data),
+    mutationFn: (data: ForgotPasswordFormData) => authApi.sendResetPasswordEmail(data),
     onSuccess: async (_, variables) => {
       await setOtpData(variables.email, "FORGET_PASS");
       toast.success("OTP sent to your email!");

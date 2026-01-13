@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { createReview, getReviews, checkReviewEligibility } from "../services/review.api";
-import { userQueryKeys } from "@/features/shared/constants/user-queryKeys";
+import { userQueryKeys } from "@/constants/userQueryKeys";
 import {
   CreateProductReviewType,
   ProductReviewResponse,

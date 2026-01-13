@@ -5,7 +5,7 @@ export { default as ProductReview } from "./details/ProductReview/ProductReview"
 export { Sidebar } from "./Sidebar";
 export { default as AlertLogin } from "./common/AlertLogin";
 export { default as ProductList } from "./listing/ProductList";
-export { default as ProductListLoading } from "./listing/ProductList/ProductListLoading";
+export { default as ProductListLoading } from "./listing/ProductListLoading";
 export { default as SortSelect } from "./listing/SortSelect";
 export { default as SimilarProducts } from "./details/SimilarProducts";
 export { default as ReviewsLoading } from "./details/ReviewsLoading";

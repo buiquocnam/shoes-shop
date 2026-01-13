@@ -1,18 +1,18 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { CategoryType } from "@/features/product/types";
 import { adminCategoriesApi } from "@/features/admin/categories/services/categories.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
-import { categoriesApi } from "@/features/shared/services/categories.api";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
+import { categoriesApi } from "@/features/product/services/categories.api";
 import { toast } from "sonner";
-import { Filters } from "@/features/shared/types";
+import { PaginationParams } from "@/types";
 
 // Re-export shared useCategories for convenience
-export { useCategories } from "@/features/shared/hooks/useCategories";
+export { useCategories } from "@/features/product/hooks/useCategories";
 
 // Admin-specific hook with pagination support
-export const useGetCategories = (filters?: Filters) => {
+export const useGetCategories = (filters?: PaginationParams) => {
   return useQuery({
-    queryKey: sharedQueryKeys.category.list(filters),
+    queryKey: productQueryKeys.category.list(undefined),
     queryFn: () => categoriesApi.getAll(filters),
     placeholderData: (previousData) => previousData,
   });
@@ -25,7 +25,7 @@ export const useCreateCategory = () => {
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.lists(),
+        queryKey: productQueryKeys.category.lists(),
       });
       toast.success("Tạo danh mục thành công");
     },
@@ -42,7 +42,7 @@ export const useUpdateCategory = () => {
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.lists(),
+        queryKey: productQueryKeys.category.lists(),
       });
       toast.success("Cập nhật danh mục thành công");
     },
@@ -65,7 +65,7 @@ export const useDeleteCategory = () => {
     onSuccess: () => {
       // Invalidate all category list queries (with or without filters)
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.category.lists(),
+        queryKey: productQueryKeys.category.lists(),
       });
       toast.success("Xóa danh mục thành công");
     },

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCategories } from "@/features/shared/hooks/useCategories";
-import { useBrands } from "@/features/shared/hooks/useBrands";
+import { useCategories } from "@/features/product/hooks/useCategories";
+import { useBrands } from "@/features/product/hooks/useBrands";
 import { Button } from "@/components/ui/button";
 import {
     Sidebar as ShadcnSidebar,

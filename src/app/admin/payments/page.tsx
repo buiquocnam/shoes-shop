@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import Loading from "@/features/admin/components/Loading";
 import { usePayments, useUpdateOrderStatus, paymentColumns, PaymentFilters, PaymentRecord } from "@/features/admin/payments";
-import { OrderDetailDialog } from "@/features/shared/components/order/OrderDetailDialog";
+import { OrderDetailDialog } from "@/features/order";
 import { useUpdateParams } from "@/features/admin/util/updateParams";
 
 const AdminPaymentsPage = () => {

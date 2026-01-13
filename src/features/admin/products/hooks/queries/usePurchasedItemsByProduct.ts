@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { PaginationParams } from "@/types/common";
 
 export const usePurchasedItemsByProduct = (
@@ -11,7 +11,7 @@ export const usePurchasedItemsByProduct = (
 ) => {
   return useQuery({
     queryKey: [
-      ...sharedQueryKeys.product.key,
+      ...productQueryKeys.all,
       "purchased-items",
       productId || "",
       filters?.page || 1,

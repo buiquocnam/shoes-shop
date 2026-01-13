@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminProductsApi } from "../../services/products.api";
-import { sharedQueryKeys } from "@/features/shared/constants/shared-queryKeys";
+import { productQueryKeys } from "@/features/product/constants/queryKeys";
 import { toast } from "sonner";
 
 export const useDeleteProduct = () => {
@@ -9,7 +9,7 @@ export const useDeleteProduct = () => {
     mutationFn: (productId: string) => adminProductsApi.delete(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: sharedQueryKeys.product.lists(),
+        queryKey: productQueryKeys.lists(),
       });
       toast.success("Xóa sản phẩm thành công");
     },

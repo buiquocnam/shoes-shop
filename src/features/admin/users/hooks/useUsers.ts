@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminUsersApi } from "@/features/admin/users/services/users.api";
-import { adminQueryKeys } from "@/features/shared";
+import { adminQueryKeys } from "@/features/admin/constants/queryKeys";
 import { User } from "@/types";
 import { UserFilters } from "../types";
 import { toast } from "sonner";

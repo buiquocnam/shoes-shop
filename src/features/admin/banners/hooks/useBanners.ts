@@ -2,11 +2,11 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminBannersApi } from "../services/banners.api";
-import { sharedQueryKeys } from "@/features/shared/constants";
+import { homeQueryKeys } from "@/features/home/constants/queryKeys";
 
 export function useBanners() {
   return useQuery({
-    queryKey: [sharedQueryKeys.banner.list],
+    queryKey: homeQueryKeys.banner.list(),
     queryFn: () => adminBannersApi.search(),
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -20,7 +20,7 @@ export const useUpsertBanner = () => {
     mutationFn: (data: FormData) => adminBannersApi.createOrUpdate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [sharedQueryKeys.banner.list],
+        queryKey: homeQueryKeys.banner.list(),
       });
       toast.success("Thành công");
     },

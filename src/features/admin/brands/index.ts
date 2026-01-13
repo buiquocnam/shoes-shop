@@ -11,4 +11,4 @@ export { brandSchema, type BrandFormValues } from "./schema";
 export type {
   FetchBrandsParams,
   BrandPaginationResponse,
-} from "@/features/shared/types";
+} from "@/types/brand";
